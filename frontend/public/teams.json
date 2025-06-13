@@ -1,0 +1,92 @@
+[
+    {
+        "id": "A",
+        "name": "TeamA",
+        "record": { "win": 0, "loss": 0 }
+    },
+    {
+        "id": "B",
+        "name": "TeamB",
+        "record": { "win": 0, "loss": 0 }
+    },
+    {
+        "id": "C",
+        "name": "TeamC",
+        "record": { "win": 0, "loss": 0 }
+    },
+    {
+        "id": "D",
+        "name": "TeamD",
+        "record": { "win": 0, "loss": 0 }
+    },
+    {
+        "id": "E",
+        "name": "TeamE",
+        "record": { "win": 0, "loss": 0 }
+    },
+    {
+        "id": "F",
+        "name": "TeamF",
+        "record": { "win": 0, "loss": 0 }
+    },
+    {
+        "id": "G",
+        "name": "TeamG",
+        "record": { "win": 0, "loss": 0 }
+    },
+    {
+        "id": "H",
+        "name": "TeamH",
+        "record": { "win": 0, "loss": 0 }
+    },
+    {
+        "id": "I",
+        "name": "TeamI",
+        "record": { "win": 0, "loss": 0 }
+    },
+    {
+        "id": "J",
+        "name": "TeamJ",
+        "record": { "win": 0, "loss": 0 }
+    },
+    {
+        "id": "K",
+        "name": "TeamK",
+        "record": { "win": 0, "loss": 0 }
+    },
+    {
+        "id": "L",
+        "name": "TeamL",
+        "record": { "win": 0, "loss": 0 }
+    },
+    {
+        "id": "M",
+        "name": "TeamM",
+        "record": { "win": 0, "loss": 0 }
+    },
+    {
+        "id": "N",
+        "name": "TeamN",
+        "record": { "win": 0, "loss": 0 }
+    },
+    {
+        "id": "O",
+        "name": "TeamO",
+        "record": { "win": 0, "loss": 0 }
+    },
+    {
+        "id": "P",
+        "name": "TeamP",
+        "record": { "win": 0, "loss": 0 }
+    },
+    {
+        "id": "Q",
+        "name": "TeamQ",
+        "record": { "win": 0, "loss": 0 }
+    },
+    {
+        "id": "R",
+        "name": "TeamR",
+        "record": { "win": 0, "loss": 0 }
+    }
+]

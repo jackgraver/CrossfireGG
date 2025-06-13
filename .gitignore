@@ -1,0 +1,75 @@
+# ==== Node/Vite + React ==== #
+
+# Dependency folders
+node_modules/
+.vite/
+
+# Production build output
+dist/
+build/
+
+# Local env files
+.env
+.env.local
+.env.*.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# IDE/editor folders and files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+
+# ==== Python (FastAPI + Uvicorn) ==== #
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# Python environment files
+*.env
+.env
+
+# Uvicorn logs and stuff
+uvicorn.log
+
+# Mypy cache
+.mypy_cache/
+
+# Pytest cache
+.pytest_cache/
+
+# Coverage reports
+htmlcov/
+.coverage
+.coverage.*
+
+# IDE/editor folders and files
+.vscode/
+.idea/
+
+# Other
+*.sqlite3
+*.db
+

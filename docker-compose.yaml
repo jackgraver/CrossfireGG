@@ -1,0 +1,17 @@
+services:
+    # frontend:
+    #     build:
+    #         context: ./frontend
+    #         dockerfile: Dockerfile
+    #     environment:
+    #         NODE_ENV: production
+    #     ports:
+    #         - 3000:3000
+
+    backend:
+        build:
+            context: ./backend
+            dockerfile: Dockerfile
+        container_name: oss_backend
+        ports:
+            - "8000:8000"
