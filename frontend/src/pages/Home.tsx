@@ -1,23 +1,8 @@
 import type { Match, Team } from "../types/Types";
-
-import { TEAMS, FIRSTMATCHES } from "../lib/Mock";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Bracket from "../components/bracket/Bracket";
-import { fetchFaceit } from "../lib/FaceitAPI";
-
-const rowBorder = (win: number, loss: number) => {
-    if (win >= 3) {
-        return "border border-green-400";
-    } else if (loss >= 3) {
-        return "border border-red-400";
-    }
-    return "";
-};
-
-const rowBgColor = (i: number) => {
-    return i % 2 === 0 ? "bg-gray-800" : "bg-gray-600";
-};
+import Standings from "../components/Standings";
 
 export default function Home() {
     const navigate = useNavigate();
@@ -70,7 +55,7 @@ export default function Home() {
 
     return (
         <div className="flex flex-col justify-center items-center">
-            <div className="flex flex-col justify-center items-center bg-white rounded-md w-5/6">
+            <div className="flex flex-col justify-center items-center bg-gray-800 rounded-md w-5/6">
                 {/* <img
                     src="/OSSLOGO.png"
                     className="absolute w-64 h-64 opacity-30"
@@ -82,7 +67,7 @@ export default function Home() {
             {teams.length === 0 ? (
                 "LOADING..."
             ) : (
-                <div className="flex flex-col justify-center items-center bg-white rounded-md w-5/6 mt-4">
+                <div className="flex flex-col justify-center items-center bg-gray-800 rounded-md w-5/6 mt-4">
                     <div className="rounded-md p-2 w-48">
                         <button
                             className={`
@@ -108,38 +93,9 @@ export default function Home() {
                     >
                         Refresh
                     </button>
-                    {displayTab === "standings" && (
-                        <table className="bg-gray-800 text-white mt-2">
-                            <thead>
-                                <tr>
-                                    <th></th>
-                                    <th>Team</th>
-                                    <th>Matches</th>
-                                    <th>Record</th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                {teams.map((t, i) => (
-                                    <tr
-                                        key={i}
-                                        className={`text-center
-                                ${rowBgColor(i)}
-                                ${rowBorder(t.win, t.loss)}`}
-                                    >
-                                        <td className="p-2 w-8">{i + 1}</td>
-                                        <td className="w-32">{t.team_name}</td>
-                                        <td className="w-28">
-                                            {t.win + t.loss}
-                                        </td>
-                                        <td className="w-28">{`${t.win}-${t.loss}`}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    )}
+                    {displayTab === "standings" && <Standings teams={teams} />}
                     {displayTab === "bracket" && (
-                        <div>
+                        <div className="w-full">
                             <Bracket teams={teams} matches={matches} />
                         </div>
                     )}

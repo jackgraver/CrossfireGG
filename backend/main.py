@@ -6,7 +6,10 @@ import os
 from fastapi import FastAPI
 import requests
 
-from db import *
+from db.db import *
+from db.matches import *
+from db.teams import *
+from db.metadata import *
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -67,12 +70,12 @@ def refresh_teams():
 
 FACEIT_API_KEY = os.getenv("FACEIT_API_KEY")
 FACEIT_API_URL = "https://open.faceit.com/data/v4/championships/f56331e8-131a-4c50-b7db-eec8b010ff98/matches?limit=70"
-MATCHES_FILE = Path("matches.json")
-DEBUG = False 
+MATCHES_FILE = Path("f2.json")
+DEBUG = True 
 def process_matches():
     try:
         if DEBUG:
-            with open("f.json", "r", encoding="utf-8") as f:
+            with open("f1.json", "r", encoding="utf-8") as f:
                 items = json.load(f).get("items", [])  # expects a list of matches
         else:
             response = requests.get(
@@ -91,8 +94,8 @@ def process_matches():
         # items.sort(key=lambda item: item.get("scheduled_at", 0), reverse=True)
         # print('a', items[0]['scheduled_at'])
         
-        with Path("f.json").open("w", encoding="utf-8") as f:
-            json.dump(items, f, indent=2)
+        # with Path("f2.json").open("w", encoding="utf-8") as f:
+        #     json.dump(items, f, indent=2)
         
         for item in reversed(items):
             teams = item.get("teams", {})

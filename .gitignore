@@ -73,3 +73,5 @@ htmlcov/
 *.sqlite3
 *.db
 
+# Test coverage files
+coverage/

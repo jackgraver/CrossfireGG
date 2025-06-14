@@ -1,6 +1,9 @@
 // import { FAKEMATCHES } from "../../lib/Mock";
 import type { Round, Match, Team } from "../../types/Types";
-import RoundCard from "./RoundSection";
+import { MatchTeam } from "./MatchTeam";
+import QualElimCard from "./qualelimcard/QualElimCard";
+import RoundSection from "./RoundSection";
+import RoundCard from "./RoundCard";
 
 type BracketProps = {
     teams: Team[];
@@ -17,77 +20,71 @@ export default function Bracket({ teams, matches }: BracketProps) {
         }
         rounds.get(key)!.push(match);
     });
-    console.log(rounds);
+
+    rounds.forEach((matches, _) => {
+        matches.sort((a, b) => {
+            const aMinSeed = Math.min(a.teams.team1.seed, a.teams.team2.seed);
+            const bMinSeed = Math.min(b.teams.team1.seed, b.teams.team2.seed);
+            return aMinSeed - bMinSeed;
+        });
+    });
 
     const qualifiedTeams: Team[] = teams.filter((team) => team.win >= 3);
     const eliminatedTeams: Team[] = teams.filter((team) => team.loss >= 3);
 
     return (
         <div className="flex flex-row justify-center items-center">
-            <div className="flex flex-col">
+            <RoundSection round_num={0}>
                 <RoundCard round="0-0" matches={rounds.get("0-0")} />
-            </div>
-            <div className="flex flex-col">
+            </RoundSection>
+
+            <RoundSection round_num={1}>
                 <RoundCard round="1-0" matches={rounds.get("1-0")} />
                 <RoundCard round="0-1" matches={rounds.get("0-1")} />
-            </div>
+            </RoundSection>
 
-            <div className="flex flex-col">
+            <RoundSection round_num={2}>
+                <RoundCard round="2-0" matches={rounds.get("2-0")} />
+                <RoundCard round="1-1" matches={rounds.get("1-1")} />
+                <RoundCard round="0-2" matches={rounds.get("0-2")} />
+            </RoundSection>
+
+            <RoundSection round_num={3}>
                 <div>
                     {qualifiedTeams
                         .filter((t) => t.loss === 0)
                         .map((t, i) => (
-                            <span key={i}>{t.team_name}</span>
-                        ))}
-                </div>
-                <RoundCard round="2-0" matches={rounds.get("2-0")} />
-                <RoundCard round="1-1" matches={rounds.get("1-1")} />
-                <RoundCard round="0-2" matches={rounds.get("0-2")} />
-                <div>
-                    {eliminatedTeams
-                        .filter((t) => t.win === 0)
-                        .map((t, i) => (
-                            <span key={i}>{t.team_name}</span>
-                        ))}
-                </div>
-            </div>
-
-            <div className="flex flex-col">
-                <div>
-                    {qualifiedTeams
-                        .filter((t) => t.loss === 1)
-                        .map((t, i) => (
-                            <span key={i}>{t.team_name}</span>
+                            <QualElimCard key={i} team={t} qualified={true} />
                         ))}
                 </div>
                 <RoundCard round="2-1" matches={rounds.get("2-1")} />{" "}
                 <RoundCard round="1-2" matches={rounds.get("1-2")} />
                 <div>
                     {eliminatedTeams
-                        .filter((t) => t.win === 1)
+                        .filter((t) => t.win === 0)
                         .map((t, i) => (
-                            <span key={i}>{t.team_name}</span>
+                            <QualElimCard key={i} team={t} qualified={false} />
                         ))}
                 </div>
-            </div>
+            </RoundSection>
 
-            <div className="flex flex-col">
+            <RoundSection round_num={4}>
                 <div>
                     {qualifiedTeams
-                        .filter((t) => t.loss === 2)
+                        .filter((t) => t.loss === 1)
                         .map((t, i) => (
-                            <span key={i}>{t.team_name}</span>
+                            <QualElimCard key={i} team={t} qualified={true} />
                         ))}
                 </div>
                 <RoundCard round="2-2" matches={rounds.get("2-2")} />
                 <div>
                     {eliminatedTeams
-                        .filter((t) => t.win === 2)
+                        .filter((t) => t.win === 1)
                         .map((t, i) => (
-                            <span key={i}>{t.team_name}</span>
+                            <QualElimCard key={i} team={t} qualified={false} />
                         ))}
                 </div>
-            </div>
+            </RoundSection>
         </div>
     );
 }
