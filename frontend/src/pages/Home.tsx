@@ -55,32 +55,47 @@ export default function Home() {
 
     return (
         <div className="flex flex-col justify-center items-center">
-            <div className="flex flex-col justify-center items-center bg-gray-800 rounded-md w-5/6">
-                {/* <img
-                    src="/OSSLOGO.png"
-                    className="absolute w-64 h-64 opacity-30"
-                /> */}
-
-                <h1 className="text-6xl"> Off Season Shenanigans</h1>
-                <p>Off Season tournament during the off seasons!</p>
+            <div className="flex flex-row justify-center items-center w-5/6">
+                <img src="/OSSLOGO.png" className="w-64 h-64" />
+                <div className="flex flex-col text-white">
+                    <h1 className="text-6xl font-semibold">
+                        OFF SEASON
+                        <br />
+                        SHENANIGANS
+                    </h1>
+                    <p className="text-2xl">
+                        Off Season tournament during the off seasons!
+                    </p>
+                </div>
             </div>
             {teams.length === 0 ? (
                 "LOADING..."
             ) : (
-                <div className="flex flex-col justify-center items-center bg-gray-800 rounded-md w-5/6 mt-4">
-                    <div className="rounded-md p-2 w-48">
+                <div className="flex flex-col justify-center items-center w-5/6 mt-4">
+                    <div className="relative inline-flex bg-white rounded-md overflow-hidden shadow-md">
+                        <div
+                            className={`absolute bottom-0 h-1 bg-orange-500 transition-all duration-300 ease-in-out`}
+                            style={{
+                                width: "50%",
+                                left: displayTab === "bracket" ? "0%" : "50%",
+                            }}
+                        />
                         <button
-                            className={`
-                        bg-gray-600 p-2 rounded-md m-2
-                        ${displayTab === "bracket" && "text-green-400"}`}
+                            className={`w-32 py-2 text-xl font-bold transition-colors duration-200 ${
+                                displayTab === "bracket"
+                                    ? "text-blue-600"
+                                    : "text-gray-400"
+                            }`}
                             onClick={() => setDisplayTab("bracket")}
                         >
                             Bracket
                         </button>
                         <button
-                            className={`
-                        bg-gray-600 p-2 rounded-md
-                        ${displayTab === "standings" && "text-green-400"}`}
+                            className={`w-32 py-2 text-xl font-bold transition-colors duration-200 ${
+                                displayTab === "standings"
+                                    ? "text-blue-600"
+                                    : "text-gray-400"
+                            }`}
                             onClick={() => setDisplayTab("standings")}
                         >
                             Standings

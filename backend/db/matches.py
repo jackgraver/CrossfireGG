@@ -20,8 +20,6 @@ def create_matches_table(conn: sqlite3.Connection):
 
 
 def fetch_all_matches(conn: sqlite3.Connection) -> List[Dict]:
-    create_matches_table(conn)
-
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM matches")
     columns = [desc[0] for desc in cursor.description]

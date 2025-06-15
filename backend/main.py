@@ -27,6 +27,7 @@ app.add_middleware(
 
 @app.get("/")
 async def read_root():
+    init_tables(get_db_connection())
     return {"message": "Hello from FastAPI"}
 
 
@@ -75,8 +76,8 @@ DEBUG = True
 def process_matches():
     try:
         if DEBUG:
-            with open("f1.json", "r", encoding="utf-8") as f:
-                items = json.load(f).get("items", [])  # expects a list of matches
+            with open("f2.json", "r", encoding="utf-8") as f:
+                matches = json.load(f).get("items", [])  # expects a list of matches
         else:
             response = requests.get(
                 FACEIT_API_URL,
@@ -86,7 +87,7 @@ def process_matches():
                 },
             )
             response.raise_for_status()
-            items = response.json().get("items", [])
+            matches = response.json().get("items", [])
             
         conn = get_db_connection()
         
@@ -97,22 +98,25 @@ def process_matches():
         # with Path("f2.json").open("w", encoding="utf-8") as f:
         #     json.dump(items, f, indent=2)
         
-        for item in reversed(items):
-            teams = item.get("teams", {})
-            results = item.get("results", {})
+        processed_matches = {match["match_id"] for match in fetch_all_matches(conn)}
+        nonprocess_matches = [match for match in matches if match["match_id"] not in processed_matches]   #fetch_all_matches(conn)
+        
+        for match in reversed(nonprocess_matches): 
+            teams = match.get("teams", {})
+            results = match.get("results", {})
             faction1 = teams.get("faction1", {})
             faction2 = teams.get("faction2", {})
             winner_key = results.get("winner")  # "faction1" or "faction2"
 
-            team1 = {"team_id": faction1.get("faction_id"), "name": faction1.get("name")}
-            team2 = {"team_id": faction2.get("faction_id"), "name": faction2.get("name")}
+            team1 = {"team_id": faction1.get("faction_id"), "name": faction1.get("name"), "team_logo": faction1.get("avatar")}
+            team2 = {"team_id": faction2.get("faction_id"), "name": faction2.get("name"), "team_logo": faction2.get("avatar")}
             
             if not winner_key:
                 match = {
-                    "match_id": item.get("match_id"),
-                    "status": item.get("status"),
+                    "match_id": match.get("match_id"),
+                    "status": match.get("status"),
                     "round": get_team_record(conn, team1["team_id"]),
-                    "faceit_url": item.get("faceit_url").replace('{lang}', 'en'),
+                    "faceit_url": match.get("faceit_url").replace('{lang}', 'en'),
                     "team1_id": team1["team_id"],
                     "team2_id": team2["team_id"],
                     "winner": ""
@@ -130,10 +134,10 @@ def process_matches():
                 continue  # skip incomplete data
             
             match = {
-                "match_id": item.get("match_id"),
-                "status": item.get("status"),
+                "match_id": match.get("match_id"),
+                "status": match.get("status"),
                 "round": get_team_record(conn, team1["team_id"]),
-                "faceit_url": item.get("faceit_url").replace('{lang}', 'en'),
+                "faceit_url": match.get("faceit_url").replace('{lang}', 'en'),
                 "team1_id": team1["team_id"],
                 "team2_id": team2["team_id"],
                 "winner": winner_id
@@ -144,7 +148,7 @@ def process_matches():
             update_team_record(conn, team2, won=(team2["team_id"] == winner_id))
             
         conn.close()
-        return items
+        return matches
 
     except (requests.RequestException, json.JSONDecodeError, FileNotFoundError) as err:
         print("Fetch error:", err)

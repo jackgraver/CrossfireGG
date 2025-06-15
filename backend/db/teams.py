@@ -7,6 +7,7 @@ def create_teams_table(conn: sqlite3.Connection):
         CREATE TABLE IF NOT EXISTS teams (
             team_id TEXT PRIMARY KEY,
             team_name TEXT,
+            team_logo TEXT,
             seed INTEGER,
             win INTEGER,
             loss INTEGER,
@@ -18,8 +19,6 @@ def create_teams_table(conn: sqlite3.Connection):
 
 
 def fetch_all_teams(conn: sqlite3.Connection) -> List[Dict]:
-    create_teams_table(conn)
-
     cursor = conn.cursor()
     cursor.execute("SELECT * FROM teams")
     columns = [desc[0] for desc in cursor.description]
@@ -54,7 +53,7 @@ def update_team_record(conn, team: dict, won: bool):
         # If team doesn't exist, insert it
         win = 1 if won else 0
         loss = 0 if won else 1
-        cursor.execute("INSERT INTO teams (team_id, team_name, seed, win, loss, paid, joined_tournament) VALUES (?, ?, -1, ?, ?, 1, 1)", (team["team_id"], team["name"], win, loss))
+        cursor.execute("INSERT INTO teams (team_id, team_name, team_logo, seed, win, loss, paid, joined_tournament) VALUES (?, ?, ?, -1, ?, ?, 1, 1)", (team["team_id"], team["name"], team["team_logo"], win, loss))
         
     conn.commit()
     
@@ -63,11 +62,11 @@ def get_team_info(conn: sqlite3.Connection, team_id: str) -> dict:
         return {}
 
     cursor = conn.cursor()
-    cursor.execute("SELECT team_id, team_name, seed, win, loss, paid, joined_tournament FROM teams WHERE team_id = ?", (team_id,))
+    cursor.execute("SELECT team_id, team_name, team_logo, seed, win, loss, paid, joined_tournament FROM teams WHERE team_id = ?", (team_id,))
     row = cursor.fetchone()
 
     if row:
-        keys = ["team_id", "team_name", "seed", "win", "loss", "paid", "joined_tournament"]
+        keys = ["team_id", "team_name", "team_logo", "seed", "win", "loss", "paid", "joined_tournament"]
         return dict(zip(keys, row))
     else:
         return {}

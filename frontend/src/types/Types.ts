@@ -21,6 +21,7 @@ export type Round =
 export type Team = {
     team_id: string;
     team_name: string;
+    team_logo: string;
     seed: number;
     win: number;
     loss: number;

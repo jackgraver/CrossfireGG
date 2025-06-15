@@ -11,7 +11,15 @@ export function MatchTeam({
 
     return (
         <div className={`flex items-center gap-x-3 bg-gray-400 px-2 ${bg}`}>
-            <img src="OSSLOGO.png" className="w-6 h-6" alt="?" />
+            <img
+                src={team?.team_logo || "OSSLOGO.png"}
+                onError={(e) => {
+                    e.currentTarget.onerror = null; // Prevents infinite loop
+                    e.currentTarget.src = "/OSSLOGO.png";
+                }}
+                alt="?"
+                className="w-6 h-6 rounded"
+            />
 
             <div className="min-w-[24px] text-left">
                 <span>{team?.seed}</span>
