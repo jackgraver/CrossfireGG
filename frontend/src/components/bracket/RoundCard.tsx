@@ -34,7 +34,7 @@ export default function RoundCard({ round, matches }: RoundCardProps) {
     return (
         <div className="flex flex-col p-2 m-2">
             <div className="flex justify-center items-center">
-                <h1 className="bg-gray-200 w-24 p-2 text-2xl text-orange-600">
+                <h1 className="bg-gray-200 w-16 px-2 py-1 text-2xl text-orange-600">
                     {round}
                 </h1>
             </div>

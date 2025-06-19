@@ -7,10 +7,10 @@ export function MatchTeam({
     team: Team | undefined;
     winner?: boolean;
 }) {
-    const bg = winner === undefined ? "" : winner ? "bg-green-500" : "";
+    const bg = winner === undefined ? "" : winner ? "bg-[#378a37] " : "";
 
     return (
-        <div className={`flex items-center gap-x-3 bg-gray-400 px-2 ${bg}`}>
+        <div className={`flex items-center gap-x-3 px-2 ${bg}`}>
             <img
                 src={team?.team_logo || "OSSLOGO.png"}
                 onError={(e) => {

@@ -75,3 +75,5 @@ htmlcov/
 
 # Test coverage files
 coverage/
+
+test_data/

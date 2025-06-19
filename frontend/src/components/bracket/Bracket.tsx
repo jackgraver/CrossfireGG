@@ -33,7 +33,7 @@ export default function Bracket({ teams, matches }: BracketProps) {
     const eliminatedTeams: Team[] = teams.filter((team) => team.loss >= 3);
 
     return (
-        <div className="flex flex-row items-center overflow-x-scroll">
+        <div className="flex flex-row items-center overflow-x-auto">
             <RoundSection round_num={1}>
                 <RoundCard round="0-0" matches={rounds.get("0-0")} />
             </RoundSection>
@@ -50,22 +50,22 @@ export default function Bracket({ teams, matches }: BracketProps) {
             </RoundSection>
 
             <RoundSection round_num={4}>
-                <div>
+                {/* <div>
                     {qualifiedTeams
                         .filter((t) => t.loss === 0)
                         .map((t, i) => (
                             <QualElimCard key={i} team={t} qualified={true} />
                         ))}
-                </div>
+                </div> */}
                 <RoundCard round="2-1" matches={rounds.get("2-1")} />{" "}
                 <RoundCard round="1-2" matches={rounds.get("1-2")} />
-                <div>
+                {/* <div>
                     {eliminatedTeams
                         .filter((t) => t.win === 0)
                         .map((t, i) => (
                             <QualElimCard key={i} team={t} qualified={false} />
                         ))}
-                </div>
+                </div> */}
             </RoundSection>
 
             <RoundSection round_num={5}>

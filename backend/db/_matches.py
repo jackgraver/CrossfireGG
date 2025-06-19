@@ -8,12 +8,14 @@ def create_matches_table(conn: sqlite3.Connection):
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS matches (
             match_id TEXT PRIMARY KEY,
+            sub_t_id INTEGER,
             status TEXT,
             round TEXT,
             faceit_url TEXT,
             team1_id TEXT,
             team2_id TEXT,
-            winner TEXT
+            winner TEXT,
+            FOREIGN KEY (sub_t_id) REFERENCES sub_tournaments(sub_t_id)
         )
     """)
     conn.commit()
@@ -48,8 +50,8 @@ def write_match(match: dict):
     conn = sqlite3.connect("oss.db")
     cursor = conn.cursor()
     cursor.execute(
-        "INSERT OR IGNORE INTO matches (match_id, status, round, faceit_url, team1_id, team2_id, winner) VALUES (?, ?, ?, ?, ?, ?, ?);",
-        (match["match_id"], match["status"], match["round"], match["faceit_url"], match["team1_id"], match["team2_id"], match["winner"])
+        "INSERT OR IGNORE INTO matches (match_id, sub_t_id, status, round, faceit_url, team1_id, team2_id, winner) VALUES (?, ?, ?, ?, ?, ?, ?, ?);",
+        (match["match_id"], 'd2bf2ad5-9f7e-4bbe-9d72-b3e9bcf010e6', match["status"], match["round"], match["faceit_url"], match["team1_id"], match["team2_id"], match["winner"])
     )
     conn.commit()
     conn.close()

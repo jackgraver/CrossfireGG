@@ -14,7 +14,7 @@ export default function MatchCard({ match }: MatchCardProps) {
     // }
 
     return (
-        <div className="flex flex-col p-2 rounded-md">
+        <div className="flex flex-col m-2 rounded-md text-gray-200 border">
             <MatchTeam
                 team={match?.teams.team1}
                 winner={
