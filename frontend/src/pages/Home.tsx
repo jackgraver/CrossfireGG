@@ -1,8 +1,9 @@
 import type { Match, Team } from "../types/Types";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Bracket from "../components/bracket/Bracket";
 import Standings from "../components/Standings";
+import RegularSeasonBracket from "../components/bracket/RegularSeasonBracket";
+import PlayoffBracket from "../components/bracket/PlayoffBracket";
 
 const createNavButton = (text: string, displayTab: string, onClick: any) => {
     return (
@@ -26,7 +27,8 @@ export default function Home() {
     const [refreshTeams, setRefreshTeams] = useState(true);
     const [teams, setTeams] = useState<Team[]>([]);
     const [lastUpdate, setLastUpdate] = useState(-1);
-    const [matches, setMatches] = useState<Match[]>([]);
+    const [regSeason, setRegSeason] = useState<Match[]>([]);
+    const [playoffs, setPlayoffs] = useState<Match[]>([]);
 
     useEffect(() => {
         async function loadTeams() {
@@ -55,7 +57,8 @@ export default function Home() {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
                 const data = await response.json();
-                setMatches(data);
+                setRegSeason(data.reg_season);
+                setPlayoffs(data.playoffs);
             } catch (err) {
                 console.error("Failed to fetch teams:", err);
             }
@@ -63,10 +66,6 @@ export default function Home() {
 
         loadMatches();
     }, []);
-
-    useEffect(() => {
-        console.log(matches);
-    }, [matches]);
 
     return (
         <div className="flex flex-col justify-center items-center">
@@ -156,9 +155,17 @@ export default function Home() {
                     </div>
 
                     {displayTab === "standings" && <Standings teams={teams} />}
+                    {displayTab === "playoffs" && (
+                        <div className="w-full">
+                            <PlayoffBracket teams={teams} matches={playoffs} />
+                        </div>
+                    )}
                     {displayTab === "regseason" && (
                         <div className="w-full">
-                            <Bracket teams={teams} matches={matches} />
+                            <RegularSeasonBracket
+                                teams={teams}
+                                matches={regSeason}
+                            />
                         </div>
                     )}
                 </div>

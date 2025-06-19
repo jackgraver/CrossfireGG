@@ -22,6 +22,7 @@ export default function MatchCard({ match }: MatchCardProps) {
                         ? match?.winner === match?.teams.team1.team_id
                         : undefined
                 }
+                score={match?.team1_score}
             />
             <MatchTeam
                 team={match?.teams.team2}
@@ -30,6 +31,7 @@ export default function MatchCard({ match }: MatchCardProps) {
                         ? match?.winner === match?.teams.team2.team_id
                         : undefined
                 }
+                score={match?.team2_score}
             />
         </div>
     );

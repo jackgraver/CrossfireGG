@@ -16,3 +16,8 @@ def query_last_update() -> Optional[str]:
     with Session(get_db_connection()) as session:
         metadata = session.get(Metadata, "last_refresh")
         return metadata.value if metadata else None
+
+def get_metadata_value(key: str) -> Optional[str]:
+    with Session(get_db_connection()) as session:
+        metadata = session.get(Metadata, key)
+        return metadata.value if metadata else None

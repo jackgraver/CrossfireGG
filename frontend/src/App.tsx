@@ -7,6 +7,7 @@ import SignIn from "./pages/users/SignIn";
 import SignUp from "./pages/users/SignUp";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
+import Admin from "./pages/Admin";
 
 function App() {
     return (
@@ -18,6 +19,7 @@ function App() {
                 <Route path="/manage-teams" element={<ManageTeams />} />
                 <Route path="/sign-in" element={<SignIn />} />
                 <Route path="/sign-up" element={<SignUp />} />
+                <Route path="/admin" element={<Admin />} />
             </Routes>
             <Footer />
         </Router>

@@ -17,6 +17,7 @@ from db.team.team_model import *
 from db.team.team_sql import *
 from db.metadata.metadata_model import *
 from db.metadata.metadata_sql import *
+from db.tournament.tournament_sql import *
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -34,8 +35,8 @@ app.add_middleware(
 
 @app.get("/matches")
 def get_matches():
-    matches = fetch_all_matches()
-    return matches
+    res = fetch_all_matches()
+    return res
 
 @app.get("/teams")
 def get_matches():
@@ -100,3 +101,52 @@ async def sign_up(request: Request):
     insert_user(conn, email, hashed_password)
 
     return JSONResponse(content={"message": "User created successfully"}, status_code=201)
+
+
+@app.post("/update_current_tournament")
+async def update_current_tournament(request: Request):
+    data = await request.json()
+    t_id = data.get("t_id")
+    
+    if not t_id:
+        raise HTTPException(status_code=400, detail="Missing required fields")
+    
+    write_metadata("last_refresh", t_id)
+    return JSONResponse(content={"message": "Current Tournament Updated."}, status_code=201) 
+
+@app.get("/current_tournaments")
+async def current_tournament():
+    ct = get_current_tournament()
+    cr = get_current_sub_tournament_by_name("REGULAR SEASON")
+    cp = get_current_sub_tournament_by_name("PLAYOFFS")
+    return {"ct": ct, "cr": cr, "cp": cp}
+
+@app.get("/current_stage")
+async def current_stage():
+    return get_metadata_value("current_stage")
+
+@app.post("/toggle_stage")
+async def toggle_stage():
+    """
+    Toggle the current stage between 'REGULAR SEASON' and 'PLAYOFFS'
+    """
+    current_stage = get_metadata_value("current_stage")
+    
+    if current_stage == "REGULAR SEASON":
+        new_stage = "PLAYOFFS"
+    elif current_stage == "PLAYOFFS":
+        new_stage = "REGULAR SEASON"
+    else:
+        # If current_stage is not set or is something else, default to REGULAR SEASON
+        new_stage = "REGULAR SEASON"    
+    
+    write_metadata("current_stage", new_stage)
+    
+    return JSONResponse(
+        content={
+            "message": f"Stage switched to {new_stage}",
+            "previous_stage": current_stage,
+            "current_stage": new_stage
+        }, 
+        status_code=200
+    )

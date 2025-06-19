@@ -5,6 +5,8 @@ export type Match = {
     faceit_url: string;
     winner: string;
     teams: { team1: Team; team2: Team };
+    team1_score: number;
+    team2_score: number;
 };
 
 export type Round =
@@ -28,7 +30,6 @@ export type Team = {
     paid: boolean;
     joined_tournament: boolean;
 };
-
 // export type FTeam = {
 //     faction_id: string;
 //     name: string;

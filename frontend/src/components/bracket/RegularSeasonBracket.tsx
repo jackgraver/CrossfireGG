@@ -10,7 +10,7 @@ type BracketProps = {
     matches: Match[];
 };
 
-export default function Bracket({ teams, matches }: BracketProps) {
+export default function RegularSeasonBracket({ teams, matches }: BracketProps) {
     const rounds = new Map<Round, Match[]>();
 
     matches.forEach((match) => {

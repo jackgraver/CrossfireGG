@@ -3,9 +3,11 @@ import type { Team } from "../../types/Types";
 export function MatchTeam({
     team,
     winner,
+    score,
 }: {
     team: Team | undefined;
     winner?: boolean;
+    score?: number;
 }) {
     const bg = winner === undefined ? "" : winner ? "bg-[#378a37] " : "";
 
@@ -30,7 +32,7 @@ export function MatchTeam({
             </div>
 
             <div className="min-w-[8px] text-left mr-2">
-                <span>{0}</span>
+                <span>{score}</span>
             </div>
         </div>
     );
