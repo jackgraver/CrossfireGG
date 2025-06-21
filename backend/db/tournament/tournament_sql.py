@@ -51,3 +51,12 @@ def get_current_sub_tournament_id() -> Optional[str]:
         )
         sub_tournament = session.exec(stmt).first()
         return sub_tournament.sub_t_id if sub_tournament else None
+
+def get_sub_tournament_name_by_id(sub_t_id: str) -> Optional[str]:
+    """
+    Get the sub_tournament name by its ID
+    """
+    with Session(get_db_connection()) as session:
+        stmt = select(SubTournament).where(SubTournament.sub_t_id == sub_t_id)
+        sub_tournament = session.exec(stmt).first()
+        return sub_tournament.t_name if sub_tournament else None

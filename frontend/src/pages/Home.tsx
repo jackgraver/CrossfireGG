@@ -4,19 +4,8 @@ import { useNavigate } from "react-router-dom";
 import Standings from "../components/Standings";
 import RegularSeasonBracket from "../components/bracket/RegularSeasonBracket";
 import PlayoffBracket from "../components/bracket/PlayoffBracket";
-
-const createNavButton = (text: string, displayTab: string, onClick: any) => {
-    return (
-        <button
-            className={`w-32 py-2 text-xl font-bold transition-colors duration-200 ${
-                displayTab === text ? "text-blue-600" : "text-gray-400"
-            }`}
-            onClick={onClick}
-        >
-            {text}
-        </button>
-    );
-};
+import NonFinishedMatches from "../components/NonFinishedMatches";
+import ViewSelector from "../components/ViewSelector";
 
 export default function Home() {
     const navigate = useNavigate();
@@ -25,10 +14,29 @@ export default function Home() {
         "regseason" | "playoffs" | "standings"
     >("regseason");
     const [refreshTeams, setRefreshTeams] = useState(true);
-    const [teams, setTeams] = useState<Team[]>([]);
+    const [regSeasonTeams, setRegSeasonTeams] = useState<Team[]>([]);
+    const [playoffsTeams, setPlayoffsTeams] = useState<Team[]>([]);
     const [lastUpdate, setLastUpdate] = useState(-1);
     const [regSeason, setRegSeason] = useState<Match[]>([]);
     const [playoffs, setPlayoffs] = useState<Match[]>([]);
+
+    // Define the view options
+    const viewOptions = [
+        { key: "regseason", label: "Regular Season" },
+        { key: "playoffs", label: "Playoffs" },
+        { key: "standings", label: "Standings" },
+    ];
+
+    // Type-safe view change handler
+    const handleViewChange = (view: string) => {
+        if (
+            view === "regseason" ||
+            view === "playoffs" ||
+            view === "standings"
+        ) {
+            setDisplayTab(view);
+        }
+    };
 
     useEffect(() => {
         async function loadTeams() {
@@ -38,7 +46,8 @@ export default function Home() {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
                 const data = await response.json();
-                setTeams(data.teams);
+                setRegSeasonTeams(data.reg_season || []);
+                setPlayoffsTeams(data.playoffs || []);
                 setLastUpdate(data.last_update);
                 setRefreshTeams(false);
             } catch (err) {
@@ -67,6 +76,27 @@ export default function Home() {
         loadMatches();
     }, []);
 
+    const nonFinishedMatches = [...regSeason, ...playoffs].filter(
+        (match) => match.status !== "FINISHED"
+    );
+    console.log(nonFinishedMatches);
+
+    // Get the appropriate teams based on current view
+    const getCurrentTeams = () => {
+        switch (displayTab) {
+            case "regseason":
+                return regSeasonTeams;
+            case "playoffs":
+                return playoffsTeams;
+            case "standings":
+                return regSeasonTeams;
+            default:
+                return regSeasonTeams;
+        }
+    };
+
+    const currentTeams = getCurrentTeams();
+
     return (
         <div className="flex flex-col justify-center items-center">
             <div className="flex flex-row justify-center items-center w-5/6 mt-12 mb-16">
@@ -78,54 +108,35 @@ export default function Home() {
                         SHENANIGANS
                     </h1>
                     <p className="text-2xl text-gray-400">
-                        Off Season tournament during the off seasons!
+                        Off Season Shenanigans the ultimate Counter-Strike
+                        <br />
+                        tournament during the off seasons!
                     </p>
                 </div>
             </div>
-            {teams.length === 0 ? (
+            {currentTeams.length === 0 ? (
                 "LOADING..."
             ) : (
                 <div className="flex flex-col justify-center items-center w-5/6 mt-4">
-                    <div className="relative inline-flex bg-white rounded-md overflow-hidden shadow-md">
-                        <div
-                            className={`absolute bottom-0 h-1 bg-orange-500 transition-all duration-300 ease-in-out`}
-                            // style={{
-                            //     width: "50%",
-                            //     left: displayTab === "bracket" ? "0%" : "50%",
-                            // }}
-                        />
-                        <button
-                            className={`w-32 py-2 text-xl font-bold transition-colors duration-200 ${
-                                displayTab === "regseason"
-                                    ? "text-blue-600"
-                                    : "text-gray-400"
-                            }`}
-                            onClick={() => setDisplayTab("regseason")}
-                        >
-                            Regular Season
-                        </button>
-                        <button
-                            className={`w-32 py-2 text-xl font-bold transition-colors duration-200 ${
-                                displayTab === "playoffs"
-                                    ? "text-blue-600"
-                                    : "text-gray-400"
-                            }`}
-                            onClick={() => setDisplayTab("playoffs")}
-                        >
-                            Playoffs
-                        </button>
-                        <button
-                            className={`w-32 py-2 text-xl font-bold transition-colors duration-200 ${
-                                displayTab === "standings"
-                                    ? "text-blue-600"
-                                    : "text-gray-400"
-                            }`}
-                            onClick={() => setDisplayTab("standings")}
-                        >
-                            Standings
-                        </button>
+                    <div>
+                        {nonFinishedMatches.length > 0 && (
+                            <>
+                                <NonFinishedMatches
+                                    matches={nonFinishedMatches}
+                                />
+                            </>
+                        )}
                     </div>
-                    <div className="flex flex-row justify-end items-center gap-2 w-full mt-2 text-white">
+
+                    <div className="my-6">
+                        <ViewSelector
+                            views={viewOptions}
+                            currentView={displayTab}
+                            onViewChange={handleViewChange}
+                        />
+                    </div>
+
+                    <div className="flex flex-row justify-end items-center gap-2 w-full mb-4 text-white">
                         <p className="text-sm text-gray-400">
                             Last Updated:{" "}
                             {new Date(lastUpdate * 1000).toDateString()}
@@ -154,16 +165,21 @@ export default function Home() {
                         </button>
                     </div>
 
-                    {displayTab === "standings" && <Standings teams={teams} />}
+                    {displayTab === "standings" && (
+                        <Standings teams={currentTeams} />
+                    )}
                     {displayTab === "playoffs" && (
                         <div className="w-full">
-                            <PlayoffBracket teams={teams} matches={playoffs} />
+                            <PlayoffBracket
+                                teams={playoffsTeams}
+                                matches={playoffs}
+                            />
                         </div>
                     )}
                     {displayTab === "regseason" && (
                         <div className="w-full">
                             <RegularSeasonBracket
-                                teams={teams}
+                                teams={regSeasonTeams}
                                 matches={regSeason}
                             />
                         </div>

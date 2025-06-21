@@ -2,20 +2,71 @@ from sqlmodel import Session, select
 from typing import List, Dict
 from db.db import get_db_connection
 from db.team.team_model import Team
+from db.tournament.tournament_sql import get_sub_tournament_name_by_id, get_current_sub_tournament_by_name
 
-def fetch_all_teams() -> List[Dict]:
-    with Session(get_db_connection()) as session:
-        teams = session.exec(select(Team)).all()
-        return [team.model_dump() for team in teams]
+def fetch_all_teams() -> Dict[str, List[Dict]]:
+    # Get current tournament's regular season and playoffs sub-tournaments
+    reg_season_sub_t = get_current_sub_tournament_by_name("REGULAR SEASON")
+    playoffs_sub_t = get_current_sub_tournament_by_name("PLAYOFFS")
     
-def get_team_record(team_id: str) -> str:
+    reg_season_id = reg_season_sub_t.sub_t_id if reg_season_sub_t else None
+    playoffs_id = playoffs_sub_t.sub_t_id if playoffs_sub_t else None
+    
     with Session(get_db_connection()) as session:
-        stmt = select(Team).where(Team.team_id == team_id)
-        team = session.exec(stmt).first()
-        if team:
-            return f"{team.win}-{team.loss}"
+        results = session.exec(select(Team)).all()
+        
+        reg_season_teams = []
+        playoffs_teams = []
+        
+        for team in results:
+            team_dict = team.model_dump()
+            
+            # Split teams based on sub_t_id
+            if team.sub_t_id == reg_season_id:
+                reg_season_teams.append(team_dict)
+            elif team.sub_t_id == playoffs_id:
+                playoffs_teams.append(team_dict)
+
+        return {
+            "reg_season": reg_season_teams,
+            "playoffs": playoffs_teams
+        }
+    
+def get_team_record(team_id: str, sub_t_id: str = None, tournament_name: str = None) -> str:
+    with Session(get_db_connection()) as session:
+        if sub_t_id:
+            stmt = select(Team).where(
+                Team.team_id == team_id,
+                Team.sub_t_id == sub_t_id
+            )
         else:
-            return "0-0"
+            stmt = select(Team).where(Team.team_id == team_id)
+        team = session.exec(stmt).first()
+        
+        if not team:
+            return ""
+        
+        # If tournament_name is not provided, try to get it from sub_t_id
+        if not tournament_name and sub_t_id:
+            tournament_name = get_sub_tournament_name_by_id(sub_t_id)
+        
+        # Handle different tournament types
+        if tournament_name == "PLAYOFFS":
+            # Playoffs format: 0-0 = RO16, 1-0 = QF, 2-0 = SF, 3-0 = F
+            if team.win == 0 and team.loss == 0:
+                return "RO16"
+            elif team.win == 1 and team.loss == 0:
+                return "QF"
+            elif team.win == 2 and team.loss == 0:
+                return "SF"
+            elif team.win == 3 and team.loss == 0:
+                return "F"
+            else:
+                # For any other record, return the standard format
+                return f"{team.win}-{team.loss}"
+        else:
+            # Regular Season format (default): return win-loss record
+            return f"{team.win}-{team.loss}"
         
 def update_team_record(team: dict, won: bool, current_sub_t_id: str = None):
     with Session(get_db_connection()) as session:

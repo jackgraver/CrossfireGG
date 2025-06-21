@@ -21,7 +21,29 @@ const numMatchesForRound = (round: Round): number => {
         case "1-2":
         case "2-2":
             return 6;
+        case "RO16":
+            return 8;
+        case "QF":
+            return 4;
+        case "SF":
+            return 2;
+        case "F":
+            return 1;
+        default:
+            return 0;
     }
+};
+
+const getDisplayRound = (round: Round): string => {
+    switch (round) {
+        case "QF":
+            return "QUARTER FINALS";
+        case "SF":
+            return "SEMI-FINALS";
+        case "F":
+            return "FINAL";
+    }
+    return round;
 };
 
 export default function RoundCard({ round, matches }: RoundCardProps) {
@@ -29,13 +51,13 @@ export default function RoundCard({ round, matches }: RoundCardProps) {
         matches = [];
     }
 
-    matches.sort((m1, m2) => m1.teams.team1.seed - m2.teams.team2.seed);
+    const displayRound = getDisplayRound(round);
 
     return (
         <div className="flex flex-col p-2 m-2">
             <div className="flex justify-center items-center">
-                <h1 className="bg-gray-200 w-16 px-2 py-1 text-2xl text-orange-600">
-                    {round}
+                <h1 className="bg-gray-200 min-w-16 px-2 py-1 text-2xl text-orange-600">
+                    {displayRound}
                 </h1>
             </div>
 

@@ -8,7 +8,8 @@ type SortType = "name" | "seed" | "paid" | "joined";
 
 export default function ManageTeams() {
     const [showInput, setShowInput] = useState(false);
-    const [teams, setTeams] = useState<Team[]>([]);
+    const [regSeasonTeams, setRegSeasonTeams] = useState<Team[]>([]);
+    const [playoffsTeams, setPlayoffsTeams] = useState<Team[]>([]);
     const [sortType, setSortType] = useState<SortType | null>(null);
     const [sortAscending, setSortAscending] = useState(true);
 
@@ -20,7 +21,8 @@ export default function ManageTeams() {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
                 const data = await response.json();
-                setTeams(data.teams);
+                setRegSeasonTeams(data.reg_season || []);
+                setPlayoffsTeams(data.playoffs || []);
             } catch (err) {
                 console.error("Failed to fetch teams:", err);
             }
@@ -28,6 +30,9 @@ export default function ManageTeams() {
 
         loadTeams();
     }, []);
+
+    // Combine all teams for management purposes
+    const allTeams = [...regSeasonTeams, ...playoffsTeams];
 
     const handleSort = (type: SortType) => {
         if (sortType === type) {
@@ -55,8 +60,13 @@ export default function ManageTeams() {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
 
-            setTeams(
-                teams.map((team) =>
+            setRegSeasonTeams(
+                regSeasonTeams.map((team) =>
+                    team.team_id === teamId ? { ...team, seed: newSeed } : team
+                )
+            );
+            setPlayoffsTeams(
+                playoffsTeams.map((team) =>
                     team.team_id === teamId ? { ...team, seed: newSeed } : team
                 )
             );
@@ -82,8 +92,13 @@ export default function ManageTeams() {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
 
-            setTeams(
-                teams.map((team) =>
+            setRegSeasonTeams(
+                regSeasonTeams.map((team) =>
+                    team.team_id === teamId ? { ...team, paid: newPaid } : team
+                )
+            );
+            setPlayoffsTeams(
+                playoffsTeams.map((team) =>
                     team.team_id === teamId ? { ...team, paid: newPaid } : team
                 )
             );
@@ -109,8 +124,15 @@ export default function ManageTeams() {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
 
-            setTeams(
-                teams.map((team) =>
+            setRegSeasonTeams(
+                regSeasonTeams.map((team) =>
+                    team.team_id === teamId
+                        ? { ...team, joined_tournament: newJoined }
+                        : team
+                )
+            );
+            setPlayoffsTeams(
+                playoffsTeams.map((team) =>
                     team.team_id === teamId
                         ? { ...team, joined_tournament: newJoined }
                         : team
@@ -121,7 +143,7 @@ export default function ManageTeams() {
         }
     };
 
-    const sortedTeams = [...teams].sort((a, b) => {
+    const sortedTeams = [...allTeams].sort((a, b) => {
         if (!sortType) return 0;
 
         let comparison = 0;

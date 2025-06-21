@@ -9,6 +9,7 @@ from db.db import get_db_connection
 from db.match.match_sql import fetch_all_matches, write_match
 from db.team.team_sql import get_team_record, update_team_record
 from db.tournament.tournament_sql import get_current_sub_tournament_id
+from db.metadata.metadata_sql import get_metadata_value
 
 load_dotenv()
 
@@ -23,6 +24,7 @@ DEBUG = False
 def process_matches():
     try:
         current_sub_t_id = get_current_sub_tournament_id()
+        current_stage = get_metadata_value("current_stage")
         if not current_sub_t_id:
             print("Could not determine current sub_tournament ID from metadata")
             return []
@@ -60,7 +62,8 @@ def process_matches():
                     "match_id": match.get("match_id"),
                     "sub_t_id": current_sub_t_id,
                     "status": match.get("status"),
-                    "round": get_team_record(team1["team_id"]),
+                    "scheduled_at": match.get("scheduled_at"),
+                    "round": get_team_record(team1["team_id"], current_sub_t_id, current_stage),
                     "faceit_url": match.get("faceit_url").replace('{lang}', 'en'),
                     "team1_id": team1["team_id"],
                     "team2_id": team2["team_id"],
@@ -84,7 +87,8 @@ def process_matches():
                 "match_id": match.get("match_id"),
                 "status": match.get("status"),
                 "sub_t_id": current_sub_t_id,
-                "round": get_team_record(team1["team_id"]),
+                "scheduled_at": match.get("scheduled_at"),
+                "round": get_team_record(team1["team_id"], current_sub_t_id, current_stage),
                 "faceit_url": match.get("faceit_url").replace('{lang}', 'en'),
                 "team1_id": team1["team_id"],
                 "team2_id": team2["team_id"],

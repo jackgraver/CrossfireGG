@@ -4,6 +4,7 @@ import { MatchTeam } from "./MatchTeam";
 import QualElimCard from "./qualelimcard/QualElimCard";
 import RoundSection from "./RoundSection";
 import RoundCard from "./RoundCard";
+import { groupMatchesByRoundAndSort } from "./Bracket.util";
 
 type BracketProps = {
     teams: Team[];
@@ -11,23 +12,7 @@ type BracketProps = {
 };
 
 export default function RegularSeasonBracket({ teams, matches }: BracketProps) {
-    const rounds = new Map<Round, Match[]>();
-
-    matches.forEach((match) => {
-        const key = match.round;
-        if (!rounds.has(key)) {
-            rounds.set(key, []);
-        }
-        rounds.get(key)!.push(match);
-    });
-
-    rounds.forEach((matches, _) => {
-        matches.sort((a, b) => {
-            const aMinSeed = Math.min(a.teams.team1.seed, a.teams.team2.seed);
-            const bMinSeed = Math.min(b.teams.team1.seed, b.teams.team2.seed);
-            return aMinSeed - bMinSeed;
-        });
-    });
+    const rounds = groupMatchesByRoundAndSort(matches);
 
     const qualifiedTeams: Team[] = teams.filter((team) => team.win >= 3);
     const eliminatedTeams: Team[] = teams.filter((team) => team.loss >= 3);

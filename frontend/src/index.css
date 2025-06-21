@@ -8,7 +8,7 @@ body,
     padding: 0;
 }
 body {
-    background: linear-gradient(to bottom, #30356e, #1f2347);
+    background: #252b5e;
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-size: cover;

@@ -1,6 +1,7 @@
 export type Match = {
     match_id: string;
     status: string;
+    scheduled_at: number;
     round: Round;
     faceit_url: string;
     winner: string;
@@ -18,7 +19,11 @@ export type Round =
     | "0-2"
     | "2-1"
     | "1-2"
-    | "2-2";
+    | "2-2"
+    | "RO16"
+    | "QF"
+    | "SF"
+    | "F";
 
 export type Team = {
     team_id: string;

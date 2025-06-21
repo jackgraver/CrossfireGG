@@ -31,9 +31,11 @@ export function MatchTeam({
                 <span>{team?.team_name}</span>
             </div>
 
-            <div className="min-w-[8px] text-left mr-2">
-                <span>{score}</span>
-            </div>
+            {score && (
+                <div className="min-w-[8px] text-left mr-2">
+                    <span>{score}</span>
+                </div>
+            )}
         </div>
     );
 }

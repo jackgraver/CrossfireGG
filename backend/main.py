@@ -39,10 +39,14 @@ def get_matches():
     return res
 
 @app.get("/teams")
-def get_matches():
-    teams = fetch_all_teams()
+def get_teams():
+    teams_data = fetch_all_teams()
     last_update = query_last_update()
-    return {"teams": teams, "last_update": last_update}
+    return {
+        "reg_season": teams_data["reg_season"],
+        "playoffs": teams_data["playoffs"],
+        "last_update": last_update
+    }
 
 @app.get("/last_update")
 def get_last_update():
