@@ -35,40 +35,23 @@ export type Team = {
     paid: boolean;
     joined_tournament: boolean;
 };
-// export type FTeam = {
-//     faction_id: string;
-//     name: string;
-// };
 
-// type FTeams = {
-//     faction1: FTeam;
-//     faction2: FTeam;
-// };
+export type PlayerStats = {
+    player_id: string;
+    map_id: string;
+    kills: number;
+    deaths: number;
+    assists: number;
+    adr: number;
+    damage: number;
+};
 
-// type Result = {
-//     winner: string;
-//     score: { faction1: number; faction2: number };
-// };
-
-// export type Match = {
-//     match_id: string;
-//     teams: Teams;
-//     round: Round;
-//     results: Result;
-//     processed?: boolean;
-// };
-
-// export type Teams = {
-//     faction1: Team;
-//     faction2: Team;
-// };
-
-// export type Team = {
-//     team_id: string;
-//     team_name: string;
-//     seed: number;
-//     win: number;
-//     loss: number;
-//     paid: boolean;
-//     joined_tournament: boolean;
-// };
+export type MatchMap = {
+    map_id: string;
+    match_id: string;
+    map_name: string;
+    round: number;
+    winner_id: string;
+    team1_score: number;
+    team2_score: number;
+};

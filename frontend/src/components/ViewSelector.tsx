@@ -1,9 +1,5 @@
-import { useState, useCallback } from "react";
-import TabButton from "./buttons/TabButton";
+import { useRef, useEffect, useState } from "react";
 
-/**
- * Configuration for a view option in the selector
- */
 type ViewOption = {
     key: string;
     label: string;
@@ -11,24 +7,6 @@ type ViewOption = {
     disabled?: boolean;
 };
 
-/**
- * A generic view selector component that creates a tabbed interface.
- *
- * @example
- * ```tsx
- * const viewOptions = [
- *   { key: "home", label: "Home", icon: "🏠" },
- *   { key: "profile", label: "Profile", icon: "👤" },
- *   { key: "settings", label: "Settings", disabled: true }
- * ];
- *
- * <ViewSelector
- *   views={viewOptions}
- *   currentView="home"
- *   onViewChange={(view) => setCurrentView(view)}
- * />
- * ```
- */
 type ViewSelectorProps = {
     views: ViewOption[];
     currentView: string;
@@ -42,53 +20,63 @@ export default function ViewSelector({
     onViewChange,
     className = "",
 }: ViewSelectorProps) {
-    const [buttonWidths, setButtonWidths] = useState<number[]>([]);
-    const currentIndex = views.findIndex((v) => v.key === currentView);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const activeButtonRef = useRef<HTMLButtonElement>(null);
+    const [indicatorStyle, setIndicatorStyle] = useState<{
+        left: number;
+        width: number;
+    }>({ left: 0, width: 0 });
 
-    const handleWidthChange = useCallback((index: number, width: number) => {
-        setButtonWidths((prev) => {
-            const newWidths = [...prev];
-            newWidths[index] = width;
-            return newWidths;
-        });
-    }, []);
+    useEffect(() => {
+        const updateIndicator = () => {
+            const containerLeft =
+                containerRef.current?.getBoundingClientRect().left || 0;
+            const buttonRect = activeButtonRef.current?.getBoundingClientRect();
 
-    // Calculate indicator position and width based on actual button widths
-    const getIndicatorStyle = () => {
-        if (buttonWidths.length === 0 || currentIndex === -1) {
-            return { width: "0px", left: "0px" };
-        }
-
-        const totalWidth = buttonWidths.reduce((sum, width) => sum + width, 0);
-        const leftPosition = buttonWidths
-            .slice(0, currentIndex)
-            .reduce((sum, width) => sum + width, 0);
-        const currentButtonWidth = buttonWidths[currentIndex] || 0;
-
-        return {
-            width: `${currentButtonWidth}px`,
-            left: `${leftPosition}px`,
+            if (buttonRect) {
+                setIndicatorStyle({
+                    left: buttonRect.left - containerLeft,
+                    width: buttonRect.width,
+                });
+            }
         };
-    };
+
+        updateIndicator();
+        window.addEventListener("resize", updateIndicator);
+        return () => window.removeEventListener("resize", updateIndicator);
+    }, [currentView]);
 
     return (
         <div
+            ref={containerRef}
             className={`relative inline-flex bg-white rounded-md overflow-hidden shadow-md ${className}`}
         >
             <div
                 className="absolute bottom-0 h-1 bg-orange-500 transition-all duration-300 ease-in-out"
-                style={getIndicatorStyle()}
+                style={{
+                    left: indicatorStyle.left,
+                    width: indicatorStyle.width,
+                }}
             />
-            {views.map((view, index) => (
-                <TabButton
+            {views.map((view) => (
+                <button
                     key={view.key}
-                    label={view.label}
-                    isActive={currentView === view.key}
+                    ref={currentView === view.key ? activeButtonRef : null}
                     onClick={() => onViewChange(view.key)}
                     disabled={view.disabled}
-                    icon={view.icon}
-                    onWidthChange={(width) => handleWidthChange(index, width)}
-                />
+                    className={`min-w-32 px-6 py-4 text-xl font-bold transition-colors duration-200 flex items-center justify-center gap-2 ${
+                        currentView === view.key
+                            ? "text-blue-600"
+                            : "text-gray-400"
+                    } ${
+                        view.disabled
+                            ? "opacity-50 cursor-not-allowed"
+                            : "hover:text-blue-500"
+                    }`}
+                >
+                    {view.icon && <span className="text-lg">{view.icon}</span>}
+                    {view.label}
+                </button>
             ))}
         </div>
     );

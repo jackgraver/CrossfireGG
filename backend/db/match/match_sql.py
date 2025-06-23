@@ -1,5 +1,5 @@
 from sqlmodel import Session, select
-from db.match.match_model import Match
+from db.match.match_model import Match, Map
 from db.db import get_db_connection
 from typing import List, Dict
 from db.team.team_sql import get_team_info
@@ -11,6 +11,14 @@ def write_match(match_dict: dict):
         existing = session.get(Match, match.match_id)
         if not existing:
             session.add(match)
+            session.commit()
+
+def write_map(map_dict: dict):
+    map_obj = Map(**map_dict)
+    with Session(get_db_connection()) as session:
+        existing = session.get(Map, map_obj.map_id)
+        if not existing:
+            session.add(map_obj)
             session.commit()
             
 def fetch_all_matches() -> Dict[str, List[Dict]]:

@@ -18,6 +18,7 @@ from db.team.team_sql import *
 from db.metadata.metadata_model import *
 from db.metadata.metadata_sql import *
 from db.tournament.tournament_sql import *
+from player.player_sql import *
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -32,6 +33,38 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+FACEIT_API_KEY = os.getenv("FACEIT_API_KEY")
+
+@app.get("/stats")
+def get_stats():
+    # api_url = f"https://open.faceit.com/data/v4/matches/1-d0f8a7df-6fa1-47b1-853f-08b3aee555df/stats"
+    # response = requests.get(
+    #     api_url,
+    #     headers={
+    #         "Authorization": f"Bearer {FACEIT_API_KEY}",
+    #         "Accept": "application/json",
+    #     },
+    # )
+    # response.raise_for_status()
+    
+    # # Parse the JSON response and write it formatted
+    # stats_data = response.json()
+    # with open("test_data/stats.json", "w", encoding="utf-8") as f:
+    #     json.dump(stats_data, f, indent=4, ensure_ascii=False)
+    
+    res = get_all_player_stats()
+    return res;
+
+@app.get("/stats/{match_id}")
+def get_stats_by_match_id(match_id: str):
+    res = get_player_stats_by_match_id(match_id)
+    return res  
+
+@app.get("/players")
+def get_players():
+    res = get_all_players()
+    return res
 
 @app.get("/matches")
 def get_matches():

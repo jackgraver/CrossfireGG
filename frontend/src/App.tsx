@@ -8,6 +8,7 @@ import SignUp from "./pages/users/SignUp";
 import NavBar from "./components/NavBar";
 import Footer from "./components/Footer";
 import Admin from "./pages/Admin";
+import MatchStats from "./pages/MatchStats";
 
 function App() {
     return (
@@ -20,6 +21,7 @@ function App() {
                 <Route path="/sign-in" element={<SignIn />} />
                 <Route path="/sign-up" element={<SignUp />} />
                 <Route path="/admin" element={<Admin />} />
+                <Route path="/stats/:match_id" element={<MatchStats />} />
             </Routes>
             <Footer />
         </Router>

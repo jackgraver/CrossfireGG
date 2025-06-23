@@ -79,7 +79,6 @@ export default function Home() {
     const nonFinishedMatches = [...regSeason, ...playoffs].filter(
         (match) => match.status !== "FINISHED"
     );
-    console.log(nonFinishedMatches);
 
     // Get the appropriate teams based on current view
     const getCurrentTeams = () => {
@@ -114,28 +113,24 @@ export default function Home() {
                     </p>
                 </div>
             </div>
-            {currentTeams.length === 0 ? (
+            <div>
+                {nonFinishedMatches.length > 0 && (
+                    <>
+                        <NonFinishedMatches matches={nonFinishedMatches} />
+                    </>
+                )}
+            </div>
+            <div className="my-6">
+                <ViewSelector
+                    views={viewOptions}
+                    currentView={displayTab}
+                    onViewChange={handleViewChange}
+                />
+            </div>
+            {!currentTeams ? (
                 "LOADING..."
             ) : (
                 <div className="flex flex-col justify-center items-center w-5/6 mt-4">
-                    <div>
-                        {nonFinishedMatches.length > 0 && (
-                            <>
-                                <NonFinishedMatches
-                                    matches={nonFinishedMatches}
-                                />
-                            </>
-                        )}
-                    </div>
-
-                    <div className="my-6">
-                        <ViewSelector
-                            views={viewOptions}
-                            currentView={displayTab}
-                            onViewChange={handleViewChange}
-                        />
-                    </div>
-
                     <div className="flex flex-row justify-end items-center gap-2 w-full mb-4 text-white">
                         <p className="text-sm text-gray-400">
                             Last Updated:{" "}
@@ -163,10 +158,14 @@ export default function Home() {
                                 />
                             </svg>
                         </button>
-                    </div>
-
-                    {displayTab === "standings" && (
-                        <Standings teams={currentTeams} />
+                    </div>{" "}
+                    {displayTab === "regseason" && (
+                        <div className="w-full">
+                            <RegularSeasonBracket
+                                teams={regSeasonTeams}
+                                matches={regSeason}
+                            />
+                        </div>
                     )}
                     {displayTab === "playoffs" && (
                         <div className="w-full">
@@ -176,13 +175,8 @@ export default function Home() {
                             />
                         </div>
                     )}
-                    {displayTab === "regseason" && (
-                        <div className="w-full">
-                            <RegularSeasonBracket
-                                teams={regSeasonTeams}
-                                matches={regSeason}
-                            />
-                        </div>
+                    {displayTab === "standings" && (
+                        <Standings teams={currentTeams} />
                     )}
                 </div>
             )}

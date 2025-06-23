@@ -1,6 +1,6 @@
 export default function Footer() {
     return (
-        <footer className="bg-gray-200 shadow-md mt-auto">
+        <footer className="bg-gray-200 shadow-md fixed bottom-0 left-0 right-0">
             <div className="w-full px-4 py-4">
                 <div className="flex justify-between items-center">
                     <div className="text-gray-600">Organized by OSS</div>

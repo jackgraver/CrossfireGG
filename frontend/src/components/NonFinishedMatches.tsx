@@ -11,7 +11,7 @@ export default function NonFinishedMatches({
     matches,
 }: NonFinishedMatchesProps) {
     const [startIndex, setStartIndex] = useState(0);
-    const matchesPerPage = 4;
+    const matchesPerPage = matches.length > 4 ? 4 : matches.length;
 
     const goToPrevious = () => {
         if (matches.length <= matchesPerPage) return;

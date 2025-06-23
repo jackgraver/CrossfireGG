@@ -13,3 +13,13 @@ class Match(SQLModel, table=True):
     winner: Optional[str] = None
     team1_score: Optional[int] = 0
     team2_score: Optional[int] = 0
+    
+    
+class Map(SQLModel, table=True):
+    map_id: str = Field(primary_key=True)
+    match_id: str = Field(foreign_key="match.match_id")
+    map_name: str
+    round: int
+    winner_id: str = Field(foreign_key="team.team_id")
+    team1_score: int
+    team2_score: int
