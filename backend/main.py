@@ -80,6 +80,16 @@ def get_teams():
         "playoffs": teams_data["playoffs"],
         "last_update": last_update
     }
+    
+@app.get("/team/{team_id}")
+def get_team(team_id: str):
+    team_info = get_team_info(team_id)
+    matches = get_team_matches(team_id)
+    res = {
+        "team": team_info,
+        "matches": matches
+    }
+    return res
 
 @app.get("/last_update")
 def get_last_update():

@@ -3,6 +3,7 @@ from typing import List, Dict
 from db.db import get_db_connection
 from db.team.team_model import Team
 from db.tournament.tournament_sql import get_sub_tournament_name_by_id, get_current_sub_tournament_by_name
+from db.match.match_model import Match
 
 def fetch_all_teams() -> Dict[str, List[Dict]]:
     # Get current tournament's regular season and playoffs sub-tournaments
@@ -103,9 +104,36 @@ def update_team_record(team: dict, won: bool, current_sub_t_id: str = None):
 
 def get_team_info(team_id: str) -> dict:
     if not team_id:
-        return {}
-
+        return {}   
     with Session(get_db_connection()) as session:
         stmt = select(Team).where(Team.team_id == team_id)
         team = session.exec(stmt).first()
         return team.model_dump() if team else {}
+    
+def get_team_matches(team_id: str) -> dict:
+    with Session(get_db_connection()) as session:
+        # Get matches where the team is either team1 or team2
+        stmt = select(Match).where(
+            (Match.team1_id == team_id) | (Match.team2_id == team_id)
+        )
+        matches = session.exec(stmt).all()
+        
+        result = []
+        for match in matches:
+            match_dict = match.model_dump()
+            
+            # Fetch team information for both teams
+            team1_stmt = select(Team).where(Team.team_id == match.team1_id)
+            team2_stmt = select(Team).where(Team.team_id == match.team2_id)
+            
+            team1 = session.exec(team1_stmt).first()
+            team2 = session.exec(team2_stmt).first()
+            
+            match_dict["teams"] = {
+                "team1": team1.model_dump() if team1 else {},
+                "team2": team2.model_dump() if team2 else {}
+            }
+            
+            result.append(match_dict)
+        
+        return result

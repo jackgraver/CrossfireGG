@@ -2,7 +2,7 @@ from sqlmodel import Session, select
 from db.match.match_model import Match, Map
 from db.db import get_db_connection
 from typing import List, Dict
-from db.team.team_sql import get_team_info
+from db.team.team_model import Team
 from db.tournament.tournament_sql import get_current_sub_tournament_by_name
 
 def write_match(match_dict: dict):
@@ -38,12 +38,16 @@ def fetch_all_matches() -> Dict[str, List[Dict]]:
         for m in results:
             match_dict = m.model_dump()
 
-            team1 = get_team_info(m.team1_id)
-            team2 = get_team_info(m.team2_id)
+            # Fetch team information directly instead of using get_team_info
+            team1_stmt = select(Team).where(Team.team_id == m.team1_id)
+            team2_stmt = select(Team).where(Team.team_id == m.team2_id)
+            
+            team1 = session.exec(team1_stmt).first()
+            team2 = session.exec(team2_stmt).first()
 
             match_dict["teams"] = {
-                "team1": team1,
-                "team2": team2
+                "team1": team1.model_dump() if team1 else {},
+                "team2": team2.model_dump() if team2 else {}
             }
 
             # Optionally remove raw team IDs from top-level
