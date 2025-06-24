@@ -10,8 +10,8 @@ from db.match.match_sql import fetch_all_matches, write_match, write_map
 from db.team.team_sql import get_team_record, update_team_record
 from db.tournament.tournament_sql import get_current_sub_tournament_id
 from db.metadata.metadata_sql import get_metadata_value
-from player.player_model import Player, PlayerStats
-from player.player_sql import insert_player, insert_player_stats
+from db.player.player_model import Player, PlayerStats
+from db.player.player_sql import insert_player, insert_player_stats
 
 load_dotenv()
 
@@ -20,7 +20,7 @@ if not FACEIT_API_KEY:
     raise RuntimeError("FACEIT_API_KEY not set.")
 FACEIT_API_URL = "https://open.faceit.com/data/v4/championships/f56331e8-131a-4c50-b7db-eec8b010ff98/matches?limit=70"
 # FACEIT_API_URL = "https://open.faceit.com/data/v4/championships/b4cb8915-2a74-4899-b7df-220cb85f3916/matches?limit=70"
-MATCHES_FILE = Path("test_data/1team.json")
+MATCHES_FILE = Path("test_data/f1.json")
 DEBUG = True 
 
 def process_matches():

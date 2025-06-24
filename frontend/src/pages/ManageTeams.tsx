@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import type { Team } from "../types/Types";
 import InputPopup from "../components/input/InputPopup";
+import OSSTable from "../components/OSSTable";
 
 type SortType = "name" | "seed" | "paid" | "joined";
 
@@ -171,10 +172,60 @@ export default function ManageTeams() {
     });
 
     return (
-        <div className="flex flex-col justify-center items-center text-white">
+        <div className="flex flex-col justify-center items-center">
             {showInput && <InputPopup />}
-            <h1 className="text-4xl pb-12 pt-12">Current Teams</h1>
-            <table className="bg-gray-800 mt-2">
+            <h1 className="text-4xl pb-12 pt-12 text-gray-200">
+                Current Teams
+            </h1>
+            <OSSTable
+                data={sortedTeams}
+                columns={[
+                    { header: "ID", accessor: "team_id" },
+                    { header: "Name", accessor: "team_name" },
+                    {
+                        header: "Seed",
+                        accessor: "seed",
+                        cell: (team) => (
+                            <input
+                                type="number"
+                                value={team.seed}
+                                className="w-16 text-center rounded border-2 border-gray-300"
+                                min="1"
+                                readOnly
+                            />
+                        ),
+                    },
+                    {
+                        header: "Paid",
+                        accessor: "paid",
+                        cell: (team) => (
+                            <div className="flex justify-center items-center">
+                                <input
+                                    type="checkbox"
+                                    checked={team.paid}
+                                    className="w-4 h-4"
+                                    readOnly
+                                />
+                            </div>
+                        ),
+                    },
+                    {
+                        header: "Joined Tournament",
+                        accessor: "joined_tournament",
+                        cell: (team) => (
+                            <div className="flex justify-center items-center">
+                                <input
+                                    type="checkbox"
+                                    checked={team.joined_tournament}
+                                    className="w-4 h-4"
+                                    readOnly
+                                />
+                            </div>
+                        ),
+                    },
+                ]}
+            />
+            {/* <table className="bg-gray-800 mt-2">
                 <tr className="border-b border-white">
                     <th>ID </th>
                     <th
@@ -242,7 +293,7 @@ export default function ManageTeams() {
                         </td>
                     </tr>
                 ))}
-            </table>
+            </table> */}
             <button
                 className="bg-gray-800 rounded-md pt-1 p-2 mt-1"
                 onClick={() => setShowInput(true)}

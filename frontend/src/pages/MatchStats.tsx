@@ -1,86 +1,105 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import type { MatchMap, PlayerStats } from "../types/Types";
+import type { Match, MatchMap } from "../types/Types";
 import ViewSelector from "../components/ViewSelector";
 import OSSTable from "../components/OSSTable";
 
-// Extended type to include player_name from the API
-type PlayerStatsWithName = PlayerStats & {
-    player_name: string;
+/**
+ * Extracts the map name from the map_name string (de_dust2 -> Dust2)
+ * @param map_name Map name to extract map name from
+ * @returns Map name
+ */
+const getMapName = (map_name: string) => {
+    return (
+        map_name.split("_")[1].charAt(0).toUpperCase() +
+        map_name.split("_")[1].slice(1)
+    );
 };
 
 export default function MatchStats() {
     const { match_id } = useParams();
 
-    const [stats, setStats] = useState<Map<string, PlayerStatsWithName[]>>(
-        new Map()
-    );
-    const [currentMap, setCurrentMap] = useState<string>("");
+    const [match, setMatch] = useState<Match | null>(null);
+    const [maps, setMaps] = useState<MatchMap[]>([]);
+    const [currentMap, setCurrentMap] = useState<MatchMap | null>(null);
 
     useEffect(() => {
-        // fetch(`http://localhost:8000/stats/${match_id}`)
         fetch(
             `http://localhost:8000/stats/1-d0f8a7df-6fa1-47b1-853f-08b3aee555df`
         )
             .then((response) => response.json())
             .then((data) => {
-                // Group stats by map_id
-                const groupedStats = new Map<string, PlayerStatsWithName[]>();
-
-                data.forEach((stat: PlayerStatsWithName) => {
-                    const mapId = stat.map_id;
-                    if (!groupedStats.has(mapId)) {
-                        groupedStats.set(mapId, []);
-                    }
-                    groupedStats.get(mapId)!.push(stat);
-                });
-
-                setStats(groupedStats);
-                // Set the first map as current if available
-                if (groupedStats.size > 0) {
-                    setCurrentMap(Array.from(groupedStats.keys())[0]);
-                }
+                setMatch(data.match_info);
+                setMaps(data.maps);
+                setCurrentMap(data.maps[0]);
             });
     }, [match_id]);
 
-    const mapViews = Array.from(stats.keys()).map((mapId, index) => ({
-        key: mapId,
-        label: `Map ${index + 1}`,
+    const mapViews = maps.map((map) => ({
+        key: map.map_id,
+        label: getMapName(map.map_name),
     }));
 
-    const currentStats = stats.get(currentMap) || [];
+    const teamA =
+        currentMap?.teams[0].players.flatMap((player) => ({
+            player_name: player.player_name,
+            kills: player.stats.kills,
+            deaths: player.stats.deaths,
+            assists: player.stats.assists,
+            adr: player.stats.adr,
+            damage: player.stats.damage,
+        })) || [];
+    const teamB =
+        currentMap?.teams[1].players.flatMap((player) => ({
+            player_name: player.player_name,
+            kills: player.stats.kills,
+            deaths: player.stats.deaths,
+            assists: player.stats.assists,
+            adr: player.stats.adr,
+            damage: player.stats.damage,
+        })) || [];
 
     return (
-        <div>
-            <div className="mb-6 flex justify-center pt-6">
+        <div className="flex flex-col justify-center items-center">
+            <div className="mb-6 pt-6">
                 <ViewSelector
                     views={mapViews}
-                    currentView={currentMap}
-                    onViewChange={setCurrentMap}
+                    currentView={currentMap?.map_id || ""}
+                    onViewChange={(view) => {
+                        setCurrentMap(maps.find((map) => map.map_id === view)!);
+                    }}
                 />
             </div>
-
-            <OSSTable
-                data={currentStats}
-                headers={[
-                    "Name",
-                    "Kills",
-                    "Deaths",
-                    "Assists",
-                    "ADR",
-                    "Damage",
-                ]}
-                columnKeys={[
-                    "player_name",
-                    "kills",
-                    "deaths",
-                    "assists",
-                    "adr",
-                    "damage",
-                ]}
-                rowKey={(row) => `${row.player_id}-${row.map_id}`}
-                emptyMessage="No stats available for this map"
-            />
+            <div className="flex flex-row gap-4">
+                <OSSTable
+                    data={teamA}
+                    columns={[
+                        {
+                            header: "Player",
+                            accessor: "player_name",
+                        },
+                        { header: "Kills", accessor: "kills" },
+                        { header: "Deaths", accessor: "deaths" },
+                        { header: "Assists", accessor: "assists" },
+                        { header: "ADR", accessor: "adr" },
+                        { header: "Damage", accessor: "damage" },
+                    ]}
+                />
+                <OSSTable
+                    data={teamB}
+                    columns={[
+                        {
+                            header: "Player",
+                            accessor: "player_name",
+                        },
+                        { header: "Kills", accessor: "kills" },
+                        { header: "Deaths", accessor: "deaths" },
+                        { header: "Assists", accessor: "assists" },
+                        { header: "ADR", accessor: "adr" },
+                        { header: "Damage", accessor: "damage" },
+                    ]}
+                />
+            </div>
         </div>
     );
 }

@@ -18,7 +18,7 @@ from db.team.team_sql import *
 from db.metadata.metadata_model import *
 from db.metadata.metadata_sql import *
 from db.tournament.tournament_sql import *
-from player.player_sql import *
+from db.player.player_sql import *
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -59,7 +59,7 @@ def get_stats():
 @app.get("/stats/{match_id}")
 def get_stats_by_match_id(match_id: str):
     res = get_player_stats_by_match_id(match_id)
-    return res  
+    return res
 
 @app.get("/players")
 def get_players():

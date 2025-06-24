@@ -54,4 +54,21 @@ export type MatchMap = {
     winner_id: string;
     team1_score: number;
     team2_score: number;
+    teams: {
+        team_id: string;
+        team_name: string;
+        team_logo: string;
+        players: {
+            player_id: string;
+            player_name: string;
+            player_logo: string;
+            stats: {
+                kills: number;
+                deaths: number;
+                assists: number;
+                adr: number;
+                damage: number;
+            };
+        }[];
+    }[];
 };

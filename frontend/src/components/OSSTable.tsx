@@ -1,184 +1,173 @@
+import React from "react";
 import { useState } from "react";
 
-type SortConfig = {
-    key: string;
-    direction: "asc" | "desc";
-};
-
-type OSSTableProps = {
-    data: any[];
-    headers?: string[];
-    columnKeys?: string[];
+export type ColumnDef<T> = {
+    header: string;
+    accessor: keyof T | ((row: T) => any);
+    cell?: (row: T) => React.ReactNode;
     className?: string;
-    onSort?: (sortConfig: SortConfig | null) => void;
-    defaultSort?: SortConfig;
-    rowKey?: string | ((row: any, index: number) => string);
-    emptyMessage?: string;
-    excludeColumns?: string[];
+    notSortable?: boolean;
+    sortFn?: (a: T, b: T) => number; // Optional custom comparator
 };
 
-export default function OSSTable({
+export type OSSTableProps<T> = {
+    data: T[];
+    columns: ColumnDef<T>[];
+    rowKey?: (row: T) => string | number;
+    isLoading?: boolean;
+    emptyMessage?: string;
+    className?: string;
+    rowClassName?: (row: T) => string;
+};
+
+export default function OSSTable<T>({
     data,
-    headers,
-    columnKeys,
+    columns,
+    rowKey,
+    isLoading = false,
+    emptyMessage = "No data available.",
     className = "",
-    onSort,
-    defaultSort,
-    rowKey = "id",
-    emptyMessage = "No data available",
-    excludeColumns = [],
-}: OSSTableProps) {
-    const [sortConfig, setSortConfig] = useState<SortConfig | null>(
-        defaultSort || null
-    );
+    rowClassName,
+}: OSSTableProps<T>) {
+    const [sortColumn, setSortColumn] = useState<keyof T | string | null>(null);
+    const [sortAscending, setSortAscending] = useState(true);
 
-    // Generate columns based on columnKeys if provided, otherwise auto-generate from data
-    const generateColumns = () => {
-        if (data.length === 0) return [];
+    const sortedData = React.useMemo(() => {
+        if (!sortColumn) return data;
 
-        if (columnKeys && columnKeys.length > 0) {
-            // Use columnKeys to determine columns and their order
-            return columnKeys.map((key, index) => ({
-                key,
-                header:
-                    headers?.[index] ||
-                    key.charAt(0).toUpperCase() +
-                        key.slice(1).replace(/_/g, " "),
-                type: typeof data[0]?.[key],
-            }));
-        } else {
-            // Auto-generate from data if no columnKeys provided
-            const firstRow = data[0];
-            const keys = Object.keys(firstRow).filter(
-                (key) => !excludeColumns.includes(key)
-            );
-
-            return keys.map((key, index) => ({
-                key,
-                header:
-                    headers?.[index] ||
-                    key.charAt(0).toUpperCase() +
-                        key.slice(1).replace(/_/g, " "),
-                type: typeof firstRow[key],
-            }));
-        }
-    };
-
-    const columns = generateColumns();
-    console.log(columns);
-
-    const handleSort = (columnKey: string) => {
-        const newSortConfig: SortConfig = {
-            key: columnKey,
-            direction:
-                sortConfig?.key === columnKey && sortConfig.direction === "asc"
-                    ? "desc"
-                    : "asc",
-        };
-
-        setSortConfig(newSortConfig);
-        onSort?.(newSortConfig);
-    };
-
-    const getSortedData = () => {
-        if (!sortConfig) return data;
-
-        return [...data].sort((a, b) => {
-            const aValue = a[sortConfig.key];
-            const bValue = b[sortConfig.key];
-
-            let comparison = 0;
-
-            if (typeof aValue === "number" && typeof bValue === "number") {
-                comparison = (aValue || 0) - (bValue || 0);
-            } else if (
-                typeof aValue === "boolean" &&
-                typeof bValue === "boolean"
-            ) {
-                comparison = aValue === bValue ? 0 : aValue ? 1 : -1;
-            } else {
-                // string or other types
-                const aStr = String(aValue || "").toLowerCase();
-                const bStr = String(bValue || "").toLowerCase();
-                comparison = aStr.localeCompare(bStr);
-            }
-
-            return sortConfig.direction === "asc" ? comparison : -comparison;
+        const col = columns.find((c) => {
+            const key =
+                typeof c.accessor === "function" ? c.header : c.accessor;
+            return key === sortColumn;
         });
-    };
 
-    const getRowKey = (row: any, index: number): string => {
-        if (typeof rowKey === "function") {
-            return rowKey(row, index);
+        if (!col || col.notSortable) return data;
+
+        const sorted = [...data];
+
+        if (col.sortFn) {
+            sorted.sort((a, b) => col.sortFn!(a, b));
+        } else {
+            // Default value-based sort
+            sorted.sort((a, b) => {
+                const aVal =
+                    typeof col.accessor === "function"
+                        ? col.accessor(a)
+                        : a[col.accessor];
+                const bVal =
+                    typeof col.accessor === "function"
+                        ? col.accessor(b)
+                        : b[col.accessor];
+
+                if (aVal === bVal) return 0;
+                return aVal > bVal ? 1 : -1;
+            });
         }
-        return row[rowKey] || `row-${index}`;
+
+        return sortAscending ? sorted : sorted.reverse();
+    }, [data, sortColumn, sortAscending, columns]);
+
+    const handleSort = (column: ColumnDef<T>) => {
+        if (column.notSortable) return;
+
+        const columnKey =
+            typeof column.accessor === "function"
+                ? column.header
+                : column.accessor;
+
+        if (sortColumn === columnKey) {
+            const newAscending = !sortAscending;
+            setSortAscending(newAscending);
+        } else {
+            setSortColumn(columnKey);
+            setSortAscending(true);
+        }
     };
 
-    const getAlignmentClass = (value: any) => {
-        if (typeof value === "number") return "text-right";
-        if (typeof value === "boolean") return "text-center";
-        return "text-left";
-    };
+    const getSortIcon = (column: ColumnDef<T>) => {
+        const columnKey =
+            typeof column.accessor === "function"
+                ? column.header
+                : column.accessor;
 
-    const sortedData = getSortedData();
+        if (sortColumn === columnKey) {
+            return sortAscending ? " ↑" : " ↓";
+        }
+        return "";
+    };
 
     return (
         <div className={`overflow-x-auto ${className}`}>
-            <table className="min-w-full bg-gray-400 border border-gray-300">
+            <table className="table-auto border-collapse">
                 <thead>
-                    <tr className="bg-gray-500">
-                        {columns.map((column) => (
+                    <tr className="bg-gray-100 text-left text-sm text-gray-600 uppercase">
+                        {columns.map((col, i) => (
                             <th
-                                key={column.key}
-                                className={`px-4 py-2 border-b cursor-pointer hover:bg-gray-600 ${getAlignmentClass(
-                                    data[0]?.[column.key]
-                                )}`}
-                                onClick={() => handleSort(column.key)}
+                                key={i}
+                                className={`px-4 py-2 font-medium ${
+                                    col.className || ""
+                                } ${
+                                    !col.notSortable
+                                        ? "cursor-pointer hover:bg-gray-200"
+                                        : ""
+                                }`}
+                                onClick={() => handleSort(col)}
                             >
-                                <div className="flex items-center justify-center gap-1">
-                                    <span>{column.header}</span>
-                                    {sortConfig?.key === column.key && (
-                                        <span className="text-sm">
-                                            {sortConfig.direction === "asc"
-                                                ? "↑"
-                                                : "↓"}
-                                        </span>
-                                    )}
-                                </div>
+                                {col.header}
+                                {getSortIcon(col)}
                             </th>
                         ))}
                     </tr>
                 </thead>
+
                 <tbody>
-                    {sortedData.length === 0 ? (
+                    {isLoading ? (
                         <tr>
                             <td
                                 colSpan={columns.length}
-                                className="px-4 py-8 text-center text-gray-500"
+                                className="text-center py-6 text-gray-400"
+                            >
+                                Loading...
+                            </td>
+                        </tr>
+                    ) : data.length === 0 ? (
+                        <tr>
+                            <td
+                                colSpan={columns.length}
+                                className="text-center py-6 text-gray-400"
                             >
                                 {emptyMessage}
                             </td>
                         </tr>
                     ) : (
-                        sortedData.map((row, index) => (
+                        sortedData.map((row, rowIndex) => (
                             <tr
-                                key={getRowKey(row, index)}
-                                className={`hover:bg-gray-50 ${
-                                    index % 2 === 0
-                                        ? "bg-gray-400"
-                                        : "bg-gray-300"
+                                key={rowKey?.(row) ?? rowIndex}
+                                className={`hover:bg-gray-50 border-t border-gray-200 ${
+                                    rowClassName?.(row) || ""
+                                } ${
+                                    rowIndex % 2 === 0
+                                        ? "bg-white"
+                                        : "bg-gray-50"
                                 }`}
                             >
-                                {columns.map((column) => (
-                                    <td
-                                        key={column.key}
-                                        className={`px-4 py-2 border-b ${getAlignmentClass(
-                                            row[column.key]
-                                        )}`}
-                                    >
-                                        {row[column.key]?.toString() || ""}
-                                    </td>
-                                ))}
+                                {columns.map((col, colIndex) => {
+                                    const raw =
+                                        typeof col.accessor === "function"
+                                            ? col.accessor(row)
+                                            : row[col.accessor];
+
+                                    return (
+                                        <td
+                                            key={colIndex}
+                                            className={`px-4 py-3 text-sm ${
+                                                col.className || ""
+                                            }`}
+                                        >
+                                            {col.cell ? col.cell(row) : raw}
+                                        </td>
+                                    );
+                                })}
                             </tr>
                         ))
                     )}
