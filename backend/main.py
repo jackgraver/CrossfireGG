@@ -1,14 +1,12 @@
-import datetime
-import json
+from datetime import datetime, timedelta
 from pathlib import Path
 from dotenv import load_dotenv
 import os
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
-import requests
 from jose import jwt
 
-from db.users import *
+from db.users import *  
 from db.db import *
 from db.match.match_model import *
 from db.match.match_sql import *
@@ -38,21 +36,6 @@ FACEIT_API_KEY = os.getenv("FACEIT_API_KEY")
 
 @app.get("/stats")
 def get_stats():
-    # api_url = f"https://open.faceit.com/data/v4/matches/1-d0f8a7df-6fa1-47b1-853f-08b3aee555df/stats"
-    # response = requests.get(
-    #     api_url,
-    #     headers={
-    #         "Authorization": f"Bearer {FACEIT_API_KEY}",
-    #         "Accept": "application/json",
-    #     },
-    # )
-    # response.raise_for_status()
-    
-    # # Parse the JSON response and write it formatted
-    # stats_data = response.json()
-    # with open("test_data/stats.json", "w", encoding="utf-8") as f:
-    #     json.dump(stats_data, f, indent=4, ensure_ascii=False)
-    
     res = get_all_player_stats()
     return res;
 
@@ -99,7 +82,7 @@ def get_last_update():
 @app.get("/refresh")
 def refresh_teams():
     process_matches()
-    write_metadata("last_refresh", int(datetime.datetime.now().timestamp()))
+    write_metadata("last_refresh", str(int(datetime.now().timestamp())))
     return {"teams:": [], "matches": []}
 
 SECRET_KEY = os.getenv("JWT_SECRET_KEY")
@@ -109,7 +92,7 @@ ALGORITHM = "HS256"
 
 def create_access_token(data: dict, expires_minutes: int = 60):
     to_encode = data.copy()
-    expire = datetime.datetime.utcnow() + datetime.timedelta(minutes=expires_minutes)
+    expire = datetime.now() + datetime.timedelta(minutes=expires_minutes)
     to_encode.update({"exp": expire})
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 

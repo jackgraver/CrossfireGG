@@ -54,21 +54,7 @@ export default function RegularSeasonBracket({ teams, matches }: BracketProps) {
             </RoundSection>
 
             <RoundSection round_num={5}>
-                <div>
-                    {qualifiedTeams
-                        .filter((t) => t.loss === 1)
-                        .map((t, i) => (
-                            <QualElimCard key={i} team={t} qualified={true} />
-                        ))}
-                </div>
                 <RoundCard round="2-2" matches={rounds.get("2-2")} />
-                <div>
-                    {eliminatedTeams
-                        .filter((t) => t.win === 1)
-                        .map((t, i) => (
-                            <QualElimCard key={i} team={t} qualified={false} />
-                        ))}
-                </div>
             </RoundSection>
         </div>
     );

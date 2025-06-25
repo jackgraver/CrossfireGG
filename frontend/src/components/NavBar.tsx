@@ -9,7 +9,7 @@ export default function NavBar() {
     const signedIn = token !== null && token !== "";
 
     return (
-        <nav className="bg-gray-200 shadow-md">
+        <nav className="bg-bg shadow-md">
             <div className="w-full px-4">
                 <div className="flex justify-between h-16">
                     <div className="flex items-center">

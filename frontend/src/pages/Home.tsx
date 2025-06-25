@@ -6,6 +6,8 @@ import RegularSeasonBracket from "../components/bracket/RegularSeasonBracket";
 import PlayoffBracket from "../components/bracket/PlayoffBracket";
 import NonFinishedMatches from "../components/NonFinishedMatches";
 import ViewSelector from "../components/ViewSelector";
+import { api } from "../lib/api";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Home() {
     const navigate = useNavigate();
@@ -13,21 +15,13 @@ export default function Home() {
     const [displayTab, setDisplayTab] = useState<
         "regseason" | "playoffs" | "standings"
     >("regseason");
-    const [refreshTeams, setRefreshTeams] = useState(true);
-    const [regSeasonTeams, setRegSeasonTeams] = useState<Team[]>([]);
-    const [playoffsTeams, setPlayoffsTeams] = useState<Team[]>([]);
-    const [lastUpdate, setLastUpdate] = useState(-1);
-    const [regSeason, setRegSeason] = useState<Match[]>([]);
-    const [playoffs, setPlayoffs] = useState<Match[]>([]);
 
-    // Define the view options
     const viewOptions = [
         { key: "regseason", label: "Regular Season" },
         { key: "playoffs", label: "Playoffs" },
         { key: "standings", label: "Standings" },
     ];
 
-    // Type-safe view change handler
     const handleViewChange = (view: string) => {
         if (
             view === "regseason" ||
@@ -38,49 +32,51 @@ export default function Home() {
         }
     };
 
-    useEffect(() => {
-        async function loadTeams() {
-            try {
-                const response = await fetch("http://localhost:8000/teams");
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                const data = await response.json();
-                setRegSeasonTeams(data.reg_season || []);
-                setPlayoffsTeams(data.playoffs || []);
-                setLastUpdate(data.last_update);
-                setRefreshTeams(false);
-            } catch (err) {
-                console.error("Failed to fetch teams:", err);
-            }
-        }
+    const {
+        data: teamData,
+        isLoading: teamsLoading,
+        error: teamsError,
+        refetch: refetchTeams,
+    } = useQuery({
+        queryKey: ["teams"],
+        queryFn: () =>
+            api.get<{
+                reg_season: Team[];
+                playoffs: Team[];
+                last_update: number;
+            }>("/teams"),
+    });
 
-        if (refreshTeams) loadTeams();
-    }, [refreshTeams]);
+    const {
+        data: matchData,
+        isLoading: matchesLoading,
+        error: matchesError,
+    } = useQuery({
+        queryKey: ["matches"],
+        queryFn: () =>
+            api.get<{ reg_season: Match[]; playoffs: Match[] }>("/matches"),
+    });
 
-    useEffect(() => {
-        async function loadMatches() {
-            try {
-                const response = await fetch("http://localhost:8000/matches");
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                const data = await response.json();
-                setRegSeason(data.reg_season);
-                setPlayoffs(data.playoffs);
-            } catch (err) {
-                console.error("Failed to fetch teams:", err);
-            }
-        }
+    if (teamsLoading || matchesLoading) {
+        return <div>Loading...</div>;
+    }
 
-        loadMatches();
-    }, []);
+    if (teamsError || matchesError) {
+        return <div>Error: {teamsError?.message || matchesError?.message}</div>;
+    }
 
-    const nonFinishedMatches = [...regSeason, ...playoffs].filter(
+    const {
+        reg_season: regSeasonTeams,
+        playoffs: playoffsTeams,
+        last_update: lastUpdate,
+    } = teamData!;
+    const { reg_season: regSeasonMatches, playoffs: playoffsMatches } =
+        matchData!;
+
+    const nonFinishedMatches = [...regSeasonMatches, ...playoffsMatches].filter(
         (match) => match.status !== "FINISHED"
     );
 
-    // Get the appropriate teams based on current view
     const getCurrentTeams = () => {
         switch (displayTab) {
             case "regseason":
@@ -130,16 +126,14 @@ export default function Home() {
             {!currentTeams ? (
                 "LOADING..."
             ) : (
-                <div className="flex flex-col justify-center items-center w-5/6 mt-4">
-                    <div className="flex flex-row justify-end items-center gap-2 w-full mb-4 text-white">
+                <div className="flex flex-col justify-center items-center w-5/6 mt-4 relative">
+                    <div className="flex flex-row absolute right-0 top-0 justify-end items-center gap-2 text-white">
                         <p className="text-sm text-gray-400">
                             Last Updated:{" "}
                             {new Date(lastUpdate * 1000).toDateString()}
                         </p>
                         <button
-                            onClick={() => {
-                                setRefreshTeams(true);
-                            }}
+                            onClick={() => refetchTeams()}
                             className="p-2 rounded-full hover:bg-gray-700 transition-colors duration-200"
                             title="Refresh data"
                         >
@@ -158,12 +152,12 @@ export default function Home() {
                                 />
                             </svg>
                         </button>
-                    </div>{" "}
+                    </div>
                     {displayTab === "regseason" && (
                         <div className="w-full">
                             <RegularSeasonBracket
                                 teams={regSeasonTeams}
-                                matches={regSeason}
+                                matches={regSeasonMatches}
                             />
                         </div>
                     )}
@@ -171,7 +165,7 @@ export default function Home() {
                         <div className="w-full">
                             <PlayoffBracket
                                 teams={playoffsTeams}
-                                matches={playoffs}
+                                matches={playoffsMatches}
                             />
                         </div>
                     )}

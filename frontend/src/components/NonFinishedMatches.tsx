@@ -1,6 +1,5 @@
 import type { Match } from "../types/Types";
-import MatchCard from "./bracket/MatchCard";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import ScheduledCard from "./bracket/ScheduledCard";
 
 type NonFinishedMatchesProps = {
@@ -11,60 +10,66 @@ export default function NonFinishedMatches({
     matches,
 }: NonFinishedMatchesProps) {
     const [startIndex, setStartIndex] = useState(0);
-    const matchesPerPage = matches.length > 4 ? 4 : matches.length;
+    const [matchesPerPage, setMatchesPerPage] = useState(4);
+
+    useEffect(() => {
+        const updateMatchesPerPage = () => {
+            const width = window.innerWidth;
+            if (width < 640) setMatchesPerPage(1); // sm
+            else if (width < 768) setMatchesPerPage(2); // md
+            else if (width < 1024) setMatchesPerPage(3); // lg
+            else setMatchesPerPage(4); // xl+
+        };
+
+        updateMatchesPerPage(); // initial check
+
+        window.addEventListener("resize", updateMatchesPerPage);
+        return () => window.removeEventListener("resize", updateMatchesPerPage);
+    }, []);
+
+    const visibleMatches = useMemo(() => {
+        const validMatches = matches
+            .filter((m) => m.status !== "CANCELLED")
+            .sort((a, b) => {
+                if (a.status === "ONGOING" && b.status !== "ONGOING") return -1; // a before b
+                if (a.status !== "ONGOING" && b.status === "ONGOING") return 1; // b before a
+                return b.scheduled_at - a.scheduled_at; // order by latest first
+            });
+        const result: Match[] = [];
+        for (
+            let i = 0;
+            i < Math.min(matchesPerPage, validMatches.length);
+            i++
+        ) {
+            const index = (startIndex + i) % validMatches.length;
+            result.push(validMatches[index]);
+        }
+        return result;
+    }, [matches, startIndex, matchesPerPage]);
 
     const goToPrevious = () => {
-        if (matches.length <= matchesPerPage) return;
-
-        setStartIndex((prev) => {
-            if (prev === 0) {
-                // Loop back to the end
-                return Math.max(0, matches.length - matchesPerPage);
-            }
-            return Math.max(0, prev - 1);
-        });
+        setStartIndex((prev) =>
+            prev === 0
+                ? Math.max(0, matches.length - matchesPerPage)
+                : Math.max(0, prev - 1)
+        );
     };
 
     const goToNext = () => {
-        if (matches.length <= matchesPerPage) return;
-
-        setStartIndex((prev) => {
-            if (prev >= matches.length - matchesPerPage) {
-                // Loop back to the beginning
-                return 0;
-            }
-            return prev + 1;
-        });
+        setStartIndex((prev) =>
+            prev >= matches.length - matchesPerPage ? 0 : prev + 1
+        );
     };
 
-    // Reset to first position when matches change
-    useEffect(() => {
-        setStartIndex(0);
-    }, [matches]);
-
-    if (matches.length === 0) {
-        return <></>;
-    }
-
-    // Get the 4 matches to display (with wrapping if needed)
-    const getVisibleMatches = () => {
-        const visibleMatches = [];
-        for (let i = 0; i < matchesPerPage; i++) {
-            const index = (startIndex + i) % matches.length;
-            visibleMatches.push(matches[index]);
-        }
-        return visibleMatches;
-    };
-
-    const visibleMatches = getVisibleMatches();
+    if (matches.length === 0) return null;
 
     return (
-        <div className="relative">
-            {/* Left Arrow - always show if there are more than 4 matches */}
+        <div className="relative w-full flex justify-center items-center">
+            {/* Left Arrow */}
             {matches.length > matchesPerPage && (
                 <button
                     onClick={goToPrevious}
-                    className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10 bg-gray-800 hover:bg-gray-700 text-white rounded-full w-8 h-8 flex items-center justify-center shadow-lg transition-all duration-200"
+                    className="z-10 bg-gray-800 hover:bg-gray-700 text-white rounded-full w-8 h-8 flex items-center justify-center shadow transition duration-200 mx-2"
                     aria-label="Previous match"
                 >
                     <svg
@@ -83,11 +88,26 @@ export default function NonFinishedMatches({
                 </button>
             )}
 
-            {/* Right Arrow - always show if there are more than 4 matches */}
+            {/* Fixed-width container for matches */}
+            <div
+                className="flex gap-2 overflow-hidden"
+                style={{
+                    width: `${matchesPerPage * 260}px`, // matchesPerPage × card width (~260px)
+                    transition: "width 0.2s ease-in-out",
+                }}
+            >
+                {visibleMatches.map((match) => (
+                    <div key={match.match_id} className="w-[250px] shrink-0">
+                        <ScheduledCard match={match} />
+                    </div>
+                ))}
+            </div>
+
+            {/* Right Arrow */}
             {matches.length > matchesPerPage && (
                 <button
                     onClick={goToNext}
-                    className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10 bg-gray-800 hover:bg-gray-700 text-white rounded-full w-8 h-8 flex items-center justify-center shadow-lg transition-all duration-200"
+                    className="z-10 bg-gray-800 hover:bg-gray-700 text-white rounded-full w-8 h-8 flex items-center justify-center shadow transition duration-200 mx-2"
                     aria-label="Next match"
                 >
                     <svg
@@ -105,18 +125,6 @@ export default function NonFinishedMatches({
                     </svg>
                 </button>
             )}
-
-            {/* Matches Container */}
-            <div className="flex gap-2 px-2">
-                {visibleMatches.map((match: Match, index: number) => (
-                    <div
-                        key={`${match.match_id}-${startIndex + index}`}
-                        className="flex-1"
-                    >
-                        <ScheduledCard match={match} />
-                    </div>
-                ))}
-            </div>
         </div>
     );
 }

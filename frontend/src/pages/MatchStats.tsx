@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import type { Match, MatchMap } from "../types/Types";
 import ViewSelector from "../components/ViewSelector";
 import OSSTable from "../components/OSSTable";
+import { api } from "../lib/api";
+import { useQuery } from "@tanstack/react-query";
 
 /**
  * Extracts the map name from the map_name string (de_dust2 -> Dust2)
@@ -19,21 +21,25 @@ const getMapName = (map_name: string) => {
 export default function MatchStats() {
     const { match_id } = useParams();
 
-    const [match, setMatch] = useState<Match | null>(null);
-    const [maps, setMaps] = useState<MatchMap[]>([]);
-    const [currentMap, setCurrentMap] = useState<MatchMap | null>(null);
+    // const [currentMap, setCurrentMap] = useState<MatchMap | null>(null);
 
-    useEffect(() => {
-        fetch(
-            `http://localhost:8000/stats/1-d0f8a7df-6fa1-47b1-853f-08b3aee555df`
-        )
-            .then((response) => response.json())
-            .then((data) => {
-                setMatch(data.match_info);
-                setMaps(data.maps);
-                setCurrentMap(data.maps[0]);
-            });
-    }, [match_id]);
+    const { data, isLoading, error } = useQuery({
+        queryKey: ["match", match_id],
+        queryFn: () =>
+            api.get<{ match: Match; maps: MatchMap[] }>(`/stats/${match_id}`),
+    });
+
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
+
+    if (error) {
+        return <div>Error: {error.message}</div>;
+    }
+
+    const { match, maps } = data!;
+
+    const currentMap = maps[0];
 
     const mapViews = maps.map((map) => ({
         key: map.map_id,
@@ -66,7 +72,7 @@ export default function MatchStats() {
                     views={mapViews}
                     currentView={currentMap?.map_id || ""}
                     onViewChange={(view) => {
-                        setCurrentMap(maps.find((map) => map.map_id === view)!);
+                        // setCurrentMap(maps.find((map) => map.map_id === view)!);
                     }}
                 />
             </div>

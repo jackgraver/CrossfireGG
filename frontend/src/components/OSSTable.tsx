@@ -29,6 +29,7 @@ export default function OSSTable<T>({
     className = "",
     rowClassName,
 }: OSSTableProps<T>) {
+    console.log(data);
     const [sortColumn, setSortColumn] = useState<keyof T | string | null>(null);
     const [sortAscending, setSortAscending] = useState(true);
 
@@ -143,13 +144,13 @@ export default function OSSTable<T>({
                         sortedData.map((row, rowIndex) => (
                             <tr
                                 key={rowKey?.(row) ?? rowIndex}
-                                className={`hover:bg-gray-50 border-t border-gray-200 ${
-                                    rowClassName?.(row) || ""
-                                } ${
-                                    rowIndex % 2 === 0
-                                        ? "bg-white"
-                                        : "bg-gray-50"
-                                }`}
+                                className={`
+        hover:bg-gray-50 border-t border-gray-200
+        ${
+            rowClassName?.(row) ||
+            (rowIndex % 2 === 0 ? "bg-white" : "bg-gray-50")
+        }
+    `}
                             >
                                 {columns.map((col, colIndex) => {
                                     const raw =

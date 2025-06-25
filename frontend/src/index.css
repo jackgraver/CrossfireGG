@@ -1,15 +1,48 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --color-bg-dark: hsl(0, 0%, 90%);
+    --color-bg: hsl(0, 0%, 95%);
+    --color-bg-light: hsl(0, 0%, 100%);
+    --color-text: #000000;
+    --color-primary: #1e3a8a;
+    --color-card: #f9f9f9;
+    --color-border: #e5e7eb;
+}
+
+.dark {
+    --color-bg-dark: hsl(0, 0%, 0%);
+    --color-bg: hsl(0, 0%, 5%);
+    --color-bg-light: hsl(0, 0%, 10%);
+    --color-text: #f4f5;
+    --color-primary: #60a5fa;
+    --color-card: #1e1e1e;
+    --color-border: #333333;
+}
 
 html,
+body,
+#root {
+    background-color: var(--color-bg-dark);
+    color: var(--color-text);
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* html,
 body,
 #root {
     height: 100%;
     margin: 0;
     padding: 0;
-}
-body {
+} */
+
+/*body {
     background: #252b5e;
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-size: cover;
-}
+} */

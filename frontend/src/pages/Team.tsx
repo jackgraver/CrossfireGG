@@ -4,6 +4,10 @@ import type { Match, Team } from "../types/Types";
 import { api } from "../lib/api";
 import { useQuery } from "@tanstack/react-query";
 
+const openInNewTab = (url: string) => {
+    window.open(url, "_blank", "noopener,noreferrer");
+};
+
 export default function Team() {
     const { team_id } = useParams();
 
@@ -110,6 +114,11 @@ export default function Team() {
                             <div
                                 key={match.match_id}
                                 className="border border-gray-200 rounded-lg p-5 hover:shadow-lg transition-all cursor-pointer"
+                                onClick={() => {
+                                    if (match.faceit_url) {
+                                        openInNewTab(match.faceit_url);
+                                    }
+                                }}
                             >
                                 <div className="flex justify-between items-center mb-4">
                                     <span className="text-sm text-gray-600 font-medium bg-gray-100 px-3 py-1 rounded-full">

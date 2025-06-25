@@ -20,7 +20,7 @@ if not FACEIT_API_KEY:
     raise RuntimeError("FACEIT_API_KEY not set.")
 FACEIT_API_URL = "https://open.faceit.com/data/v4/championships/f56331e8-131a-4c50-b7db-eec8b010ff98/matches?limit=70"
 # FACEIT_API_URL = "https://open.faceit.com/data/v4/championships/b4cb8915-2a74-4899-b7df-220cb85f3916/matches?limit=70"
-MATCHES_FILE = Path("test_data/f1.json")
+MATCHES_FILE = Path("test_data/flush_matches.json")
 DEBUG = True 
 
 def process_matches():
@@ -43,6 +43,9 @@ def process_matches():
             )
             response.raise_for_status()
             matches = response.json().get("items", [])
+            matches_file = Path("test_data/flush_matches.json")
+            with open(matches_file, "w", encoding="utf-8") as f:
+                json.dump(matches, f, indent=4, default=str)
             
         all_matches = fetch_all_matches()
         processed_matches = {match["match_id"] for group in all_matches.values() for match in group}
@@ -66,7 +69,7 @@ def process_matches():
                     "match_id": proc_match.get("match_id"),
                     "sub_t_id": current_sub_t_id,
                     "status": proc_match.get("status"),
-                    "scheduled_at": match.get("scheduled_at"),
+                    "scheduled_at": proc_match.get("scheduled_at"),
                     "round": get_team_record(team1["team_id"], current_sub_t_id, current_stage),
                     "faceit_url": proc_match.get("faceit_url").replace('{lang}', 'en'),
                     "team1_id": team1["team_id"],
@@ -161,7 +164,7 @@ def process_players(players_data: list, team_id: str, sub_t_id: str = None):
         print(f"Error processing players: {e}")
     
 
-STATS_FILE = Path("test_data/stats.json")
+STATS_FILE = Path("test_data/flush_stats.json")
 STATS_DEBUG = True 
 
 # @TODO: Implement sub_t_id
@@ -183,10 +186,10 @@ def process_stats(match_id: str, sub_t_id: str = None):
         # Fetch stats data based on DEBUG setting
         if STATS_DEBUG:
             try:
-                with open(STATS_FILE, "r", encoding="utf-8") as f:
+                with open(f"test_data/stats/{match_id}_stats.json", "r", encoding="utf-8") as f:
                     stats_data = json.load(f)
             except FileNotFoundError:
-                print(f"Stats file {STATS_FILE} not found, falling back to API")
+                print(f"Stats file {f"test_data/stats/{match_id}_stats.json"} not found, falling back to API")
                 return
         
         if not STATS_DEBUG:
@@ -201,10 +204,10 @@ def process_stats(match_id: str, sub_t_id: str = None):
             )
             response.raise_for_status()
             stats_data = response.json()
+            stats_file = Path(f"test_data/stats/{match_id}_stats.json")
+            with open(stats_file, "w", encoding="utf-8") as f:
+                json.dump(stats_data, f, indent=4, default=str) 
             
-            with open(STATS_FILE, "w", encoding="utf-8") as f:
-                json.dump(stats_data, f, indent=4)
-        
         inserted_stats = []
         inserted_maps = []
         

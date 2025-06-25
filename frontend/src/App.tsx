@@ -14,10 +14,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const queryClient = new QueryClient();
 
+document.documentElement.classList.add("dark");
+
 function App() {
     return (
         <QueryClientProvider client={queryClient}>
-            {" "}
             <Router>
                 <NavBar />
                 <Routes>
@@ -31,7 +32,7 @@ function App() {
                     <Route path="/team/:team_id" element={<Team />} />
                 </Routes>
                 <Footer />
-            </Router>{" "}
+            </Router>
         </QueryClientProvider>
     );
 }
