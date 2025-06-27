@@ -13,7 +13,9 @@ export function MatchTeam({
 
     return (
         <div
-            className={`rounded-md grid grid-cols-[auto_auto_1fr_auto] items-center gap-x-3 px-2 py-1 ${bg}`}
+            className={`${
+                !team && "min-w-64"
+            } rounded-md grid grid-cols-[auto_auto_1fr_auto] items-center gap-x-3 px-2 py-1 ${bg}`}
         >
             {/* Logo */}
             <div className="w-6 h-6 flex-shrink-0">

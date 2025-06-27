@@ -52,6 +52,9 @@ def process_matches():
         nonprocess_matches = [match for match in matches if match["match_id"] not in processed_matches] 
         
         for proc_match in reversed(nonprocess_matches): 
+            if proc_match.get("status") == "CANCELLED":
+                continue
+            
             teams = proc_match.get("teams", {})
             results = proc_match.get("results", {})
             faction1 = teams.get("faction1", {})
@@ -211,12 +214,10 @@ def process_stats(match_id: str, sub_t_id: str = None):
         inserted_stats = []
         inserted_maps = []
         
-        print("rounds length: ", len(stats_data.get("rounds", [])))
         # Process each round in the match
         for round_data in stats_data.get("rounds", []):
             if round_data.get("match_id") != match_id:
                 continue
-            print("round_data: ", round_data.get("round_stats", {}).get("Map"))
             
             match_round = round_data.get("match_round")
             round_stats = round_data.get("round_stats", {})

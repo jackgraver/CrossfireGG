@@ -12,6 +12,7 @@ type BracketProps = {
 };
 
 export default function RegularSeasonBracket({ teams, matches }: BracketProps) {
+    console.log("matches", matches);
     const rounds = groupMatchesByRoundAndSort(matches);
 
     const qualifiedTeams: Team[] = teams.filter((team) => team.win >= 3);

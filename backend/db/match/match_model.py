@@ -23,3 +23,8 @@ class Map(SQLModel, table=True):
     winner_id: str = Field(foreign_key="team.team_id")
     team1_score: int
     team2_score: int
+
+
+class MatchCaster(SQLModel, table=True):
+    match_id: str = Field(primary_key=True, foreign_key="match.match_id")
+    caster_id: int = Field(primary_key=True, foreign_key="user.user_id")

@@ -49,7 +49,7 @@ export default function ViewSelector({
     return (
         <div
             ref={containerRef}
-            className={`relative inline-flex bg-white rounded-md overflow-hidden shadow-md ${className}`}
+            className={`relative inline-flex bg-bg rounded-md overflow-hidden shadow-md ${className}`}
         >
             <div
                 className="absolute bottom-0 h-1 bg-orange-500 transition-all duration-300 ease-in-out"
@@ -66,8 +66,8 @@ export default function ViewSelector({
                     disabled={view.disabled}
                     className={`min-w-32 px-6 py-4 text-xl font-bold transition-colors duration-200 flex items-center justify-center gap-2 ${
                         currentView === view.key
-                            ? "text-blue-600"
-                            : "text-gray-400"
+                            ? "text-blue-500"
+                            : "text-text-secondary"
                     } ${
                         view.disabled
                             ? "opacity-50 cursor-not-allowed"

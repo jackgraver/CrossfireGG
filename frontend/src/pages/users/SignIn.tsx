@@ -1,6 +1,16 @@
 import { useState } from "react";
 import { validateEmail } from "./SignInUp.util";
 import { useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import { api } from "../../lib/api";
+
+interface SignInResponse {
+    access_token: string;
+}
+
+interface SignInError {
+    detail: string;
+}
 
 export default function SignIn() {
     const navigate = useNavigate();
@@ -9,6 +19,19 @@ export default function SignIn() {
     const [emailError, setEmailError] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
+
+    const signInMutation = useMutation({
+        mutationFn: (credentials: { email: string; password: string }) =>
+            api.post<SignInResponse>("/sign-in", credentials),
+        onSuccess: (data) => {
+            localStorage.setItem("access_token", data.access_token);
+            navigate("/");
+        },
+        onError: (error: any) => {
+            const errorMessage = error.response?.data?.detail || "Login failed";
+            setEmailError(errorMessage);
+        },
+    });
 
     const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newEmail = e.target.value;
@@ -30,32 +53,7 @@ export default function SignIn() {
             return;
         }
 
-        try {
-            const response = await fetch("http://localhost:8000/sign-in", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    email: email,
-                    password: password,
-                }),
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                setEmailError(errorData.detail || "Login failed");
-                return;
-            }
-
-            const token = await response.json();
-            localStorage.setItem("access_token", token.access_token);
-
-            navigate("/");
-        } catch (err) {
-            console.error("Login error:", err);
-            setEmailError("An error occurred. Please try again later.");
-        }
+        signInMutation.mutate({ email, password });
     };
 
     const togglePasswordVisibility = () => {
@@ -64,17 +62,17 @@ export default function SignIn() {
 
     return (
         <div className="min-h-screen flex items-center justify-center">
-            <div className="bg-gray-200 p-8 rounded-lg shadow-lg w-full max-w-md">
+            <div className="bg-bg p-8 rounded-lg shadow-lg w-full max-w-md">
                 <div className="flex flex-col items-center space-y-4">
                     <img
                         src="/OSSLOGO.png"
                         alt="OSS Logo"
                         className="w-32 h-32"
                     />
-                    <h1 className="text-2xl font-bold text-gray-800">
+                    <h1 className="text-2xl font-bold text-text-primary">
                         Welcome Back
                     </h1>
-                    <p className="text-gray-600">
+                    <p className="text-text-secondary">
                         Haven't signed up yet?{" "}
                         <a
                             href="/sign-up"
@@ -90,11 +88,12 @@ export default function SignIn() {
                                 placeholder="Email address"
                                 value={email}
                                 onChange={handleEmailChange}
+                                disabled={signInMutation.isPending}
                                 className={`w-full px-4 py-2 border ${
                                     emailError
                                         ? "border-red-500"
-                                        : "border-gray-400"
-                                } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                                        : "border-border"
+                                } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed bg-bg-light`}
                             />
                             {emailError && (
                                 <p className="text-red-500 text-sm mt-1">
@@ -108,12 +107,14 @@ export default function SignIn() {
                                 placeholder="Password"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
-                                className="w-full px-4 py-2 border border-gray-400 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                disabled={signInMutation.isPending}
+                                className="w-full px-4 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed bg-bg-light"
                             />
                             <button
                                 type="button"
                                 onClick={togglePasswordVisibility}
-                                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                                disabled={signInMutation.isPending}
+                                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none disabled:opacity-50"
                             >
                                 {showPassword ? (
                                     <svg
@@ -148,9 +149,12 @@ export default function SignIn() {
                         </div>
                         <button
                             type="submit"
-                            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition duration-200"
+                            disabled={signInMutation.isPending}
+                            className="w-full bg-bg-light text-text-primary py-2 px-4 rounded-md hover:bg-bg-extra-light transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
-                            Sign In
+                            {signInMutation.isPending
+                                ? "Signing In..."
+                                : "Sign In"}
                         </button>
                     </form>
                 </div>

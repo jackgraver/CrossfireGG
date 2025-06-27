@@ -60,7 +60,7 @@ export default function ManageTeams() {
     return (
         <div className="flex flex-col justify-center items-center">
             {showInput && <InputPopup />}
-            <h1 className="text-4xl pb-12 pt-12 text-gray-200">
+            <h1 className="text-4xl pb-12 pt-12 text-text-primary">
                 Current Teams
             </h1>
             <OSSTable
@@ -75,7 +75,7 @@ export default function ManageTeams() {
                             <input
                                 type="number"
                                 value={team.seed}
-                                className="w-16 text-center rounded border-2 border-gray-300"
+                                className="w-16 text-center rounded border-2 border-border bg-bg-light text-text-primary"
                                 min="1"
                                 readOnly
                             />

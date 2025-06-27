@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import type { Match, Team } from "../types/Types";
 import { api } from "../lib/api";
 import { useQuery } from "@tanstack/react-query";
+import { formatDateOnly } from "../lib/dateUtils";
 
 const openInNewTab = (url: string) => {
     window.open(url, "_blank", "noopener,noreferrer");
@@ -28,13 +29,7 @@ export default function Team() {
     const { team, matches } = data!;
 
     const formatDate = (timestamp: number) => {
-        return new Date(timestamp * 1000).toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "short",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-        });
+        return formatDateOnly(timestamp);
     };
 
     const getMatchResult = (match: Match) => {
@@ -57,41 +52,41 @@ export default function Team() {
     return (
         <div className="max-w-[1200px] mx-auto p-5 min-h-screen font-sans">
             {/* Team Header */}
-            <div className="bg-white rounded-xl p-8 mb-8 shadow-md">
+            <div className="bg-bg rounded-xl p-8 mb-8 shadow-md">
                 <div className="flex items-center gap-5">
                     {team.team_logo && (
                         <img
                             src={team.team_logo}
                             alt={team.team_name}
-                            className="w-20 h-20 rounded-full object-cover border-4 border-gray-200"
+                            className="w-20 h-20 rounded-full object-cover border-4 border-border"
                         />
                     )}
                     <div className="flex-1">
-                        <h1 className="text-3xl font-bold text-gray-800 mb-3">
+                        <h1 className="text-3xl font-bold text-text-primary mb-3">
                             {team.team_name}
                         </h1>
-                        <div className="flex flex-wrap gap-8">
+                        <div className="flex flex-wrap gap-8 text-text-primary">
                             <div className="flex flex-col gap-1">
-                                <span className="text-sm text-gray-500 font-medium">
+                                <span className="text-sm text-text-secondary font-bold">
                                     Record:
                                 </span>
-                                <span className="text-lg text-gray-800 font-bold">
+                                <span className="text-lg text-text-secondary font-medium">
                                     {team.win}-{team.loss}
                                 </span>
                             </div>
                             <div className="flex flex-col gap-1">
-                                <span className="text-sm text-gray-500 font-medium">
+                                <span className="text-sm text-text-secondary font-bold">
                                     Seed:
                                 </span>
-                                <span className="text-lg text-gray-800 font-bold">
+                                <span className="text-lg text-text-secondary font-medium">
                                     {team.seed}
                                 </span>
                             </div>
                             <div className="flex flex-col gap-1">
-                                <span className="text-sm text-gray-500 font-medium">
+                                <span className="text-sm text-text-secondary font-bold">
                                     Status:
                                 </span>
-                                <span className="text-lg text-gray-800 font-bold">
+                                <span className="text-lg text-text-secondary font-medium">
                                     {team.paid ? "Paid" : "Unpaid"} •{" "}
                                     {team.joined_tournament
                                         ? "Joined"
@@ -104,8 +99,8 @@ export default function Team() {
             </div>
 
             {/* Matches Section */}
-            <div className="bg-white rounded-xl p-8 shadow-md">
-                <h2 className="text-2xl font-bold text-gray-800 mb-6">
+            <div className="bg-bg rounded-xl p-8 shadow-md">
+                <h2 className="text-2xl font-bold text-text-primary mb-6">
                     Match History
                 </h2>
                 {matches && matches.length > 0 ? (
@@ -113,7 +108,7 @@ export default function Team() {
                         {matches.map((match) => (
                             <div
                                 key={match.match_id}
-                                className="border border-gray-200 rounded-lg p-5 hover:shadow-lg transition-all cursor-pointer"
+                                className="border border-border bg-bg-light rounded-lg p-5 hover:shadow-lg transition-all cursor-pointer"
                                 onClick={() => {
                                     if (match.faceit_url) {
                                         openInNewTab(match.faceit_url);
@@ -121,22 +116,22 @@ export default function Team() {
                                 }}
                             >
                                 <div className="flex justify-between items-center mb-4">
-                                    <span className="text-sm text-gray-600 font-medium bg-gray-100 px-3 py-1 rounded-full">
+                                    <span className="text-sm text-text-secondary font-medium bg-bg-extra-light px-3 py-1 rounded-full">
                                         {match.round}
                                     </span>
-                                    <span className="text-sm text-gray-600">
+                                    <span className="text-sm text-text-secondary">
                                         {formatDate(match.scheduled_at)}
                                     </span>
                                 </div>
                                 <div className="flex justify-between items-center">
                                     <div className="flex items-center gap-4 flex-1">
-                                        <span className="text-gray-800 font-semibold">
+                                        <span className="text-text-primary font-semibold">
                                             {team.team_name}
                                         </span>
-                                        <span className="text-lg font-bold text-gray-800 min-w-[60px] text-center">
+                                        <span className="text-lg font-bold text-text-primary min-w-[60px] text-center">
                                             {getMatchScore(match)}
                                         </span>
-                                        <span className="text-gray-800 font-semibold">
+                                        <span className="text-text-primary font-semibold">
                                             {getOpponent(match)}
                                         </span>
                                     </div>
@@ -156,7 +151,7 @@ export default function Team() {
                                         >
                                             {getMatchResult(match)}
                                         </span>
-                                        <span className="text-xs uppercase text-gray-500">
+                                        <span className="text-xs uppercase text-text-secondary">
                                             {match.status}
                                         </span>
                                     </div>
@@ -165,7 +160,7 @@ export default function Team() {
                         ))}
                     </div>
                 ) : (
-                    <div className="text-center text-gray-600 text-base py-10">
+                    <div className="text-center text-text-secondary text-base py-10">
                         No matches found for this team.
                     </div>
                 )}

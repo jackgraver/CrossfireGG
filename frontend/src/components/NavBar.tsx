@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
+function toggleDarkMode() {
+    const isDark = document.documentElement.classList.toggle("dark");
+    localStorage.setItem("theme", isDark ? "dark" : "light");
+}
+
 export default function NavBar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const username = "ADMIN"; // This will be replaced with actual user data later
@@ -9,7 +14,7 @@ export default function NavBar() {
     const signedIn = token !== null && token !== "";
 
     return (
-        <nav className="bg-bg shadow-md">
+        <nav className="bg-bg-dark">
             <div className="w-full px-4">
                 <div className="flex justify-between h-16">
                     <div className="flex items-center">
@@ -26,7 +31,7 @@ export default function NavBar() {
                         <div className="relative">
                             <button
                                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                                className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
+                                className="inline-flex items-center justify-center p-2 rounded-md text-text-secondary hover:text-text-primary hover:bg-bg-light focus:outline-none"
                             >
                                 <span className="sr-only">Open main menu</span>
                                 {/* Hamburger icon */}
@@ -67,15 +72,18 @@ export default function NavBar() {
 
                             {/* Dropdown menu */}
                             {isMenuOpen && (
-                                <div className="origin-top-right absolute right-0 mt-2 w-64 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                                <div
+                                    className="origin-top-right absolute right-0 mt-2 w-64 rounded-md shadow-lg bg-gradient-to-b from-bg-light to-bg ring-1 ring-black ring-opacity-5"
+                                    onMouseLeave={() => setIsMenuOpen(false)}
+                                >
                                     {/* User section */}
-                                    <div className="px-4 py-3 border-b border-gray-200">
+                                    <div className="px-4 py-3 border-b border-border">
                                         <div className="flex items-center">
                                             <div className="flex-shrink-0">
-                                                <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
+                                                <div className="h-10 w-10 rounded-full bg-bg-light flex items-center justify-center">
                                                     <svg
                                                         xmlns="http://www.w3.org/2000/svg"
-                                                        className="h-6 w-6 text-gray-600"
+                                                        className="h-6 w-6 text-text-secondary"
                                                         fill="none"
                                                         viewBox="0 0 24 24"
                                                         stroke="currentColor"
@@ -90,7 +98,7 @@ export default function NavBar() {
                                                 </div>
                                             </div>
                                             <div className="ml-3">
-                                                <p className="text-sm font-medium text-gray-900">
+                                                <p className="text-sm font-medium text-text-primary">
                                                     {username}
                                                 </p>
                                             </div>
@@ -105,24 +113,39 @@ export default function NavBar() {
                                     >
                                         <Link
                                             to="/manage-teams"
-                                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                            className="block px-4 py-2 text-sm text-text-secondary hover:bg-bg-light"
                                             role="menuitem"
                                             onClick={() => setIsMenuOpen(false)}
                                         >
                                             Manage Teams
                                         </Link>
                                         <Link
+                                            to="/casting"
+                                            className="block px-4 py-2 text-sm text-text-secondary hover:bg-bg-light"
+                                            role="menuitem"
+                                            onClick={() => setIsMenuOpen(false)}
+                                        >
+                                            Casting
+                                        </Link>
+                                        <Link
                                             to="/admin"
-                                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                            className="block px-4 py-2 text-sm text-text-secondary hover:bg-bg-light"
                                             role="menuitem"
                                             onClick={() => setIsMenuOpen(false)}
                                         >
                                             Admin
                                         </Link>
+                                        <div
+                                            className="block px-4 py-2 text-sm text-text-secondary hover:bg-bg-light cursor-pointer"
+                                            role="menuitem"
+                                            onClick={() => toggleDarkMode()}
+                                        >
+                                            Toggle Dark Mode
+                                        </div>
                                         {signedIn ? (
                                             <Link
                                                 to="/"
-                                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                                className="block px-4 py-2 text-sm text-text-secondary hover:bg-bg-light"
                                                 role="menuitem"
                                                 onClick={() =>
                                                     localStorage.removeItem(
@@ -135,7 +158,7 @@ export default function NavBar() {
                                         ) : (
                                             <Link
                                                 to="/sign-in"
-                                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                                className="block px-4 py-2 text-sm text-text-secondary hover:bg-bg-light"
                                                 role="menuitem"
                                                 onClick={() =>
                                                     setIsMenuOpen(false)

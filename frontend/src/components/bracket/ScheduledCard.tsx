@@ -1,5 +1,6 @@
 import type { Match } from "../../types/Types";
 import { MatchTeam } from "./MatchTeam";
+import { formatMatchDate } from "../../lib/dateUtils";
 
 const openInNewTab = (url: string) => {
     window.open(url, "_blank", "noopener,noreferrer");
@@ -9,41 +10,22 @@ type ScheduledCardProps = {
     match: Match | undefined;
 };
 
-const getDate = (date: number) => {
-    const matchDate = new Date(date * 1000);
-    const today = new Date();
-
-    // Check if the match is today
-    const isToday = matchDate.toDateString() === today.toDateString();
-
-    if (isToday) {
+export default function ScheduledCard({ match }: ScheduledCardProps) {
+    if (!match) {
         return (
-            "Today @" +
-            matchDate.toLocaleTimeString("en-US", {
-                hour: "numeric",
-                minute: "2-digit",
-                hour12: true,
-            })
+            <div className="flex flex-col mx-2">
+                <div className="bg-bg w-fit max-w-full whitespace-nowrap overflow-hidden rounded-t-md px-1 py-1">
+                    <div className="text-xs text-text-primary  flex items-center gap-1">
+                        <p className="">🕒</p>
+                    </div>
+                </div>
+                <div className="group relative flex flex-col rounded-b-md rounded-r-md text-text-primary border border-border cursor-pointer p-2 bg-bg">
+                    <MatchTeam team={undefined} score={undefined} />
+                    <MatchTeam team={undefined} score={undefined} />
+                </div>
+            </div>
         );
     }
-
-    return (
-        matchDate.toLocaleDateString("en-US", {
-            month: "2-digit",
-            day: "2-digit",
-            year: "numeric",
-        }) +
-        " @" +
-        matchDate.toLocaleTimeString("en-US", {
-            hour: "numeric",
-            minute: "2-digit",
-            hour12: true,
-        })
-    );
-};
-
-export default function ScheduledCard({ match }: ScheduledCardProps) {
-    if (!match?.scheduled_at) return null;
 
     return (
         <div className="flex flex-col mx-2">
@@ -54,21 +36,14 @@ export default function ScheduledCard({ match }: ScheduledCardProps) {
                     </div>
                 </div>
             ) : (
-                <div className="flex flex-row items-center bg-white w-fit max-w-full whitespace-nowrap overflow-hidden text-ellipsis rounded-t-md px-1 py-1">
-                    <div className="text-xs text-black flex items-center gap-1">
+                <div className="flex flex-row items-center bg-bg w-fit max-w-full whitespace-nowrap overflow-hidden text-ellipsis rounded-t-md px-1 py-1">
+                    <div className="text-xs text-text-primary  flex items-center gap-1">
                         <p className="">🕒</p>
-                        {getDate(match.scheduled_at)}
+                        {formatMatchDate(match.scheduled_at)}
                     </div>
                 </div>
             )}
-            <div
-                className="group relative flex flex-col rounded-b-md rounded-r-md text-gray-200 border cursor-pointer p-2"
-                onClick={() => {
-                    // if (match?.faceit_url) {
-                    //     openInNewTab(match.faceit_url);
-                    // }
-                }}
-            >
+            <div className="group relative flex flex-col rounded-b-md rounded-r-md text-text-primary border border-border cursor-pointer p-2 bg-bg">
                 <MatchTeam
                     team={match?.teams.team1}
                     score={match?.team1_score ?? undefined}

@@ -8,6 +8,7 @@ export type Match = {
     teams: { team1: Team; team2: Team };
     team1_score: number;
     team2_score: number;
+    caster_id?: number;
 };
 
 export type Round =
@@ -71,4 +72,14 @@ export type MatchMap = {
             };
         }[];
     }[];
+};
+
+export type MatchCaster = {
+    match_id: string;
+    caster_id: number;
+};
+
+export type MatchesWithCasters = {
+    claimed: Match[];
+    unclaimed: Match[];
 };

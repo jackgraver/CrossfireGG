@@ -75,8 +75,10 @@ def get_player_stats_by_match_id(match_id: str):
                 "round": match.round,
                 "faceit_url": match.faceit_url,
                 "winner": match.winner,
-                "team1": {"team_id": team1.team_id, "team_name": team1.team_name, "team_logo": team1.team_logo},
-                "team2": {"team_id": team2.team_id, "team_name": team2.team_name, "team_logo": team2.team_logo},
+                "teams": {
+                    "team1": {"team_id": team1.team_id, "team_name": team1.team_name, "team_logo": team1.team_logo},
+                    "team2": {"team_id": team2.team_id, "team_name": team2.team_name, "team_logo": team2.team_logo},
+                },
                 "team1_score": match.team1_score,
                 "team2_score": match.team2_score,
             },

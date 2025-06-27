@@ -1,3 +1,4 @@
+import asyncio
 from datetime import datetime, timedelta
 from pathlib import Path
 from dotenv import load_dotenv
@@ -6,11 +7,13 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse
 from jose import jwt
 
-from db.users import *  
+from db.user.user_model import *
+from db.user.user_sql import *
 from db.db import *
 from db.match.match_model import *
 from db.match.match_sql import *
 from db.match.match_util import process_matches
+from db.match.match_caster_sql import *
 from db.team.team_model import *
 from db.team.team_sql import *
 from db.metadata.metadata_model import *
@@ -34,6 +37,12 @@ app.add_middleware(
 
 FACEIT_API_KEY = os.getenv("FACEIT_API_KEY")
 
+
+@app.middleware("http")
+async def global_wrapper(request: Request, call_next):
+    await asyncio.sleep(0)
+    return await call_next(request)
+
 @app.get("/stats")
 def get_stats():
     res = get_all_player_stats()
@@ -53,6 +62,47 @@ def get_players():
 def get_matches():
     res = fetch_all_matches()
     return res
+
+@app.get("/matches/casting")
+def get_matches_for_casting():
+    res = get_matches_with_casters()
+    return res
+
+@app.post("/matches/claim")
+async def claim_match_endpoint(request: Request):
+    data = await request.json()
+    match_id = data.get("match_id")
+    
+    if not match_id:
+        raise HTTPException(status_code=400, detail="Missing match_id")
+    
+    # TODO: Get user_id from JWT token when authentication is implemented
+    # For now, we'll use a placeholder user_id
+    # In a real implementation, you would decode the JWT token to get the user_id
+    caster_id = 1  # Placeholder - should come from JWT token
+    
+    success = claim_match(match_id, caster_id)
+    if not success:
+        raise HTTPException(status_code=400, detail="Match already claimed or invalid match_id")
+    
+    return JSONResponse(content={"message": "Match claimed successfully"}, status_code=200)
+
+@app.post("/matches/unclaim")
+async def unclaim_match_endpoint(request: Request):
+    data = await request.json()
+    match_id = data.get("match_id")
+    
+    if not match_id:
+        raise HTTPException(status_code=400, detail="Missing match_id")
+    
+    # TODO: Get user_id from JWT token when authentication is implemented
+    caster_id = 1  # Placeholder - should come from JWT token
+    
+    success = unclaim_match(match_id, caster_id)
+    if not success:
+        raise HTTPException(status_code=400, detail="Match not claimed by this user or invalid match_id")
+    
+    return JSONResponse(content={"message": "Match unclaimed successfully"}, status_code=200)
 
 @app.get("/teams")
 def get_teams():
@@ -105,7 +155,7 @@ async def sign_in(request: Request):
     if not email or not password:
         raise HTTPException(status_code=400, detail="Missing email or password")
 
-    user = get_user_by_email(get_db_connection(), email)
+    user = get_user_by_email(email)
     if not user or not verify_password(password, user["hashed_password"]):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
@@ -122,13 +172,11 @@ async def sign_up(request: Request):
     if not email or not username or not password:
         raise HTTPException(status_code=400, detail="Missing required fields")
 
-    conn = get_db_connection()
-
-    if user_exists(conn, email):
+    if user_exists(email):
         raise HTTPException(status_code=400, detail="Email already in use")
 
-    hashed_password = bcrypt.hash(password)
-    insert_user(conn, email, hashed_password)
+    hashed_password = hash_password(password)
+    insert_user(email, hashed_password)
 
     return JSONResponse(content={"message": "User created successfully"}, status_code=201)
 

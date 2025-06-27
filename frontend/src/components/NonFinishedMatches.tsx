@@ -61,11 +61,10 @@ export default function NonFinishedMatches({
         );
     };
 
-    if (matches.length === 0) return null;
+    if (matches.length === 0) return <EmptyNonFinishedMatches />;
 
     return (
         <div className="relative w-full flex justify-center items-center">
-            {/* Left Arrow */}
             {matches.length > matchesPerPage && (
                 <button
                     onClick={goToPrevious}
@@ -87,8 +86,6 @@ export default function NonFinishedMatches({
                     </svg>
                 </button>
             )}
-
-            {/* Fixed-width container for matches */}
             <div
                 className="flex gap-2 overflow-hidden"
                 style={{
@@ -102,8 +99,6 @@ export default function NonFinishedMatches({
                     </div>
                 ))}
             </div>
-
-            {/* Right Arrow */}
             {matches.length > matchesPerPage && (
                 <button
                     onClick={goToNext}
@@ -125,6 +120,64 @@ export default function NonFinishedMatches({
                     </svg>
                 </button>
             )}
+        </div>
+    );
+}
+
+function EmptyNonFinishedMatches() {
+    return (
+        <div className="relative w-full flex justify-center items-center">
+            <button
+                onClick={() => {}}
+                className="z-10 bg-gray-800 hover:bg-gray-700 text-white rounded-full w-8 h-8 flex items-center justify-center shadow transition duration-200 mx-2"
+                aria-label="Previous match"
+            >
+                <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 19l-7-7 7-7"
+                    />
+                </svg>
+            </button>
+
+            <div
+                className="flex gap-2 overflow-hidden"
+                style={{
+                    width: `${260}px`, // matchesPerPage × card width (~260px)
+                    transition: "width 0.2s ease-in-out",
+                }}
+            >
+                <div className="w-[250px] shrink-0">
+                    <ScheduledCard match={undefined} />
+                </div>
+            </div>
+
+            <button
+                onClick={() => {}}
+                className="z-10 bg-gray-800 hover:bg-gray-700 text-white rounded-full w-8 h-8 flex items-center justify-center shadow transition duration-200 mx-2"
+                aria-label="Next match"
+            >
+                <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                >
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 5l7 7-7 7"
+                    />
+                </svg>
+            </button>
         </div>
     );
 }

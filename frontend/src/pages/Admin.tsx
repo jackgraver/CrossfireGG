@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Notification from "../components/Notification";
+import { formatFullDate } from "../lib/dateUtils";
 
 export type Tournament = {
     t_id?: string;
@@ -100,7 +101,7 @@ export default function Admin() {
     }, []);
 
     const formatTimestamp = (timestamp: number) => {
-        return new Date(timestamp * 1000).toLocaleString();
+        return formatFullDate(timestamp);
     };
 
     const handleToggleStage = async () => {

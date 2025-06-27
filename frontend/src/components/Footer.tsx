@@ -1,16 +1,16 @@
 export default function Footer() {
     return (
-        <footer className="bg-gray-200 shadow-md mt-12">
+        <footer className="bg-bg shadow-md mt-12">
             <div className="w-full px-4 py-4">
                 <div className="flex justify-between items-center">
-                    <div className="text-gray-600">Organized by OSS</div>
+                    <div className="text-text-secondary">Organized by OSS</div>
                     <div className="flex space-x-4">
                         {/* Twitter Icon */}
                         <a
                             href="https://twitter.com/OSSCSLeague"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-gray-600 hover:text-gray-900"
+                            className="text-text-secondary hover:text-text-primary"
                         >
                             <svg
                                 className="h-6 w-6"
@@ -26,7 +26,7 @@ export default function Footer() {
                             href="https://discord.gg/QBJYTNXRqW"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-gray-600 hover:text-gray-900"
+                            className="text-text-secondary hover:text-text-primary"
                         >
                             <svg
                                 className="h-6 w-6"

@@ -10,11 +10,10 @@ import Footer from "./components/Footer";
 import Admin from "./pages/Admin";
 import MatchStats from "./pages/MatchStats";
 import Team from "./pages/Team";
+import Casting from "./pages/Casting";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const queryClient = new QueryClient();
-
-document.documentElement.classList.add("dark");
 
 function App() {
     return (
@@ -30,6 +29,7 @@ function App() {
                     <Route path="/admin" element={<Admin />} />
                     <Route path="/stats/:match_id" element={<MatchStats />} />
                     <Route path="/team/:team_id" element={<Team />} />
+                    <Route path="/casting" element={<Casting />} />
                 </Routes>
                 <Footer />
             </Router>

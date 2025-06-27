@@ -11,16 +11,13 @@ type MatchCardProps = {
 };
 
 export default function MatchCard({ match }: MatchCardProps) {
+    // if (!match) {
+    //     console.log("Match is undefined");
+    // }
+
     const navigate = useNavigate();
     return (
-        <div
-            className="group relative flex flex-col m-2 rounded-md text-gray-200 border"
-            onClick={() => {
-                // if (match?.faceit_url) {
-                //     openInNewTab(match.faceit_url);
-                // }
-            }}
-        >
+        <div className="group relative flex flex-col m-2 rounded-md text-text-primary border border-border bg-bg">
             <MatchTeam
                 team={match?.teams.team1}
                 winner={
@@ -39,30 +36,27 @@ export default function MatchCard({ match }: MatchCardProps) {
                 }
                 score={match?.team2_score}
             />
-            {match && (
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-6">
+
+            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-6">
+                <button
+                    onClick={() => {
+                        if (match?.faceit_url) {
+                            openInNewTab(match.faceit_url);
+                        }
+                    }}
+                    className="w-10 h-10 rounded-full bg-white hover:bg-gray-200 transition flex items-center justify-center cursor-pointer"
+                >
+                    <img src="/faceit.png" alt="F" className="w-5 h-5" />
+                </button>
+                {match?.status === "FINISHED" && (
                     <button
-                        onClick={() => {
-                            if (match?.faceit_url) {
-                                openInNewTab(match.faceit_url);
-                            }
-                        }}
-                        className="w-10 h-10 rounded-full bg-white hover:bg-gray-200 transition flex items-center justify-center cursor-pointer"
+                        onClick={() => navigate(`/stats/${match?.match_id}`)}
+                        className="w-10 h-10 rounded-full bg-white hover:bg-gray-200 transition text-lg cursor-pointer"
                     >
-                        <img src="/faceit.png" alt="F" className="w-5 h-5" />
+                        📊
                     </button>
-                    {match.status === "FINISHED" && (
-                        <button
-                            onClick={() =>
-                                navigate(`/stats/${match?.match_id}`)
-                            }
-                            className="w-10 h-10 rounded-full bg-white hover:bg-gray-200 transition text-lg cursor-pointer"
-                        >
-                            📊
-                        </button>
-                    )}
-                </div>
-            )}
+                )}
+            </div>
         </div>
     );
 }

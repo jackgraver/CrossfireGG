@@ -101,7 +101,7 @@ export default function OSSTable<T>({
         <div className={`overflow-x-auto ${className}`}>
             <table className="table-auto border-collapse">
                 <thead>
-                    <tr className="bg-gray-100 text-left text-sm text-gray-600 uppercase">
+                    <tr className="bg-bg-light text-left text-sm text-text-primary uppercase">
                         {columns.map((col, i) => (
                             <th
                                 key={i}
@@ -109,7 +109,7 @@ export default function OSSTable<T>({
                                     col.className || ""
                                 } ${
                                     !col.notSortable
-                                        ? "cursor-pointer hover:bg-gray-200"
+                                        ? "cursor-pointer hover:bg-bg-extra-light"
                                         : ""
                                 }`}
                                 onClick={() => handleSort(col)}
@@ -126,7 +126,7 @@ export default function OSSTable<T>({
                         <tr>
                             <td
                                 colSpan={columns.length}
-                                className="text-center py-6 text-gray-400"
+                                className="text-center py-6 text-text-secondary"
                             >
                                 Loading...
                             </td>
@@ -135,7 +135,7 @@ export default function OSSTable<T>({
                         <tr>
                             <td
                                 colSpan={columns.length}
-                                className="text-center py-6 text-gray-400"
+                                className="text-center py-6 text-text-secondary"
                             >
                                 {emptyMessage}
                             </td>
@@ -145,11 +145,8 @@ export default function OSSTable<T>({
                             <tr
                                 key={rowKey?.(row) ?? rowIndex}
                                 className={`
-        hover:bg-gray-50 border-t border-gray-200
-        ${
-            rowClassName?.(row) ||
-            (rowIndex % 2 === 0 ? "bg-white" : "bg-gray-50")
-        }
+        hover:bg-bg-extra-light border-t border-border
+        ${rowClassName?.(row) || (rowIndex % 2 === 0 ? "bg-bg-light" : "bg-bg")}
     `}
                             >
                                 {columns.map((col, colIndex) => {

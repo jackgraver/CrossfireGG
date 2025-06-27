@@ -57,9 +57,7 @@ export default function Home() {
             api.get<{ reg_season: Match[]; playoffs: Match[] }>("/matches"),
     });
 
-    if (teamsLoading || matchesLoading) {
-        return <div>Loading...</div>;
-    }
+    const loading = teamsLoading || matchesLoading;
 
     if (teamsError || matchesError) {
         return <div>Error: {teamsError?.message || matchesError?.message}</div>;
@@ -69,9 +67,11 @@ export default function Home() {
         reg_season: regSeasonTeams,
         playoffs: playoffsTeams,
         last_update: lastUpdate,
-    } = teamData!;
-    const { reg_season: regSeasonMatches, playoffs: playoffsMatches } =
-        matchData!;
+    } = loading ? { reg_season: [], playoffs: [], last_update: 0 } : teamData!;
+
+    const { reg_season: regSeasonMatches, playoffs: playoffsMatches } = loading
+        ? { reg_season: [], playoffs: [] }
+        : matchData!;
 
     const nonFinishedMatches = [...regSeasonMatches, ...playoffsMatches].filter(
         (match) => match.status !== "FINISHED"
@@ -89,20 +89,19 @@ export default function Home() {
                 return regSeasonTeams;
         }
     };
-
     const currentTeams = getCurrentTeams();
 
     return (
         <div className="flex flex-col justify-center items-center">
-            <div className="flex flex-row justify-center items-center w-5/6 mt-12 mb-16">
+            <div className="flex flex-row justify-center items-center w-5/6 mb-16">
                 <img src="/OSSLOGO.png" className="w-72 h-72" />
-                <div className="flex flex-col text-white">
+                <div className="flex flex-col text-text-primary">
                     <h1 className="text-7xl font-semibold">
                         OFF SEASON
                         <br />
                         SHENANIGANS
                     </h1>
-                    <p className="text-2xl text-gray-400">
+                    <p className="text-2xl text-text-secondary">
                         Off Season Shenanigans the ultimate Counter-Strike
                         <br />
                         tournament during the off seasons!
@@ -110,11 +109,7 @@ export default function Home() {
                 </div>
             </div>
             <div>
-                {nonFinishedMatches.length > 0 && (
-                    <>
-                        <NonFinishedMatches matches={nonFinishedMatches} />
-                    </>
-                )}
+                <NonFinishedMatches matches={nonFinishedMatches} />
             </div>
             <div className="my-6">
                 <ViewSelector
@@ -123,57 +118,53 @@ export default function Home() {
                     onViewChange={handleViewChange}
                 />
             </div>
-            {!currentTeams ? (
-                "LOADING..."
-            ) : (
-                <div className="flex flex-col justify-center items-center w-5/6 mt-4 relative">
-                    <div className="flex flex-row absolute right-0 top-0 justify-end items-center gap-2 text-white">
-                        <p className="text-sm text-gray-400">
-                            Last Updated:{" "}
-                            {new Date(lastUpdate * 1000).toDateString()}
-                        </p>
-                        <button
-                            onClick={() => refetchTeams()}
-                            className="p-2 rounded-full hover:bg-gray-700 transition-colors duration-200"
-                            title="Refresh data"
+            <div className="flex flex-col justify-center items-center w-5/6 mt-4 relative">
+                <div className="flex flex-row absolute right-0 top-0 justify-end items-center gap-2 text-white">
+                    <p className="text-sm text-gray-400">
+                        Last Updated:{" "}
+                        {new Date(lastUpdate * 1000).toDateString()}
+                    </p>
+                    <button
+                        onClick={() => refetchTeams()}
+                        className="p-2 rounded-full hover:bg-gray-700 transition-colors duration-200"
+                        title="Refresh data"
+                    >
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
                         >
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                className="h-5 w-5"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                                />
-                            </svg>
-                        </button>
-                    </div>
-                    {displayTab === "regseason" && (
-                        <div className="w-full">
-                            <RegularSeasonBracket
-                                teams={regSeasonTeams}
-                                matches={regSeasonMatches}
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
                             />
-                        </div>
-                    )}
-                    {displayTab === "playoffs" && (
-                        <div className="w-full">
-                            <PlayoffBracket
-                                teams={playoffsTeams}
-                                matches={playoffsMatches}
-                            />
-                        </div>
-                    )}
-                    {displayTab === "standings" && (
-                        <Standings teams={currentTeams} />
-                    )}
+                        </svg>
+                    </button>
                 </div>
-            )}
+                {displayTab === "regseason" && (
+                    <div className="w-full">
+                        <RegularSeasonBracket
+                            teams={regSeasonTeams}
+                            matches={regSeasonMatches}
+                        />
+                    </div>
+                )}
+                {displayTab === "playoffs" && (
+                    <div className="w-full">
+                        <PlayoffBracket
+                            teams={playoffsTeams}
+                            matches={playoffsMatches}
+                        />
+                    </div>
+                )}
+                {displayTab === "standings" && (
+                    <Standings teams={currentTeams} />
+                )}
+            </div>
         </div>
     );
 }
