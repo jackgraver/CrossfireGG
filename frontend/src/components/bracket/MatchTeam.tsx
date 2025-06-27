@@ -15,10 +15,10 @@ export function MatchTeam({
         <div
             className={`${
                 !team && "min-w-64"
-            } rounded-md grid grid-cols-[auto_auto_1fr_auto] items-center gap-x-3 px-2 py-1 ${bg}`}
+            } grid grid-cols-[auto_auto_1fr_auto] items-center gap-x-3 rounded-md px-2 py-1 ${bg}`}
         >
             {/* Logo */}
-            <div className="w-6 h-6 flex-shrink-0">
+            <div className="h-6 w-6 flex-shrink-0">
                 <img
                     src={team?.team_logo || "OSSLOGO.png"}
                     onError={(e) => {
@@ -26,19 +26,19 @@ export function MatchTeam({
                         e.currentTarget.src = "/OSSLOGO.png";
                     }}
                     alt="?"
-                    className="w-6 h-6 rounded object-cover"
+                    className="h-6 w-6 rounded object-cover"
                 />
             </div>
 
             {/* Seed */}
-            <div className="w-6 text-left flex-shrink-0">
+            <div className="w-6 flex-shrink-0 text-left">
                 <span className="text-sm">{team?.seed}</span>
             </div>
 
             {/* Team Name */}
             <div className="min-w-0 text-left">
                 <span
-                    className="text-sm truncate block"
+                    className="block truncate text-sm"
                     title={team?.team_name}
                 >
                     {team?.team_name}
@@ -47,7 +47,7 @@ export function MatchTeam({
 
             {/* Score */}
             {score !== undefined && (
-                <div className="w-8 text-right flex-shrink-0">
+                <div className="w-8 flex-shrink-0 text-right">
                     <span className="text-sm font-medium">{score}</span>
                 </div>
             )}

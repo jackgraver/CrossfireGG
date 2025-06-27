@@ -52,11 +52,11 @@ export default function TabButton({
             ref={buttonRef}
             onClick={onClick}
             disabled={disabled}
-            className={`min-w-32 px-6 py-4 text-xl font-bold transition-colors duration-200 flex items-center justify-center gap-2 ${
+            className={`flex min-w-32 items-center justify-center gap-2 px-6 py-4 text-xl font-bold transition-colors duration-200 ${
                 isActive ? "text-blue-600" : "text-gray-400"
             } ${
                 disabled
-                    ? "opacity-50 cursor-not-allowed"
+                    ? "cursor-not-allowed opacity-50"
                     : "hover:text-blue-500"
             } ${className}`}
         >

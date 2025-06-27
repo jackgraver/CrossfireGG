@@ -13,13 +13,13 @@ type ScheduledCardProps = {
 export default function ScheduledCard({ match }: ScheduledCardProps) {
     if (!match) {
         return (
-            <div className="flex flex-col mx-2">
-                <div className="bg-bg w-fit max-w-full whitespace-nowrap overflow-hidden rounded-t-md px-1 py-1">
-                    <div className="text-xs text-text-primary  flex items-center gap-1">
+            <div className="mx-2 flex flex-col">
+                <div className="w-fit max-w-full overflow-hidden whitespace-nowrap rounded-t-md bg-bg px-1 py-1">
+                    <div className="flex items-center gap-1 text-xs text-text-primary">
                         <p className="">🕒</p>
                     </div>
                 </div>
-                <div className="group relative flex flex-col rounded-b-md rounded-r-md text-text-primary border border-border cursor-pointer p-2 bg-bg">
+                <div className="group relative flex cursor-pointer flex-col rounded-b-md rounded-r-md border border-border bg-bg p-2 text-text-primary">
                     <MatchTeam team={undefined} score={undefined} />
                     <MatchTeam team={undefined} score={undefined} />
                 </div>
@@ -28,22 +28,22 @@ export default function ScheduledCard({ match }: ScheduledCardProps) {
     }
 
     return (
-        <div className="flex flex-col mx-2">
+        <div className="mx-2 flex flex-col">
             {match.status == "ONGOING" ? (
-                <div className="bg-green-400 w-fit max-w-full whitespace-nowrap overflow-hidden rounded-t-md px-1 py-1">
-                    <div className="text-xs text-black flex gap-1">
-                        <p className="font-bold mx-2">LIVE!</p>
+                <div className="w-fit max-w-full overflow-hidden whitespace-nowrap rounded-t-md bg-green-400 px-1 py-1">
+                    <div className="flex gap-1 text-xs text-black">
+                        <p className="mx-2 font-bold">LIVE!</p>
                     </div>
                 </div>
             ) : (
-                <div className="flex flex-row items-center bg-bg w-fit max-w-full whitespace-nowrap overflow-hidden text-ellipsis rounded-t-md px-1 py-1">
-                    <div className="text-xs text-text-primary  flex items-center gap-1">
+                <div className="flex w-fit max-w-full flex-row items-center overflow-hidden text-ellipsis whitespace-nowrap rounded-t-md bg-bg px-1 py-1">
+                    <div className="flex items-center gap-1 text-xs text-text-primary">
                         <p className="">🕒</p>
                         {formatMatchDate(match.scheduled_at)}
                     </div>
                 </div>
             )}
-            <div className="group relative flex flex-col rounded-b-md rounded-r-md text-text-primary border border-border cursor-pointer p-2 bg-bg">
+            <div className="group relative flex cursor-pointer flex-col rounded-b-md rounded-r-md border border-border bg-bg p-2 text-text-primary">
                 <MatchTeam
                     team={match?.teams.team1}
                     score={match?.team1_score ?? undefined}
@@ -52,16 +52,16 @@ export default function ScheduledCard({ match }: ScheduledCardProps) {
                     team={match?.teams.team2}
                     score={match?.team2_score ?? undefined}
                 />
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-6">
+                <div className="absolute inset-0 flex items-center justify-center gap-6 bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                     <button
                         onClick={() => {
                             if (match?.faceit_url) {
                                 openInNewTab(match.faceit_url);
                             }
                         }}
-                        className="w-10 h-10 rounded-full bg-white hover:bg-gray-200 transition flex items-center justify-center cursor-pointer"
+                        className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-white transition hover:bg-gray-200"
                     >
-                        <img src="/faceit.png" alt="F" className="w-5 h-5" />
+                        <img src="/faceit.png" alt="F" className="h-5 w-5" />
                     </button>
                 </div>
             </div>

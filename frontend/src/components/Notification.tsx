@@ -24,14 +24,14 @@ export default function Notification({
 
     return (
         <div
-            className={`fixed bottom-4 right-4 rounded-lg px-4 py-3 shadow-lg text-black ${
+            className={`fixed bottom-4 right-4 rounded-lg px-4 py-3 text-black shadow-lg ${
                 error ? "bg-red-500" : "bg-green-500"
             }`}
         >
             <div className="flex items-start justify-between gap-4 text-white">
                 <div className="flex-1">
                     {title && (
-                        <div className="text-xl font-semibold mb-1">
+                        <div className="mb-1 text-xl font-semibold">
                             {title}
                         </div>
                     )}

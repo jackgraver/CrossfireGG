@@ -16,7 +16,7 @@ export default function NavBar() {
     return (
         <nav className="bg-bg-dark">
             <div className="w-full px-4">
-                <div className="flex justify-between h-16">
+                <div className="flex h-16 justify-between">
                     <div className="flex items-center">
                         <Link to="/" className="flex-shrink-0">
                             <img
@@ -31,7 +31,7 @@ export default function NavBar() {
                         <div className="relative">
                             <button
                                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                                className="inline-flex items-center justify-center p-2 rounded-md text-text-secondary hover:text-text-primary hover:bg-bg-light focus:outline-none"
+                                className="inline-flex items-center justify-center rounded-md p-2 text-text-secondary hover:bg-bg-light hover:text-text-primary focus:outline-none"
                             >
                                 <span className="sr-only">Open main menu</span>
                                 {/* Hamburger icon */}
@@ -73,14 +73,14 @@ export default function NavBar() {
                             {/* Dropdown menu */}
                             {isMenuOpen && (
                                 <div
-                                    className="origin-top-right absolute right-0 mt-2 w-64 rounded-md shadow-lg bg-gradient-to-b from-bg-light to-bg ring-1 ring-black ring-opacity-5"
+                                    className="absolute right-0 mt-2 w-64 origin-top-right rounded-md bg-gradient-to-b from-bg-light to-bg shadow-lg ring-1 ring-black ring-opacity-5"
                                     onMouseLeave={() => setIsMenuOpen(false)}
                                 >
                                     {/* User section */}
-                                    <div className="px-4 py-3 border-b border-border">
+                                    <div className="border-b border-border px-4 py-3">
                                         <div className="flex items-center">
                                             <div className="flex-shrink-0">
-                                                <div className="h-10 w-10 rounded-full bg-bg-light flex items-center justify-center">
+                                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-bg-light">
                                                     <svg
                                                         xmlns="http://www.w3.org/2000/svg"
                                                         className="h-6 w-6 text-text-secondary"
@@ -136,7 +136,7 @@ export default function NavBar() {
                                             Admin
                                         </Link>
                                         <div
-                                            className="block px-4 py-2 text-sm text-text-secondary hover:bg-bg-light cursor-pointer"
+                                            className="block cursor-pointer px-4 py-2 text-sm text-text-secondary hover:bg-bg-light"
                                             role="menuitem"
                                             onClick={() => toggleDarkMode()}
                                         >
@@ -149,7 +149,7 @@ export default function NavBar() {
                                                 role="menuitem"
                                                 onClick={() =>
                                                     localStorage.removeItem(
-                                                        "access_token"
+                                                        "access_token",
                                                     )
                                                 }
                                             >

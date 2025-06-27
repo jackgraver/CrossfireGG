@@ -13,6 +13,7 @@ describe("QualElimCard", () => {
         loss: 0,
         paid: true,
         joined_tournament: true,
+        team_logo: "",
     };
 
     it("renders qualified team correctly", () => {
@@ -51,7 +52,7 @@ describe("QualElimCard", () => {
         expect(image).toBeInTheDocument();
         expect(image).toHaveAttribute(
             "src",
-            "https://distribution.faceit-cdn.net/images/c417aaf4-d6ac-4f5b-8fe6-d3a339cb8385.jpeg"
+            "https://distribution.faceit-cdn.net/images/c417aaf4-d6ac-4f5b-8fe6-d3a339cb8385.jpeg",
         );
         expect(image).toHaveClass("w-6", "h-6");
     });

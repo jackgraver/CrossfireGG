@@ -54,9 +54,9 @@ export default function RoundCard({ round, matches }: RoundCardProps) {
     const displayRound = getDisplayRound(round);
 
     return (
-        <div className="flex flex-col p-2 m-2">
-            <div className="flex justify-center items-center">
-                <h1 className="bg-bg-light min-w-16 px-2 py-1 text-2xl text-text-primary">
+        <div className="m-2 flex flex-col p-2">
+            <div className="flex items-center justify-center">
+                <h1 className="min-w-16 bg-bg-light px-2 py-1 text-2xl text-text-primary">
                     {displayRound}
                 </h1>
             </div>
@@ -68,7 +68,7 @@ export default function RoundCard({ round, matches }: RoundCardProps) {
                 { length: numMatchesForRound(round) - matches.length },
                 (_, i) => (
                     <MatchCard key={i} match={undefined} />
-                )
+                ),
             )}
         </div>
     );

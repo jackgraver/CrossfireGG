@@ -26,5 +26,7 @@ class Map(SQLModel, table=True):
 
 
 class MatchCaster(SQLModel, table=True):
+    __tablename__ = "match_caster"
+    
     match_id: str = Field(primary_key=True, foreign_key="match.match_id")
     caster_id: int = Field(primary_key=True, foreign_key="user.user_id")

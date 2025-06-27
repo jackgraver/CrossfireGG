@@ -17,7 +17,7 @@ export default function MatchCard({ match }: MatchCardProps) {
 
     const navigate = useNavigate();
     return (
-        <div className="group relative flex flex-col m-2 rounded-md text-text-primary border border-border bg-bg">
+        <div className="group relative m-2 flex flex-col rounded-md border border-border bg-bg text-text-primary">
             <MatchTeam
                 team={match?.teams.team1}
                 winner={
@@ -37,21 +37,21 @@ export default function MatchCard({ match }: MatchCardProps) {
                 score={match?.team2_score}
             />
 
-            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-6">
+            <div className="absolute inset-0 flex items-center justify-center gap-6 bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                 <button
                     onClick={() => {
                         if (match?.faceit_url) {
                             openInNewTab(match.faceit_url);
                         }
                     }}
-                    className="w-10 h-10 rounded-full bg-white hover:bg-gray-200 transition flex items-center justify-center cursor-pointer"
+                    className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-white transition hover:bg-gray-200"
                 >
-                    <img src="/faceit.png" alt="F" className="w-5 h-5" />
+                    <img src="/faceit.png" alt="F" className="h-5 w-5" />
                 </button>
                 {match?.status === "FINISHED" && (
                     <button
                         onClick={() => navigate(`/stats/${match?.match_id}`)}
-                        className="w-10 h-10 rounded-full bg-white hover:bg-gray-200 transition text-lg cursor-pointer"
+                        className="h-10 w-10 cursor-pointer rounded-full bg-white text-lg transition hover:bg-gray-200"
                     >
                         📊
                     </button>

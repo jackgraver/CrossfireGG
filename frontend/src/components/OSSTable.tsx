@@ -101,7 +101,7 @@ export default function OSSTable<T>({
         <div className={`overflow-x-auto ${className}`}>
             <table className="table-auto border-collapse">
                 <thead>
-                    <tr className="bg-bg-light text-left text-sm text-text-primary uppercase">
+                    <tr className="bg-bg-light text-left text-sm uppercase text-text-primary">
                         {columns.map((col, i) => (
                             <th
                                 key={i}
@@ -126,7 +126,7 @@ export default function OSSTable<T>({
                         <tr>
                             <td
                                 colSpan={columns.length}
-                                className="text-center py-6 text-text-secondary"
+                                className="py-6 text-center text-text-secondary"
                             >
                                 Loading...
                             </td>
@@ -135,7 +135,7 @@ export default function OSSTable<T>({
                         <tr>
                             <td
                                 colSpan={columns.length}
-                                className="text-center py-6 text-text-secondary"
+                                className="py-6 text-center text-text-secondary"
                             >
                                 {emptyMessage}
                             </td>
@@ -144,10 +144,7 @@ export default function OSSTable<T>({
                         sortedData.map((row, rowIndex) => (
                             <tr
                                 key={rowKey?.(row) ?? rowIndex}
-                                className={`
-        hover:bg-bg-extra-light border-t border-border
-        ${rowClassName?.(row) || (rowIndex % 2 === 0 ? "bg-bg-light" : "bg-bg")}
-    `}
+                                className={`border-t border-border hover:bg-bg-extra-light ${rowClassName?.(row) || (rowIndex % 2 === 0 ? "bg-bg-light" : "bg-bg")} `}
                             >
                                 {columns.map((col, colIndex) => {
                                     const raw =

@@ -25,7 +25,7 @@ export default function MatchStats() {
         queryKey: ["match", match_id],
         queryFn: () =>
             api.get<{ match_info: Match; maps: MatchMap[] }>(
-                `/stats/${match_id}`
+                `/stats/${match_id}`,
             ),
     });
 
@@ -73,10 +73,10 @@ export default function MatchStats() {
         })) || [];
 
     return (
-        <div className="flex flex-col justify-center items-center">
+        <div className="flex flex-col items-center justify-center">
             {/* Match Information Section */}
-            <div className="w-full max-w-6xl mb-8 p-6 bg-bg rounded-lg border border-border">
-                <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+            <div className="mb-8 w-full max-w-6xl rounded-lg border border-border bg-bg p-6">
+                <div className="flex flex-col items-start justify-between gap-4 lg:flex-row lg:items-center">
                     {/* Teams and Score */}
                     <div className="flex items-center gap-6">
                         {/* Team 1 */}
@@ -84,7 +84,7 @@ export default function MatchStats() {
                             <img
                                 src={match_info.teams.team1.team_logo}
                                 alt={match_info.teams.team1.team_name}
-                                className="w-12 h-12 rounded"
+                                className="h-12 w-12 rounded"
                                 onError={(e) => {
                                     e.currentTarget.src =
                                         "/oss-logo-placeholder.png";
@@ -108,7 +108,7 @@ export default function MatchStats() {
                         </div>
 
                         {/* VS */}
-                        <div className="text-text-secondary text-xl font-bold">
+                        <div className="text-xl font-bold text-text-secondary">
                             VS
                         </div>
 
@@ -132,7 +132,7 @@ export default function MatchStats() {
                             <img
                                 src={match_info.teams.team2.team_logo}
                                 alt={match_info.teams.team2.team_name}
-                                className="w-12 h-12 rounded"
+                                className="h-12 w-12 rounded"
                                 onError={(e) => {
                                     e.currentTarget.src =
                                         "/oss-logo-placeholder.png";
@@ -144,12 +144,12 @@ export default function MatchStats() {
                     {/* Match Details */}
                     <div className="flex flex-col items-end gap-2 text-sm text-text-secondary">
                         <div className="flex items-center gap-2">
-                            <span className="text-text-primary font-medium">
+                            <span className="font-medium text-text-primary">
                                 {match_info.round}
                             </span>
                         </div>
                         <div className="flex items-center gap-2">
-                            <span className="text-text-primary font-medium">
+                            <span className="font-medium text-text-primary">
                                 {formatMatchDate(match_info.scheduled_at)}
                             </span>
                         </div>
@@ -158,11 +158,11 @@ export default function MatchStats() {
                                 href={match_info.faceit_url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center gap-2 text-blue-500 hover:text-blue-400 transition-colors"
+                                className="flex items-center gap-2 text-blue-500 transition-colors hover:text-blue-400"
                             >
                                 <span>View on Faceit</span>
                                 <svg
-                                    className="w-4 h-4"
+                                    className="h-4 w-4"
                                     fill="none"
                                     stroke="currentColor"
                                     viewBox="0 0 24 24"
@@ -181,10 +181,10 @@ export default function MatchStats() {
 
                 {/* Winner Highlight */}
                 {match_info.winner && (
-                    <div className="mt-4 p-3 bg-green-600/10 border border-green-600/20 rounded-lg">
+                    <div className="mt-4 rounded-lg border border-green-600/20 bg-green-600/10 p-3">
                         <div className="flex items-center gap-2">
                             <svg
-                                className="w-5 h-5 text-green-500"
+                                className="h-5 w-5 text-green-500"
                                 fill="currentColor"
                                 viewBox="0 0 20 20"
                             >
@@ -194,7 +194,7 @@ export default function MatchStats() {
                                     clipRule="evenodd"
                                 />
                             </svg>
-                            <span className="text-green-500 font-semibold">
+                            <span className="font-semibold text-green-500">
                                 Winner:{" "}
                                 {match_info.winner ===
                                 match_info.teams.team1.team_id

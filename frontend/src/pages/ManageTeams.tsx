@@ -49,8 +49,8 @@ export default function ManageTeams() {
                     a.joined_tournament === b.joined_tournament
                         ? 0
                         : a.joined_tournament
-                        ? 1
-                        : -1;
+                          ? 1
+                          : -1;
                 break;
         }
 
@@ -58,9 +58,9 @@ export default function ManageTeams() {
     });
 
     return (
-        <div className="flex flex-col justify-center items-center">
+        <div className="flex flex-col items-center justify-center">
             {showInput && <InputPopup />}
-            <h1 className="text-4xl pb-12 pt-12 text-text-primary">
+            <h1 className="pb-12 pt-12 text-4xl text-text-primary">
                 Current Teams
             </h1>
             <OSSTable
@@ -75,7 +75,7 @@ export default function ManageTeams() {
                             <input
                                 type="number"
                                 value={team.seed}
-                                className="w-16 text-center rounded border-2 border-border bg-bg-light text-text-primary"
+                                className="w-16 rounded border-2 border-border bg-bg-light text-center text-text-primary"
                                 min="1"
                                 readOnly
                             />
@@ -85,11 +85,11 @@ export default function ManageTeams() {
                         header: "Paid",
                         accessor: "paid",
                         cell: (team) => (
-                            <div className="flex justify-center items-center">
+                            <div className="flex items-center justify-center">
                                 <input
                                     type="checkbox"
                                     checked={team.paid}
-                                    className="w-4 h-4"
+                                    className="h-4 w-4"
                                     readOnly
                                 />
                             </div>
@@ -99,11 +99,11 @@ export default function ManageTeams() {
                         header: "Joined Tournament",
                         accessor: "joined_tournament",
                         cell: (team) => (
-                            <div className="flex justify-center items-center">
+                            <div className="flex items-center justify-center">
                                 <input
                                     type="checkbox"
                                     checked={team.joined_tournament}
-                                    className="w-4 h-4"
+                                    className="h-4 w-4"
                                     readOnly
                                 />
                             </div>
@@ -112,7 +112,7 @@ export default function ManageTeams() {
                 ]}
             />
             <button
-                className="bg-gray-800 rounded-md pt-1 p-2 mt-1"
+                className="mt-1 rounded-md bg-gray-800 p-2 pt-1"
                 onClick={() => setShowInput(true)}
             >
                 Add Team

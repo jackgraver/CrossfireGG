@@ -93,8 +93,8 @@ export default function Casting() {
 
     if (isLoading) {
         return (
-            <div className="flex justify-center items-center min-h-screen">
-                <div className="text-text-primary text-xl">
+            <div className="flex min-h-screen items-center justify-center">
+                <div className="text-xl text-text-primary">
                     Loading matches...
                 </div>
             </div>
@@ -103,8 +103,8 @@ export default function Casting() {
 
     if (error) {
         return (
-            <div className="flex justify-center items-center min-h-screen">
-                <div className="text-red-500 text-xl">
+            <div className="flex min-h-screen items-center justify-center">
+                <div className="text-xl text-red-500">
                     Error: {error.message}
                 </div>
             </div>
@@ -127,27 +127,27 @@ export default function Casting() {
         match: Match;
         isClaimed: boolean;
     }) => (
-        <div className="bg-bg rounded-lg p-4 border border-border hover:bg-bg-light transition-colors">
-            <div className="flex justify-between items-start mb-3">
+        <div className="rounded-lg border border-border bg-bg p-4 transition-colors hover:bg-bg-light">
+            <div className="mb-3 flex items-start justify-between">
                 <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
+                    <div className="mb-2 flex items-center gap-2">
                         <span className="text-sm text-gray-400">Round:</span>
-                        <span className="text-text-primary font-medium">
+                        <span className="font-medium text-text-primary">
                             {match.round}
                         </span>
                     </div>
-                    <div className="flex items-center gap-4 mb-3">
+                    <div className="mb-3 flex items-center gap-4">
                         <div className="flex items-center gap-2">
                             <img
                                 src={match.teams.team1.team_logo}
                                 alt={match.teams.team1.team_name}
-                                className="w-6 h-6 rounded"
+                                className="h-6 w-6 rounded"
                                 onError={(e) => {
                                     e.currentTarget.src =
                                         "/oss-logo-placeholder.png";
                                 }}
                             />
-                            <span className="text-text-primary font-medium">
+                            <span className="font-medium text-text-primary">
                                 {match.teams.team1.team_name}
                             </span>
                         </div>
@@ -156,13 +156,13 @@ export default function Casting() {
                             <img
                                 src={match.teams.team2.team_logo}
                                 alt={match.teams.team2.team_name}
-                                className="w-6 h-6 rounded"
+                                className="h-6 w-6 rounded"
                                 onError={(e) => {
                                     e.currentTarget.src =
                                         "/oss-logo-placeholder.png";
                                 }}
                             />
-                            <span className="text-text-primary font-medium">
+                            <span className="font-medium text-text-primary">
                                 {match.teams.team2.team_name}
                             </span>
                         </div>
@@ -174,7 +174,7 @@ export default function Casting() {
                         Status: {match.status}
                     </div>
                     {isClaimed && match.caster_id && (
-                        <div className="text-sm text-green-400 mt-1">
+                        <div className="mt-1 text-sm text-green-400">
                             Claimed by Caster #{match.caster_id}
                         </div>
                     )}
@@ -182,7 +182,7 @@ export default function Casting() {
                 <div className="flex flex-col gap-2">
                     <button
                         onClick={() => handleViewMatch(match.match_id)}
-                        className="px-3 py-1 bg-bg-light hover:bg-bg-extra-light border border-border text-text-primary text-sm rounded transition-colors"
+                        className="rounded border border-border bg-bg-light px-3 py-1 text-sm text-text-primary transition-colors hover:bg-bg-extra-light"
                     >
                         View
                     </button>
@@ -190,7 +190,7 @@ export default function Casting() {
                         <button
                             onClick={() => handleClaimMatch(match.match_id)}
                             disabled={claimMutation.isPending}
-                            className="px-3 py-1 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 text-white text-sm rounded transition-colors"
+                            className="rounded bg-green-600 px-3 py-1 text-sm text-white transition-colors hover:bg-green-700 disabled:bg-gray-600"
                         >
                             {claimMutation.isPending ? "Claiming..." : "Claim"}
                         </button>
@@ -198,7 +198,7 @@ export default function Casting() {
                         <button
                             onClick={() => handleUnclaimMatch(match.match_id)}
                             disabled={unclaimMutation.isPending}
-                            className="px-3 py-1 bg-red-600 hover:bg-red-700 disabled:bg-gray-600 text-white text-sm rounded transition-colors"
+                            className="rounded bg-red-600 px-3 py-1 text-sm text-white transition-colors hover:bg-red-700 disabled:bg-gray-600"
                         >
                             {unclaimMutation.isPending
                                 ? "Unclaiming..."
@@ -215,7 +215,7 @@ export default function Casting() {
             {/* Status Notification */}
             {claimStatus.type && (
                 <div
-                    className={`fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${
+                    className={`fixed right-4 top-4 z-50 rounded-lg p-4 shadow-lg ${
                         claimStatus.type === "success"
                             ? "bg-green-600 text-white"
                             : "bg-red-600 text-white"
@@ -226,7 +226,7 @@ export default function Casting() {
             )}
 
             <div className="mb-8">
-                <h1 className="text-4xl font-bold text-text-primary mb-2">
+                <h1 className="mb-2 text-4xl font-bold text-text-primary">
                     Match Casting
                 </h1>
                 <p className="text-text-secondary">
@@ -235,14 +235,14 @@ export default function Casting() {
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
                 {/* Unclaimed Matches */}
                 <div>
                     <div className="mb-4">
-                        <h2 className="text-2xl font-semibold text-text-primary mb-2">
+                        <h2 className="mb-2 text-2xl font-semibold text-text-primary">
                             Available Matches
                         </h2>
-                        <p className="text-text-secondary text-sm">
+                        <p className="text-sm text-text-secondary">
                             {unclaimed.length} match
                             {unclaimed.length !== 1 ? "es" : ""} available for
                             casting
@@ -250,7 +250,7 @@ export default function Casting() {
                     </div>
                     <div className="space-y-4">
                         {unclaimed.length === 0 ? (
-                            <div className="text-center py-8 text-gray-500">
+                            <div className="py-8 text-center text-gray-500">
                                 No matches available for casting
                             </div>
                         ) : (
@@ -268,10 +268,10 @@ export default function Casting() {
                 {/* Claimed Matches */}
                 <div>
                     <div className="mb-4">
-                        <h2 className="text-2xl font-semibold text-text-primary mb-2">
+                        <h2 className="mb-2 text-2xl font-semibold text-text-primary">
                             Claimed Matches
                         </h2>
-                        <p className="text-text-secondary text-sm">
+                        <p className="text-sm text-text-secondary">
                             {claimed.length} match
                             {claimed.length !== 1 ? "es" : ""} assigned to
                             casters
@@ -279,7 +279,7 @@ export default function Casting() {
                     </div>
                     <div className="space-y-4">
                         {claimed.length === 0 ? (
-                            <div className="text-center py-8 text-gray-500">
+                            <div className="py-8 text-center text-gray-500">
                                 No matches have been claimed yet
                             </div>
                         ) : (
@@ -298,7 +298,7 @@ export default function Casting() {
             <div className="mt-8 flex justify-end">
                 <button
                     onClick={() => refetch()}
-                    className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded transition-colors"
+                    className="rounded bg-gray-700 px-4 py-2 text-white transition-colors hover:bg-gray-600"
                 >
                     Refresh
                 </button>

@@ -18,7 +18,7 @@ export default function QualElimCard({ team, qualified }: QualElimCardProps) {
             >
                 <img
                     src="https://distribution.faceit-cdn.net/images/c417aaf4-d6ac-4f5b-8fe6-d3a339cb8385.jpeg"
-                    className="w-6 h-6"
+                    className="h-6 w-6"
                     alt="?"
                 />
 
@@ -32,7 +32,7 @@ export default function QualElimCard({ team, qualified }: QualElimCardProps) {
             </div>
             <div className="bg-gray-400">
                 <p
-                    className="transform rotate-180 text-center"
+                    className="rotate-180 transform text-center"
                     style={{ writingMode: "vertical-rl" }}
                 >
                     {sideText}

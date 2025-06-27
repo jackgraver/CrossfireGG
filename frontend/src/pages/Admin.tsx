@@ -1,6 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Notification from "../components/Notification";
 import { formatFullDate } from "../lib/dateUtils";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { api } from "../lib/api";
 
 export type Tournament = {
     t_id?: string;
@@ -26,11 +28,7 @@ interface NotificationState {
 }
 
 export default function Admin() {
-    const [tournamentInfo, setTournamentInfo] = useState<TournamentInfo | null>(
-        null
-    );
-    const [loading, setLoading] = useState<boolean>(false);
-    const [error, setError] = useState<string | null>(null);
+    const queryClient = useQueryClient();
     const [notification, setNotification] = useState<NotificationState>({
         show: false,
         title: "",
@@ -38,10 +36,57 @@ export default function Admin() {
         error: false,
     });
 
+    // Fetch tournament data
+    const {
+        data: tournamentInfo,
+        isLoading,
+        error,
+        refetch,
+    } = useQuery({
+        queryKey: ["admin-tournament-info"],
+        queryFn: async (): Promise<TournamentInfo> => {
+            // Fetch data from multiple endpoints
+            const [currTournament, lastUpdate, currentStage] =
+                await Promise.all([
+                    api.get<{ ct: Tournament; cr: Tournament; cp: Tournament }>(
+                        "/current_tournaments",
+                    ),
+                    api.get<number>("/last_update"),
+                    api.get<string>("/current_stage"),
+                ]);
+
+            // Build the TournamentInfo object
+            return {
+                current_tournament: currTournament.ct,
+                current_regular_season: currTournament.cr,
+                current_playoffs: currTournament.cp,
+                last_update: lastUpdate,
+                current_stage: currentStage,
+            };
+        },
+    });
+
+    // Toggle stage mutation
+    const toggleStageMutation = useMutation({
+        mutationFn: () => api.post<{ message: string }>("/toggle_stage", {}),
+        onSuccess: (data) => {
+            // Refetch the data to get updated information
+            queryClient.invalidateQueries({
+                queryKey: ["admin-tournament-info"],
+            });
+            showNotification("Stage Updated", data.message, false);
+        },
+        onError: (error: any) => {
+            const errorMessage =
+                error.response?.data?.detail || "Failed to toggle stage";
+            showNotification("Error", errorMessage, true);
+        },
+    });
+
     const showNotification = (
         title: string,
         message: string,
-        error: boolean = false
+        error: boolean = false,
     ) => {
         setNotification({ show: true, title, message, error });
     };
@@ -50,140 +95,76 @@ export default function Admin() {
         setNotification({ show: false, title: "", message: "", error: false });
     };
 
-    const fetchData = async () => {
-        setLoading(true);
-        setError(null);
-
-        try {
-            // Fetch data from multiple endpoints
-            const [currTournamentRes, lastUpdateRes, currentStageRes] =
-                await Promise.all([
-                    fetch("http://localhost:8000/current_tournaments"),
-                    fetch("http://localhost:8000/last_update"),
-                    fetch("http://localhost:8000/current_stage"),
-                ]);
-
-            if (
-                !currTournamentRes.ok ||
-                !lastUpdateRes.ok ||
-                !currentStageRes.ok
-            ) {
-                throw new Error(`HTTP error! One or more requests failed`);
-            }
-
-            const [currTournament, lastUpdate, currentStage] =
-                await Promise.all([
-                    currTournamentRes.json(),
-                    lastUpdateRes.json(),
-                    currentStageRes.json(),
-                ]);
-
-            // Build the TournamentInfo object
-            const info: TournamentInfo = {
-                current_tournament: currTournament.ct,
-                current_regular_season: currTournament.cr,
-                current_playoffs: currTournament.cp,
-                last_update: lastUpdate,
-                current_stage: currentStage,
-            };
-
-            setTournamentInfo(info);
-        } catch (err) {
-            setError(err instanceof Error ? err.message : "An error occurred");
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        // Fetch data on component mount
-        fetchData();
-    }, []);
-
     const formatTimestamp = (timestamp: number) => {
         return formatFullDate(timestamp);
     };
 
-    const handleToggleStage = async () => {
-        try {
-            const response = await fetch("http://localhost:8000/toggle_stage", {
-                method: "POST",
-            });
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const result = await response.json();
-
-            await fetchData();
-
-            showNotification("Stage Updated", `${result.message}`, false);
-        } catch (err) {
-            setError(
-                err instanceof Error ? err.message : "Failed to toggle stage"
-            );
-            showNotification("Error", "Failed to toggle stage", true);
-        }
+    const handleToggleStage = () => {
+        toggleStageMutation.mutate();
     };
 
     return (
-        <div className="min-h-screen bg-gray-900 text-white p-8">
-            <div className="max-w-4xl mx-auto">
-                <h1 className="text-4xl font-bold mb-8 text-center">ADMIN</h1>
+        <div className="min-h-screen bg-bg-dark p-8 text-text-primary">
+            <div className="mx-auto max-w-4xl">
+                <h1 className="mb-8 text-center text-4xl font-bold">ADMIN</h1>
 
-                {loading && (
-                    <div className="text-center py-4">
+                {isLoading && (
+                    <div className="py-4 text-center">
                         <p>Loading...</p>
                     </div>
                 )}
 
                 {error && (
-                    <div className="bg-red-600 text-white p-4 rounded mb-4">
-                        <p>Error: {error}</p>
+                    <div className="mb-4 rounded bg-red-600 p-4 text-white">
+                        <p>Error: {error.message}</p>
                     </div>
                 )}
 
                 {tournamentInfo && (
                     <div className="space-y-6">
                         {/* Current Stage */}
-                        <div className="bg-gray-800 p-6 rounded">
-                            <h2 className="text-2xl font-semibold mb-4 text-blue-400">
+                        <div className="rounded bg-bg p-6">
+                            <h2 className="mb-4 text-2xl font-semibold text-blue-400">
                                 Current Stage
                             </h2>
-                            <div className="bg-gray-700 p-4 rounded">
+                            <div className="rounded bg-bg p-4">
                                 <div className="flex items-center justify-between">
                                     <span className="text-xl font-bold text-green-400">
                                         {tournamentInfo.current_stage}
                                     </span>
                                     <button
                                         onClick={handleToggleStage}
-                                        className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded transition-colors"
+                                        disabled={toggleStageMutation.isPending}
+                                        className="rounded bg-purple-600 px-4 py-2 font-bold text-white transition-colors hover:bg-purple-700 disabled:cursor-not-allowed disabled:bg-gray-600 disabled:opacity-50"
                                     >
-                                        Toggle Stage
+                                        {toggleStageMutation.isPending
+                                            ? "Toggling..."
+                                            : "Toggle Stage"}
                                     </button>
                                 </div>
                             </div>
                         </div>
 
                         {/* Last Update */}
-                        <div className="bg-gray-800 p-6 rounded">
-                            <h2 className="text-2xl font-semibold mb-4 text-blue-400">
+                        <div className="rounded bg-bg p-6">
+                            <h2 className="mb-4 text-2xl font-semibold text-blue-400">
                                 Last Update
                             </h2>
-                            <div className="bg-gray-700 p-4 rounded">
+                            <div className="rounded bg-bg p-4">
                                 <p className="text-lg">
                                     {formatTimestamp(
-                                        tournamentInfo.last_update
+                                        tournamentInfo.last_update,
                                     )}
                                 </p>
                             </div>
                         </div>
 
                         {/* Current Tournament */}
-                        <div className="bg-gray-800 p-6 rounded">
-                            <h2 className="text-2xl font-semibold mb-4 text-blue-400">
+                        <div className="rounded bg-bg p-6">
+                            <h2 className="mb-4 text-2xl font-semibold text-blue-400">
                                 Current Tournament
                             </h2>
-                            <div className="bg-gray-700 p-4 rounded">
+                            <div className="rounded bg-bg p-4">
                                 <div className="space-y-2">
                                     <p>
                                         <span className="font-semibold">
@@ -208,7 +189,7 @@ export default function Admin() {
                                             ? formatTimestamp(
                                                   tournamentInfo
                                                       .current_tournament
-                                                      .start_date
+                                                      .start_date,
                                               )
                                             : "N/A"}
                                     </p>
@@ -221,7 +202,7 @@ export default function Admin() {
                                             ? formatTimestamp(
                                                   tournamentInfo
                                                       .current_tournament
-                                                      .end_date
+                                                      .end_date,
                                               )
                                             : "N/A"}
                                     </p>
@@ -230,11 +211,11 @@ export default function Admin() {
                         </div>
 
                         {/* Regular Season */}
-                        <div className="bg-gray-800 p-6 rounded">
-                            <h2 className="text-2xl font-semibold mb-4 text-blue-400">
+                        <div className="rounded bg-bg p-6">
+                            <h2 className="mb-4 text-2xl font-semibold text-blue-400">
                                 Regular Season
                             </h2>
-                            <div className="bg-gray-700 p-4 rounded">
+                            <div className="rounded bg-bg p-4">
                                 <div className="space-y-2">
                                     <p>
                                         <span className="font-semibold">
@@ -259,7 +240,7 @@ export default function Admin() {
                                             ? formatTimestamp(
                                                   tournamentInfo
                                                       .current_regular_season
-                                                      .start_date
+                                                      .start_date,
                                               )
                                             : "N/A"}
                                     </p>
@@ -272,7 +253,7 @@ export default function Admin() {
                                             ? formatTimestamp(
                                                   tournamentInfo
                                                       .current_regular_season
-                                                      .end_date
+                                                      .end_date,
                                               )
                                             : "N/A"}
                                     </p>
@@ -281,11 +262,11 @@ export default function Admin() {
                         </div>
 
                         {/* Playoffs */}
-                        <div className="bg-gray-800 p-6 rounded">
-                            <h2 className="text-2xl font-semibold mb-4 text-blue-400">
+                        <div className="rounded bg-bg p-6">
+                            <h2 className="mb-4 text-2xl font-semibold text-blue-400">
                                 Playoffs
                             </h2>
-                            <div className="bg-gray-700 p-4 rounded">
+                            <div className="rounded bg-bg p-4">
                                 <div className="space-y-2">
                                     <p>
                                         <span className="font-semibold">
@@ -310,7 +291,7 @@ export default function Admin() {
                                             ? formatTimestamp(
                                                   tournamentInfo
                                                       .current_playoffs
-                                                      .start_date
+                                                      .start_date,
                                               )
                                             : "N/A"}
                                     </p>
@@ -322,7 +303,8 @@ export default function Admin() {
                                             ?.end_date
                                             ? formatTimestamp(
                                                   tournamentInfo
-                                                      .current_playoffs.end_date
+                                                      .current_playoffs
+                                                      .end_date,
                                               )
                                             : "N/A"}
                                     </p>
@@ -334,10 +316,11 @@ export default function Admin() {
 
                 <div className="mt-8">
                     <button
-                        onClick={fetchData}
-                        className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                        onClick={() => refetch()}
+                        disabled={isLoading}
+                        className="rounded bg-blue-600 px-4 py-2 font-bold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-600 disabled:opacity-50"
                     >
-                        Refresh Data
+                        {isLoading ? "Refreshing..." : "Refresh Data"}
                     </button>
                 </div>
             </div>

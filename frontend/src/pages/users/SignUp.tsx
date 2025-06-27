@@ -54,7 +54,7 @@ export default function SignUp() {
     };
 
     const handleConfirmPasswordChange = (
-        e: React.ChangeEvent<HTMLInputElement>
+        e: React.ChangeEvent<HTMLInputElement>,
     ) => {
         const newConfirmPassword = e.target.value;
         setConfirmPassword(newConfirmPassword);
@@ -92,13 +92,13 @@ export default function SignUp() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center">
-            <div className="bg-bg p-8 rounded-lg shadow-lg w-full max-w-md">
+        <div className="flex min-h-screen items-center justify-center">
+            <div className="w-full max-w-md rounded-lg bg-bg p-8 shadow-lg">
                 <div className="flex flex-col items-center space-y-4">
                     <img
                         src="/OSSLOGO.png"
                         alt="OSS Logo"
-                        className="w-32 h-32"
+                        className="h-32 w-32"
                     />
                     <h1 className="text-2xl font-bold text-text-primary">
                         Create Account
@@ -114,7 +114,7 @@ export default function SignUp() {
                                         setFaceitName(e.target.value)
                                     }
                                     disabled={signUpMutation.isPending}
-                                    className="w-full px-4 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed bg-bg-light"
+                                    className="w-full rounded-md border border-border bg-bg-light px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
                                 />
                             </div>
                             <div className="flex-1">
@@ -126,7 +126,7 @@ export default function SignUp() {
                                         setFaceitTeam(e.target.value)
                                     }
                                     disabled={signUpMutation.isPending}
-                                    className="w-full px-4 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed bg-bg-light"
+                                    className="w-full rounded-md border border-border bg-bg-light px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
                                 />
                             </div>
                         </div>
@@ -137,14 +137,14 @@ export default function SignUp() {
                                 value={email}
                                 onChange={handleEmailChange}
                                 disabled={signUpMutation.isPending}
-                                className={`w-full px-4 py-2 border ${
+                                className={`w-full border px-4 py-2 ${
                                     emailError
                                         ? "border-red-500"
                                         : "border-border"
-                                } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed bg-bg-light`}
+                                } rounded-md bg-bg-light focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50`}
                             />
                             {emailError && (
-                                <p className="text-red-500 text-sm mt-1">
+                                <p className="mt-1 text-sm text-red-500">
                                     {emailError}
                                 </p>
                             )}
@@ -156,13 +156,13 @@ export default function SignUp() {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 disabled={signUpMutation.isPending}
-                                className="w-full px-4 py-2 border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed bg-bg-light"
+                                className="w-full rounded-md border border-border bg-bg-light px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
                             />
                             <button
                                 type="button"
                                 onClick={togglePasswordVisibility}
                                 disabled={signUpMutation.isPending}
-                                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none disabled:opacity-50"
+                                className="absolute right-3 top-1/2 -translate-y-1/2 transform text-gray-500 hover:text-gray-700 focus:outline-none disabled:opacity-50"
                             >
                                 {showPassword ? (
                                     <svg
@@ -202,17 +202,17 @@ export default function SignUp() {
                                 value={confirmPassword}
                                 onChange={handleConfirmPasswordChange}
                                 disabled={signUpMutation.isPending}
-                                className={`w-full px-4 py-2 border ${
+                                className={`w-full border px-4 py-2 ${
                                     passwordError
                                         ? "border-red-500"
                                         : "border-border"
-                                } rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed bg-bg-light`}
+                                } rounded-md bg-bg-light focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50`}
                             />
                             <button
                                 type="button"
                                 onClick={toggleConfirmPasswordVisibility}
                                 disabled={signUpMutation.isPending}
-                                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none disabled:opacity-50"
+                                className="absolute right-3 top-1/2 -translate-y-1/2 transform text-gray-500 hover:text-gray-700 focus:outline-none disabled:opacity-50"
                             >
                                 {showConfirmPassword ? (
                                     <svg
@@ -246,7 +246,7 @@ export default function SignUp() {
                             </button>
                         </div>
                         {passwordError && (
-                            <p className="text-red-500 text-sm mt-1">
+                            <p className="mt-1 text-sm text-red-500">
                                 {passwordError}
                             </p>
                         )}
@@ -259,7 +259,7 @@ export default function SignUp() {
                                     setPrivacyAgreed(e.target.checked)
                                 }
                                 disabled={signUpMutation.isPending}
-                                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded disabled:opacity-50"
+                                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500 disabled:opacity-50"
                             />
                             <label
                                 htmlFor="privacy"
@@ -277,7 +277,7 @@ export default function SignUp() {
                         <button
                             type="submit"
                             disabled={signUpMutation.isPending}
-                            className="w-full bg-bg-light text-text-primary py-2 px-4 rounded-md hover:bg-bg-extra-light transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full rounded-md bg-bg-light px-4 py-2 text-text-primary transition duration-200 hover:bg-bg-extra-light disabled:cursor-not-allowed disabled:opacity-50"
                         >
                             {signUpMutation.isPending
                                 ? "Creating Account..."

@@ -74,7 +74,7 @@ export default function Home() {
         : matchData!;
 
     const nonFinishedMatches = [...regSeasonMatches, ...playoffsMatches].filter(
-        (match) => match.status !== "FINISHED"
+        (match) => match.status !== "FINISHED",
     );
 
     const getCurrentTeams = () => {
@@ -92,9 +92,9 @@ export default function Home() {
     const currentTeams = getCurrentTeams();
 
     return (
-        <div className="flex flex-col justify-center items-center">
-            <div className="flex flex-row justify-center items-center w-5/6 mb-16">
-                <img src="/OSSLOGO.png" className="w-72 h-72" />
+        <div className="flex flex-col items-center justify-center">
+            <div className="mb-16 flex w-5/6 flex-row items-center justify-center">
+                <img src="/OSSLOGO.png" className="h-72 w-72" />
                 <div className="flex flex-col text-text-primary">
                     <h1 className="text-7xl font-semibold">
                         OFF SEASON
@@ -118,15 +118,15 @@ export default function Home() {
                     onViewChange={handleViewChange}
                 />
             </div>
-            <div className="flex flex-col justify-center items-center w-5/6 mt-4 relative">
-                <div className="flex flex-row absolute right-0 top-0 justify-end items-center gap-2 text-white">
+            <div className="relative mt-4 flex w-5/6 flex-col items-center justify-center">
+                <div className="absolute right-0 top-0 flex flex-row items-center justify-end gap-2 text-white">
                     <p className="text-sm text-gray-400">
                         Last Updated:{" "}
                         {new Date(lastUpdate * 1000).toDateString()}
                     </p>
                     <button
                         onClick={() => refetchTeams()}
-                        className="p-2 rounded-full hover:bg-gray-700 transition-colors duration-200"
+                        className="rounded-full p-2 transition-colors duration-200 hover:bg-gray-700"
                         title="Refresh data"
                     >
                         <svg

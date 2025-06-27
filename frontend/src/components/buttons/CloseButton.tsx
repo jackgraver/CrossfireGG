@@ -6,7 +6,7 @@ export default function CloseButton({
     return (
         <button
             onClick={() => onClose(true)}
-            className="p-2 rounded hover:bg-white/30 transition-colors"
+            className="rounded p-2 transition-colors hover:bg-white/30"
             aria-label="Edit"
         >
             <svg

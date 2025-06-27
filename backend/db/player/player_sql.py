@@ -60,6 +60,7 @@ def get_player_stats_by_match_id(match_id: str):
 
             map_data.append({
                 "map_id": map_.map_id,
+                "match_id": map_.match_id,
                 "map_name": map_.map_name,
                 "round": map_.round,
                 "winner_id": map_.winner_id,
@@ -69,15 +70,35 @@ def get_player_stats_by_match_id(match_id: str):
             })
 
         return {
-            "match_id": match.match_id,
-            "match_info": {
+            "match_info": { 
+                "match_id": match.match_id,
+                "sub_t_id": match.sub_t_id,
+                "status": match.status,
                 "scheduled_at": match.scheduled_at,
                 "round": match.round,
                 "faceit_url": match.faceit_url,
                 "winner": match.winner,
                 "teams": {
-                    "team1": {"team_id": team1.team_id, "team_name": team1.team_name, "team_logo": team1.team_logo},
-                    "team2": {"team_id": team2.team_id, "team_name": team2.team_name, "team_logo": team2.team_logo},
+                    "team1": {
+                        "team_id": team1.team_id, 
+                        "team_name": team1.team_name, 
+                        "team_logo": team1.team_logo,
+                        "seed": team1.seed,
+                        "win": team1.win,
+                        "loss": team1.loss,
+                        "paid": team1.paid,
+                        "joined_tournament": team1.joined_tournament,
+                    },
+                    "team2": {
+                        "team_id": team2.team_id, 
+                        "team_name": team2.team_name, 
+                        "team_logo": team2.team_logo,
+                        "seed": team2.seed,
+                        "win": team2.win,
+                        "loss": team2.loss,
+                        "paid": team2.paid,
+                        "joined_tournament": team2.joined_tournament,
+                    },
                 },
                 "team1_score": match.team1_score,
                 "team2_score": match.team2_score,
