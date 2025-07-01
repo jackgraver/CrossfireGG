@@ -1,11 +1,13 @@
+"use client";
+
 import { useState } from "react";
-import { useParams } from "react-router-dom";
-import type { Match, MatchMap } from "../types/Types";
-import ViewSelector from "../components/ViewSelector";
-import OSSTable from "../components/OSSTable";
-import { api } from "../lib/api";
+import type { Match, MatchMap } from "@/types/Types";
+import ViewSelector from "@/components/ViewSelector";
+import OSSTable from "@/components/OSSTable";
+import { api } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
-import { formatMatchDate } from "../lib/dateUtils";
+import { formatMatchDate } from "@/lib/dateUtils";
+import { notFound } from "next/navigation";
 
 /**
  * Extracts the map name from the map_name string (de_anubis -> Anubis)
@@ -17,15 +19,22 @@ const getMapName = (map_name: string) => {
     return mapPart.charAt(0).toUpperCase() + mapPart.slice(1);
 };
 
-export default function MatchStats() {
-    const { match_id } = useParams();
+type MatchStatsProps = {
+    params: { match_id: string };
+};
+
+export default function MatchStats({ params }: MatchStatsProps) {
+    const { match_id } = params;
+
+    if (!match_id) return notFound();
+
     const [currentMapId, setCurrentMapId] = useState<string>("");
 
     const { data, isLoading, error } = useQuery({
         queryKey: ["match", match_id],
         queryFn: () =>
             api.get<{ match_info: Match; maps: MatchMap[] }>(
-                `/stats/${match_id}`,
+                `/stats/${match_id}`
             ),
     });
 

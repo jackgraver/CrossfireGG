@@ -1,8 +1,10 @@
+"use client";
+
 import { useState } from "react";
-import { validateEmail } from "./SignInUp.util";
-import { useNavigate } from "react-router-dom";
+import { validateEmail } from "@/lib/SignInUp.util";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "../../lib/api";
+import { useRouter } from "next/navigation";
 
 interface SignInResponse {
     access_token: string;
@@ -13,7 +15,7 @@ interface SignInError {
 }
 
 export default function SignIn() {
-    const navigate = useNavigate();
+    const router = useRouter();
 
     const [email, setEmail] = useState("");
     const [emailError, setEmailError] = useState("");
@@ -24,8 +26,10 @@ export default function SignIn() {
         mutationFn: (credentials: { email: string; password: string }) =>
             api.post<SignInResponse>("/sign-in", credentials),
         onSuccess: (data) => {
-            localStorage.setItem("access_token", data.access_token);
-            navigate("/");
+            if (typeof window !== "undefined") {
+                localStorage.setItem("access_token", data.access_token);
+            }
+            router.push("/");
         },
         onError: (error: any) => {
             const errorMessage = error.response?.data?.detail || "Login failed";

@@ -1,3 +1,5 @@
+"use client";
+
 import type { Match } from "../types/Types";
 import { useState, useEffect, useMemo } from "react";
 import ScheduledCard from "./bracket/ScheduledCard";
@@ -15,12 +17,9 @@ export default function NonFinishedMatches({
     useEffect(() => {
         const updateMatchesPerPage = () => {
             const width = window.innerWidth;
-            if (width < 640)
-                setMatchesPerPage(1); // sm
-            else if (width < 768)
-                setMatchesPerPage(2); // md
-            else if (width < 1024)
-                setMatchesPerPage(3); // lg
+            if (width < 640) setMatchesPerPage(1); // sm
+            else if (width < 768) setMatchesPerPage(2); // md
+            else if (width < 1024) setMatchesPerPage(3); // lg
             else setMatchesPerPage(4); // xl+
         };
 
@@ -54,13 +53,13 @@ export default function NonFinishedMatches({
         setStartIndex((prev) =>
             prev === 0
                 ? Math.max(0, matches.length - matchesPerPage)
-                : Math.max(0, prev - 1),
+                : Math.max(0, prev - 1)
         );
     };
 
     const goToNext = () => {
         setStartIndex((prev) =>
-            prev >= matches.length - matchesPerPage ? 0 : prev + 1,
+            prev >= matches.length - matchesPerPage ? 0 : prev + 1
         );
     };
 

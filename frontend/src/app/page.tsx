@@ -1,17 +1,16 @@
+"use client";
+
 import type { Match, Team } from "../types/Types";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import Standings from "../components/Standings";
 import RegularSeasonBracket from "../components/bracket/RegularSeasonBracket";
 import PlayoffBracket from "../components/bracket/PlayoffBracket";
 import NonFinishedMatches from "../components/NonFinishedMatches";
 import ViewSelector from "../components/ViewSelector";
-import { api } from "../lib/api";
+import { api } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 
 export default function Home() {
-    const navigate = useNavigate();
-
     const [displayTab, setDisplayTab] = useState<
         "regseason" | "playoffs" | "standings"
     >("regseason");
@@ -74,7 +73,7 @@ export default function Home() {
         : matchData!;
 
     const nonFinishedMatches = [...regSeasonMatches, ...playoffsMatches].filter(
-        (match) => match.status !== "FINISHED",
+        (match) => match.status !== "FINISHED"
     );
 
     const getCurrentTeams = () => {
@@ -93,10 +92,10 @@ export default function Home() {
 
     return (
         <div className="flex flex-col items-center justify-center">
-            <div className="mb-16 flex w-5/6 flex-row items-center justify-center">
-                <img src="/OSSLOGO.png" className="h-72 w-72" />
+            <div className="mb-16 flex w-5/6 flex-col items-center justify-center sm:flex-row">
+                <img src="/OSSLOGO.png" className="h-48 w-48 sm:h-72 sm:w-72" />
                 <div className="flex flex-col text-text-primary">
-                    <h1 className="text-7xl font-semibold">
+                    <h1 className="text-4xl font-semibold sm:text-7xl">
                         OFF SEASON
                         <br />
                         SHENANIGANS

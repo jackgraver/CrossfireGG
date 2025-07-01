@@ -1,16 +1,23 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import type { Match, Team } from "../types/Types";
-import { api } from "../lib/api";
+"use client";
+
+import type { Match, Team } from "@/types/Types";
+import { api } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
-import { formatDateOnly } from "../lib/dateUtils";
+import { formatDateOnly } from "@/lib/dateUtils";
+import { notFound } from "next/navigation";
 
 const openInNewTab = (url: string) => {
     window.open(url, "_blank", "noopener,noreferrer");
 };
 
-export default function Team() {
-    const { team_id } = useParams();
+type TeamProps = {
+    params: { team_id: string };
+};
+
+export default function Team({ params }: TeamProps) {
+    const { team_id } = params;
+
+    if (!team_id) return notFound();
 
     const { data, isLoading, error } = useQuery({
         queryKey: ["team", team_id],
@@ -141,9 +148,9 @@ export default function Team() {
                                                 getMatchResult(match) === "W"
                                                     ? "bg-green-100 text-green-700"
                                                     : getMatchResult(match) ===
-                                                        "L"
-                                                      ? "bg-red-100 text-red-700"
-                                                      : "bg-orange-100 text-orange-600"
+                                                      "L"
+                                                    ? "bg-red-100 text-red-700"
+                                                    : "bg-orange-100 text-orange-600"
                                             }`}
                                         >
                                             {getMatchResult(match)}

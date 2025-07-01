@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const BASE_URL = "http://192.168.4.64:8000";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
 
@@ -6,7 +6,7 @@ async function request<T>(
     method: HttpMethod,
     endpoint: string,
     body?: any,
-    headers: Record<string, string> = {}
+    headers: Record<string, string> = {},
 ): Promise<T> {
     const response = await fetch(`${BASE_URL}${endpoint}`, {
         method,
@@ -22,7 +22,7 @@ async function request<T>(
         throw new Error(`API Error (${response.status}): ${error}`);
     }
 
-    return response.json();
+    return await response.json();
 }
 
 export const api = {

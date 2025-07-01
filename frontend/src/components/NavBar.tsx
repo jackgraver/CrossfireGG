@@ -1,16 +1,30 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
 
 function toggleDarkMode() {
     const isDark = document.documentElement.classList.toggle("dark");
-    localStorage.setItem("theme", isDark ? "dark" : "light");
+    if (typeof window !== "undefined") {
+        localStorage.setItem("theme", isDark ? "dark" : "light");
+    }
 }
 
 export default function NavBar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const username = "ADMIN"; // This will be replaced with actual user data later
 
-    const token = localStorage.getItem("access_token");
+    useEffect(() => {
+        const darkPref = localStorage.getItem("theme") === "dark";
+        if (darkPref) {
+            document.documentElement.classList.add("dark");
+        }
+    }, []);
+
+    const token =
+        typeof window !== "undefined"
+            ? localStorage.getItem("access_token")
+            : null;
     const signedIn = token !== null && token !== "";
 
     return (
@@ -18,7 +32,7 @@ export default function NavBar() {
             <div className="w-full px-4">
                 <div className="flex h-16 justify-between">
                     <div className="flex items-center">
-                        <Link to="/" className="flex-shrink-0">
+                        <Link href="/" className="flex-shrink-0">
                             <img
                                 className="h-8 w-8"
                                 src="/OSSLOGO.png"
@@ -112,7 +126,7 @@ export default function NavBar() {
                                         aria-orientation="vertical"
                                     >
                                         <Link
-                                            to="/manage-teams"
+                                            href="/manage-teams"
                                             className="block px-4 py-2 text-sm text-text-secondary hover:bg-bg-light"
                                             role="menuitem"
                                             onClick={() => setIsMenuOpen(false)}
@@ -120,7 +134,7 @@ export default function NavBar() {
                                             Manage Teams
                                         </Link>
                                         <Link
-                                            to="/casting"
+                                            href="/casting"
                                             className="block px-4 py-2 text-sm text-text-secondary hover:bg-bg-light"
                                             role="menuitem"
                                             onClick={() => setIsMenuOpen(false)}
@@ -128,7 +142,7 @@ export default function NavBar() {
                                             Casting
                                         </Link>
                                         <Link
-                                            to="/admin"
+                                            href="/admin"
                                             className="block px-4 py-2 text-sm text-text-secondary hover:bg-bg-light"
                                             role="menuitem"
                                             onClick={() => setIsMenuOpen(false)}
@@ -144,12 +158,12 @@ export default function NavBar() {
                                         </div>
                                         {signedIn ? (
                                             <Link
-                                                to="/"
+                                                href="/"
                                                 className="block px-4 py-2 text-sm text-text-secondary hover:bg-bg-light"
                                                 role="menuitem"
                                                 onClick={() =>
                                                     localStorage.removeItem(
-                                                        "access_token",
+                                                        "access_token"
                                                     )
                                                 }
                                             >
@@ -157,7 +171,7 @@ export default function NavBar() {
                                             </Link>
                                         ) : (
                                             <Link
-                                                to="/sign-in"
+                                                href="/sign-in"
                                                 className="block px-4 py-2 text-sm text-text-secondary hover:bg-bg-light"
                                                 role="menuitem"
                                                 onClick={() =>

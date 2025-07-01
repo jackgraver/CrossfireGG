@@ -1,12 +1,15 @@
-import type { Match, MatchesWithCasters } from "../types/Types";
+"use client";
+
+import type { Match, MatchesWithCasters } from "@/types/Types";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { api } from "../lib/api";
+import { api } from "@/lib/api";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { formatMatchDate } from "../lib/dateUtils";
+import { formatMatchDate } from "@/lib/dateUtils";
+import { useRouter } from "next/navigation";
 
 export default function Casting() {
-    const navigate = useNavigate();
+    const router = useRouter();
+
     const queryClient = useQueryClient();
     const [claimStatus, setClaimStatus] = useState<{
         type: "success" | "error" | null;
@@ -88,7 +91,7 @@ export default function Casting() {
     };
 
     const handleViewMatch = (matchId: string) => {
-        navigate(`/match/${matchId}`);
+        router.push(`/match/${matchId}`);
     };
 
     if (isLoading) {

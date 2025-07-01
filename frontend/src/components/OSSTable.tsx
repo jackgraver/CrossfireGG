@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import { useState } from "react";
 
@@ -29,7 +31,6 @@ export default function OSSTable<T>({
     className = "",
     rowClassName,
 }: OSSTableProps<T>) {
-    console.log(data);
     const [sortColumn, setSortColumn] = useState<keyof T | string | null>(null);
     const [sortAscending, setSortAscending] = useState(true);
 
@@ -144,7 +145,12 @@ export default function OSSTable<T>({
                         sortedData.map((row, rowIndex) => (
                             <tr
                                 key={rowKey?.(row) ?? rowIndex}
-                                className={`border-t border-border hover:bg-bg-extra-light ${rowClassName?.(row) || (rowIndex % 2 === 0 ? "bg-bg-light" : "bg-bg")} `}
+                                className={`border-t border-border hover:bg-bg-extra-light ${
+                                    rowClassName?.(row) ||
+                                    (rowIndex % 2 === 0
+                                        ? "bg-bg-light"
+                                        : "bg-bg")
+                                } `}
                             >
                                 {columns.map((col, colIndex) => {
                                     const raw =

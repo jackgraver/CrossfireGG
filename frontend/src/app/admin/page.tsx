@@ -1,8 +1,10 @@
+"use client";
+
 import { useState } from "react";
-import Notification from "../components/Notification";
-import { formatFullDate } from "../lib/dateUtils";
+import Notification from "@/components/Notification";
+import { formatFullDate } from "@/lib/dateUtils";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { api } from "../lib/api";
+import { api } from "@/lib/api";
 
 export type Tournament = {
     t_id?: string;
@@ -49,7 +51,7 @@ export default function Admin() {
             const [currTournament, lastUpdate, currentStage] =
                 await Promise.all([
                     api.get<{ ct: Tournament; cr: Tournament; cp: Tournament }>(
-                        "/current_tournaments",
+                        "/current_tournaments"
                     ),
                     api.get<number>("/last_update"),
                     api.get<string>("/current_stage"),
@@ -86,7 +88,7 @@ export default function Admin() {
     const showNotification = (
         title: string,
         message: string,
-        error: boolean = false,
+        error: boolean = false
     ) => {
         setNotification({ show: true, title, message, error });
     };
@@ -153,7 +155,7 @@ export default function Admin() {
                             <div className="rounded bg-bg p-4">
                                 <p className="text-lg">
                                     {formatTimestamp(
-                                        tournamentInfo.last_update,
+                                        tournamentInfo.last_update
                                     )}
                                 </p>
                             </div>
@@ -189,7 +191,7 @@ export default function Admin() {
                                             ? formatTimestamp(
                                                   tournamentInfo
                                                       .current_tournament
-                                                      .start_date,
+                                                      .start_date
                                               )
                                             : "N/A"}
                                     </p>
@@ -202,7 +204,7 @@ export default function Admin() {
                                             ? formatTimestamp(
                                                   tournamentInfo
                                                       .current_tournament
-                                                      .end_date,
+                                                      .end_date
                                               )
                                             : "N/A"}
                                     </p>
@@ -240,7 +242,7 @@ export default function Admin() {
                                             ? formatTimestamp(
                                                   tournamentInfo
                                                       .current_regular_season
-                                                      .start_date,
+                                                      .start_date
                                               )
                                             : "N/A"}
                                     </p>
@@ -253,7 +255,7 @@ export default function Admin() {
                                             ? formatTimestamp(
                                                   tournamentInfo
                                                       .current_regular_season
-                                                      .end_date,
+                                                      .end_date
                                               )
                                             : "N/A"}
                                     </p>
@@ -291,7 +293,7 @@ export default function Admin() {
                                             ? formatTimestamp(
                                                   tournamentInfo
                                                       .current_playoffs
-                                                      .start_date,
+                                                      .start_date
                                               )
                                             : "N/A"}
                                     </p>
@@ -303,8 +305,7 @@ export default function Admin() {
                                             ?.end_date
                                             ? formatTimestamp(
                                                   tournamentInfo
-                                                      .current_playoffs
-                                                      .end_date,
+                                                      .current_playoffs.end_date
                                               )
                                             : "N/A"}
                                     </p>

@@ -137,3 +137,29 @@ def get_team_matches(team_id: str) -> dict:
             result.append(match_dict)
         
         return result
+    
+def set_team_paid(team_id: str, paid: bool):
+    with Session(get_db_connection()) as session:
+        stmt = select(Team).where(
+            Team.team_id == team_id
+        )
+        team = session.exec(stmt).first()
+        
+        if team:
+            team.paid = paid
+            session.commit()
+            return
+    return
+
+def set_team_joined(team_id: str, joined: bool):
+    with Session(get_db_connection()) as session:
+        stmt = select(Team).where(
+            Team.team_id == team_id
+        )
+        team = session.exec(stmt).first()
+        
+        if team:
+            team.joined_tournament = joined
+            session.commit()
+            return
+    return

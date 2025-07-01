@@ -192,7 +192,7 @@ def process_stats(match_id: str, sub_t_id: str = None):
                 with open(f"test_data/stats/{match_id}_stats.json", "r", encoding="utf-8") as f:
                     stats_data = json.load(f)
             except FileNotFoundError:
-                print(f"Stats file {f"test_data/stats/{match_id}_stats.json"} not found, falling back to API")
+                # print(f"Stats file {f"test_data/stats/{match_id}_stats.json"} not found, falling back to API")
                 return
         
         if not STATS_DEBUG:

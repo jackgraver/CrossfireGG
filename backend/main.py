@@ -124,6 +124,19 @@ def get_team(team_id: str):
     }
     return res
 
+@app.post("/team/paid/{team_id}")
+async def team_paid(request: Request, team_id: str):
+    data = await request.json()
+    paid = data.get("paid")
+    return set_team_paid(team_id, paid)
+
+@app.post("/team/joined/{team_id}")
+async def team_joined(request: Request, team_id: str):
+    data = await request.json()
+    joined = data.get("joined")
+    print(joined)
+    return set_team_joined(team_id, joined)
+
 @app.get("/last_update")
 def get_last_update():
     last_update = query_last_update()

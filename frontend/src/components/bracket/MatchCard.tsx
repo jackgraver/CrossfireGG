@@ -1,6 +1,8 @@
+"use client";
+
+import { useRouter } from "next/navigation";
 import type { Match } from "../../types/Types";
 import { MatchTeam } from "./MatchTeam";
-import { useNavigate } from "react-router-dom";
 
 const openInNewTab = (url: string) => {
     window.open(url, "_blank", "noopener,noreferrer");
@@ -15,7 +17,7 @@ export default function MatchCard({ match }: MatchCardProps) {
     //     console.log("Match is undefined");
     // }
 
-    const navigate = useNavigate();
+    const router = useRouter();
     return (
         <div className="group relative m-2 flex flex-col rounded-md border border-border bg-bg text-text-primary">
             <MatchTeam
@@ -50,7 +52,7 @@ export default function MatchCard({ match }: MatchCardProps) {
                 </button>
                 {match?.status === "FINISHED" && (
                     <button
-                        onClick={() => navigate(`/stats/${match?.match_id}`)}
+                        onClick={() => router.push(`/stats/${match?.match_id}`)}
                         className="h-10 w-10 cursor-pointer rounded-full bg-white text-lg transition hover:bg-gray-200"
                     >
                         📊
