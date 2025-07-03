@@ -102,7 +102,7 @@ export default function ManageTeams() {
                 <h1 className="pb-12 pt-12 text-4xl text-text-primary">
                     Current Teams
                 </h1>
-                <div className="mb-2 flex flex-wrap items-end gap-4 rounded-md bg-bg p-2 shadow">
+                <div className="mb-2 flex flex-wrap items-end gap-4 rounded-md bg-firstBg p-2 shadow">
                     <div className="flex flex-col">
                         <label
                             htmlFor="search"
@@ -157,7 +157,7 @@ export default function ManageTeams() {
                     {filteredTeams.map((team, i) => (
                         <div
                             key={i}
-                            className="relative flex items-center gap-4 rounded-md border border-border bg-bg p-4 text-text-primary shadow-md"
+                            className="relative flex items-center gap-4 rounded-md border border-border bg-firstBg p-4 text-text-primary shadow-md"
                         >
                             <div className="flex flex-col items-center justify-center">
                                 <input
@@ -262,7 +262,7 @@ export default function ManageTeams() {
                         {newTeams.map((team, index) => (
                             <div
                                 key={index}
-                                className="relative flex items-center gap-4 rounded-md border border-border bg-bg p-4 text-text-primary shadow-md"
+                                className="relative flex items-center gap-4 rounded-md border border-border bg-firstBg p-4 text-text-primary shadow-md"
                             >
                                 {/* Seed */}
                                 <div className="flex flex-col items-center justify-center">

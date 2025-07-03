@@ -14,12 +14,12 @@ export default function ScheduledCard({ match }: ScheduledCardProps) {
     if (!match) {
         return (
             <div className="mx-2 flex flex-col">
-                <div className="w-fit max-w-full overflow-hidden whitespace-nowrap rounded-t-md bg-bg px-1 py-1">
+                <div className="w-fit max-w-full overflow-hidden whitespace-nowrap rounded-t-md bg-firstBg px-1 py-1">
                     <div className="flex items-center gap-1 text-xs text-text-primary">
                         <p className="">🕒</p>
                     </div>
                 </div>
-                <div className="group relative flex cursor-pointer flex-col rounded-b-md rounded-r-md border border-border bg-bg p-2 text-text-primary">
+                <div className="group relative flex cursor-pointer flex-col rounded-b-md rounded-r-md border border-border bg-firstBg p-2 text-text-primary">
                     <MatchTeam team={undefined} score={undefined} />
                     <MatchTeam team={undefined} score={undefined} />
                 </div>
@@ -36,14 +36,14 @@ export default function ScheduledCard({ match }: ScheduledCardProps) {
                     </div>
                 </div>
             ) : (
-                <div className="flex w-fit max-w-full flex-row items-center overflow-hidden text-ellipsis whitespace-nowrap rounded-t-md bg-bg px-1 py-1">
+                <div className="flex w-fit max-w-full flex-row items-center overflow-hidden text-ellipsis whitespace-nowrap rounded-t-md bg-firstBg px-1 py-1">
                     <div className="flex items-center gap-1 text-xs text-text-primary">
                         <p className="">🕒</p>
                         {formatMatchDate(match.scheduled_at)}
                     </div>
                 </div>
             )}
-            <div className="group relative flex cursor-pointer flex-col rounded-b-md rounded-r-md border border-border bg-bg p-2 text-text-primary">
+            <div className="group relative flex cursor-pointer flex-col rounded-b-md rounded-r-md border border-border bg-firstBg p-2 text-text-primary">
                 <MatchTeam
                     team={match?.teams.team1}
                     score={match?.team1_score ?? undefined}

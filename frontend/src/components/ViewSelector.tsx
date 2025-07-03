@@ -51,7 +51,7 @@ export default function ViewSelector({
     return (
         <div
             ref={containerRef}
-            className={`relative inline-flex overflow-hidden rounded-md bg-bg shadow-md ${className}`}
+            className={`relative inline-flex overflow-hidden rounded-md bg-firstBg shadow-md ${className}`}
         >
             <div
                 className="absolute bottom-0 h-1 bg-orange-500 transition-all duration-300 ease-in-out"

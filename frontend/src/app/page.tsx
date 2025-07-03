@@ -94,7 +94,7 @@ export default function Home() {
         <div className="flex flex-col items-center justify-center">
             <div className="mb-16 flex w-5/6 flex-col items-center justify-center sm:flex-row">
                 <img src="/OSSLOGO.png" className="h-48 w-48 sm:h-72 sm:w-72" />
-                <div className="flex flex-col text-text-primary">
+                <div className="flex flex-col text-textPrimary">
                     <h1 className="text-4xl font-semibold sm:text-7xl">
                         OFF SEASON
                         <br />

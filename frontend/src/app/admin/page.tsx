@@ -106,7 +106,7 @@ export default function Admin() {
     };
 
     return (
-        <div className="min-h-screen bg-bg-dark p-8 text-text-primary">
+        <div className="min-h-screen bg-secondBg p-8 text-textPrimary">
             <div className="mx-auto max-w-4xl">
                 <h1 className="mb-8 text-center text-4xl font-bold">ADMIN</h1>
 
@@ -125,11 +125,11 @@ export default function Admin() {
                 {tournamentInfo && (
                     <div className="space-y-6">
                         {/* Current Stage */}
-                        <div className="rounded bg-bg p-6">
+                        <div className="rounded bg-firstBg p-6">
                             <h2 className="mb-4 text-2xl font-semibold text-blue-400">
                                 Current Stage
                             </h2>
-                            <div className="rounded bg-bg p-4">
+                            <div className="rounded bg-firstBg p-4">
                                 <div className="flex items-center justify-between">
                                     <span className="text-xl font-bold text-green-400">
                                         {tournamentInfo.current_stage}
@@ -148,11 +148,11 @@ export default function Admin() {
                         </div>
 
                         {/* Last Update */}
-                        <div className="rounded bg-bg p-6">
+                        <div className="rounded bg-firstBg p-6">
                             <h2 className="mb-4 text-2xl font-semibold text-blue-400">
                                 Last Update
                             </h2>
-                            <div className="rounded bg-bg p-4">
+                            <div className="rounded bg-firstBg p-4">
                                 <p className="text-lg">
                                     {formatTimestamp(
                                         tournamentInfo.last_update
@@ -162,11 +162,11 @@ export default function Admin() {
                         </div>
 
                         {/* Current Tournament */}
-                        <div className="rounded bg-bg p-6">
+                        <div className="rounded bg-firstBg p-6">
                             <h2 className="mb-4 text-2xl font-semibold text-blue-400">
                                 Current Tournament
                             </h2>
-                            <div className="rounded bg-bg p-4">
+                            <div className="rounded bg-firstBg p-4">
                                 <div className="space-y-2">
                                     <p>
                                         <span className="font-semibold">
@@ -213,11 +213,11 @@ export default function Admin() {
                         </div>
 
                         {/* Regular Season */}
-                        <div className="rounded bg-bg p-6">
+                        <div className="rounded bg-firstBg p-6">
                             <h2 className="mb-4 text-2xl font-semibold text-blue-400">
                                 Regular Season
                             </h2>
-                            <div className="rounded bg-bg p-4">
+                            <div className="rounded bg-firstBg p-4">
                                 <div className="space-y-2">
                                     <p>
                                         <span className="font-semibold">
@@ -264,11 +264,11 @@ export default function Admin() {
                         </div>
 
                         {/* Playoffs */}
-                        <div className="rounded bg-bg p-6">
+                        <div className="rounded bg-firstBg p-6">
                             <h2 className="mb-4 text-2xl font-semibold text-blue-400">
                                 Playoffs
                             </h2>
-                            <div className="rounded bg-bg p-4">
+                            <div className="rounded bg-firstBg p-4">
                                 <div className="space-y-2">
                                     <p>
                                         <span className="font-semibold">

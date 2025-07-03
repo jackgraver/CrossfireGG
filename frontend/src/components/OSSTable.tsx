@@ -102,7 +102,7 @@ export default function OSSTable<T>({
         <div className={`overflow-x-auto ${className}`}>
             <table className="table-auto border-collapse">
                 <thead>
-                    <tr className="bg-bg-light text-left text-sm uppercase text-text-primary">
+                    <tr className="text-text-primary bg-secondBg text-left text-sm uppercase">
                         {columns.map((col, i) => (
                             <th
                                 key={i}
@@ -110,7 +110,7 @@ export default function OSSTable<T>({
                                     col.className || ""
                                 } ${
                                     !col.notSortable
-                                        ? "cursor-pointer hover:bg-bg-extra-light"
+                                        ? "hover:bg-firstbg-thirdBg cursor-pointer"
                                         : ""
                                 }`}
                                 onClick={() => handleSort(col)}
@@ -127,7 +127,7 @@ export default function OSSTable<T>({
                         <tr>
                             <td
                                 colSpan={columns.length}
-                                className="py-6 text-center text-text-secondary"
+                                className="text-text-secondary py-6 text-center"
                             >
                                 Loading...
                             </td>
@@ -136,7 +136,7 @@ export default function OSSTable<T>({
                         <tr>
                             <td
                                 colSpan={columns.length}
-                                className="py-6 text-center text-text-secondary"
+                                className="text-text-secondary py-6 text-center"
                             >
                                 {emptyMessage}
                             </td>
@@ -145,11 +145,11 @@ export default function OSSTable<T>({
                         sortedData.map((row, rowIndex) => (
                             <tr
                                 key={rowKey?.(row) ?? rowIndex}
-                                className={`border-t border-border hover:bg-bg-extra-light ${
+                                className={`hover:bg-firstbg-thirdBg border-t border-border ${
                                     rowClassName?.(row) ||
-                                    (rowIndex % 2 === 0
-                                        ? "bg-bg-light"
-                                        : "bg-bg")
+                                    (rowIndex % 2 === 1
+                                        ? "bg-secondBg"
+                                        : "bg-firstBg")
                                 } `}
                             >
                                 {columns.map((col, colIndex) => {

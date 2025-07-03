@@ -66,7 +66,7 @@ export default function SignIn() {
 
     return (
         <div className="flex min-h-screen items-center justify-center">
-            <div className="w-full max-w-md rounded-lg bg-bg p-8 shadow-lg">
+            <div className="w-full max-w-md rounded-lg bg-firstBg p-8 shadow-lg">
                 <div className="flex flex-col items-center space-y-4">
                     <img
                         src="/OSSLOGO.png"
@@ -97,7 +97,7 @@ export default function SignIn() {
                                     emailError
                                         ? "border-red-500"
                                         : "border-border"
-                                } rounded-md bg-bg-light focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50`}
+                                } rounded-md bg-secondBg focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50`}
                             />
                             {emailError && (
                                 <p className="mt-1 text-sm text-red-500">
@@ -112,7 +112,7 @@ export default function SignIn() {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 disabled={signInMutation.isPending}
-                                className="w-full rounded-md border border-border bg-bg-light px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
+                                className="w-full rounded-md border border-border bg-secondBg px-4 py-2 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:cursor-not-allowed disabled:opacity-50"
                             />
                             <button
                                 type="button"
@@ -154,7 +154,7 @@ export default function SignIn() {
                         <button
                             type="submit"
                             disabled={signInMutation.isPending}
-                            className="w-full rounded-md bg-bg-light px-4 py-2 text-text-primary transition duration-200 hover:bg-bg-extra-light disabled:cursor-not-allowed disabled:opacity-50"
+                            className="w-full rounded-md bg-secondBg px-4 py-2 text-text-primary transition duration-200 hover:bg-thirdBgdisabled:cursor-not-allowed disabled:opacity-50"
                         >
                             {signInMutation.isPending
                                 ? "Signing In..."

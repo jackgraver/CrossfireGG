@@ -97,7 +97,7 @@ export default function Casting() {
     if (isLoading) {
         return (
             <div className="flex min-h-screen items-center justify-center">
-                <div className="text-xl text-text-primary">
+                <div className="text-xl text-textPrimary">
                     Loading matches...
                 </div>
             </div>
@@ -130,12 +130,12 @@ export default function Casting() {
         match: Match;
         isClaimed: boolean;
     }) => (
-        <div className="rounded-lg border border-border bg-bg p-4 transition-colors hover:bg-bg-light">
+        <div className="rounded-lg border border-border bg-firstBg p-4 transition-colors hover:bg-secondBg">
             <div className="mb-3 flex items-start justify-between">
                 <div className="flex-1">
                     <div className="mb-2 flex items-center gap-2">
                         <span className="text-sm text-gray-400">Round:</span>
-                        <span className="font-medium text-text-primary">
+                        <span className="font-medium text-textPrimary">
                             {match.round}
                         </span>
                     </div>
@@ -150,7 +150,7 @@ export default function Casting() {
                                         "/oss-logo-placeholder.png";
                                 }}
                             />
-                            <span className="font-medium text-text-primary">
+                            <span className="font-medium text-textPrimary">
                                 {match.teams.team1.team_name}
                             </span>
                         </div>
@@ -185,7 +185,7 @@ export default function Casting() {
                 <div className="flex flex-col gap-2">
                     <button
                         onClick={() => handleViewMatch(match.match_id)}
-                        className="rounded border border-border bg-bg-light px-3 py-1 text-sm text-text-primary transition-colors hover:bg-bg-extra-light"
+                        className="rounded border border-border bg-firstBg px-3 py-1 text-sm text-text text-text-primary transition-colors hover:bg-secondBg"
                     >
                         View
                     </button>

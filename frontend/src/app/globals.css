@@ -3,10 +3,11 @@
 @tailwind utilities;
 
 :root {
-    --color-bg-dark: hsl(0, 0%, 90%);
-    --color-bg: hsl(0, 0%, 95%);
-    --color-bg-light: hsl(0, 0%, 100%);
-    --color-bg-extra-light: hsl(0, 0%, 85%);
+    --color-main-bg: hsl(0, 0%, 100%);
+    --color-first-bg: hsl(0, 0%, 95%);
+    --color-second-bg: hsl(0, 0%, 90%);
+    --color-third-bg: hsl(0, 0%, 85%);
+
     --color-text-primary: hsl(0, 0%, 0%);
     --color-text-secondary: hsl(0, 0%, 50%);
     --color-border: hsl(0, 0%, 80%);
@@ -18,10 +19,11 @@
 }
 
 .dark {
-    --color-bg-dark: hsl(0, 0%, 0%);
-    --color-bg: hsl(0, 0%, 5%);
-    --color-bg-light: hsl(0, 0%, 10%);
-    --color-bg-extra-light: hsl(0, 0%, 15%);
+    --color-main-bg: hsl(0, 0%, 0%);
+    --color-first-bg: hsl(0, 0%, 10%);
+    --color-second-bg: hsl(0, 0%, 20%);
+    --color-third-bg: hsl(0, 0%, 30%);
+
     --color-text-primary: hsl(0, 0%, 95%);
     --color-text-secondary: hsl(0, 0%, 70%);
     --color-border: hsl(0, 0%, 30%);
@@ -35,7 +37,7 @@
 html,
 body,
 #root {
-    background-color: var(--color-bg-dark);
+    background-color: var(--color-main-bg);
     color: var(--color-text-primary);
     height: 100%;
     margin: 0;
