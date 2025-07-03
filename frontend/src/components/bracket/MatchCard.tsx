@@ -19,7 +19,7 @@ export default function MatchCard({ match }: MatchCardProps) {
 
     const router = useRouter();
     return (
-        <div className="group relative m-2 flex flex-col rounded-md border border-border bg-firstBg text-text-primary">
+        <div className="text-text-primary group relative m-2 flex flex-col rounded-md border border-border bg-firstBg">
             <MatchTeam
                 team={match?.teams.team1}
                 winner={
@@ -39,26 +39,30 @@ export default function MatchCard({ match }: MatchCardProps) {
                 score={match?.team2_score}
             />
 
-            <div className="absolute inset-0 flex items-center justify-center gap-6 bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
-                <button
-                    onClick={() => {
-                        if (match?.faceit_url) {
-                            openInNewTab(match.faceit_url);
-                        }
-                    }}
-                    className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-white transition hover:bg-gray-200"
-                >
-                    <img src="/faceit.png" alt="F" className="h-5 w-5" />
-                </button>
-                {match?.status === "FINISHED" && (
+            {match && (
+                <div className="absolute inset-0 flex items-center justify-center gap-6 bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                     <button
-                        onClick={() => router.push(`/stats/${match?.match_id}`)}
-                        className="h-10 w-10 cursor-pointer rounded-full bg-white text-lg transition hover:bg-gray-200"
+                        onClick={() => {
+                            if (match?.faceit_url) {
+                                openInNewTab(match.faceit_url);
+                            }
+                        }}
+                        className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-white transition hover:bg-gray-200"
                     >
-                        📊
+                        <img src="/faceit.png" alt="F" className="h-5 w-5" />
                     </button>
-                )}
-            </div>
+                    {match?.status === "FINISHED" && (
+                        <button
+                            onClick={() =>
+                                router.push(`/stats/${match?.match_id}`)
+                            }
+                            className="h-10 w-10 cursor-pointer rounded-full bg-white text-lg transition hover:bg-gray-200"
+                        >
+                            📊
+                        </button>
+                    )}
+                </div>
+            )}
         </div>
     );
 }

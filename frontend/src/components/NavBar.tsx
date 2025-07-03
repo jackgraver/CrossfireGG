@@ -54,7 +54,7 @@ export default function NavBar() {
                         <div className="relative">
                             <button
                                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                                className="inline-flex items-center justify-center rounded-md p-2 text-text-secondary hover:bg-secondBg hover:text-text-primary focus:outline-none"
+                                className="text-text-secondary hover:text-text-primary inline-flex items-center justify-center rounded-md p-2 hover:bg-secondBg focus:outline-none"
                             >
                                 <span className="sr-only">Open main menu</span>
                                 {/* Hamburger icon */}
@@ -96,36 +96,38 @@ export default function NavBar() {
                             {/* Dropdown menu */}
                             {isMenuOpen && (
                                 <div
-                                    className="absolute right-0 mt-2 w-64 origin-top-right rounded-md bg-gradient-to-b from-bg-light to-bg shadow-lg ring-1 ring-black ring-opacity-5"
+                                    className="from-bg-light to-bg absolute right-0 mt-2 w-64 origin-top-right rounded-md bg-gradient-to-b shadow-lg ring-1 ring-black ring-opacity-5"
                                     onMouseLeave={() => setIsMenuOpen(false)}
                                 >
                                     {/* User section */}
                                     <div className="border-b border-border px-4 py-3">
-                                        <div className="flex items-center">
-                                            <div className="flex-shrink-0">
-                                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-secondBg">
-                                                    <svg
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        className="h-6 w-6 text-text-secondary"
-                                                        fill="none"
-                                                        viewBox="0 0 24 24"
-                                                        stroke="currentColor"
-                                                    >
-                                                        <path
-                                                            strokeLinecap="round"
-                                                            strokeLinejoin="round"
-                                                            strokeWidth={2}
-                                                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                                                        />
-                                                    </svg>
+                                        <Link href="/user">
+                                            <div className="flex items-center">
+                                                <div className="flex-shrink-0">
+                                                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-secondBg">
+                                                        <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            className="text-text-secondary h-6 w-6"
+                                                            fill="none"
+                                                            viewBox="0 0 24 24"
+                                                            stroke="currentColor"
+                                                        >
+                                                            <path
+                                                                strokeLinecap="round"
+                                                                strokeLinejoin="round"
+                                                                strokeWidth={2}
+                                                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                                                            />
+                                                        </svg>
+                                                    </div>
+                                                </div>
+                                                <div className="ml-3">
+                                                    <p className="text-text-primary text-sm font-medium">
+                                                        {username}
+                                                    </p>
                                                 </div>
                                             </div>
-                                            <div className="ml-3">
-                                                <p className="text-sm font-medium text-text-primary">
-                                                    {username}
-                                                </p>
-                                            </div>
-                                        </div>
+                                        </Link>
                                     </div>
 
                                     {/* Menu items */}
@@ -136,7 +138,7 @@ export default function NavBar() {
                                     >
                                         <Link
                                             href="/manage-teams"
-                                            className="block px-4 py-2 text-sm text-text-secondary hover:bg-secondBg"
+                                            className="text-text-secondary block px-4 py-2 text-sm hover:bg-secondBg"
                                             role="menuitem"
                                             onClick={() => setIsMenuOpen(false)}
                                         >
@@ -144,7 +146,7 @@ export default function NavBar() {
                                         </Link>
                                         <Link
                                             href="/casting"
-                                            className="block px-4 py-2 text-sm text-text-secondary hover:bg-secondBg"
+                                            className="text-text-secondary block px-4 py-2 text-sm hover:bg-secondBg"
                                             role="menuitem"
                                             onClick={() => setIsMenuOpen(false)}
                                         >
@@ -152,14 +154,14 @@ export default function NavBar() {
                                         </Link>
                                         <Link
                                             href="/admin"
-                                            className="block px-4 py-2 text-sm text-text-secondary hover:bg-secondBg"
+                                            className="text-text-secondary block px-4 py-2 text-sm hover:bg-secondBg"
                                             role="menuitem"
                                             onClick={() => setIsMenuOpen(false)}
                                         >
                                             Admin
                                         </Link>
                                         <div
-                                            className="block cursor-pointer px-4 py-2 text-sm text-text-secondary hover:bg-secondBg"
+                                            className="text-text-secondary block cursor-pointer px-4 py-2 text-sm hover:bg-secondBg"
                                             role="menuitem"
                                             onClick={() => toggleDarkMode()}
                                         >
@@ -168,11 +170,11 @@ export default function NavBar() {
                                         {signedIn ? (
                                             <Link
                                                 href="/"
-                                                className="block px-4 py-2 text-sm text-text-secondary hover:bg-secondBg"
+                                                className="text-text-secondary block px-4 py-2 text-sm hover:bg-secondBg"
                                                 role="menuitem"
                                                 onClick={() =>
                                                     localStorage.removeItem(
-                                                        "access_token"
+                                                        "access_token",
                                                     )
                                                 }
                                             >
@@ -181,7 +183,7 @@ export default function NavBar() {
                                         ) : (
                                             <Link
                                                 href="/sign-in"
-                                                className="block px-4 py-2 text-sm text-text-secondary hover:bg-secondBg"
+                                                className="text-text-secondary block px-4 py-2 text-sm hover:bg-secondBg"
                                                 role="menuitem"
                                                 onClick={() =>
                                                     setIsMenuOpen(false)

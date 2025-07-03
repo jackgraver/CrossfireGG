@@ -1,7 +1,5 @@
 "use client";
 
-import "./sign-up.css";
-
 import { useEffect, useState } from "react";
 import { validateEmail } from "@/lib/SignInUp.util";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -9,7 +7,6 @@ import { api } from "../../lib/api";
 import { useRouter } from "next/navigation";
 
 import { FaSpinner } from "react-icons/fa";
-import { link } from "fs";
 
 interface SignUpResponse {
     access_token: string;
@@ -191,7 +188,7 @@ export default function SignUp() {
     };
 
     return (
-        <div className="flex min-h-screen items-center justify-center">
+        <div className="flex items-center justify-center">
             <div className="w-full max-w-md rounded-lg bg-firstBg p-8 shadow-lg">
                 <div className="flex flex-col items-center space-y-4">
                     <img

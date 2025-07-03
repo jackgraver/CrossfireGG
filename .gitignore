@@ -76,9 +76,9 @@ htmlcov/
 # Test coverage files
 coverage/
 
-test_data/
+.test_data/
 
-.sql
+*.sql
 
 _*
 

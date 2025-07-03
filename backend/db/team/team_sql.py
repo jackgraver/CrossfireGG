@@ -45,7 +45,9 @@ def get_team_record(team_id: str, sub_t_id: str = None, tournament_name: str = N
         team = session.exec(stmt).first()
         
         if not team:
-            return ""
+            if tournament_name == "PLAYOFFS":
+                return "RO16"
+            return "0-0"
         
         # If tournament_name is not provided, try to get it from sub_t_id
         if not tournament_name and sub_t_id:

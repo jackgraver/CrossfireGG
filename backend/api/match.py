@@ -1,0 +1,64 @@
+
+from fastapi import APIRouter, HTTPException, Request
+from fastapi.responses import JSONResponse
+
+from db.match.match_caster_sql import claim_match, get_matches_with_casters, unclaim_match
+from db.metadata.metadata_sql import write_metadata
+from db.match.match_sql import fetch_all_matches
+from db.match.match_util import process_matches
+
+from datetime import datetime
+
+router = APIRouter()
+
+@router.get("/refresh")
+def refresh_teams():
+    process_matches()
+    write_metadata("last_refresh", str(int(datetime.now().timestamp())))
+    return {"teams:": [], "matches": []}
+
+@router.get("/all")
+def get_matches():
+    res = fetch_all_matches()
+    return res
+
+@router.get("/casting")
+def get_matches_for_casting():
+    res = get_matches_with_casters()
+    return res
+
+@router.post("/claim")
+async def claim_match_endpoint(request: Request):
+    data = await request.json()
+    match_id = data.get("match_id")
+    
+    if not match_id:
+        raise HTTPException(status_code=400, detail="Missing match_id")
+    
+    # TODO: Get user_id from JWT token when authentication is implemented
+    # For now, we'll use a placeholder user_id
+    # In a real implementation, you would decode the JWT token to get the user_id
+    caster_id = 1  # Placeholder - should come from JWT token
+    
+    success = claim_match(match_id, caster_id)
+    if not success:
+        raise HTTPException(status_code=400, detail="Match already claimed or invalid match_id")
+    
+    return JSONResponse(content={"message": "Match claimed successfully"}, status_code=200)
+
+@router.post("/unclaim")
+async def unclaim_match_endpoint(request: Request):
+    data = await request.json()
+    match_id = data.get("match_id")
+    
+    if not match_id:
+        raise HTTPException(status_code=400, detail="Missing match_id")
+    
+    # TODO: Get user_id from JWT token when authentication is implemented
+    caster_id = 1  # Placeholder - should come from JWT token
+    
+    success = unclaim_match(match_id, caster_id)
+    if not success:
+        raise HTTPException(status_code=400, detail="Match not claimed by this user or invalid match_id")
+    
+    return JSONResponse(content={"message": "Match unclaimed successfully"}, status_code=200)

@@ -43,7 +43,7 @@ export default function Home() {
                 reg_season: Team[];
                 playoffs: Team[];
                 last_update: number;
-            }>("/teams"),
+            }>("/team/all"),
     });
 
     const {
@@ -53,7 +53,7 @@ export default function Home() {
     } = useQuery({
         queryKey: ["matches"],
         queryFn: () =>
-            api.get<{ reg_season: Match[]; playoffs: Match[] }>("/matches"),
+            api.get<{ reg_season: Match[]; playoffs: Match[] }>("/match/all"),
     });
 
     const loading = teamsLoading || matchesLoading;
@@ -73,7 +73,7 @@ export default function Home() {
         : matchData!;
 
     const nonFinishedMatches = [...regSeasonMatches, ...playoffsMatches].filter(
-        (match) => match.status !== "FINISHED"
+        (match) => match.status !== "FINISHED",
     );
 
     const getCurrentTeams = () => {
@@ -100,7 +100,7 @@ export default function Home() {
                         <br />
                         SHENANIGANS
                     </h1>
-                    <p className="text-2xl text-text-secondary">
+                    <p className="text-text-secondary text-2xl">
                         Off Season Shenanigans the ultimate Counter-Strike
                         <br />
                         tournament during the off seasons!

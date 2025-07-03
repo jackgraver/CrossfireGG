@@ -38,7 +38,7 @@ export default function ManageTeams() {
         switch (filter) {
             case "name":
                 res = res.filter((team) =>
-                    team.team_name.toLowerCase().includes(f.toLowerCase())
+                    team.team_name.toLowerCase().includes(f.toLowerCase()),
                 );
                 break;
             case "paid":
@@ -54,7 +54,7 @@ export default function ManageTeams() {
 
     const { data, isLoading, error } = useQuery<TeamsResponse, Error>({
         queryKey: ["teams"],
-        queryFn: () => api.get<TeamsResponse>("/teams"),
+        queryFn: () => api.get<TeamsResponse>("/team"),
     });
 
     const paidMutation = useMutation({
@@ -99,14 +99,14 @@ export default function ManageTeams() {
     return (
         <div className="flex flex-row justify-center space-x-16">
             <div className="flex flex-col items-center justify-center">
-                <h1 className="pb-12 pt-12 text-4xl text-text-primary">
+                <h1 className="text-text-primary pb-12 pt-12 text-4xl">
                     Current Teams
                 </h1>
                 <div className="mb-2 flex flex-wrap items-end gap-4 rounded-md bg-firstBg p-2 shadow">
                     <div className="flex flex-col">
                         <label
                             htmlFor="search"
-                            className="mb-1 text-sm text-text-secondary"
+                            className="text-text-secondary mb-1 text-sm"
                         >
                             Search
                         </label>
@@ -123,7 +123,7 @@ export default function ManageTeams() {
                     <div className="flex flex-col">
                         <label
                             htmlFor="paid"
-                            className="mb-1 text-sm text-text-secondary"
+                            className="text-text-secondary mb-1 text-sm"
                         >
                             Paid Teams
                         </label>
@@ -139,7 +139,7 @@ export default function ManageTeams() {
                     <div className="flex flex-col">
                         <label
                             htmlFor="joined"
-                            className="mb-1 text-sm text-text-secondary"
+                            className="text-text-secondary mb-1 text-sm"
                         >
                             Teams in Tournament
                         </label>
@@ -157,7 +157,7 @@ export default function ManageTeams() {
                     {filteredTeams.map((team, i) => (
                         <div
                             key={i}
-                            className="relative flex items-center gap-4 rounded-md border border-border bg-firstBg p-4 text-text-primary shadow-md"
+                            className="text-text-primary relative flex items-center gap-4 rounded-md border border-border bg-firstBg p-4 shadow-md"
                         >
                             <div className="flex flex-col items-center justify-center">
                                 <input
@@ -166,12 +166,12 @@ export default function ManageTeams() {
                                     value={team.seed}
                                     readOnly
                                 />
-                                <span className="text-xs text-text-secondary">
+                                <span className="text-text-secondary text-xs">
                                     Seed
                                 </span>
                             </div>
                             <div className="flex flex-1 flex-col gap-1">
-                                <p className="text-sm text-text-secondary">
+                                <p className="text-text-secondary text-sm">
                                     {team.team_id}
                                 </p>
                                 <p className="text-lg font-semibold">
@@ -229,7 +229,7 @@ export default function ManageTeams() {
                 </div>
             </div>
             <div className="">
-                <h1 className="pb-12 pt-12 text-4xl text-text-primary">
+                <h1 className="text-text-primary pb-12 pt-12 text-4xl">
                     Add Teams{" "}
                 </h1>
                 <div>
@@ -262,7 +262,7 @@ export default function ManageTeams() {
                         {newTeams.map((team, index) => (
                             <div
                                 key={index}
-                                className="relative flex items-center gap-4 rounded-md border border-border bg-firstBg p-4 text-text-primary shadow-md"
+                                className="text-text-primary relative flex items-center gap-4 rounded-md border border-border bg-firstBg p-4 shadow-md"
                             >
                                 {/* Seed */}
                                 <div className="flex flex-col items-center justify-center">
@@ -274,11 +274,11 @@ export default function ManageTeams() {
                                             handleChange(
                                                 index,
                                                 "seed",
-                                                Number(e.target.value)
+                                                Number(e.target.value),
                                             )
                                         }
                                     />
-                                    <span className="text-xs text-text-secondary">
+                                    <span className="text-text-secondary text-xs">
                                         Seed
                                     </span>
                                 </div>
@@ -295,7 +295,7 @@ export default function ManageTeams() {
                                             handleChange(
                                                 index,
                                                 "team_name",
-                                                e.target.value
+                                                e.target.value,
                                             )
                                         }
                                     />
@@ -310,7 +310,7 @@ export default function ManageTeams() {
                                                     handleChange(
                                                         index,
                                                         "paid",
-                                                        e.target.checked
+                                                        e.target.checked,
                                                     )
                                                 }
                                             />
@@ -324,7 +324,7 @@ export default function ManageTeams() {
                                                     handleChange(
                                                         index,
                                                         "joined_tournament",
-                                                        e.target.checked
+                                                        e.target.checked,
                                                     )
                                                 }
                                             />
