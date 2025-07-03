@@ -1,6 +1,7 @@
 import asyncio
 from datetime import datetime, timedelta
 from pathlib import Path
+from time import sleep
 from dotenv import load_dotenv
 import os
 from fastapi import FastAPI, HTTPException, Request
@@ -20,6 +21,7 @@ from db.metadata.metadata_model import *
 from db.metadata.metadata_sql import *
 from db.tournament.tournament_sql import *
 from db.player.player_sql import *
+from db.player.player_util import *
 
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -46,7 +48,7 @@ async def global_wrapper(request: Request, call_next):
 @app.get("/stats")
 def get_stats():
     res = get_all_player_stats()
-    return res;
+    return res
 
 @app.get("/stats/{match_id}")
 def get_stats_by_match_id(match_id: str):
@@ -178,20 +180,51 @@ async def sign_in(request: Request):
 @app.post("/sign-up")
 async def sign_up(request: Request):
     data = await request.json()
-    email = data.get("email")
-    username = data.get("username")
-    password = data.get("password")
+    try:
+        id = data.get("id")
+        email = data.get("email")
+        username = data.get("username")
+        faceit_id = data.get("faceit_id")
+        team_id = data.get("team_id")
+        password = data.get("password")
+    except:
+        id = None
+        faceit_id = None
+        team_id = None
 
     if not email or not username or not password:
+        print('fail 1')
         raise HTTPException(status_code=400, detail="Missing required fields")
 
     if user_exists(email):
+        print('fail 2')
         raise HTTPException(status_code=400, detail="Email already in use")
 
     hashed_password = hash_password(password)
-    insert_user(email, hashed_password)
+    insert_user(id, email, faceit_id, team_id, hashed_password)
 
     return JSONResponse(content={"message": "User created successfully"}, status_code=201)
+
+@app.get("/test_faceit_link/{name}")
+async def test_faceit_link(name: str):
+    # sleep(3)
+    if not name:    
+        return {"id": None}
+    
+    if (id := fetch_faceit_info(name)):
+        internal_id, team_id, team_name = check_player_exists(name)
+        if internal_id and team_id and team_name:
+            return {"player": {"i_id": internal_id, "id": id}, 
+                    "team": {"id": team_id, "name": team_name}}
+        else:
+            return {"player": {"i_id": id, "id": None}, "team": None}
+    return {"player": {"i_id": None, "id": None}, "team": None}
+
+
+@app.get("/users")
+def get_all_users():
+    users = fetch_all_users()
+    return users
 
 
 @app.post("/update_current_tournament")

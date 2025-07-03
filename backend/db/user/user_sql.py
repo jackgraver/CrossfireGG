@@ -1,12 +1,23 @@
+from uuid import uuid4
 from sqlmodel import Session, select
-from db.user.user_model import User
+from db.user.user_model import User, UserPublic
 from db.db import get_db_connection
 from typing import Optional
 from passlib.hash import bcrypt
+import re
 
-def insert_user(email: str, hashed_password: str) -> None:
+def insert_user(id: str, email: str, faceit_id: str, team_id: str, hashed_password: str):
     """Insert a new user or update existing user's password"""
-    user = User(email=email, password=hashed_password)
+    
+    if not (re.match("^\$2[aby]\$\d{2}\$[./A-Za-z0-9]{53}$", hashed_password)):
+        raise Exception("Invalid hashed_password format")
+    
+    print('using id', id)
+    
+    if id:
+        user = User(user_id=id, email=email, faceit_id=faceit_id, team_id=team_id, password=hashed_password)
+    else:
+        user = User(user_id=str(uuid4()), email=email, faceit_id=faceit_id, team_id=team_id, password=hashed_password)
     with Session(get_db_connection()) as session:
         # Check if user exists
         existing_user = session.exec(
@@ -15,6 +26,8 @@ def insert_user(email: str, hashed_password: str) -> None:
         
         if existing_user:
             # Update password
+            existing_user.faceit_id = faceit_id
+            existing_user.team_id = team_id
             existing_user.password = hashed_password
         else:
             # Create new user
@@ -57,3 +70,8 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 def hash_password(plain_password: str) -> str:
     """Hash a plain password using bcrypt"""
     return bcrypt.hash(plain_password)
+
+def fetch_all_users():
+    with Session(get_db_connection()) as session:
+        users = session.exec(select(User.user_id, User.email, User.faceit_id, User.team_id)).all()
+        return [UserPublic(user_id=row[0], email=row[1], faceit_id=row[2], team_id=row[3]) for row in users]

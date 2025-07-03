@@ -78,6 +78,8 @@ coverage/
 
 test_data/
 
+.sql
+
 _*
 
 todo.md

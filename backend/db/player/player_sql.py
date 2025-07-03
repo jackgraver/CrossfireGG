@@ -124,3 +124,21 @@ def insert_player_stats(player_stats: PlayerStats):
         session.commit()
         session.refresh(player_stats)
         return player_stats
+    
+def check_player_exists(player_name: str):
+    """_summary_
+
+    Args:
+        player_name (str): _description_
+
+    Returns:
+        int, int, str: player_id_i, team_id, team_name
+    """
+    with Session(get_db_connection()) as session:
+        player = session.exec(select(Player).where(Player.player_name == player_name)).first()
+        
+        if player:
+            team = session.exec(select(Team).where(Team.team_id == player.team_id)).first()
+            if team:
+                return player.player_id_i, team.team_id, team.team_name
+    return None, None, None
