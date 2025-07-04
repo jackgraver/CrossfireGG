@@ -12,12 +12,11 @@ def insert_user(id: str, email: str, faceit_id: str, team_id: str, hashed_passwo
     if not (re.match("^\$2[aby]\$\d{2}\$[./A-Za-z0-9]{53}$", hashed_password)):
         raise Exception("Invalid hashed_password format")
     
-    print('using id', id)
-    
     if id:
         user = User(user_id=id, email=email, faceit_id=faceit_id, team_id=team_id, password=hashed_password)
     else:
-        user = User(user_id=str(uuid4()), email=email, faceit_id=faceit_id, team_id=team_id, password=hashed_password)
+        id = str(uuid4())
+        user = User(user_id=id, email=email, faceit_id=faceit_id, team_id=team_id, password=hashed_password)
     with Session(get_db_connection()) as session:
         # Check if user exists
         existing_user = session.exec(
@@ -34,6 +33,7 @@ def insert_user(id: str, email: str, faceit_id: str, team_id: str, hashed_passwo
             session.add(user)
         
         session.commit()
+    return id
 
 def user_exists(email: str) -> bool:
     """Check if a user exists by email"""

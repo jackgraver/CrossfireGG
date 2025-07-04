@@ -118,8 +118,9 @@ export default function SignUp() {
             faceit_id: string;
             team_id: string;
             password: string;
-        }) => api.post<SignUpResponse>("/sign-up", userData),
+        }) => api.post<SignUpResponse>("/user/sign-up", userData),
         onSuccess: (data) => {
+            console.log(data);
             if (typeof window !== "undefined") {
                 localStorage.setItem("access_token", data.access_token);
             }

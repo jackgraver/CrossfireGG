@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { Match, MatchMap } from "@/types/Types";
+import type { MatchMap, PlayerStats, Round, Team } from "@/types/Types";
 import ViewSelector from "@/components/ViewSelector";
 import OSSTable from "@/components/OSSTable";
 import { api } from "@/lib/api";
@@ -9,6 +9,50 @@ import { useQuery } from "@tanstack/react-query";
 import { formatMatchDate } from "@/lib/dateUtils";
 import { notFound, useRouter } from "next/navigation";
 import { use } from "react";
+
+type Match = {
+    match_id: string;
+    status: string;
+    scheduled_at: number;
+    round: Round;
+    faceit_url: string;
+    winner: string;
+    teams: { team1: Team; team2: Team };
+    team1_score: number;
+    team2_score: number;
+    caster_id?: number;
+};
+
+type Map = {
+    map_id: string;
+    match_id: string;
+    map_name: string;
+    round: number;
+    winner_id: string;
+    team1_score: number;
+    team2_score: number;
+};
+
+type Stats = {
+    map_id: string;
+    match_id: string;
+    ps_id: string;
+    kills: number;
+    deaths: number;
+    assists: number;
+    adr: number;
+    damage: number;
+    player_id: string;
+};
+
+type Player = {
+    team_id: string;
+    player_id: string;
+    sub_t_id: string;
+    player_name: string;
+    player_logo: string;
+    player_id_i: string;
+};
 
 /**
  * Extracts the map name from the map_name string (de_anubis -> Anubis)
@@ -31,6 +75,52 @@ type MatchStatsProps = {
     params: Promise<{ match_id: string }>;
 };
 
+type AggregatedStat = {
+    player_id: string;
+    player_name: string;
+    kills: number;
+    deaths: number;
+    assists: number;
+    adr: number;
+    damage: number;
+};
+
+function aggregateStatsByPlayer(
+    stats: Stats[],
+    players: Player[],
+    currentMapIds: string[],
+): AggregatedStat[] {
+    const grouped = new Map<string, AggregatedStat>();
+
+    for (const stat of stats) {
+        if (!currentMapIds.includes(stat.map_id)) continue;
+
+        const existing = grouped.get(stat.player_id);
+        if (existing) {
+            existing.kills += stat.kills;
+            existing.deaths += stat.deaths;
+            existing.assists += stat.assists;
+            existing.adr += stat.adr;
+            existing.damage += stat.damage;
+        } else {
+            const player = players.find((p) => p.player_id === stat.player_id);
+            if (!player) continue; // skip if player not found
+
+            grouped.set(stat.player_id, {
+                player_id: stat.player_id,
+                player_name: player.player_name,
+                kills: stat.kills,
+                deaths: stat.deaths,
+                assists: stat.assists,
+                adr: stat.adr,
+                damage: stat.damage,
+            });
+        }
+    }
+
+    return Array.from(grouped.values());
+}
+
 export default function MatchStats({ params }: MatchStatsProps) {
     const { match_id } = use(params);
 
@@ -43,9 +133,16 @@ export default function MatchStats({ params }: MatchStatsProps) {
     const { data, isLoading, error } = useQuery({
         queryKey: ["match", match_id],
         queryFn: () =>
-            api.get<{ match_info: Match; maps: MatchMap[] }>(
-                `/stats/${match_id}`,
-            ),
+            api.get<{
+                match: Match;
+                team1: Team;
+                team2: Team;
+                maps: Map[];
+                t1_players: Player[];
+                t2_players: Player[];
+                t1_stats: Stats[];
+                t2_stats: Stats[];
+            }>(`/stats/${match_id}`),
     });
 
     if (isLoading) {
@@ -56,93 +153,115 @@ export default function MatchStats({ params }: MatchStatsProps) {
         return <div>Error: {error.message}</div>;
     }
 
-    const { match_info, maps } = data!;
+    const {
+        match,
+        team1,
+        team2,
+        maps,
+        t1_players,
+        t2_players,
+        t1_stats,
+        t2_stats,
+    } = data!;
 
-    const teamAmergedStatsMap = new Map<
-        string,
-        {
-            player_name: string;
-            kills: number;
-            deaths: number;
-            assists: number;
-            adr: number;
-            damage: number;
-        }
-    >();
+    // const { match, maps } = data!;
 
-    maps.filter((map) => currentMapIds.includes(map.map_id)).forEach((map) => {
-        map.teams[0].players.forEach((player) => {
-            const name = player.player_name;
-            const existing = teamAmergedStatsMap.get(name);
+    const t1_display_stats_array = aggregateStatsByPlayer(
+        t1_stats,
+        t1_players,
+        currentMapIds,
+    );
+    const t2_display_stats_array = aggregateStatsByPlayer(
+        t2_stats,
+        t2_players,
+        currentMapIds,
+    );
 
-            const stats = {
-                player_name: name,
-                kills: player.stats.kills,
-                deaths: player.stats.deaths,
-                assists: player.stats.assists,
-                adr: player.stats.adr,
-                damage: player.stats.damage,
-            };
+    // const teamAmergedStatsMap = new Map<
+    //     string,
+    //     {
+    //         player_name: string;
+    //         kills: number;
+    //         deaths: number;
+    //         assists: number;
+    //         adr: number;
+    //         damage: number;
+    //     }
+    // >();
 
-            if (existing) {
-                teamAmergedStatsMap.set(name, {
-                    player_name: name,
-                    kills: existing.kills + stats.kills,
-                    deaths: existing.deaths + stats.deaths,
-                    assists: existing.assists + stats.assists,
-                    adr: existing.adr + stats.adr,
-                    damage: existing.damage + stats.damage,
-                });
-            } else {
-                teamAmergedStatsMap.set(name, stats);
-            }
-        });
-    });
+    // maps.filter((map) => currentMapIds.includes(map.map_id)).forEach((map) => {
+    //     map.teams[0].players.forEach((player) => {
+    //         const name = player.player_name;
+    //         const existing = teamAmergedStatsMap.get(name);
 
-    const teamAStats = Array.from(teamAmergedStatsMap.values());
+    //         const stats = {
+    //             player_name: name,
+    //             kills: player.stats.kills,
+    //             deaths: player.stats.deaths,
+    //             assists: player.stats.assists,
+    //             adr: player.stats.adr,
+    //             damage: player.stats.damage,
+    //         };
 
-    const teamBmergedStatsMap = new Map<
-        string,
-        {
-            player_name: string;
-            kills: number;
-            deaths: number;
-            assists: number;
-            adr: number;
-            damage: number;
-        }
-    >();
+    //         if (existing) {
+    //             teamAmergedStatsMap.set(name, {
+    //                 player_name: name,
+    //                 kills: existing.kills + stats.kills,
+    //                 deaths: existing.deaths + stats.deaths,
+    //                 assists: existing.assists + stats.assists,
+    //                 adr: existing.adr + stats.adr,
+    //                 damage: existing.damage + stats.damage,
+    //             });
+    //         } else {
+    //             teamAmergedStatsMap.set(name, stats);
+    //         }
+    //     });
+    // });
 
-    maps.filter((map) => currentMapIds.includes(map.map_id)).forEach((map) => {
-        map.teams[1].players.forEach((player) => {
-            const name = player.player_name;
-            const existing = teamBmergedStatsMap.get(name);
+    // const teamAStats = Array.from(teamAmergedStatsMap.values());
 
-            const stats = {
-                player_name: name,
-                kills: player.stats.kills,
-                deaths: player.stats.deaths,
-                assists: player.stats.assists,
-                adr: player.stats.adr,
-                damage: player.stats.damage,
-            };
+    // const teamBmergedStatsMap = new Map<
+    //     string,
+    //     {
+    //         player_name: string;
+    //         kills: number;
+    //         deaths: number;
+    //         assists: number;
+    //         adr: number;
+    //         damage: number;
+    //     }
+    // >();
 
-            if (existing) {
-                teamBmergedStatsMap.set(name, {
-                    player_name: name,
-                    kills: existing.kills + stats.kills,
-                    deaths: existing.deaths + stats.deaths,
-                    assists: existing.assists + stats.assists,
-                    adr: existing.adr + stats.adr,
-                    damage: existing.damage + stats.damage,
-                });
-            } else {
-                teamBmergedStatsMap.set(name, stats);
-            }
-        });
-    });
+    // maps.filter((map) => currentMapIds.includes(map.map_id)).forEach((map) => {
+    //     map.teams[1].players.forEach((player) => {
+    //         const name = player.player_name;
+    //         const existing = teamBmergedStatsMap.get(name);
 
-    const teamBStats = Array.from(teamBmergedStatsMap.values());
+    //         const stats = {
+    //             player_name: name,
+    //             kills: player.stats.kills,
+    //             deaths: player.stats.deaths,
+    //             assists: player.stats.assists,
+    //             adr: player.stats.adr,
+    //             damage: player.stats.damage,
+    //         };
+
+    //         if (existing) {
+    //             teamBmergedStatsMap.set(name, {
+    //                 player_name: name,
+    //                 kills: existing.kills + stats.kills,
+    //                 deaths: existing.deaths + stats.deaths,
+    //                 assists: existing.assists + stats.assists,
+    //                 adr: existing.adr + stats.adr,
+    //                 damage: existing.damage + stats.damage,
+    //             });
+    //         } else {
+    //             teamBmergedStatsMap.set(name, stats);
+    //         }
+    //     });
+    // });
+
+    // const teamBStats = Array.from(teamBmergedStatsMap.values());
 
     // const teamBStats = maps
     //     .filter((map) => currentMapIds.includes(map.map_id)) // only selected maps
@@ -163,7 +282,7 @@ export default function MatchStats({ params }: MatchStatsProps) {
                 {/* Left Side - Team 1 */}
                 <div className="flex min-w-0 flex-1 flex-row items-center gap-x-4">
                     <img
-                        src={match_info.teams.team1.team_logo}
+                        src={team1.team_logo || "/oss-logo-placeholder.png"}
                         className="h-12 w-12 flex-shrink-0 rounded"
                         onError={(e) => {
                             e.currentTarget.src = "/oss-logo-placeholder.png";
@@ -172,27 +291,25 @@ export default function MatchStats({ params }: MatchStatsProps) {
                     <h1
                         className="cursor-pointer truncate text-left text-2xl"
                         onClick={() =>
-                            router.push(
-                                `/team/${match_info.teams.team1.team_id}`,
-                            )
+                            // router.push(`/team/${team1.team_id}`)
+                            router.push(`/`)
                         }
                     >
-                        {match_info.teams.team1.team_name}
+                        {team1.team_name}
                     </h1>
                     <h1 className="text-2xl">
                         {formatScore(
-                            match_info.team1_score,
-                            match_info.winner ===
-                                match_info.teams.team1.team_id,
+                            match.team1_score,
+                            match.winner === team1.team_id,
                         )}
                     </h1>
                 </div>
 
                 {/* Center - Status + Date */}
                 <div className="flex w-40 flex-shrink-0 flex-col items-center justify-center text-center">
-                    <p className="text-text-secondary">{match_info.status}</p>
+                    <p className="text-text-secondary">{match.status}</p>
                     <p className="text-sm">
-                        {formatMatchDate(match_info.scheduled_at)}
+                        {formatMatchDate(match.scheduled_at)}
                     </p>
                 </div>
 
@@ -200,23 +317,18 @@ export default function MatchStats({ params }: MatchStatsProps) {
                 <div className="flex min-w-0 flex-1 flex-row items-center justify-end gap-x-4">
                     <h1 className="text-2xl">
                         {formatScore(
-                            match_info.team2_score,
-                            match_info.winner ===
-                                match_info.teams.team2.team_id,
+                            match.team2_score,
+                            match.winner === team2.team_id,
                         )}
                     </h1>
                     <h1
                         className="cursor-pointer truncate text-right text-2xl"
-                        onClick={() =>
-                            router.push(
-                                `/team/${match_info.teams.team2.team_id}`,
-                            )
-                        }
+                        onClick={() => router.push(`/team/${team2.team_id}`)}
                     >
-                        {match_info.teams.team2.team_name}
+                        {team2.team_name}
                     </h1>
                     <img
-                        src={match_info.teams.team2.team_logo}
+                        src={team2.team_logo}
                         className="h-12 w-12 flex-shrink-0 rounded"
                         onError={(e) => {
                             e.currentTarget.src = "/oss-logo-placeholder.png";
@@ -228,7 +340,7 @@ export default function MatchStats({ params }: MatchStatsProps) {
                 <div className="flex flex-col">
                     {currentMapIds.length > 0 && (
                         <OSSTable
-                            data={teamAStats}
+                            data={t1_display_stats_array}
                             columns={[
                                 {
                                     header: "Player",
@@ -305,7 +417,7 @@ export default function MatchStats({ params }: MatchStatsProps) {
                 <div className="flex flex-col">
                     {currentMapIds.length > 0 && (
                         <OSSTable
-                            data={teamBStats}
+                            data={t2_display_stats_array}
                             columns={[
                                 {
                                     header: "Player",

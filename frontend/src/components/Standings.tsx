@@ -2,7 +2,6 @@ import type { Team } from "../types/Types";
 import OSSTable from "./OSSTable";
 
 const rowBgColor = (row: Team) => {
-    // console.log(row);
     if (row.win >= 3) {
         return "bg-[#378a37]";
     } else if (row.loss >= 3) {
@@ -16,7 +15,6 @@ type StandingsProps = {
 };
 
 export default function Standings({ teams }: StandingsProps) {
-    // console.log(teams);
     return (
         <div>
             <OSSTable

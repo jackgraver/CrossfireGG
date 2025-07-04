@@ -48,9 +48,10 @@ async def sign_up(request: Request):
         raise HTTPException(status_code=400, detail="Email already in use")
 
     hashed_password = hash_password(password)
-    insert_user(id, email, faceit_id, team_id, hashed_password)
+    user_id = insert_user(id, email, faceit_id, team_id, hashed_password)
 
-    return JSONResponse(content={"message": "User created successfully"}, status_code=201)
+    token = create_access_token({"user_id": user_id, "email": email})
+    return {"access_token": token}
 
 @router.get("/test_faceit_link/{name}")
 async def test_faceit_link(name: str):

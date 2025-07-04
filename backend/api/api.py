@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request
+from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 
 from .user import router as user_router
@@ -7,6 +7,10 @@ from .team import router as team_router
 from .metadata import router as metadata_router
 from .tournament import router as tournament_router 
 from .stats import router as stats_router
+
+from fastapi.security import OAuth2PasswordBearer
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 import asyncio
 
@@ -19,6 +23,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 
 # Global middleware
 @app.middleware("http")

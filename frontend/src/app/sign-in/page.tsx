@@ -24,7 +24,7 @@ export default function SignIn() {
 
     const signInMutation = useMutation({
         mutationFn: (credentials: { email: string; password: string }) =>
-            api.post<SignInResponse>("/sign-in", credentials),
+            api.post<SignInResponse>("/user/sign-in", credentials),
         onSuccess: (data) => {
             if (typeof window !== "undefined") {
                 localStorage.setItem("access_token", data.access_token);
@@ -73,7 +73,7 @@ export default function SignIn() {
                         alt="OSS Logo"
                         className="h-32 w-32"
                     />
-                    <h1 className="text-2xl font-bold text-text-primary">
+                    <h1 className="text-text-primary text-2xl font-bold">
                         Welcome Back
                     </h1>
                     <p className="text-text-secondary">
@@ -154,7 +154,7 @@ export default function SignIn() {
                         <button
                             type="submit"
                             disabled={signInMutation.isPending}
-                            className="w-full rounded-md bg-secondBg px-4 py-2 text-text-primary transition duration-200 hover:bg-thirdBgdisabled:cursor-not-allowed disabled:opacity-50"
+                            className="text-text-primary hover:bg-thirdBgdisabled:cursor-not-allowed w-full rounded-md bg-secondBg px-4 py-2 transition duration-200 disabled:opacity-50"
                         >
                             {signInMutation.isPending
                                 ? "Signing In..."

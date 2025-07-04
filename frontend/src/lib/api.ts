@@ -8,12 +8,17 @@ async function request<T>(
     body?: any,
     headers: Record<string, string> = {},
 ): Promise<T> {
+    const accessToken = localStorage.getItem("access_token");
+
+    const finalHeaders: HeadersInit = {
+        "Content-Type": "application/json",
+        ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+        ...headers,
+    };
+
     const response = await fetch(`${BASE_URL}${endpoint}`, {
         method,
-        headers: {
-            "Content-Type": "application/json",
-            ...headers,
-        },
+        headers: finalHeaders,
         body: body ? JSON.stringify(body) : undefined,
     });
 
