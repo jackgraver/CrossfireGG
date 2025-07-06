@@ -1,4 +1,4 @@
-const BASE_URL = "http://192.168.4.64:8000";
+const BASE_URL = process.env.API_URL || "http://localhost:8000";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
 
