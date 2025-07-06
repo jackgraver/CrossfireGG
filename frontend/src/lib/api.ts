@@ -1,4 +1,5 @@
-const BASE_URL = "https://backend-empty-fog-5756.fly.dev";
+// const BASE_URL = "https://backend-empty-fog-5756.fly.dev";
+const BASE_URL = "http://localhost:8000";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
 

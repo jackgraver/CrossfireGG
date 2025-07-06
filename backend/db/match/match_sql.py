@@ -25,6 +25,8 @@ def write_map(map_dict: dict):
 def fetch_match(match_id: str) -> Dict:
     with Session(get_db_connection()) as session:
         match = session.get(Match, match_id)
+        if not match:
+            return {}
         maps = session.exec(select(Map).where(Map.match_id == match_id)).all()
         team1 = session.exec(select(Team).where(Team.sub_t_id == match.sub_t_id).where(Team.team_id == match.team1_id)).first()
         team2 = session.exec(select(Team).where(Team.sub_t_id == match.sub_t_id).where(Team.team_id == match.team2_id)).first()

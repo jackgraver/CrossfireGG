@@ -22,15 +22,14 @@ def get_matches():
     res = fetch_all_matches()
     return res
 
-@router.get("/{match_id}")
-def get_match(match_id: str):
-    res = fetch_match(match_id)
-    return res
-    
-
 @router.get("/casting")
 def get_matches_for_casting():
     res = get_matches_with_casters()
+    return res
+
+@router.get("/{match_id}")
+def get_match(match_id: str):
+    res = fetch_match(match_id)
     return res
 
 @router.post("/claim")

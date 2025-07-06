@@ -23,7 +23,7 @@ export default function Casting() {
         refetch,
     } = useQuery({
         queryKey: ["matches-casting"],
-        queryFn: () => api.get<MatchesWithCasters>("/matches/casting"),
+        queryFn: () => api.get<MatchesWithCasters>("/match/casting"),
     });
 
     const claimMutation = useMutation({
@@ -165,7 +165,7 @@ export default function Casting() {
                                         "/oss-logo-placeholder.png";
                                 }}
                             />
-                            <span className="font-medium text-text-primary">
+                            <span className="text-text-primary font-medium">
                                 {match.teams.team2.team_name}
                             </span>
                         </div>
@@ -185,7 +185,7 @@ export default function Casting() {
                 <div className="flex flex-col gap-2">
                     <button
                         onClick={() => handleViewMatch(match.match_id)}
-                        className="rounded border border-border bg-firstBg px-3 py-1 text-sm text-text text-text-primary transition-colors hover:bg-secondBg"
+                        className="text-text text-text-primary rounded border border-border bg-firstBg px-3 py-1 text-sm transition-colors hover:bg-secondBg"
                     >
                         View
                     </button>
@@ -229,7 +229,7 @@ export default function Casting() {
             )}
 
             <div className="mb-8">
-                <h1 className="mb-2 text-4xl font-bold text-text-primary">
+                <h1 className="text-text-primary mb-2 text-4xl font-bold">
                     Match Casting
                 </h1>
                 <p className="text-text-secondary">
@@ -242,10 +242,10 @@ export default function Casting() {
                 {/* Unclaimed Matches */}
                 <div>
                     <div className="mb-4">
-                        <h2 className="mb-2 text-2xl font-semibold text-text-primary">
+                        <h2 className="text-text-primary mb-2 text-2xl font-semibold">
                             Available Matches
                         </h2>
-                        <p className="text-sm text-text-secondary">
+                        <p className="text-text-secondary text-sm">
                             {unclaimed.length} match
                             {unclaimed.length !== 1 ? "es" : ""} available for
                             casting
@@ -271,10 +271,10 @@ export default function Casting() {
                 {/* Claimed Matches */}
                 <div>
                     <div className="mb-4">
-                        <h2 className="mb-2 text-2xl font-semibold text-text-primary">
+                        <h2 className="text-text-primary mb-2 text-2xl font-semibold">
                             Claimed Matches
                         </h2>
-                        <p className="text-sm text-text-secondary">
+                        <p className="text-text-secondary text-sm">
                             {claimed.length} match
                             {claimed.length !== 1 ? "es" : ""} assigned to
                             casters
