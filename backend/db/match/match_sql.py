@@ -1,4 +1,5 @@
 from sqlmodel import Session, select
+from db.player.player_model import Player
 from db.match.match_model import Match, Map
 from db.db import get_db_connection
 from typing import List, Dict
@@ -20,6 +21,20 @@ def write_map(map_dict: dict):
         if not existing:
             session.add(map_obj)
             session.commit()
+      
+def fetch_match(match_id: str) -> Dict:
+    with Session(get_db_connection()) as session:
+        match = session.get(Match, match_id)
+        maps = session.exec(select(Map).where(Map.match_id == match_id)).all()
+        team1 = session.exec(select(Team).where(Team.sub_t_id == match.sub_t_id).where(Team.team_id == match.team1_id)).first()
+        team2 = session.exec(select(Team).where(Team.sub_t_id == match.sub_t_id).where(Team.team_id == match.team2_id)).first()
+        players1 = session.exec(select(Player).where(Player.team_id == match.team1_id)).all()
+        players2 = session.exec(select(Player).where(Player.team_id == match.team2_id)).all()
+        
+        if match:
+            return {"match": match, "maps": maps, "team1": team1, "team2": team2, "players1": players1, "players2": players2}
+        else:
+            return {}
             
 def fetch_all_matches() -> Dict[str, List[Dict]]:
     # Get current tournament's regular season and playoffs sub-tournaments

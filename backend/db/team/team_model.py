@@ -3,6 +3,22 @@ from sqlmodel import SQLModel, Field
 from typing import Optional
 
 class Team(SQLModel, table=True):
+    """
+    team_id_i: str - primary key <br>
+    team_id: str <br>
+    sub_t_id: str - foreign_key sub_tournament.sub_t_id <br>
+    team_name: str <br>
+    team_logo: str <br>
+    seed: int <br>
+    win: int <br>
+    loss: int <br>
+    paid: int <br>
+    joined_tournament: int <br>
+
+    Args:
+        SQLModel (_type_): _description_
+        table (bool, optional): _description_. Defaults to True.
+    """
     team_id_i: str = Field(primary_key=True)
     team_id: str
     sub_t_id: Optional[str] = Field(default=None, foreign_key="sub_tournament.sub_t_id")

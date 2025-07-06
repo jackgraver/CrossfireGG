@@ -8,10 +8,6 @@ class User(SQLModel, table=True):
     faceit_id: str<br>
     team_id: str<br>
     password: str
-
-    Args:
-        SQLModel (_type_): _description_
-        table (bool, optional): _description_. Defaults to True.
     """
     user_id: Optional[str] = Field(default=None, primary_key=True)
     email: str = Field(unique=True, index=True)
@@ -20,6 +16,12 @@ class User(SQLModel, table=True):
     password: str
 
 class UserPublic(SQLModel):
+    """
+    user_id: str
+    email: str 
+    faceit_id: str
+    team_id: str
+    """
     user_id: str
     email: str
     faceit_id: str | None

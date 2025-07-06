@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 
 from db.match.match_caster_sql import claim_match, get_matches_with_casters, unclaim_match
 from db.metadata.metadata_sql import write_metadata
-from db.match.match_sql import fetch_all_matches
+from db.match.match_sql import fetch_all_matches, fetch_match
 from db.match.match_util import process_matches
 
 from datetime import datetime
@@ -21,6 +21,12 @@ def refresh_teams():
 def get_matches():
     res = fetch_all_matches()
     return res
+
+@router.get("/{match_id}")
+def get_match(match_id: str):
+    res = fetch_match(match_id)
+    return res
+    
 
 @router.get("/casting")
 def get_matches_for_casting():

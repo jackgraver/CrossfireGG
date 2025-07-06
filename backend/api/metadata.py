@@ -26,7 +26,7 @@ async def current_stage():
     return get_metadata_value("current_stage")
 
 
-@router.post("/toggle_stage")
+@router.get("/toggle_stage")
 async def toggle_stage(current_user: str = Depends(get_auth_user)):
     """
     Toggle the current stage between 'REGULAR SEASON' and 'PLAYOFFS'

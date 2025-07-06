@@ -54,7 +54,7 @@ export default function MatchCard({ match }: MatchCardProps) {
                     {match?.status === "FINISHED" && (
                         <button
                             onClick={() =>
-                                router.push(`/stats/${match?.match_id}`)
+                                router.push(`/match/${match?.match_id}`)
                             }
                             className="h-10 w-10 cursor-pointer rounded-full bg-white text-lg transition hover:bg-gray-200"
                         >

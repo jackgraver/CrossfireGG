@@ -5,8 +5,10 @@ export type Match = {
     round: Round;
     faceit_url: string;
     winner: string;
-    team1: string;
-    team2: string;
+    teams: {
+        team1: Team;
+        team2: Team;
+    };
     team1_score: number;
     team2_score: number;
     caster_id?: number;

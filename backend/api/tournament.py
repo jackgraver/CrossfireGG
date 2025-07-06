@@ -19,7 +19,7 @@ async def update_current_tournament(request: Request):
 
 @router.get("/current_tournaments")
 async def current_tournament():
-    ct = get_current_tournament()
-    cr = get_current_sub_tournament_by_name("REGULAR SEASON")
-    cp = get_current_sub_tournament_by_name("PLAYOFFS")
-    return {"ct": ct, "cr": cr, "cp": cp}
+    current_tournament = get_current_tournament()
+    current_regular_season = get_current_sub_tournament_by_name("REGULAR SEASON")
+    current_playoffs = get_current_sub_tournament_by_name("PLAYOFFS")
+    return {"current_tournament": current_tournament, "current_regular_season": current_regular_season, "current_playoffs": current_playoffs}

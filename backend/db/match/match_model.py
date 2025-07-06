@@ -2,6 +2,19 @@ from typing import Optional
 from sqlmodel import SQLModel, Field
 
 class Match(SQLModel, table=True):
+    """
+    match_id: str - primary key <br>
+    sub_t_id: str - foreign_key sub_tournament.sub_t_id <br>
+    status: str <br>
+    scheduled_at: int <br>
+    round: str <br>
+    faceit_url: str <br>
+    team1_id: str <br>
+    team2_id: str <br>
+    winner: str <br>
+    team1_score: int <br>
+    team2_score: int <br>
+    """
     match_id: str = Field(primary_key=True)
     sub_t_id: Optional[str] = Field(default=None, foreign_key="sub_tournament.sub_t_id")
     status: Optional[str] = None
@@ -16,6 +29,15 @@ class Match(SQLModel, table=True):
     
     
 class Map(SQLModel, table=True):
+    """
+    map_id: str - primary key <br>
+    match_id: str - foreign_key match.match_id <br>
+    map_name: str <br>
+    round: int <br>
+    winner_id: str - foreign_key team.team_id <br>
+    team1_score: int <br>
+    team2_score: int <br>
+    """
     map_id: str = Field(primary_key=True)
     match_id: str = Field(foreign_key="match.match_id")
     map_name: str
@@ -26,6 +48,10 @@ class Map(SQLModel, table=True):
 
 
 class MatchCaster(SQLModel, table=True):
+    """
+    match_id: str - primary key <br>
+    caster_id: int - foreign_key user.user_id <br>
+    """
     __tablename__ = "match_caster"
     
     match_id: str = Field(primary_key=True, foreign_key="match.match_id")

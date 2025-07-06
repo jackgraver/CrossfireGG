@@ -32,7 +32,7 @@ def process_matches():
             return []
         
         if DEBUG:
-            with open(MATCHES_FILE, "r", encoding="utf-8") as f:
+            with open(PO_MATCHES_FILE, "r", encoding="utf-8") as f:
                 matches = json.load(f).get("items", [])  # expects a list of matches
         else:
             response = requests.get(
@@ -45,7 +45,7 @@ def process_matches():
             response.raise_for_status()
             matches = response.json().get("items", [])
             matches_file = Path(".test_data/flush_matches.json")
-            with open(MATCHES_FILE, "w", encoding="utf-8") as f:
+            with open(PO_MATCHES_FILE, "w", encoding="utf-8") as f:
                 json.dump(matches, f, indent=4, default=str)
             
         all_matches = fetch_all_matches()
@@ -208,7 +208,7 @@ def process_stats(match_id: str, sub_t_id: str = None):
             )
             response.raise_for_status()
             stats_data = response.json()
-            stats_file = Path(f".test_data/reg_stats/{match_id}_stats.json")
+            stats_file = Path(f".test_data/stats/{match_id}_stats.json")
             with open(stats_file, "w", encoding="utf-8") as f:
                 json.dump(stats_data, f, indent=4, default=str) 
             
