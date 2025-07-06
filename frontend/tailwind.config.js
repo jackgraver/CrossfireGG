@@ -5,6 +5,7 @@ module.exports = {
         extend: {
             colors: {
                 mainBg: "var(--color-main-bg)",
+                mainBgTransparent: "var(--color-main-bg-transparent)",
                 firstBg: "var(--color-first-bg)",
                 secondBg: "var(--color-second-bg)",
                 thirdBg: "var(--color-third-bg)",

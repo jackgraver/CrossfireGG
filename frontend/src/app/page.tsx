@@ -1,7 +1,7 @@
 "use client";
 
 import type { Match, Team } from "../types/Types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Standings from "../components/Standings";
 import RegularSeasonBracket from "../components/bracket/RegularSeasonBracket";
 import PlayoffBracket from "../components/bracket/PlayoffBracket";
@@ -72,6 +72,13 @@ export default function Home() {
         ? { reg_season: [], playoffs: [] }
         : matchData!;
 
+    useEffect(() => {
+        console.log(regSeasonMatches.length);
+        if (regSeasonMatches.length >= 66) {
+            setDisplayTab("playoffs");
+        }
+    }, [regSeasonMatches]);
+
     const nonFinishedMatches = [...regSeasonMatches, ...playoffsMatches].filter(
         (match) => match.status !== "FINISHED",
     );
@@ -91,7 +98,7 @@ export default function Home() {
     const currentTeams = getCurrentTeams();
 
     return (
-        <div className="flex flex-col items-center justify-center">
+        <div className="transform- flex flex-col items-center justify-center">
             <div className="mb-16 flex w-5/6 flex-col items-center justify-center sm:flex-row">
                 <img src="/OSSLOGO.png" className="h-48 w-48 sm:h-72 sm:w-72" />
                 <div className="flex flex-col text-textPrimary">
@@ -118,32 +125,6 @@ export default function Home() {
                 />
             </div>
             <div className="relative mt-4 flex w-5/6 flex-col items-center justify-center">
-                <div className="absolute right-0 top-0 flex flex-row items-center justify-end gap-2 text-white">
-                    <p className="text-sm text-gray-400">
-                        Last Updated:{" "}
-                        {new Date(lastUpdate * 1000).toDateString()}
-                    </p>
-                    <button
-                        onClick={() => refetchTeams()}
-                        className="rounded-full p-2 transition-colors duration-200 hover:bg-gray-700"
-                        title="Refresh data"
-                    >
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-5 w-5"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                            />
-                        </svg>
-                    </button>
-                </div>
                 {displayTab === "regseason" && (
                     <div className="w-full">
                         <RegularSeasonBracket

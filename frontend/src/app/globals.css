@@ -5,6 +5,7 @@
 :root {
     --color-main-bg: hsl(0, 0%, 100%);
     --color-first-bg: hsl(0, 0%, 95%);
+    --color-main-bg-transparent: hsla(0, 0%, 100%, 0.6);
     --color-second-bg: hsl(0, 0%, 90%);
     --color-third-bg: hsl(0, 0%, 85%);
 
@@ -20,6 +21,7 @@
 
 .dark {
     --color-main-bg: hsl(0, 0%, 0%);
+    --color-main-bg-transparent: hsla(0, 0%, 0%, 0.6);
     --color-first-bg: hsl(0, 0%, 10%);
     --color-second-bg: hsl(0, 0%, 20%);
     --color-third-bg: hsl(0, 0%, 30%);
@@ -52,17 +54,10 @@ button:hover {
     background-color: var(--color-bg-extra-light);
 }
 
-/* html,
-body,
-#root {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-} */
+.grow {
+    transition: all 0.2s ease-in-out;
+}
 
-/*body {
-    background: #252b5e;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-size: cover;
-} */
+.grow:hover {
+    transform: scale(1.02);
+}

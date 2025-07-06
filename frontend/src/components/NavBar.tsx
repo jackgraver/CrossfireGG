@@ -28,25 +28,12 @@ export default function NavBar() {
     const signedIn = token !== null && token !== "";
 
     return (
-        <nav className="bg-firstBg-dark">
+        <nav className="bg-mainBgTransparent sticky top-0 z-50 bg-mainBg backdrop-blur-md">
             <div className="w-full px-4">
                 <div className="flex h-16 justify-between">
                     <div className="flex items-center">
                         <Link href="/" className="flex-shrink-0">
-                            {/* House SVG icon */}
-                            <svg
-                                className="h-8 w-8"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                            >
-                                <path
-                                    d="M3 10.75L12 4l9 6.75V19a2 2 0 01-2 2h-3.5a.5.5 0 01-.5-.5V15a1 1 0 00-1-1h-2a1 1 0 00-1 1v5.5a.5.5 0 01-.5.5H5a2 2 0 01-2-2V10.75z"
-                                    stroke="currentColor"
-                                    strokeWidth="2"
-                                    strokeLinejoin="round"
-                                />
-                            </svg>
+                            <h1 className="text-2xl font-bold">OSS</h1>
                         </Link>
                     </div>
 
