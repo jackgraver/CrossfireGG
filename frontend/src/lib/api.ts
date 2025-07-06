@@ -1,4 +1,4 @@
-const BASE_URL = process.env.API_URL || "http://localhost:8000";
+const BASE_URL = "https://backend-empty-fog-5756.fly.dev";
 
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
 
