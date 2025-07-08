@@ -30,8 +30,8 @@ def fetch_match(match_id: str) -> Dict:
         maps = session.exec(select(Map).where(Map.match_id == match_id)).all()
         team1 = session.exec(select(Team).where(Team.sub_t_id == match.sub_t_id).where(Team.team_id == match.team1_id)).first()
         team2 = session.exec(select(Team).where(Team.sub_t_id == match.sub_t_id).where(Team.team_id == match.team2_id)).first()
-        players1 = session.exec(select(Player).where(Player.team_id == match.team1_id)).all()
-        players2 = session.exec(select(Player).where(Player.team_id == match.team2_id)).all()
+        players1 = session.exec(select(Player).where(Player.team_id == match.team1_id).where(Player.sub_t_id == match.sub_t_id)).all()
+        players2 = session.exec(select(Player).where(Player.team_id == match.team2_id).where(Player.sub_t_id == match.sub_t_id)).all()
         
         if match:
             return {"match": match, "maps": maps, "team1": team1, "team2": team2, "players1": players1, "players2": players2}
