@@ -102,7 +102,7 @@ export default function OSSTable<T>({
         <div className={`overflow-x-auto ${className}`}>
             <table className="table-auto border-collapse">
                 <thead>
-                    <tr className="text-text-primary bg-secondBg text-left text-sm uppercase">
+                    <tr className="bg-secondBg text-left text-sm uppercase text-textPrimary">
                         {columns.map((col, i) => (
                             <th
                                 key={i}
@@ -127,7 +127,7 @@ export default function OSSTable<T>({
                         <tr>
                             <td
                                 colSpan={columns.length}
-                                className="text-text-secondary py-6 text-center"
+                                className="py-6 text-center text-textSecondary"
                             >
                                 Loading...
                             </td>
@@ -136,7 +136,7 @@ export default function OSSTable<T>({
                         <tr>
                             <td
                                 colSpan={columns.length}
-                                className="text-text-secondary py-6 text-center"
+                                className="py-6 text-center text-textSecondary"
                             >
                                 {emptyMessage}
                             </td>

@@ -19,7 +19,7 @@ export default function MatchCard({ match }: MatchCardProps) {
 
     const router = useRouter();
     return (
-        <div className="text-text-primary group relative m-2 flex grow flex-col rounded-md border border-border bg-firstBg">
+        <div className="group relative m-2 flex grow flex-col rounded-md border border-border bg-firstBg text-textPrimary">
             <MatchTeam
                 team={match?.teams.team1}
                 winner={

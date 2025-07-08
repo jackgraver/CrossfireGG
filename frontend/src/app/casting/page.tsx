@@ -165,7 +165,7 @@ export default function Casting() {
                                         "/oss-logo-placeholder.png";
                                 }}
                             />
-                            <span className="text-text-primary font-medium">
+                            <span className="font-medium text-textPrimary">
                                 {match.teams.team2.team_name}
                             </span>
                         </div>
@@ -185,7 +185,7 @@ export default function Casting() {
                 <div className="flex flex-col gap-2">
                     <button
                         onClick={() => handleViewMatch(match.match_id)}
-                        className="text-text text-text-primary rounded border border-border bg-firstBg px-3 py-1 text-sm transition-colors hover:bg-secondBg"
+                        className="text-text rounded border border-border bg-firstBg px-3 py-1 text-sm text-textPrimary transition-colors hover:bg-secondBg"
                     >
                         View
                     </button>
@@ -229,10 +229,10 @@ export default function Casting() {
             )}
 
             <div className="mb-8">
-                <h1 className="text-text-primary mb-2 text-4xl font-bold">
+                <h1 className="mb-2 text-4xl font-bold text-textPrimary">
                     Match Casting
                 </h1>
-                <p className="text-text-secondary">
+                <p className="text-textSecondary">
                     Manage match casting assignments and claim matches for
                     casting
                 </p>
@@ -242,10 +242,10 @@ export default function Casting() {
                 {/* Unclaimed Matches */}
                 <div>
                     <div className="mb-4">
-                        <h2 className="text-text-primary mb-2 text-2xl font-semibold">
+                        <h2 className="mb-2 text-2xl font-semibold text-textPrimary">
                             Available Matches
                         </h2>
-                        <p className="text-text-secondary text-sm">
+                        <p className="text-sm text-textSecondary">
                             {unclaimed.length} match
                             {unclaimed.length !== 1 ? "es" : ""} available for
                             casting
@@ -271,10 +271,10 @@ export default function Casting() {
                 {/* Claimed Matches */}
                 <div>
                     <div className="mb-4">
-                        <h2 className="text-text-primary mb-2 text-2xl font-semibold">
+                        <h2 className="mb-2 text-2xl font-semibold text-textPrimary">
                             Claimed Matches
                         </h2>
-                        <p className="text-text-secondary text-sm">
+                        <p className="text-sm text-textSecondary">
                             {claimed.length} match
                             {claimed.length !== 1 ? "es" : ""} assigned to
                             casters

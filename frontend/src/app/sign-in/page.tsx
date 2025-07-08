@@ -73,10 +73,10 @@ export default function SignIn() {
                         alt="OSS Logo"
                         className="h-32 w-32"
                     />
-                    <h1 className="text-text-primary text-2xl font-bold">
+                    <h1 className="text-2xl font-bold text-textPrimary">
                         Welcome Back
                     </h1>
-                    <p className="text-text-secondary">
+                    <p className="text-textSecondary">
                         Haven't signed up yet?{" "}
                         <a
                             href="/sign-up"
@@ -154,7 +154,7 @@ export default function SignIn() {
                         <button
                             type="submit"
                             disabled={signInMutation.isPending}
-                            className="text-text-primary hover:bg-thirdBgdisabled:cursor-not-allowed w-full rounded-md bg-secondBg px-4 py-2 transition duration-200 disabled:opacity-50"
+                            className="hover:bg-thirdBgdisabled:cursor-not-allowed w-full rounded-md bg-secondBg px-4 py-2 text-textPrimary transition duration-200 disabled:opacity-50"
                         >
                             {signInMutation.isPending
                                 ? "Signing In..."

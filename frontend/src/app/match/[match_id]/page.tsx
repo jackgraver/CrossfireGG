@@ -51,7 +51,7 @@ export default function MatchPage({ params }: MatchProps) {
     const match = data.match;
     const maps: Map[] = data.maps;
 
-    console.log(maps);
+    console.log(data);
 
     return (
         <div className="flex min-h-screen w-full flex-col items-center bg-black px-4 py-8 text-white">

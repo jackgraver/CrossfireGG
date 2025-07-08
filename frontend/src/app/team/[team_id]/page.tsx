@@ -73,31 +73,31 @@ export default function Team({ params }: TeamProps) {
                         />
                     )}
                     <div className="flex-1">
-                        <h1 className="text-text-primary mb-3 text-3xl font-bold">
+                        <h1 className="mb-3 text-3xl font-bold text-textPrimary">
                             {team.team_name}
                         </h1>
-                        <div className="text-text-primary flex flex-wrap gap-8">
+                        <div className="flex flex-wrap gap-8 text-textPrimary">
                             <div className="flex flex-col gap-1">
-                                <span className="text-text-secondary text-sm font-bold">
+                                <span className="text-sm font-bold text-textSecondary">
                                     Record:
                                 </span>
-                                <span className="text-text-secondary text-lg font-medium">
+                                <span className="text-lg font-medium text-textSecondary">
                                     {team.win}-{team.loss}
                                 </span>
                             </div>
                             <div className="flex flex-col gap-1">
-                                <span className="text-text-secondary text-sm font-bold">
+                                <span className="text-sm font-bold text-textSecondary">
                                     Seed:
                                 </span>
-                                <span className="text-text-secondary text-lg font-medium">
+                                <span className="text-lg font-medium text-textSecondary">
                                     {team.seed}
                                 </span>
                             </div>
                             <div className="flex flex-col gap-1">
-                                <span className="text-text-secondary text-sm font-bold">
+                                <span className="text-sm font-bold text-textSecondary">
                                     Status:
                                 </span>
-                                <span className="text-text-secondary text-lg font-medium">
+                                <span className="text-lg font-medium text-textSecondary">
                                     {team.paid ? "Paid" : "Unpaid"} •{" "}
                                     {team.joined_tournament
                                         ? "Joined"
@@ -111,7 +111,7 @@ export default function Team({ params }: TeamProps) {
 
             {/* Matches Section */}
             <div className="rounded-xl bg-firstBg p-8 shadow-md">
-                <h2 className="text-text-primary mb-6 text-2xl font-bold">
+                <h2 className="mb-6 text-2xl font-bold text-textPrimary">
                     Match History
                 </h2>
                 {matches && matches.length > 0 ? (
@@ -127,22 +127,22 @@ export default function Team({ params }: TeamProps) {
                                 }}
                             >
                                 <div className="mb-4 flex items-center justify-between">
-                                    <span className="bg-firstbg-thirdBg text-text-secondary rounded-full px-3 py-1 text-sm font-medium">
+                                    <span className="bg-firstbg-thirdBg rounded-full px-3 py-1 text-sm font-medium text-textSecondary">
                                         {match.round}
                                     </span>
-                                    <span className="text-text-secondary text-sm">
+                                    <span className="text-sm text-textSecondary">
                                         {formatDate(match.scheduled_at)}
                                     </span>
                                 </div>
                                 <div className="flex items-center justify-between">
                                     <div className="flex flex-1 items-center gap-4">
-                                        <span className="text-text-primary font-semibold">
+                                        <span className="font-semibold text-textPrimary">
                                             {team.team_name}
                                         </span>
-                                        <span className="text-text-primary min-w-[60px] text-center text-lg font-bold">
+                                        <span className="min-w-[60px] text-center text-lg font-bold text-textPrimary">
                                             {getMatchScore(match)}
                                         </span>
-                                        <span className="text-text-primary font-semibold">
+                                        <span className="font-semibold text-textPrimary">
                                             {getOpponent(match)}
                                         </span>
                                     </div>
@@ -159,7 +159,7 @@ export default function Team({ params }: TeamProps) {
                                         >
                                             {getMatchResult(match)}
                                         </span>
-                                        <span className="text-text-secondary text-xs uppercase">
+                                        <span className="text-xs uppercase text-textSecondary">
                                             {match.status}
                                         </span>
                                     </div>
@@ -168,7 +168,7 @@ export default function Team({ params }: TeamProps) {
                         ))}
                     </div>
                 ) : (
-                    <div className="text-text-secondary py-10 text-center text-base">
+                    <div className="py-10 text-center text-base text-textSecondary">
                         No matches found for this team.
                     </div>
                 )}

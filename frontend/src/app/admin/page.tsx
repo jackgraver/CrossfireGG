@@ -1,6 +1,9 @@
+"use client";
+
 import ManageTournaments from "./components/tournaments";
 import ManageUsers from "./components/users";
 import ManageTeams from "./components/teams";
+import { api } from "@/lib/api";
 
 export default function Admin() {
     // const queryClient = useQueryClient();
@@ -13,6 +16,9 @@ export default function Admin() {
                     <ManageTournaments />
                     <ManageUsers />
                     {/* <ManageTeams /> */}
+                    <button onClick={() => api.post("/metadata/toggle_stage")}>
+                        Toggle Stage
+                    </button>
                 </div>
             </div>
         </div>

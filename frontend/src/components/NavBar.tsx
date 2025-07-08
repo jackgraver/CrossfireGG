@@ -12,7 +12,7 @@ function toggleDarkMode() {
 
 export default function NavBar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const username = "ADMIN"; // This will be replaced with actual user data later
+    const username = "ADMIN";
 
     useEffect(() => {
         const darkPref = localStorage.getItem("theme") === "dark";
@@ -28,7 +28,7 @@ export default function NavBar() {
     const signedIn = token !== null && token !== "";
 
     return (
-        <nav className="bg-mainBgTransparent sticky top-0 z-50 bg-mainBg backdrop-blur-md">
+        <nav className="sticky top-0 z-50 bg-mainBg bg-mainBgTransparent backdrop-blur-md">
             <div className="w-full px-4">
                 <div className="flex h-16 justify-between">
                     <div className="flex items-center">
@@ -36,15 +36,17 @@ export default function NavBar() {
                             <h1 className="text-2xl font-bold">OSS</h1>
                         </Link>
                     </div>
+                    <div className="mt-4 flex h-min items-center rounded-md bg-red-400 px-1 py-1">
+                        <p>BETA VERSION</p>
+                    </div>
 
                     <div className="flex items-center">
                         <div className="relative">
                             <button
                                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                                className="text-text-secondary hover:text-text-primary inline-flex items-center justify-center rounded-md p-2 hover:bg-secondBg focus:outline-none"
+                                className="inline-flex items-center justify-center rounded-md p-2 text-textSecondary hover:bg-secondBg hover:text-textPrimary focus:outline-none"
                             >
                                 <span className="sr-only">Open main menu</span>
-                                {/* Hamburger icon */}
                                 <svg
                                     className={`${
                                         isMenuOpen ? "hidden" : "block"
@@ -61,7 +63,6 @@ export default function NavBar() {
                                         d="M4 6h16M4 12h16M4 18h16"
                                     />
                                 </svg>
-                                {/* Close icon */}
                                 <svg
                                     className={`${
                                         isMenuOpen ? "block" : "hidden"
@@ -79,14 +80,11 @@ export default function NavBar() {
                                     />
                                 </svg>
                             </button>
-
-                            {/* Dropdown menu */}
                             {isMenuOpen && (
                                 <div
-                                    className="from-bg-light to-bg absolute right-0 mt-2 w-64 origin-top-right rounded-md bg-gradient-to-b shadow-lg ring-1 ring-black ring-opacity-5"
+                                    className="absolute right-0 mt-2 w-64 origin-top-right rounded-md bg-gradient-to-b from-secondBg to-firstBg shadow-lg ring-1 ring-black ring-opacity-5"
                                     onMouseLeave={() => setIsMenuOpen(false)}
                                 >
-                                    {/* User section */}
                                     <div className="border-b border-border px-4 py-3">
                                         <Link href="/user">
                                             <div className="flex items-center">
@@ -94,7 +92,7 @@ export default function NavBar() {
                                                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-secondBg">
                                                         <svg
                                                             xmlns="http://www.w3.org/2000/svg"
-                                                            className="text-text-secondary h-6 w-6"
+                                                            className="h-6 w-6 text-textSecondary"
                                                             fill="none"
                                                             viewBox="0 0 24 24"
                                                             stroke="currentColor"
@@ -109,15 +107,13 @@ export default function NavBar() {
                                                     </div>
                                                 </div>
                                                 <div className="ml-3">
-                                                    <p className="text-text-primary text-sm font-medium">
+                                                    <p className="text-sm font-medium text-textPrimary">
                                                         {username}
                                                     </p>
                                                 </div>
                                             </div>
                                         </Link>
                                     </div>
-
-                                    {/* Menu items */}
                                     <div
                                         className="py-1"
                                         role="menu"
@@ -125,7 +121,7 @@ export default function NavBar() {
                                     >
                                         <Link
                                             href="/manage-teams"
-                                            className="text-text-secondary block px-4 py-2 text-sm hover:bg-secondBg"
+                                            className="block px-4 py-2 text-sm text-textSecondary hover:bg-secondBg"
                                             role="menuitem"
                                             onClick={() => setIsMenuOpen(false)}
                                         >
@@ -133,7 +129,7 @@ export default function NavBar() {
                                         </Link>
                                         <Link
                                             href="/casting"
-                                            className="text-text-secondary block px-4 py-2 text-sm hover:bg-secondBg"
+                                            className="block px-4 py-2 text-sm text-textSecondary hover:bg-secondBg"
                                             role="menuitem"
                                             onClick={() => setIsMenuOpen(false)}
                                         >
@@ -141,14 +137,14 @@ export default function NavBar() {
                                         </Link>
                                         <Link
                                             href="/admin"
-                                            className="text-text-secondary block px-4 py-2 text-sm hover:bg-secondBg"
+                                            className="block px-4 py-2 text-sm text-textSecondary hover:bg-secondBg"
                                             role="menuitem"
                                             onClick={() => setIsMenuOpen(false)}
                                         >
                                             Admin
                                         </Link>
                                         <div
-                                            className="text-text-secondary block cursor-pointer px-4 py-2 text-sm hover:bg-secondBg"
+                                            className="block cursor-pointer px-4 py-2 text-sm text-textSecondary hover:bg-secondBg"
                                             role="menuitem"
                                             onClick={() => toggleDarkMode()}
                                         >
@@ -157,7 +153,7 @@ export default function NavBar() {
                                         {signedIn ? (
                                             <Link
                                                 href="/"
-                                                className="text-text-secondary block px-4 py-2 text-sm hover:bg-secondBg"
+                                                className="block px-4 py-2 text-sm text-textSecondary hover:bg-secondBg"
                                                 role="menuitem"
                                                 onClick={() =>
                                                     localStorage.removeItem(
@@ -170,7 +166,7 @@ export default function NavBar() {
                                         ) : (
                                             <Link
                                                 href="/sign-in"
-                                                className="text-text-secondary block px-4 py-2 text-sm hover:bg-secondBg"
+                                                className="block px-4 py-2 text-sm text-textSecondary hover:bg-secondBg"
                                                 role="menuitem"
                                                 onClick={() =>
                                                     setIsMenuOpen(false)

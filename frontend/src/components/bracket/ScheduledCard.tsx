@@ -15,11 +15,11 @@ export default function ScheduledCard({ match }: ScheduledCardProps) {
         return (
             <div className="mx-2 flex flex-col">
                 <div className="w-fit max-w-full overflow-hidden whitespace-nowrap rounded-t-md bg-firstBg px-1 py-1">
-                    <div className="text-text-primary flex items-center gap-1 text-xs">
+                    <div className="flex items-center gap-1 text-xs text-textPrimary">
                         <p className="">🕒</p>
                     </div>
                 </div>
-                <div className="text-text-primary group relative flex cursor-pointer flex-col rounded-b-md rounded-r-md border border-border bg-firstBg p-2">
+                <div className="group relative flex cursor-pointer flex-col rounded-b-md rounded-r-md border border-border bg-firstBg p-2 text-textPrimary">
                     <MatchTeam team={undefined} score={undefined} />
                     <MatchTeam team={undefined} score={undefined} />
                 </div>
@@ -37,13 +37,13 @@ export default function ScheduledCard({ match }: ScheduledCardProps) {
                 </div>
             ) : (
                 <div className="flex w-fit max-w-full flex-row items-center overflow-hidden text-ellipsis whitespace-nowrap rounded-t-md bg-firstBg px-1 py-1">
-                    <div className="text-text-primary flex items-center gap-1 text-xs">
+                    <div className="flex items-center gap-1 text-xs text-textPrimary">
                         <p className="">🕒</p>
                         {formatMatchDate(match.scheduled_at)}
                     </div>
                 </div>
             )}
-            <div className="text-text-primary group relative flex cursor-pointer flex-col rounded-b-md rounded-r-md border border-border bg-firstBg p-2">
+            <div className="group relative flex cursor-pointer flex-col rounded-b-md rounded-r-md border border-border bg-firstBg p-2 text-textPrimary">
                 <MatchTeam
                     team={match?.teams.team1}
                     score={match?.team1_score ?? undefined}

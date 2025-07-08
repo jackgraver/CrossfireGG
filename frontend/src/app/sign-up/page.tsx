@@ -197,7 +197,7 @@ export default function SignUp() {
                         alt="OSS Logo"
                         className="h-32 w-32"
                     />
-                    <h1 className="text-text-primary text-2xl font-bold">
+                    <h1 className="text-2xl font-bold text-textPrimary">
                         Create Account
                     </h1>
                     <form className="w-full space-y-4" onSubmit={handleSubmit}>
@@ -246,7 +246,7 @@ export default function SignUp() {
                                     )}
                                 </div>
                             </div>
-                            <p className="text-text-secondary hidden:block absolute mt-1 text-xs text-red-500">
+                            <p className="hidden:block absolute mt-1 text-xs text-red-500 text-textSecondary">
                                 {faceitLinkError}
                             </p>
                         </div>
@@ -393,7 +393,7 @@ export default function SignUp() {
                             />
                             <label
                                 htmlFor="privacy"
-                                className="text-text-secondary ml-2 block text-xs"
+                                className="ml-2 block text-xs text-textSecondary"
                             >
                                 I agree to the{" "}
                                 <a
@@ -407,14 +407,14 @@ export default function SignUp() {
                         <button
                             type="submit"
                             disabled={signUpMutation.isPending}
-                            className="text-text-primary w-full rounded-md bg-blue-600 px-4 py-2 transition duration-200 hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                            className="w-full rounded-md bg-blue-600 px-4 py-2 text-textPrimary transition duration-200 hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
                         >
                             {signUpMutation.isPending
                                 ? "Creating Account..."
                                 : "Sign Up"}
                         </button>
                     </form>
-                    <p className="text-text-secondary">
+                    <p className="text-textSecondary">
                         Already have an account?{" "}
                         <a
                             href="/sign-in"

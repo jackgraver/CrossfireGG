@@ -61,3 +61,7 @@ button:hover {
 .grow:hover {
     transform: scale(1.02);
 }
+
+.city {
+    background-image: url("/bg-city.png");
+}

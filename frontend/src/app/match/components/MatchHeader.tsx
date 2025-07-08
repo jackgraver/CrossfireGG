@@ -70,7 +70,7 @@ export default function MatchHeader({ team1, team2, match }: MatchHeaderProps) {
     //     </div>
     //     <div className="mx-4 gap-y-4 text-center">
     //         <p className="text-xl">{formatMatchDate(match.scheduled_at)}</p>
-    //         <p className="text-text-secondary text-xl">{match.status}</p>
+    //         <p className="text-textSecondary text-xl">{match.status}</p>
     //     </div>
     //     <div className="items-center text-left text-4xl">
     //         {formatScore(match.team2_score, match.winner === team2.team_id)}
@@ -117,7 +117,7 @@ export default function MatchHeader({ team1, team2, match }: MatchHeaderProps) {
     //         {formatScore(match.team1_score, match.winner === team1.team_id)}
     //     </div>
     //     <div className="w-64 text-center">
-    //         <p className="text-text-secondary">{match.status}</p>
+    //         <p className="text-textSecondary">{match.status}</p>
     //         <p className="text-sm">{formatMatchDate(match.scheduled_at)}</p>
     //     </div>
     //     <div className="mr-8 text-4xl">

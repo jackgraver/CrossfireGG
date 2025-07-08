@@ -3,13 +3,13 @@ export default function Footer() {
         <footer className="mt-12 bg-firstBg shadow-md">
             <div className="w-full px-4 py-4">
                 <div className="flex items-center justify-between">
-                    <div className="text-text-secondary">Organized by OSS</div>
+                    <div className="text-textSecondary">Organized by OSS</div>
                     <div className="flex space-x-4">
                         <a
                             href="https://twitter.com/OSSCSLeague"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-text-secondary hover:text-text-primary"
+                            className="text-textSecondary hover:text-textPrimary"
                         >
                             <svg
                                 className="h-6 w-6"
@@ -24,7 +24,7 @@ export default function Footer() {
                             href="https://discord.gg/QBJYTNXRqW"
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-text-secondary hover:text-text-primary"
+                            className="text-textSecondary hover:text-textPrimary"
                         >
                             <svg
                                 className="h-6 w-6"

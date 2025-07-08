@@ -107,7 +107,7 @@ export default function Home() {
                         <br />
                         SHENANIGANS
                     </h1>
-                    <p className="text-text-secondary text-2xl">
+                    <p className="text-2xl text-textSecondary">
                         Off Season Shenanigans the ultimate Counter-Strike
                         <br />
                         tournament during the off seasons!

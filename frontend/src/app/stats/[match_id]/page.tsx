@@ -307,7 +307,7 @@ export default function MatchStats({ params }: MatchStatsProps) {
 
                 {/* Center - Status + Date */}
                 <div className="flex w-40 flex-shrink-0 flex-col items-center justify-center text-center">
-                    <p className="text-text-secondary">{match.status}</p>
+                    <p className="text-textSecondary">{match.status}</p>
                     <p className="text-sm">
                         {formatMatchDate(match.scheduled_at)}
                     </p>
@@ -361,8 +361,8 @@ export default function MatchStats({ params }: MatchStatsProps) {
                             key={map.map_id}
                             className={`flex min-w-64 flex-row items-center gap-x-4 rounded-lg bg-firstBg px-4 py-2 transition-colors hover:bg-secondBg ${
                                 currentMapIds?.includes(map.map_id)
-                                    ? "text-text-primary bg-secondBg"
-                                    : "text-text-secondary"
+                                    ? "bg-secondBg text-textPrimary"
+                                    : "text-textSecondary"
                             }`}
                             onClick={() => {
                                 if (currentMapIds.includes(map.map_id)) {
@@ -401,7 +401,7 @@ export default function MatchStats({ params }: MatchStatsProps) {
                                     map.team1_score,
                                     map.team1_score > map.team2_score,
                                 )}
-                                <p className="text-text-secondary"> - </p>
+                                <p className="text-textSecondary"> - </p>
                                 {formatScore(
                                     map.team2_score,
                                     map.team2_score > map.team1_score,

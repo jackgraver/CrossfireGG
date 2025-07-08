@@ -69,7 +69,7 @@ export default function ViewSelector({
                     className={`flex min-w-32 items-center justify-center gap-2 px-6 py-4 text-xl font-bold transition-colors duration-200 ${
                         currentView === view.key
                             ? "text-blue-500"
-                            : "text-text-secondary"
+                            : "text-textSecondary"
                     } ${
                         view.disabled
                             ? "cursor-not-allowed opacity-50"

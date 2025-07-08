@@ -54,7 +54,7 @@ export default function ManageTeams() {
 
     const { data, isLoading, error } = useQuery<TeamsResponse, Error>({
         queryKey: ["teams"],
-        queryFn: () => api.get<TeamsResponse>("/team"),
+        queryFn: () => api.get<TeamsResponse>("/team/all"),
     });
 
     const paidMutation = useMutation({
@@ -99,14 +99,14 @@ export default function ManageTeams() {
     return (
         <div className="flex flex-row justify-center space-x-16">
             <div className="flex flex-col items-center justify-center">
-                <h1 className="text-text-primary pb-12 pt-12 text-4xl">
+                <h1 className="pb-12 pt-12 text-4xl text-textPrimary">
                     Current Teams
                 </h1>
                 <div className="mb-2 flex flex-wrap items-end gap-4 rounded-md bg-firstBg p-2 shadow">
                     <div className="flex flex-col">
                         <label
                             htmlFor="search"
-                            className="text-text-secondary mb-1 text-sm"
+                            className="mb-1 text-sm text-textSecondary"
                         >
                             Search
                         </label>
@@ -123,7 +123,7 @@ export default function ManageTeams() {
                     <div className="flex flex-col">
                         <label
                             htmlFor="paid"
-                            className="text-text-secondary mb-1 text-sm"
+                            className="mb-1 text-sm text-textSecondary"
                         >
                             Paid Teams
                         </label>
@@ -139,7 +139,7 @@ export default function ManageTeams() {
                     <div className="flex flex-col">
                         <label
                             htmlFor="joined"
-                            className="text-text-secondary mb-1 text-sm"
+                            className="mb-1 text-sm text-textSecondary"
                         >
                             Teams in Tournament
                         </label>
@@ -157,7 +157,7 @@ export default function ManageTeams() {
                     {filteredTeams.map((team, i) => (
                         <div
                             key={i}
-                            className="text-text-primary relative flex items-center gap-4 rounded-md border border-border bg-firstBg p-4 shadow-md"
+                            className="relative flex items-center gap-4 rounded-md bg-firstBg p-4 text-textPrimary shadow-md"
                         >
                             <div className="flex flex-col items-center justify-center">
                                 <input
@@ -166,12 +166,12 @@ export default function ManageTeams() {
                                     value={team.seed}
                                     readOnly
                                 />
-                                <span className="text-text-secondary text-xs">
+                                <span className="text-xs text-textSecondary">
                                     Seed
                                 </span>
                             </div>
                             <div className="flex flex-1 flex-col gap-1">
-                                <p className="text-text-secondary text-sm">
+                                <p className="text-sm text-textSecondary">
                                     {team.team_id}
                                 </p>
                                 <p className="text-lg font-semibold">
@@ -229,7 +229,7 @@ export default function ManageTeams() {
                 </div>
             </div>
             <div className="">
-                <h1 className="text-text-primary pb-12 pt-12 text-4xl">
+                <h1 className="pb-12 pt-12 text-4xl text-textPrimary">
                     Add Teams{" "}
                 </h1>
                 <div>
@@ -262,7 +262,7 @@ export default function ManageTeams() {
                         {newTeams.map((team, index) => (
                             <div
                                 key={index}
-                                className="text-text-primary relative flex items-center gap-4 rounded-md border border-border bg-firstBg p-4 shadow-md"
+                                className="relative flex items-center gap-4 rounded-md bg-firstBg p-4 text-textPrimary shadow-md"
                             >
                                 {/* Seed */}
                                 <div className="flex flex-col items-center justify-center">
@@ -278,7 +278,7 @@ export default function ManageTeams() {
                                             )
                                         }
                                     />
-                                    <span className="text-text-secondary text-xs">
+                                    <span className="text-xs text-textSecondary">
                                         Seed
                                     </span>
                                 </div>

@@ -9,7 +9,7 @@ module.exports = {
                 firstBg: "var(--color-first-bg)",
                 secondBg: "var(--color-second-bg)",
                 thirdBg: "var(--color-third-bg)",
-                textPrimary: "var(--color-text)",
+                textPrimary: "var(--color-text-primary)",
                 textSecondary: "var(--color-text-secondary)",
                 border: "var(--color-border)",
                 gradient: "var(--color-gradient)",
