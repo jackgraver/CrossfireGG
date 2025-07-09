@@ -4,7 +4,6 @@
  * @returns Formatted date string
  */
 export const formatMatchDate = (timestamp: number): string => {
-    console.log(timestamp);
     const matchDate = new Date(timestamp * 1000);
     const today = new Date();
 

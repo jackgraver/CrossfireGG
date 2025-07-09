@@ -29,7 +29,6 @@ export default function NavBar() {
             const token = localStorage.getItem("access_token");
             if (token) {
                 api.get("/user/user-role").then((data: any) => {
-                    console.log(data);
                     setUser(data);
                 });
             }

@@ -25,17 +25,17 @@ def get_role_name(role_id: int) -> str:
         ).first()
         return role.role_name
 
-def insert_user(id: str, email: str, faceit_id: str, team_id: str, hashed_password: str):
+def insert_user(id: str, email: str,  faceit_id: str, team_id: str, hashed_password: str, user_name: str = "temp-name"):
     """Insert a new user or update existing user's password"""
     
     if not (re.match("^\$2[aby]\$\d{2}\$[./A-Za-z0-9]{53}$", hashed_password)):
         raise Exception("Invalid hashed_password format")
     
     if id:
-        user = User(user_id=id, email=email, faceit_id=faceit_id, team_id=team_id, password=hashed_password)
+        user = User(user_id=id, email=email, user_name=user_name, faceit_id=faceit_id, team_id=team_id, password=hashed_password)
     else:
         id = str(uuid4())
-        user = User(user_id=id, email=email, faceit_id=faceit_id, team_id=team_id, password=hashed_password)
+        user = User(user_id=id, email=email, user_name=user_name, faceit_id=faceit_id, team_id=team_id, password=hashed_password)
     with Session(get_db_connection()) as session:
         # Check if user exists
         existing_user = session.exec(
@@ -69,9 +69,12 @@ def get_user_by_email(email: str) -> Optional[dict]:
             select(User).where(User.email == email)
         ).first()
         
+        roles = session.exec(select(UserRole).where(UserRole.user_id == user.user_id)).all()
+        
         if user:
             return {
                 "user_id": user.user_id,
+                "roles": [role.role_id for role in roles],
                 "email": user.email,
                 "hashed_password": user.password,
             }
@@ -80,7 +83,8 @@ def get_user_by_email(email: str) -> Optional[dict]:
 def get_user_by_id(user_id: int) -> Optional[User]:
     """Get user by user_id, returns User object"""
     with Session(get_db_connection()) as session:
-        return session.get(User, user_id)
+        user = session.get(User, user_id)
+        return UserPublic(user_id=user.user_id, user_name=user.user_name, email=user.email, faceit_id=user.faceit_id, team_id=user.team_id)
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """Verify a plain password against a hashed password"""

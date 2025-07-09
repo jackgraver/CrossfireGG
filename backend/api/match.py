@@ -1,7 +1,9 @@
 
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import JSONResponse
 
+from api.auth import get_auth_user
+from db.user.user_sql import get_user_by_id
 from db.match.match_caster_sql import claim_match, get_matches_with_casters, unclaim_match
 from db.metadata.metadata_sql import write_metadata
 from db.match.match_sql import fetch_all_matches, fetch_match
@@ -33,19 +35,25 @@ def get_match(match_id: str):
     return res
 
 @router.post("/claim")
-async def claim_match_endpoint(request: Request):
+async def claim_match_endpoint(request: Request, current_user: str = Depends(get_auth_user)):
+    if not current_user:
+        raise HTTPException(status_code=401, detail="No JWT token found")
+
     data = await request.json()
     match_id = data.get("match_id")
     
     if not match_id:
         raise HTTPException(status_code=400, detail="Missing match_id")
     
-    # TODO: Get user_id from JWT token when authentication is implemented
-    # For now, we'll use a placeholder user_id
-    # In a real implementation, you would decode the JWT token to get the user_id
-    caster_id = 1  # Placeholder - should come from JWT token
+    if current_user:
+        caster_id = get_user_by_id(current_user)
+        print(caster_id)
+        if not caster_id:
+            raise HTTPException(status_code=401, detail="Invalid user_id")
     
-    success = claim_match(match_id, caster_id)
+    
+    success = claim_match(match_id, caster_id.user_id)
+    
     if not success:
         raise HTTPException(status_code=400, detail="Match already claimed or invalid match_id")
     

@@ -13,7 +13,6 @@ export default function ProtectedRoute({
     const { user } = useUser(); // loading useful if user is fetched async
 
     useEffect(() => {
-        console.log(user);
         if (!user) {
             router.replace("/");
         }

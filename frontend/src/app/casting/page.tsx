@@ -8,6 +8,11 @@ import { formatMatchDate } from "@/lib/dateUtils";
 import { useRouter } from "next/navigation";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
+const getMatchCaster = (match: string, match_casters: any) => {
+    if (!match_casters[match]) return "Claimed Error";
+    return "Claimed By " + match_casters[match].user_name;
+};
+
 export default function Casting() {
     const router = useRouter();
 
@@ -29,7 +34,7 @@ export default function Casting() {
 
     const claimMutation = useMutation({
         mutationFn: (matchId: string) =>
-            api.post("/matches/claim", { match_id: matchId }),
+            api.post("/match/claim", { match_id: matchId }),
         onSuccess: () => {
             setClaimStatus({
                 type: "success",
@@ -57,7 +62,7 @@ export default function Casting() {
 
     const unclaimMutation = useMutation({
         mutationFn: (matchId: string) =>
-            api.post("/matches/unclaim", { match_id: matchId }),
+            api.post("/match/unclaim", { match_id: matchId }),
         onSuccess: () => {
             setClaimStatus({
                 type: "success",
@@ -115,9 +120,10 @@ export default function Casting() {
         );
     }
 
-    const { claimed, unclaimed } = castingData || {
+    const { claimed, unclaimed, claimed_match_caster } = castingData || {
         claimed: [],
         unclaimed: [],
+        claimed_match_caster: [],
     };
 
     const formatMatchTime = (timestamp: number) => {
@@ -139,6 +145,16 @@ export default function Casting() {
                         <span className="font-medium text-textPrimary">
                             {match.round}
                         </span>
+                        <div className="ml-8">
+                            {isClaimed && (
+                                <span className="mt-1 font-medium text-green-400">
+                                    {getMatchCaster(
+                                        match.match_id,
+                                        claimed_match_caster,
+                                    )}
+                                </span>
+                            )}
+                        </div>
                     </div>
                     <div className="mb-3 flex items-center gap-4">
                         <div className="flex items-center gap-2">
@@ -177,11 +193,6 @@ export default function Casting() {
                     <div className="text-sm text-gray-400">
                         Status: {match.status}
                     </div>
-                    {isClaimed && match.caster_id && (
-                        <div className="mt-1 text-sm text-green-400">
-                            Claimed by Caster #{match.caster_id}
-                        </div>
-                    )}
                 </div>
                 <div className="flex flex-col gap-2">
                     <button

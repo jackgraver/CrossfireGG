@@ -28,8 +28,19 @@ async def sign_in(request: Request):
     if not user or not verify_password(password, user["hashed_password"]):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    token = create_access_token({"user_id": user["user_id"], "email": user["email"]})
-    return {"access_token": token}
+    print(user['roles'])
+    token = create_access_token({"user_id": user["user_id"], "roles": user["roles"], "email": user["email"]})
+    response = JSONResponse(content={"message": "Login successful"})
+    response.set_cookie(
+        key="access_token",
+        value=token,
+        httponly=True,
+        secure=True,
+        samesite="lax",
+        max_age=3600,
+        path="/"
+    )
+    return response
 
 @router.post("/sign-up")
 async def sign_up(request: Request):
@@ -57,12 +68,21 @@ async def sign_up(request: Request):
     hashed_password = hash_password(password)
     user_id = insert_user(id, email, faceit_id, team_id, hashed_password)
 
-    token = create_access_token({"user_id": user_id, "email": email})
-    return {"access_token": token}
+    token = create_access_token({"user_id": user_id, "roles": [], "email": email})
+    response = JSONResponse(content={"message": "Login successful"})
+    response.set_cookie(
+        key="access_token",
+        value=token,
+        httponly=True,
+        secure=True,
+        samesite="lax",
+        max_age=3600,
+        path="/"
+    )
+    return response
 
 @router.get("/test_faceit_link/{name}")
 async def test_faceit_link(name: str):
-    # sleep(3)
     if not name:    
         return {"id": None}
     

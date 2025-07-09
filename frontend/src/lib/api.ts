@@ -8,11 +8,8 @@ async function request<T>(
     body?: any,
     headers: Record<string, string> = {},
 ): Promise<T> {
-    const accessToken = localStorage.getItem("access_token");
-
     const finalHeaders: HeadersInit = {
         "Content-Type": "application/json",
-        ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
         ...headers,
     };
 
@@ -20,6 +17,7 @@ async function request<T>(
         method,
         headers: finalHeaders,
         body: body ? JSON.stringify(body) : undefined,
+        credentials: "include", // 🔒 Always include cookies
     });
 
     if (!response.ok) {
@@ -29,7 +27,6 @@ async function request<T>(
 
     return await response.json();
 }
-
 export const api = {
     get: <T>(endpoint: string) => request<T>("GET", endpoint),
     post: <T>(endpoint: string, body?: any) =>

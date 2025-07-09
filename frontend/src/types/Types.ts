@@ -85,4 +85,11 @@ export type MatchCaster = {
 export type MatchesWithCasters = {
     claimed: Match[];
     unclaimed: Match[];
+    claimed_match_caster: {
+        user_id: string;
+        user_name: string;
+        email: string;
+        faceit_id: string;
+        team_id: string;
+    }[];
 };
