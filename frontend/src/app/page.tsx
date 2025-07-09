@@ -72,12 +72,12 @@ export default function Home() {
         ? { reg_season: [], playoffs: [] }
         : matchData!;
 
-    useEffect(() => {
-        console.log(regSeasonMatches.length);
-        if (regSeasonMatches.length >= 66) {
-            setDisplayTab("playoffs");
-        }
-    }, [regSeasonMatches]);
+    // useEffect(() => {
+    //     console.log(regSeasonMatches.length);
+    //     if (regSeasonMatches.length >= 66) {
+    //         setDisplayTab("playoffs");
+    //     }
+    // }, [regSeasonMatches]);
 
     const nonFinishedMatches = [...regSeasonMatches, ...playoffsMatches].filter(
         (match) => match.status !== "FINISHED",
@@ -99,22 +99,35 @@ export default function Home() {
 
     return (
         <div className="transform- flex flex-col items-center justify-center">
-            <div className="mb-16 flex w-5/6 flex-col items-center justify-center sm:flex-row">
-                <img src="/OSSLOGO.png" className="h-48 w-48 sm:h-72 sm:w-72" />
-                <div className="flex flex-col text-textPrimary">
-                    <h1 className="text-4xl font-semibold sm:text-7xl">
-                        OFF SEASON
-                        <br />
-                        SHENANIGANS
-                    </h1>
-                    <p className="text-2xl text-textSecondary">
-                        Off Season Shenanigans the ultimate Counter-Strike
-                        <br />
-                        tournament during the off seasons!
-                    </p>
+            <div className="mb-16 flex flex-col items-center justify-center">
+                <div className="mb-8 flex w-5/6 flex-col items-center justify-center sm:flex-row">
+                    <img
+                        src="/OSSLOGO.png"
+                        className="h-48 w-48 sm:h-72 sm:w-72"
+                    />
+                    <div className="flex flex-col text-textPrimary">
+                        <h1 className="text-4xl font-semibold sm:text-7xl">
+                            OFF SEASON
+                            <br />
+                            SHENANIGANS
+                        </h1>
+                        <p className="text-2xl text-textSecondary">
+                            Off Season Shenanigans the ultimate Counter-Strike
+                            <br />
+                            tournament during the off seasons!
+                        </p>
+                    </div>
+                </div>
+                <div className="flex flex-col items-center justify-center">
+                    <h2 className="text-4xl font-semibold text-textPrimary">
+                        Now VRS Enabled!
+                    </h2>
+                    <button className="pb mt-4 rounded bg-orange-500 px-3 pb-2 pt-1 text-xl font-semibold text-textPrimary hover:bg-orange-400">
+                        Sign up for Season 9
+                    </button>
                 </div>
             </div>
-            <div>
+            <div className="mb-8">
                 <NonFinishedMatches matches={nonFinishedMatches} />
             </div>
             <div className="my-6">

@@ -4,6 +4,7 @@ import ManageTournaments from "./components/tournaments";
 import ManageUsers from "./components/users";
 import ManageTeams from "./components/teams";
 import { api } from "@/lib/api";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 export default function Admin() {
     // const queryClient = useQueryClient();
@@ -16,8 +17,8 @@ export default function Admin() {
                     <ManageTournaments />
                     <ManageUsers />
                     {/* <ManageTeams /> */}
-                    <button onClick={() => api.post("/metadata/toggle_stage")}>
-                        Toggle Stage
+                    <button onClick={() => api.get("/user/user-role")}>
+                        User Role
                     </button>
                 </div>
             </div>

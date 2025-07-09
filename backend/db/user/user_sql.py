@@ -1,10 +1,29 @@
 from uuid import uuid4
 from sqlmodel import Session, select
-from db.user.user_model import User, UserPublic
+from db.user.user_model import Role, User, UserPublic, UserRole
 from db.db import get_db_connection
 from typing import Optional
 from passlib.hash import bcrypt
 import re
+
+
+def get_user_roles(user_id: str) -> str:
+    with Session(get_db_connection()) as session:
+        user_roles = session.exec(
+            select(UserRole).where(UserRole.user_id == user_id)
+        ).all()
+        roles = []
+        for role in user_roles:
+            roles.append(get_role_name(role.role_id))
+            
+        return roles
+
+def get_role_name(role_id: int) -> str:
+    with Session(get_db_connection()) as session:
+        role = session.exec(
+            select(Role).where(Role.role_id == role_id)
+        ).first()
+        return role.role_name
 
 def insert_user(id: str, email: str, faceit_id: str, team_id: str, hashed_password: str):
     """Insert a new user or update existing user's password"""
@@ -74,4 +93,4 @@ def hash_password(plain_password: str) -> str:
 def fetch_all_users():
     with Session(get_db_connection()) as session:
         users = session.exec(select(User.user_id, User.email, User.faceit_id, User.team_id)).all()
-        return [UserPublic(user_id=row[0], email=row[1], faceit_id=row[2], team_id=row[3]) for row in users]
+        return [UserPublic(user_id=row[0], user_name="temp", email=row[1], faceit_id=row[2], team_id=row[3]) for row in users]

@@ -6,6 +6,7 @@ import { api } from "@/lib/api";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { formatMatchDate } from "@/lib/dateUtils";
 import { useRouter } from "next/navigation";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 export default function Casting() {
     const router = useRouter();
@@ -214,98 +215,100 @@ export default function Casting() {
     );
 
     return (
-        <div className="container mx-auto px-4 py-8">
-            {/* Status Notification */}
-            {claimStatus.type && (
-                <div
-                    className={`fixed right-4 top-4 z-50 rounded-lg p-4 shadow-lg ${
-                        claimStatus.type === "success"
-                            ? "bg-green-600 text-white"
-                            : "bg-red-600 text-white"
-                    }`}
-                >
-                    {claimStatus.message}
-                </div>
-            )}
-
-            <div className="mb-8">
-                <h1 className="mb-2 text-4xl font-bold text-textPrimary">
-                    Match Casting
-                </h1>
-                <p className="text-textSecondary">
-                    Manage match casting assignments and claim matches for
-                    casting
-                </p>
-            </div>
-
-            <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-                {/* Unclaimed Matches */}
-                <div>
-                    <div className="mb-4">
-                        <h2 className="mb-2 text-2xl font-semibold text-textPrimary">
-                            Available Matches
-                        </h2>
-                        <p className="text-sm text-textSecondary">
-                            {unclaimed.length} match
-                            {unclaimed.length !== 1 ? "es" : ""} available for
-                            casting
-                        </p>
+        <ProtectedRoute>
+            <div className="container mx-auto px-4 py-8">
+                {/* Status Notification */}
+                {claimStatus.type && (
+                    <div
+                        className={`fixed right-4 top-4 z-50 rounded-lg p-4 shadow-lg ${
+                            claimStatus.type === "success"
+                                ? "bg-green-600 text-white"
+                                : "bg-red-600 text-white"
+                        }`}
+                    >
+                        {claimStatus.message}
                     </div>
-                    <div className="space-y-4">
-                        {unclaimed.length === 0 ? (
-                            <div className="py-8 text-center text-gray-500">
-                                No matches available for casting
-                            </div>
-                        ) : (
-                            unclaimed.map((match) => (
-                                <MatchCard
-                                    key={match.match_id}
-                                    match={match}
-                                    isClaimed={false}
-                                />
-                            ))
-                        )}
-                    </div>
+                )}
+
+                <div className="mb-8">
+                    <h1 className="mb-2 text-4xl font-bold text-textPrimary">
+                        Match Casting
+                    </h1>
+                    <p className="text-textSecondary">
+                        Manage match casting assignments and claim matches for
+                        casting
+                    </p>
                 </div>
 
-                {/* Claimed Matches */}
-                <div>
-                    <div className="mb-4">
-                        <h2 className="mb-2 text-2xl font-semibold text-textPrimary">
-                            Claimed Matches
-                        </h2>
-                        <p className="text-sm text-textSecondary">
-                            {claimed.length} match
-                            {claimed.length !== 1 ? "es" : ""} assigned to
-                            casters
-                        </p>
+                <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+                    {/* Unclaimed Matches */}
+                    <div>
+                        <div className="mb-4">
+                            <h2 className="mb-2 text-2xl font-semibold text-textPrimary">
+                                Available Matches
+                            </h2>
+                            <p className="text-sm text-textSecondary">
+                                {unclaimed.length} match
+                                {unclaimed.length !== 1 ? "es" : ""} available
+                                for casting
+                            </p>
+                        </div>
+                        <div className="space-y-4">
+                            {unclaimed.length === 0 ? (
+                                <div className="py-8 text-center text-gray-500">
+                                    No matches available for casting
+                                </div>
+                            ) : (
+                                unclaimed.map((match) => (
+                                    <MatchCard
+                                        key={match.match_id}
+                                        match={match}
+                                        isClaimed={false}
+                                    />
+                                ))
+                            )}
+                        </div>
                     </div>
-                    <div className="space-y-4">
-                        {claimed.length === 0 ? (
-                            <div className="py-8 text-center text-gray-500">
-                                No matches have been claimed yet
-                            </div>
-                        ) : (
-                            claimed.map((match) => (
-                                <MatchCard
-                                    key={match.match_id}
-                                    match={match}
-                                    isClaimed={true}
-                                />
-                            ))
-                        )}
+
+                    {/* Claimed Matches */}
+                    <div>
+                        <div className="mb-4">
+                            <h2 className="mb-2 text-2xl font-semibold text-textPrimary">
+                                Claimed Matches
+                            </h2>
+                            <p className="text-sm text-textSecondary">
+                                {claimed.length} match
+                                {claimed.length !== 1 ? "es" : ""} assigned to
+                                casters
+                            </p>
+                        </div>
+                        <div className="space-y-4">
+                            {claimed.length === 0 ? (
+                                <div className="py-8 text-center text-gray-500">
+                                    No matches have been claimed yet
+                                </div>
+                            ) : (
+                                claimed.map((match) => (
+                                    <MatchCard
+                                        key={match.match_id}
+                                        match={match}
+                                        isClaimed={true}
+                                    />
+                                ))
+                            )}
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div className="mt-8 flex justify-end">
-                <button
-                    onClick={() => refetch()}
-                    className="rounded bg-gray-700 px-4 py-2 text-white transition-colors hover:bg-gray-600"
-                >
-                    Refresh
-                </button>
+                <div className="mt-8 flex justify-end">
+                    <button
+                        onClick={() => refetch()}
+                        className="rounded bg-gray-700 px-4 py-2 text-white transition-colors hover:bg-gray-600"
+                    >
+                        Refresh
+                    </button>
+                </div>
             </div>
-        </div>
+        </ProtectedRoute>
     );
 }

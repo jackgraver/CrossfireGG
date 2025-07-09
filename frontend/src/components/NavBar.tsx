@@ -2,6 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useUser } from "@/context/UserContext";
+import { api } from "@/lib/api";
+import { match } from "assert";
+import { matchesRole } from "@/lib/role.util";
 
 function toggleDarkMode() {
     const isDark = document.documentElement.classList.toggle("dark");
@@ -12,12 +16,23 @@ function toggleDarkMode() {
 
 export default function NavBar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const username = "ADMIN";
+
+    const { user, setUser } = useUser();
 
     useEffect(() => {
         const darkPref = localStorage.getItem("theme") === "dark";
         if (darkPref) {
             document.documentElement.classList.add("dark");
+        }
+
+        if (typeof window !== "undefined" && !user) {
+            const token = localStorage.getItem("access_token");
+            if (token) {
+                api.get("/user/user-role").then((data: any) => {
+                    console.log(data);
+                    setUser(data);
+                });
+            }
         }
     }, []);
 
@@ -36,7 +51,7 @@ export default function NavBar() {
                             <h1 className="text-2xl font-bold">OSS</h1>
                         </Link>
                     </div>
-                    <div className="mt-4 flex h-min items-center rounded-md bg-red-400 px-1 py-1">
+                    <div className="mt-4 flex h-min items-center rounded-md bg-red-500 px-1 py-1">
                         <p>BETA VERSION</p>
                     </div>
 
@@ -107,42 +122,60 @@ export default function NavBar() {
                                                     </div>
                                                 </div>
                                                 <div className="ml-3">
-                                                    <p className="text-sm font-medium text-textPrimary">
-                                                        {username}
+                                                    <p className="text-lg font-medium text-textPrimary">
+                                                        {user?.user_name}
                                                     </p>
                                                 </div>
                                             </div>
                                         </Link>
                                     </div>
+
                                     <div
                                         className="py-1"
                                         role="menu"
                                         aria-orientation="vertical"
                                     >
-                                        <Link
-                                            href="/manage-teams"
-                                            className="block px-4 py-2 text-sm text-textSecondary hover:bg-secondBg"
-                                            role="menuitem"
-                                            onClick={() => setIsMenuOpen(false)}
-                                        >
-                                            Manage Teams
-                                        </Link>
-                                        <Link
-                                            href="/casting"
-                                            className="block px-4 py-2 text-sm text-textSecondary hover:bg-secondBg"
-                                            role="menuitem"
-                                            onClick={() => setIsMenuOpen(false)}
-                                        >
-                                            Casting
-                                        </Link>
-                                        <Link
-                                            href="/admin"
-                                            className="block px-4 py-2 text-sm text-textSecondary hover:bg-secondBg"
-                                            role="menuitem"
-                                            onClick={() => setIsMenuOpen(false)}
-                                        >
-                                            Admin
-                                        </Link>
+                                        {matchesRole(user?.roles, "ADMIN") && (
+                                            <Link
+                                                href="/manage-teams"
+                                                className="block px-4 py-2 text-sm text-textSecondary hover:bg-secondBg"
+                                                role="menuitem"
+                                                onClick={() =>
+                                                    setIsMenuOpen(false)
+                                                }
+                                            >
+                                                Manage Teams
+                                            </Link>
+                                        )}
+                                        {matchesRole(
+                                            user?.roles,
+                                            "ADMIN",
+                                            "PRODUCTION_LEAD",
+                                            "PRODUCTION",
+                                        ) && (
+                                            <Link
+                                                href="/casting"
+                                                className="block px-4 py-2 text-sm text-textSecondary hover:bg-secondBg"
+                                                role="menuitem"
+                                                onClick={() =>
+                                                    setIsMenuOpen(false)
+                                                }
+                                            >
+                                                Casting
+                                            </Link>
+                                        )}
+                                        {matchesRole(user?.roles, "ADMIN") && (
+                                            <Link
+                                                href="/admin"
+                                                className="block px-4 py-2 text-sm text-textSecondary hover:bg-secondBg"
+                                                role="menuitem"
+                                                onClick={() =>
+                                                    setIsMenuOpen(false)
+                                                }
+                                            >
+                                                Admin
+                                            </Link>
+                                        )}
                                         <div
                                             className="block cursor-pointer px-4 py-2 text-sm text-textSecondary hover:bg-secondBg"
                                             role="menuitem"

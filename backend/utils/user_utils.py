@@ -7,7 +7,7 @@ if not SECRET_KEY:
     raise RuntimeError("JWT_SECRET_KEY not set.")
 ALGORITHM = "HS256"
 
-def create_access_token(data: dict, expires_minutes: int = 60):
+def create_access_token(data: dict, expires_minutes: int = 10000):
     to_encode = data.copy()
     expire = datetime.now(timezone.utc) + timedelta(minutes=expires_minutes)
     to_encode.update({"exp": expire})

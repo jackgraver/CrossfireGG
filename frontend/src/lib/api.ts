@@ -1,8 +1,4 @@
-// const BASE_URL = "https://backend-empty-fog-5756.fly.dev";
-// const BASE_URL = "http://localhost:8000";
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL_BASE;
-
-console.log(process.env.NEXT_PUBLIC_API_URL_BASE);
 
 type HttpMethod = "GET" | "POST" | "PUT" | "DELETE";
 

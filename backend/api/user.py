@@ -1,12 +1,19 @@
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import JSONResponse
 
+from api.auth import get_auth_user
 from utils.user_utils import create_access_token
 from db.player.player_sql import check_player_exists
 from db.player.player_util import fetch_faceit_info
-from db.user.user_sql import fetch_all_users, get_user_by_email, hash_password, insert_user, user_exists, verify_password
+from db.user.user_sql import fetch_all_users, get_user_by_email, get_user_by_id, get_user_roles, hash_password, insert_user, user_exists, verify_password
 
 router = APIRouter()
+
+@router.get("/user-role")
+async def get_user_role(user: str = Depends(get_auth_user)):
+    roles = get_user_roles(user)
+    user = get_user_by_id(user)
+    return {"user_id": user, "user_name": user.user_name, "roles": roles}
 
 @router.post("/sign-in")
 async def sign_in(request: Request):

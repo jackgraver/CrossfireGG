@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import type { Team } from "@/types/Types";
 import { api } from "@/lib/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 type Filter = "name" | "paid" | "joined";
 
@@ -97,246 +98,256 @@ export default function ManageTeams() {
     if (error) return <div>Error: {error.message}</div>;
 
     return (
-        <div className="flex flex-row justify-center space-x-16">
-            <div className="flex flex-col items-center justify-center">
-                <h1 className="pb-12 pt-12 text-4xl text-textPrimary">
-                    Current Teams
-                </h1>
-                <div className="mb-2 flex flex-wrap items-end gap-4 rounded-md bg-firstBg p-2 shadow">
-                    <div className="flex flex-col">
-                        <label
-                            htmlFor="search"
-                            className="mb-1 text-sm text-textSecondary"
-                        >
-                            Search
-                        </label>
-                        <input
-                            id="search"
-                            type="text"
-                            placeholder="Search for team"
-                            className="rounded-md border border-border bg-transparent px-2 py-1"
-                            onChange={(e) =>
-                                filterTeams("name", e.target.value)
-                            }
-                        />
-                    </div>
-                    <div className="flex flex-col">
-                        <label
-                            htmlFor="paid"
-                            className="mb-1 text-sm text-textSecondary"
-                        >
-                            Paid Teams
-                        </label>
-                        <input
-                            id="paid"
-                            type="checkbox"
-                            className="rounded-md border border-border bg-transparent px-2 py-1"
-                            onChange={(e) =>
-                                filterTeams("paid", e.target.checked ? 1 : 0)
-                            }
-                        />
-                    </div>
-                    <div className="flex flex-col">
-                        <label
-                            htmlFor="joined"
-                            className="mb-1 text-sm text-textSecondary"
-                        >
-                            Teams in Tournament
-                        </label>
-                        <input
-                            id="joined"
-                            type="checkbox"
-                            className="rounded-md border border-border bg-transparent px-2 py-1"
-                            onChange={(e) =>
-                                filterTeams("paid", e.target.checked ? 1 : 0)
-                            }
-                        />
-                    </div>
-                </div>
-                <div className="space-y-2">
-                    {filteredTeams.map((team, i) => (
-                        <div
-                            key={i}
-                            className="relative flex items-center gap-4 rounded-md bg-firstBg p-4 text-textPrimary shadow-md"
-                        >
-                            <div className="flex flex-col items-center justify-center">
-                                <input
-                                    type="number"
-                                    className="w-12 border-none bg-transparent text-center text-2xl font-bold outline-none"
-                                    value={team.seed}
-                                    readOnly
-                                />
-                                <span className="text-xs text-textSecondary">
-                                    Seed
-                                </span>
-                            </div>
-                            <div className="flex flex-1 flex-col gap-1">
-                                <p className="text-sm text-textSecondary">
-                                    {team.team_id}
-                                </p>
-                                <p className="text-lg font-semibold">
-                                    {team.team_name}
-                                </p>
-                                <div className="mt-1 flex gap-2">
-                                    <span
-                                        className={`rounded px-2 py-0.5 text-xs font-medium ${
-                                            team.paid
-                                                ? "bg-green-100 text-green-800"
-                                                : "bg-red-100 text-red-800"
-                                        }`}
-                                    >
-                                        {team.paid ? "Paid" : "Unpaid"}
-                                    </span>
-                                    <span
-                                        className={`rounded px-2 py-0.5 text-xs font-medium ${
-                                            team.joined_tournament
-                                                ? "bg-blue-100 text-blue-800"
-                                                : "bg-gray-100 text-gray-800"
-                                        }`}
-                                    >
-                                        {team.joined_tournament
-                                            ? "Joined"
-                                            : "Not Joined"}
-                                    </span>
-                                </div>
-                            </div>
-                            <div className="flex flex-col gap-2">
-                                <button
-                                    className="rounded border border-border px-3 py-1 text-sm"
-                                    onClick={() =>
-                                        paidMutation.mutate({
-                                            team_id: team.team_id,
-                                            paid: !team.paid,
-                                        })
-                                    }
-                                >
-                                    Set Paid
-                                </button>
-                                <button
-                                    className="rounded border border-border px-3 py-1 text-sm"
-                                    onClick={() =>
-                                        joinedMutation.mutate({
-                                            team_id: team.team_id,
-                                            joined: !team.joined_tournament,
-                                        })
-                                    }
-                                >
-                                    Toggle Join
-                                </button>
-                            </div>
+        <ProtectedRoute>
+            <div className="flex flex-row justify-center space-x-16">
+                <div className="flex flex-col items-center justify-center">
+                    <h1 className="pb-12 pt-12 text-4xl text-textPrimary">
+                        Current Teams
+                    </h1>
+                    <div className="mb-2 flex flex-wrap items-end gap-4 rounded-md bg-firstBg p-2 shadow">
+                        <div className="flex flex-col">
+                            <label
+                                htmlFor="search"
+                                className="mb-1 text-sm text-textSecondary"
+                            >
+                                Search
+                            </label>
+                            <input
+                                id="search"
+                                type="text"
+                                placeholder="Search for team"
+                                className="rounded-md border border-border bg-transparent px-2 py-1"
+                                onChange={(e) =>
+                                    filterTeams("name", e.target.value)
+                                }
+                            />
                         </div>
-                    ))}
-                </div>
-            </div>
-            <div className="">
-                <h1 className="pb-12 pt-12 text-4xl text-textPrimary">
-                    Add Teams{" "}
-                </h1>
-                <div>
-                    <div className="flex flex-row space-x-4">
-                        <button
-                            className="rounded-full px-2 text-4xl"
-                            onClick={() =>
-                                setNewTeams([
-                                    {
-                                        team_id: "",
-                                        team_name: "",
-                                        team_logo: "",
-                                        seed: 0,
-                                        win: 0,
-                                        loss: 0,
-                                        paid: false,
-                                        joined_tournament: false,
-                                    },
-                                    ...newTeams,
-                                ])
-                            }
-                        >
-                            +
-                        </button>
-                        <button className="rounded-md bg-green-600 p-2">
-                            Submit
-                        </button>
+                        <div className="flex flex-col">
+                            <label
+                                htmlFor="paid"
+                                className="mb-1 text-sm text-textSecondary"
+                            >
+                                Paid Teams
+                            </label>
+                            <input
+                                id="paid"
+                                type="checkbox"
+                                className="rounded-md border border-border bg-transparent px-2 py-1"
+                                onChange={(e) =>
+                                    filterTeams(
+                                        "paid",
+                                        e.target.checked ? 1 : 0,
+                                    )
+                                }
+                            />
+                        </div>
+                        <div className="flex flex-col">
+                            <label
+                                htmlFor="joined"
+                                className="mb-1 text-sm text-textSecondary"
+                            >
+                                Teams in Tournament
+                            </label>
+                            <input
+                                id="joined"
+                                type="checkbox"
+                                className="rounded-md border border-border bg-transparent px-2 py-1"
+                                onChange={(e) =>
+                                    filterTeams(
+                                        "paid",
+                                        e.target.checked ? 1 : 0,
+                                    )
+                                }
+                            />
+                        </div>
                     </div>
                     <div className="space-y-2">
-                        {newTeams.map((team, index) => (
+                        {filteredTeams.map((team, i) => (
                             <div
-                                key={index}
+                                key={i}
                                 className="relative flex items-center gap-4 rounded-md bg-firstBg p-4 text-textPrimary shadow-md"
                             >
-                                {/* Seed */}
                                 <div className="flex flex-col items-center justify-center">
                                     <input
                                         type="number"
                                         className="w-12 border-none bg-transparent text-center text-2xl font-bold outline-none"
                                         value={team.seed}
-                                        onChange={(e) =>
-                                            handleChange(
-                                                index,
-                                                "seed",
-                                                Number(e.target.value),
-                                            )
-                                        }
+                                        readOnly
                                     />
                                     <span className="text-xs text-textSecondary">
                                         Seed
                                     </span>
                                 </div>
-
-                                {/* Form Inputs */}
-                                <div className="flex flex-1 flex-col gap-2">
-                                    {/* Team Name */}
-                                    <input
-                                        type="text"
-                                        placeholder="Team Name"
-                                        className="rounded-lg border border-border bg-transparent px-2 py-1 text-lg font-semibold outline-none"
-                                        value={team.team_name}
-                                        onChange={(e) =>
-                                            handleChange(
-                                                index,
-                                                "team_name",
-                                                e.target.value,
-                                            )
-                                        }
-                                    />
-
-                                    {/* Status Flags */}
-                                    <div className="flex items-center gap-4">
-                                        <label className="flex items-center gap-1 text-sm">
-                                            <input
-                                                type="checkbox"
-                                                checked={team.paid}
-                                                onChange={(e) =>
-                                                    handleChange(
-                                                        index,
-                                                        "paid",
-                                                        e.target.checked,
-                                                    )
-                                                }
-                                            />
-                                            Paid
-                                        </label>
-                                        <label className="flex items-center gap-1 text-sm">
-                                            <input
-                                                type="checkbox"
-                                                checked={team.joined_tournament}
-                                                onChange={(e) =>
-                                                    handleChange(
-                                                        index,
-                                                        "joined_tournament",
-                                                        e.target.checked,
-                                                    )
-                                                }
-                                            />
-                                            Joined
-                                        </label>
+                                <div className="flex flex-1 flex-col gap-1">
+                                    <p className="text-sm text-textSecondary">
+                                        {team.team_id}
+                                    </p>
+                                    <p className="text-lg font-semibold">
+                                        {team.team_name}
+                                    </p>
+                                    <div className="mt-1 flex gap-2">
+                                        <span
+                                            className={`rounded px-2 py-0.5 text-xs font-medium ${
+                                                team.paid
+                                                    ? "bg-green-100 text-green-800"
+                                                    : "bg-red-100 text-red-800"
+                                            }`}
+                                        >
+                                            {team.paid ? "Paid" : "Unpaid"}
+                                        </span>
+                                        <span
+                                            className={`rounded px-2 py-0.5 text-xs font-medium ${
+                                                team.joined_tournament
+                                                    ? "bg-blue-100 text-blue-800"
+                                                    : "bg-gray-100 text-gray-800"
+                                            }`}
+                                        >
+                                            {team.joined_tournament
+                                                ? "Joined"
+                                                : "Not Joined"}
+                                        </span>
                                     </div>
+                                </div>
+                                <div className="flex flex-col gap-2">
+                                    <button
+                                        className="rounded border border-border px-3 py-1 text-sm"
+                                        onClick={() =>
+                                            paidMutation.mutate({
+                                                team_id: team.team_id,
+                                                paid: !team.paid,
+                                            })
+                                        }
+                                    >
+                                        Set Paid
+                                    </button>
+                                    <button
+                                        className="rounded border border-border px-3 py-1 text-sm"
+                                        onClick={() =>
+                                            joinedMutation.mutate({
+                                                team_id: team.team_id,
+                                                joined: !team.joined_tournament,
+                                            })
+                                        }
+                                    >
+                                        Toggle Join
+                                    </button>
                                 </div>
                             </div>
                         ))}
                     </div>
                 </div>
+                <div className="">
+                    <h1 className="pb-12 pt-12 text-4xl text-textPrimary">
+                        Add Teams{" "}
+                    </h1>
+                    <div>
+                        <div className="flex flex-row space-x-4">
+                            <button
+                                className="rounded-full px-2 text-4xl"
+                                onClick={() =>
+                                    setNewTeams([
+                                        {
+                                            team_id: "",
+                                            team_name: "",
+                                            team_logo: "",
+                                            seed: 0,
+                                            win: 0,
+                                            loss: 0,
+                                            paid: false,
+                                            joined_tournament: false,
+                                        },
+                                        ...newTeams,
+                                    ])
+                                }
+                            >
+                                +
+                            </button>
+                            <button className="rounded-md bg-green-600 p-2">
+                                Submit
+                            </button>
+                        </div>
+                        <div className="space-y-2">
+                            {newTeams.map((team, index) => (
+                                <div
+                                    key={index}
+                                    className="relative flex items-center gap-4 rounded-md bg-firstBg p-4 text-textPrimary shadow-md"
+                                >
+                                    {/* Seed */}
+                                    <div className="flex flex-col items-center justify-center">
+                                        <input
+                                            type="number"
+                                            className="w-12 border-none bg-transparent text-center text-2xl font-bold outline-none"
+                                            value={team.seed}
+                                            onChange={(e) =>
+                                                handleChange(
+                                                    index,
+                                                    "seed",
+                                                    Number(e.target.value),
+                                                )
+                                            }
+                                        />
+                                        <span className="text-xs text-textSecondary">
+                                            Seed
+                                        </span>
+                                    </div>
+
+                                    {/* Form Inputs */}
+                                    <div className="flex flex-1 flex-col gap-2">
+                                        {/* Team Name */}
+                                        <input
+                                            type="text"
+                                            placeholder="Team Name"
+                                            className="rounded-lg border border-border bg-transparent px-2 py-1 text-lg font-semibold outline-none"
+                                            value={team.team_name}
+                                            onChange={(e) =>
+                                                handleChange(
+                                                    index,
+                                                    "team_name",
+                                                    e.target.value,
+                                                )
+                                            }
+                                        />
+
+                                        {/* Status Flags */}
+                                        <div className="flex items-center gap-4">
+                                            <label className="flex items-center gap-1 text-sm">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={team.paid}
+                                                    onChange={(e) =>
+                                                        handleChange(
+                                                            index,
+                                                            "paid",
+                                                            e.target.checked,
+                                                        )
+                                                    }
+                                                />
+                                                Paid
+                                            </label>
+                                            <label className="flex items-center gap-1 text-sm">
+                                                <input
+                                                    type="checkbox"
+                                                    checked={
+                                                        team.joined_tournament
+                                                    }
+                                                    onChange={(e) =>
+                                                        handleChange(
+                                                            index,
+                                                            "joined_tournament",
+                                                            e.target.checked,
+                                                        )
+                                                    }
+                                                />
+                                                Joined
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
+        </ProtectedRoute>
     );
 }
