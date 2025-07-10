@@ -26,6 +26,8 @@ async def sign_in(request: Request):
 
     user = get_user_by_email(email)
     if not user or not verify_password(password, user["hashed_password"]):
+        print(user)
+        print(verify_password(password, user["hashed_password"]))
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
     print(user['roles'])
@@ -36,7 +38,7 @@ async def sign_in(request: Request):
         value=token,
         httponly=True,
         secure=True,
-        samesite="lax",
+        samesite="none",
         max_age=3600,
         path="/"
     )
@@ -75,7 +77,7 @@ async def sign_up(request: Request):
         value=token,
         httponly=True,
         secure=True,
-        samesite="lax",
+        samesite="none",
         max_age=3600,
         path="/"
     )

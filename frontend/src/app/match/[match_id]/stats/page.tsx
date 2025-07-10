@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import type { MatchMap, PlayerStats, Round, Team } from "@/types/Types";
-import ViewSelector from "@/components/ViewSelector";
-import OSSTable from "@/components/OSSTable";
+import ViewSelector from "@/shared/ViewSelector";
+import OSSTable from "@/shared/OSSTable";
 import { api } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import { formatMatchDate } from "@/lib/dateUtils";

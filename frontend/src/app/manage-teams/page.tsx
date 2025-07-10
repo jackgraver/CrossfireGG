@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import type { Team } from "@/types/Types";
 import { api } from "@/lib/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import ProtectedRoute from "@/components/ProtectedRoute";
+import ProtectedRoute from "@/shared/ProtectedRoute";
 
 type Filter = "name" | "paid" | "joined";
 

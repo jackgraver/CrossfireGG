@@ -4,7 +4,7 @@ import ManageTournaments from "./components/tournaments";
 import ManageUsers from "./components/users";
 import ManageTeams from "./components/teams";
 import { api } from "@/lib/api";
-import ProtectedRoute from "@/components/ProtectedRoute";
+import ProtectedRoute from "@/shared/ProtectedRoute";
 
 export default function Admin() {
     // const queryClient = useQueryClient();

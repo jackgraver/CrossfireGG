@@ -10,16 +10,23 @@ const openInNewTab = (url: string) => {
 
 type MatchCardProps = {
     match: Match | undefined;
+    margin?: boolean;
 };
 
-export default function MatchCard({ match }: MatchCardProps) {
-    // if (!match) {
-    //     console.log("Match is undefined");
-    // }
+export default function MatchCard({ match, margin }: MatchCardProps) {
+    if (margin === undefined) {
+        margin = true;
+    }
 
     const router = useRouter();
     return (
-        <div className="group relative m-2 flex grow flex-col rounded-md border border-border bg-firstBg text-textPrimary">
+        <div
+            className={`group relative flex grow flex-col border border-border bg-firstBg text-textPrimary ${
+                margin
+                    ? "m-2 rounded-md"
+                    : "rounded-bl-md rounded-br-md rounded-tr-md"
+            }`}
+        >
             <MatchTeam
                 team={match?.teams.team1}
                 winner={

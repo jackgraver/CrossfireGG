@@ -2,11 +2,11 @@
 
 import type { Match, Team } from "../types/Types";
 import { useEffect, useState } from "react";
-import Standings from "../components/Standings";
-import RegularSeasonBracket from "../components/bracket/RegularSeasonBracket";
-import PlayoffBracket from "../components/bracket/PlayoffBracket";
-import NonFinishedMatches from "../components/NonFinishedMatches";
-import ViewSelector from "../components/ViewSelector";
+import Standings from "../shared/Standings";
+import RegularSeasonBracket from "../shared/bracket/RegularSeasonBracket";
+import PlayoffBracket from "../shared/bracket/PlayoffBracket";
+import NonFinishedMatches from "../shared/NonFinishedMatches";
+import ViewSelector from "../shared/ViewSelector";
 import { api } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 

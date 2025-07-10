@@ -20,18 +20,21 @@ export default function NavBar() {
     const { user, setUser } = useUser();
 
     useEffect(() => {
+        if (!user) {
+            api.get("/user/user-role")
+                .then((data: any) => {
+                    setUser(data);
+                })
+                .catch((err) => {
+                    console.error("Failed to fetch user:", err);
+                });
+        }
+    }, [user]);
+
+    useEffect(() => {
         const darkPref = localStorage.getItem("theme") === "dark";
         if (darkPref) {
             document.documentElement.classList.add("dark");
-        }
-
-        if (typeof window !== "undefined" && !user) {
-            const token = localStorage.getItem("access_token");
-            if (token) {
-                api.get("/user/user-role").then((data: any) => {
-                    setUser(data);
-                });
-            }
         }
     }, []);
 
@@ -51,7 +54,7 @@ export default function NavBar() {
                         </Link>
                     </div>
                     <div className="mt-4 flex h-min items-center rounded-md bg-red-500 px-1 py-1">
-                        <p>BETA VERSION</p>
+                        <p>ALPHA VERSION</p>
                     </div>
 
                     <div className="flex items-center">

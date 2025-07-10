@@ -6,7 +6,7 @@ import { api } from "@/lib/api";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { formatMatchDate } from "@/lib/dateUtils";
 import { useRouter } from "next/navigation";
-import ProtectedRoute from "@/components/ProtectedRoute";
+import ProtectedRoute from "@/shared/ProtectedRoute";
 
 const getMatchCaster = (match: string, match_casters: any) => {
     if (!match_casters[match]) return "Claimed Error";

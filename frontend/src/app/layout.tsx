@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Providers from "./providers";
-import NavBar from "@/components/NavBar";
-import Footer from "@/components/Footer";
+import NavBar from "@/shared/NavBar";
+import Footer from "@/shared/Footer";
 
 export const metadata: Metadata = {
     title: "OSS Season 8",

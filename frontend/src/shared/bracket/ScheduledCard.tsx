@@ -1,6 +1,7 @@
 import type { Match } from "../../types/Types";
 import { MatchTeam } from "./MatchTeam";
 import { formatMatchDate } from "../../lib/dateUtils";
+import MatchCard from "./MatchCard";
 
 const openInNewTab = (url: string) => {
     window.open(url, "_blank", "noopener,noreferrer");
@@ -19,10 +20,7 @@ export default function ScheduledCard({ match }: ScheduledCardProps) {
                         <p className="">🕒</p>
                     </div>
                 </div>
-                <div className="group relative flex cursor-pointer flex-col rounded-b-md rounded-r-md border border-border bg-firstBg p-2 text-textPrimary">
-                    <MatchTeam team={undefined} score={undefined} />
-                    <MatchTeam team={undefined} score={undefined} />
-                </div>
+                <MatchCard match={match} margin={false} />
             </div>
         );
     }
@@ -43,7 +41,8 @@ export default function ScheduledCard({ match }: ScheduledCardProps) {
                     </div>
                 </div>
             )}
-            <div className="group relative flex cursor-pointer flex-col rounded-b-md rounded-r-md border border-border bg-firstBg p-2 text-textPrimary">
+            <MatchCard match={match} margin={false} />
+            {/* <div className="group relative flex cursor-pointer flex-col rounded-b-md rounded-r-md border border-border bg-firstBg p-2 text-textPrimary">
                 <MatchTeam
                     team={match?.teams.team1}
                     score={match?.team1_score ?? undefined}
@@ -70,7 +69,7 @@ export default function ScheduledCard({ match }: ScheduledCardProps) {
                         </button>
                     </div>
                 )}
-            </div>
+            </div> */}
         </div>
     );
 }
