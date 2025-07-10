@@ -19,6 +19,8 @@ const protectedRoutes: { route: string; roles: Role[] }[] = [
 export function middleware(request: NextRequest) {
     const token = request.cookies.get("access_token")?.value;
 
+    console.log(token);
+
     const pathname = request.nextUrl.pathname;
 
     const matchedRoute = protectedRoutes.find((r) =>
@@ -28,6 +30,7 @@ export function middleware(request: NextRequest) {
     if (!matchedRoute) return NextResponse.next(); // Not protected
 
     if (!token) {
+        console.log("no token");
         return NextResponse.redirect(new URL("/", request.url));
     }
 
@@ -41,9 +44,11 @@ export function middleware(request: NextRequest) {
         );
 
         if (!isAllowed) {
+            console.log("not allowed");
             return NextResponse.redirect(new URL("/", request.url));
         }
     } catch (err) {
+        console.log("err");
         console.error("Invalid token:", err);
         return NextResponse.redirect(new URL("/", request.url));
     }

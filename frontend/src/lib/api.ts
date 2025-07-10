@@ -13,11 +13,11 @@ async function request<T>(
         ...headers,
     };
 
-    const response = await fetch(`${BASE_URL}${endpoint}`, {
+    const response = await fetch(`/api${endpoint}`, {
         method,
         headers: finalHeaders,
         body: body ? JSON.stringify(body) : undefined,
-        credentials: "include", // 🔒 Always include cookies
+        credentials: "include",
     });
 
     if (!response.ok) {
