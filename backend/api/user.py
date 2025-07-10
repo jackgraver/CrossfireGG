@@ -42,6 +42,7 @@ async def sign_in(request: Request):
         max_age=3600,
         path="/"
     )
+    
     return response
 
 @router.post("/sign-up")
