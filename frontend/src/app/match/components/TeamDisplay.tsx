@@ -1,5 +1,6 @@
 import { Team } from "@/types/Types";
 import PlayerCard from "./PlayerCard";
+import TeamLogo from "@/shared/bracket/TeamLogo";
 
 type Player = {
     player_id: string;
@@ -20,13 +21,7 @@ export default function TeamDisplay({
     return (
         <div className="flex flex-col gap-4">
             <div className="flex items-center justify-center gap-4">
-                <img
-                    src={team.team_logo}
-                    onError={(e) => {
-                        e.currentTarget.src = "/oss-logo-placeholder.png";
-                    }}
-                    className="h-12 w-12 rounded"
-                />
+                <TeamLogo team={team} styling="h-12 w-12 rounded" />
                 <h1 className="truncate text-2xl font-bold">
                     {team.team_name}
                 </h1>

@@ -7,6 +7,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { formatMatchDate } from "@/lib/dateUtils";
 import { useRouter } from "next/navigation";
 import ProtectedRoute from "@/shared/ProtectedRoute";
+import ProtectedElement from "@/shared/ProtectedButton";
+import TeamLogo from "@/shared/bracket/TeamLogo";
 
 const getMatchCaster = (match: string, match_casters: any) => {
     if (!match_casters[match]) return "Claimed Error";
@@ -158,14 +160,9 @@ export default function Casting() {
                     </div>
                     <div className="mb-3 flex items-center gap-4">
                         <div className="flex items-center gap-2">
-                            <img
-                                src={match.teams.team1.team_logo}
-                                alt={match.teams.team1.team_name}
-                                className="h-6 w-6 rounded"
-                                onError={(e) => {
-                                    e.currentTarget.src =
-                                        "/oss-logo-placeholder.png";
-                                }}
+                            <TeamLogo
+                                team={match.teams.team1}
+                                styling="h-6 w-6 rounded"
                             />
                             <span className="font-medium text-textPrimary">
                                 {match.teams.team1.team_name}
@@ -173,14 +170,9 @@ export default function Casting() {
                         </div>
                         <span className="text-gray-400">vs</span>
                         <div className="flex items-center gap-2">
-                            <img
-                                src={match.teams.team2.team_logo}
-                                alt={match.teams.team2.team_name}
-                                className="h-6 w-6 rounded"
-                                onError={(e) => {
-                                    e.currentTarget.src =
-                                        "/oss-logo-placeholder.png";
-                                }}
+                            <TeamLogo
+                                team={match.teams.team1}
+                                styling="h-6 w-6 rounded"
                             />
                             <span className="font-medium text-textPrimary">
                                 {match.teams.team2.team_name}
@@ -201,25 +193,31 @@ export default function Casting() {
                     >
                         View
                     </button>
-                    {!isClaimed ? (
-                        <button
-                            onClick={() => handleClaimMatch(match.match_id)}
-                            disabled={claimMutation.isPending}
-                            className="rounded bg-green-600 px-3 py-1 text-sm text-white transition-colors hover:bg-green-700 disabled:bg-gray-600"
-                        >
-                            {claimMutation.isPending ? "Claiming..." : "Claim"}
-                        </button>
-                    ) : (
-                        <button
-                            onClick={() => handleUnclaimMatch(match.match_id)}
-                            disabled={unclaimMutation.isPending}
-                            className="rounded bg-red-600 px-3 py-1 text-sm text-white transition-colors hover:bg-red-700 disabled:bg-gray-600"
-                        >
-                            {unclaimMutation.isPending
-                                ? "Unclaiming..."
-                                : "Unclaim"}
-                        </button>
-                    )}
+                    <ProtectedElement roles={["PRODUCTION"]}>
+                        {!isClaimed ? (
+                            <button
+                                onClick={() => handleClaimMatch(match.match_id)}
+                                disabled={claimMutation.isPending}
+                                className="rounded bg-green-600 px-3 py-1 text-sm text-white transition-colors hover:bg-green-700 disabled:bg-gray-600"
+                            >
+                                {claimMutation.isPending
+                                    ? "Claiming..."
+                                    : "Claim"}
+                            </button>
+                        ) : (
+                            <button
+                                onClick={() =>
+                                    handleUnclaimMatch(match.match_id)
+                                }
+                                disabled={unclaimMutation.isPending}
+                                className="rounded bg-red-600 px-3 py-1 text-sm text-white transition-colors hover:bg-red-700 disabled:bg-gray-600"
+                            >
+                                {unclaimMutation.isPending
+                                    ? "Unclaiming..."
+                                    : "Unclaim"}
+                            </button>
+                        )}
+                    </ProtectedElement>
                 </div>
             </div>
         </div>

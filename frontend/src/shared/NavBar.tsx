@@ -14,22 +14,31 @@ function toggleDarkMode() {
     }
 }
 
+export async function logoutUser() {
+    // await fetch("/api/user/logout", {
+    //     method: "POST",
+    //     credentials: "include",
+    // });
+    await api.post("/user/logout");
+}
+
 export default function NavBar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-    const { user, setUser } = useUser();
+    const { user } = useUser();
 
-    useEffect(() => {
-        if (!user) {
-            api.get("/user/user-role")
-                .then((data: any) => {
-                    setUser(data);
-                })
-                .catch((err) => {
-                    console.error("Failed to fetch user:", err);
-                });
-        }
-    }, [user]);
+    // useEffect(() => {
+    //     console.log("user", user);
+    //     if (!user) {
+    //         api.get("/user/user-role")
+    //             .then((data: any) => {
+    //                 setUser(data);
+    //             })
+    //             .catch((_) => {
+    //                 return;
+    //             });
+    //     }
+    // }, [user]);
 
     useEffect(() => {
         const darkPref = localStorage.getItem("theme") === "dark";
@@ -102,36 +111,39 @@ export default function NavBar() {
                                     className="absolute right-0 mt-2 w-64 origin-top-right rounded-md bg-gradient-to-b from-secondBg to-firstBg shadow-lg ring-1 ring-black ring-opacity-5"
                                     onMouseLeave={() => setIsMenuOpen(false)}
                                 >
-                                    <div className="border-b border-border px-4 py-3">
-                                        <Link href="/user">
-                                            <div className="flex items-center">
-                                                <div className="flex-shrink-0">
-                                                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-secondBg">
-                                                        <svg
-                                                            xmlns="http://www.w3.org/2000/svg"
-                                                            className="h-6 w-6 text-textSecondary"
-                                                            fill="none"
-                                                            viewBox="0 0 24 24"
-                                                            stroke="currentColor"
-                                                        >
-                                                            <path
-                                                                strokeLinecap="round"
-                                                                strokeLinejoin="round"
-                                                                strokeWidth={2}
-                                                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                                                            />
-                                                        </svg>
+                                    {user && (
+                                        <div className="border-b border-border px-4 py-3">
+                                            <Link href="/user">
+                                                <div className="flex items-center">
+                                                    <div className="flex-shrink-0">
+                                                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-secondBg">
+                                                            <svg
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                className="h-6 w-6 text-textSecondary"
+                                                                fill="none"
+                                                                viewBox="0 0 24 24"
+                                                                stroke="currentColor"
+                                                            >
+                                                                <path
+                                                                    strokeLinecap="round"
+                                                                    strokeLinejoin="round"
+                                                                    strokeWidth={
+                                                                        2
+                                                                    }
+                                                                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                                                                />
+                                                            </svg>
+                                                        </div>
+                                                    </div>
+                                                    <div className="ml-3">
+                                                        <p className="text-lg font-medium text-textPrimary">
+                                                            {user?.user_name}
+                                                        </p>
                                                     </div>
                                                 </div>
-                                                <div className="ml-3">
-                                                    <p className="text-lg font-medium text-textPrimary">
-                                                        {user?.user_name}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </Link>
-                                    </div>
-
+                                            </Link>
+                                        </div>
+                                    )}
                                     <div
                                         className="py-1"
                                         role="menu"
@@ -185,16 +197,16 @@ export default function NavBar() {
                                         >
                                             Toggle Dark Mode
                                         </div>
-                                        {signedIn ? (
+                                        {user ? (
                                             <Link
                                                 href="/"
                                                 className="block px-4 py-2 text-sm text-textSecondary hover:bg-secondBg"
                                                 role="menuitem"
-                                                onClick={() =>
-                                                    localStorage.removeItem(
-                                                        "access_token",
-                                                    )
-                                                }
+                                                onClick={async (e) => {
+                                                    e.preventDefault();
+                                                    await logoutUser();
+                                                    window.location.href = "/";
+                                                }}
                                             >
                                                 Sign Out
                                             </Link>

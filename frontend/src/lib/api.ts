@@ -10,6 +10,7 @@ async function request<T>(
 ): Promise<T> {
     const finalHeaders: HeadersInit = {
         "Content-Type": "application/json",
+        "x-api-key": process.env.NEXT_PUBLIC_API_KEY ?? "",
         ...headers,
     };
 

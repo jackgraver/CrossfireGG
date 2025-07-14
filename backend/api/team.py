@@ -35,5 +35,4 @@ async def team_paid(request: Request, team_id: str):
 async def team_joined(request: Request, team_id: str):
     data = await request.json()
     joined = data.get("joined")
-    print(joined)
     return set_team_joined(team_id, joined)

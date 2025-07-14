@@ -1,7 +1,7 @@
 from fastapi import Depends, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 
-from api.auth import has_token
+from api.auth import verify_api_key
 
 from .user import router as user_router
 from .match import router as match_router
@@ -28,9 +28,9 @@ async def global_wrapper(request: Request, call_next):
     await asyncio.sleep(0)
     return await call_next(request)
 
-app.include_router(user_router, prefix="/user", tags=["User"])
-app.include_router(match_router, prefix="/match", tags=["Match"], dependencies=[Depends(has_token)])
-app.include_router(team_router, prefix="/team", tags=["Team"], dependencies=[Depends(has_token)])
-app.include_router(metadata_router, prefix="/metadata", tags=["Metadata"], dependencies=[Depends(has_token)])
-app.include_router(tournament_router, prefix="/tournament", tags=["Tournament"], dependencies=[Depends(has_token)])
-app.include_router(stats_router, prefix="/stats", tags=["Stats"], dependencies=[Depends(has_token)])
+app.include_router(user_router, prefix="/user", tags=["User"], dependencies=[Depends(verify_api_key)])
+app.include_router(match_router, prefix="/match", tags=["Match"], dependencies=[Depends(verify_api_key)])
+app.include_router(team_router, prefix="/team", tags=["Team"], dependencies=[Depends(verify_api_key)])
+app.include_router(metadata_router, prefix="/metadata", tags=["Metadata"], dependencies=[Depends(verify_api_key)])
+app.include_router(tournament_router, prefix="/tournament", tags=["Tournament"], dependencies=[Depends(verify_api_key)])
+app.include_router(stats_router, prefix="/stats", tags=["Stats"], dependencies=[Depends(verify_api_key)])

@@ -14,9 +14,18 @@ export default function PlayerCard({ player }: { player: Player }) {
                 <img
                     src={player.player_logo}
                     onError={(e) => {
-                        e.currentTarget.src = "/oss-logo-placeholder.png";
+                        if (
+                            !e.currentTarget.src.includes(
+                                "/oss-logo-placeholder.png",
+                            )
+                        ) {
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src = "/oss-logo-placeholder.png";
+                        }
                     }}
+                    alt={player.player_name}
                     className="h-12 w-12 rounded-full"
+                    loading="lazy"
                 />
                 <div className="flex flex-col">
                     <span className="font-bold">{player.player_name}</span>

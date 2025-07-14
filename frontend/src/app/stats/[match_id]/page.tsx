@@ -9,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { formatMatchDate } from "@/lib/dateUtils";
 import { notFound, useRouter } from "next/navigation";
 import { use } from "react";
+import TeamLogo from "@/shared/bracket/TeamLogo";
 
 type Match = {
     match_id: string;
@@ -279,14 +280,10 @@ export default function MatchStats({ params }: MatchStatsProps) {
     return (
         <div className="flex flex-col items-center gap-y-8">
             <div className="flex w-full max-w-5xl flex-row items-center justify-between gap-x-4">
-                {/* Left Side - Team 1 */}
                 <div className="flex min-w-0 flex-1 flex-row items-center gap-x-4">
-                    <img
-                        src={team1.team_logo || "/oss-logo-placeholder.png"}
-                        className="h-12 w-12 flex-shrink-0 rounded"
-                        onError={(e) => {
-                            e.currentTarget.src = "/oss-logo-placeholder.png";
-                        }}
+                    <TeamLogo
+                        team={team1}
+                        styling="h-12 w-12 flex-shrink-0 rounded"
                     />
                     <h1
                         className="cursor-pointer truncate text-left text-2xl"
@@ -327,12 +324,9 @@ export default function MatchStats({ params }: MatchStatsProps) {
                     >
                         {team2.team_name}
                     </h1>
-                    <img
-                        src={team2.team_logo}
-                        className="h-12 w-12 flex-shrink-0 rounded"
-                        onError={(e) => {
-                            e.currentTarget.src = "/oss-logo-placeholder.png";
-                        }}
+                    <TeamLogo
+                        team={team2}
+                        styling="h-12 w-12 flex-shrink-0 rounded"
                     />
                 </div>
             </div>

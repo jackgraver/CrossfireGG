@@ -137,7 +137,7 @@ export default function Home() {
                     onViewChange={handleViewChange}
                 />
             </div>
-            <div className="relative mt-4 flex w-5/6 flex-col items-center justify-center">
+            <div className="relative mt-4 flex flex-col items-center justify-center">
                 {displayTab === "regseason" && (
                     <div className="w-full">
                         <RegularSeasonBracket

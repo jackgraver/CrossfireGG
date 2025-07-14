@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from fastapi.responses import JSONResponse
 
 from api.auth import get_auth_user
@@ -83,6 +83,11 @@ async def sign_up(request: Request):
         path="/"
     )
     return response
+
+@router.post("/logout")
+def logout(response: Response):
+    response.delete_cookie("access_token", path="/")
+    return {"message": "Logged out"}
 
 @router.get("/test_faceit_link/{name}")
 async def test_faceit_link(name: str):

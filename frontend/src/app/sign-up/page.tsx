@@ -7,6 +7,11 @@ import { api } from "../../lib/api";
 import { useRouter } from "next/navigation";
 
 import { FaSpinner } from "react-icons/fa";
+import OSSForm from "@/shared/OSSForm/OSSForm";
+import BaseInput from "@/shared/OSSForm/BaseInput";
+import PasswordInput from "@/shared/OSSForm/PasswordInput";
+import SpinnerInput from "@/shared/OSSForm/SpinnerInput";
+import UserForm from "@/shared/UserForm";
 
 interface SignUpResponse {
     access_token: string;
@@ -189,18 +194,161 @@ export default function SignUp() {
     };
 
     return (
-        <div className="flex items-center justify-center">
-            <div className="w-full max-w-md rounded-lg bg-firstBg p-8 shadow-lg">
-                <div className="flex flex-col items-center space-y-4">
-                    <img
-                        src="/OSSLOGO.png"
-                        alt="OSS Logo"
-                        className="h-32 w-32"
-                    />
-                    <h1 className="text-2xl font-bold text-textPrimary">
-                        Create Account
-                    </h1>
-                    <form className="w-full space-y-4" onSubmit={handleSubmit}>
+        // <div className="flex items-center justify-center pt-24">
+        //     <div className="w-full max-w-md rounded-lg bg-firstBg p-8 shadow-lg">
+        //         <div className="flex flex-col items-center space-y-4">
+        //             <img
+        //                 src="/OSSLOGO.png"
+        //                 alt="OSS Logo"
+        //                 className="h-32 w-32"
+        //             />
+        //             <h1 className="text-2xl font-bold text-textPrimary">
+        //                 Create Account
+        //             </h1>
+        //             <p className="text-textSecondary">
+        //                 Already have an account?{" "}
+        //                 <a
+        //                     href="/sign-in"
+        //                     className="text-blue-600 hover:text-blue-800"
+        //                 >
+        //                     Sign in
+        //                 </a>
+        //             </p>
+        //             <OSSForm onSubmit={handleSubmit} submitLabel="Sign Up">
+        //                 <BaseInput
+        //                     type="email"
+        //                     placeholder="Email address"
+        //                     value={email}
+        //                     onChange={handleEmailChange}
+        //                     disabled={signUpMutation.isPending}
+        //                     error={emailError}
+        //                 />
+        //                 <SpinnerInput
+        //                     placeholder="Faceit Link"
+        //                     value={faceitLink}
+        //                     onChange={(e) => setFaceitLink(e.target.value)}
+        //                     disabled={signUpMutation.isPending}
+        //                     error={faceitLinkError}
+        //                 />
+        //                 <BaseInput
+        //                     type="text"
+        //                     placeholder="Faceit Team"
+        //                     value={faceitTeam.name}
+        //                     disabled={false}
+        //                     onChange={(e) => {}}
+        //                 />
+        //                 <PasswordInput
+        //                     value={password}
+        //                     onChange={(e) => setPassword(e.target.value)}
+        //                     disabled={signUpMutation.isPending}
+        //                 />
+        //             </OSSForm>
+        //         </div>
+        //     </div>
+        // </div>
+        // <div className="flex justify-center px-4 py-12 pt-24 sm:px-6 lg:px-8">
+        //     <div className="flex w-full max-w-4xl overflow-hidden rounded-lg bg-firstBg shadow-lg">
+        //         {/* Left side: logo with bg */}
+        //         <div className="flex w-1/2 flex-col items-center justify-center bg-[url('/bg-city.png')] bg-cover bg-center bg-no-repeat p-8">
+        //             <img
+        //                 src="/OSSLOGO.png"
+        //                 alt="OSS Logo"
+        //                 className="mb-6 h-64 w-64"
+        //             />
+        //         </div>
+        //         <div className="flex w-1/2 flex-col items-center justify-center bg-firstBg p-8 text-center">
+        //             <h1 className="text-2xl font-bold text-textPrimary">
+        //                 Create Account
+        //             </h1>
+        //             <p className="text-textSecondary">
+        //                 Already have an account?{" "}
+        //                 <a
+        //                     href="/sign-in"
+        //                     className="text-blue-600 hover:text-blue-800"
+        //                 >
+        //                     Sign in
+        //                 </a>
+        //             </p>
+        //             <OSSForm onSubmit={handleSubmit} submitLabel="Sign Up">
+        //                 <BaseInput
+        //                     type="email"
+        //                     placeholder="Email address"
+        //                     value={email}
+        //                     onChange={handleEmailChange}
+        //                     disabled={signUpMutation.isPending}
+        //                     error={emailError}
+        //                 />
+        //                 <SpinnerInput
+        //                     placeholder="Faceit Link"
+        //                     value={faceitLink}
+        //                     onChange={(e) => setFaceitLink(e.target.value)}
+        //                     disabled={signUpMutation.isPending}
+        //                     error={faceitLinkError}
+        //                 />
+        //                 <BaseInput
+        //                     type="text"
+        //                     placeholder="Faceit Team"
+        //                     value={faceitTeam.name}
+        //                     disabled={false}
+        //                     onChange={(e) => {}}
+        //                 />
+        //                 <PasswordInput
+        //                     value={password}
+        //                     onChange={(e) => setPassword(e.target.value)}
+        //                     disabled={signUpMutation.isPending}
+        //                 />
+        //             </OSSForm>
+        //         </div>
+        //     </div>
+        // </div>
+        <UserForm>
+            <h1 className="text-2xl font-bold text-textPrimary">
+                Create Account
+            </h1>
+            <p className="text-textSecondary">
+                Already have an account?{" "}
+                <a
+                    href="/sign-in"
+                    className="text-blue-600 hover:text-blue-800"
+                >
+                    Sign in
+                </a>
+            </p>
+            <OSSForm onSubmit={handleSubmit} submitLabel="Sign Up">
+                <BaseInput
+                    type="email"
+                    placeholder="Email address"
+                    value={email}
+                    onChange={handleEmailChange}
+                    disabled={signUpMutation.isPending}
+                    error={emailError}
+                />
+                <SpinnerInput
+                    placeholder="Faceit Link"
+                    value={faceitLink}
+                    onChange={(e) => setFaceitLink(e.target.value)}
+                    disabled={signUpMutation.isPending}
+                    error={faceitLinkError}
+                />
+                <BaseInput
+                    type="text"
+                    placeholder="Faceit Team"
+                    value={faceitTeam.name}
+                    disabled={false}
+                    onChange={(e) => {}}
+                />
+                <PasswordInput
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    disabled={signUpMutation.isPending}
+                />
+            </OSSForm>
+        </UserForm>
+    );
+}
+
+{
+    /* <form className="w-full space-y-4" onSubmit={handleSubmit}>
                         <div className="pb-2">
                             <span className="text-xs text-textSecondary">
                                 Email <span className="text-red-500">*</span>
@@ -413,18 +561,5 @@ export default function SignUp() {
                                 ? "Creating Account..."
                                 : "Sign Up"}
                         </button>
-                    </form>
-                    <p className="text-textSecondary">
-                        Already have an account?{" "}
-                        <a
-                            href="/sign-in"
-                            className="text-blue-600 hover:text-blue-800"
-                        >
-                            Sign in
-                        </a>
-                    </p>
-                </div>
-            </div>
-        </div>
-    );
+                    </form> */
 }

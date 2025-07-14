@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { formatDateOnly } from "@/lib/dateUtils";
 import { notFound } from "next/navigation";
 import { use } from "react";
+import TeamLogo from "@/shared/bracket/TeamLogo";
 
 const openInNewTab = (url: string) => {
     window.open(url, "_blank", "noopener,noreferrer");
@@ -62,16 +63,10 @@ export default function Team({ params }: TeamProps) {
             {/* Team Header */}
             <div className="mb-8 rounded-xl bg-firstBg p-8 shadow-md">
                 <div className="flex items-center gap-5">
-                    {team.team_logo && (
-                        <img
-                            src={team.team_logo}
-                            onError={(e) => {
-                                e.currentTarget.src =
-                                    "/oss-logo-placeholder.png";
-                            }}
-                            className="h-20 w-20 rounded-full border-4 border-border object-cover"
-                        />
-                    )}
+                    <TeamLogo
+                        team={team}
+                        styling="h-20 w-20 rounded-full border-4 border-border object-cover"
+                    />
                     <div className="flex-1">
                         <h1 className="mb-3 text-3xl font-bold text-textPrimary">
                             {team.team_name}
