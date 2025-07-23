@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { MatchMap, PlayerStats, Round, Team } from "@/types/Types";
 import ViewSelector from "@/shared/ViewSelector";
 import OSSTable from "@/shared/OSSTable";
@@ -72,10 +72,6 @@ const formatScore = (score: number, winner: boolean) => {
     return <p className="text-red-500">{score}</p>;
 };
 
-type MatchStatsProps = {
-    params: Promise<{ match_id: string }>;
-};
-
 type AggregatedStat = {
     player_id: string;
     player_name: string;
@@ -87,10 +83,12 @@ type AggregatedStat = {
 };
 
 function aggregateStatsByPlayer(
-    stats: Stats[],
-    players: Player[],
+    stats: Stats[] | undefined,
+    players: Player[] | undefined,
     currentMapIds: string[],
 ): AggregatedStat[] {
+    if (!stats || !players) return [];
+
     const grouped = new Map<string, AggregatedStat>();
 
     for (const stat of stats) {
@@ -122,12 +120,12 @@ function aggregateStatsByPlayer(
     return Array.from(grouped.values());
 }
 
+type MatchStatsProps = {
+    params: Promise<{ match_id: string }>;
+};
+
 export default function MatchStats({ params }: MatchStatsProps) {
     const { match_id } = use(params);
-
-    if (!match_id) return notFound();
-
-    const router = useRouter();
 
     const [currentMapIds, setCurrentMapIds] = useState<string[]>([]);
 
@@ -146,14 +144,6 @@ export default function MatchStats({ params }: MatchStatsProps) {
             }>(`/stats/${match_id}`),
     });
 
-    if (isLoading) {
-        return <div>Loading...</div>;
-    }
-
-    if (error) {
-        return <div>Error: {error.message}</div>;
-    }
-
     const {
         match,
         team1,
@@ -163,9 +153,15 @@ export default function MatchStats({ params }: MatchStatsProps) {
         t2_players,
         t1_stats,
         t2_stats,
-    } = data!;
+    } = data ? data : {};
 
-    // const { match, maps } = data!;
+    useEffect(() => {
+        if (maps && maps.length > 0) setCurrentMapIds([maps[0].map_id]);
+    }, [maps]);
+
+    if (isLoading) return <div>Loading...</div>;
+    if (error) return <div>Error: {error.message}</div>;
+    if (!data) return <div>No data</div>;
 
     const t1_display_stats_array = aggregateStatsByPlayer(
         t1_stats,
@@ -177,105 +173,6 @@ export default function MatchStats({ params }: MatchStatsProps) {
         t2_players,
         currentMapIds,
     );
-
-    // const teamAmergedStatsMap = new Map<
-    //     string,
-    //     {
-    //         player_name: string;
-    //         kills: number;
-    //         deaths: number;
-    //         assists: number;
-    //         adr: number;
-    //         damage: number;
-    //     }
-    // >();
-
-    // maps.filter((map) => currentMapIds.includes(map.map_id)).forEach((map) => {
-    //     map.teams[0].players.forEach((player) => {
-    //         const name = player.player_name;
-    //         const existing = teamAmergedStatsMap.get(name);
-
-    //         const stats = {
-    //             player_name: name,
-    //             kills: player.stats.kills,
-    //             deaths: player.stats.deaths,
-    //             assists: player.stats.assists,
-    //             adr: player.stats.adr,
-    //             damage: player.stats.damage,
-    //         };
-
-    //         if (existing) {
-    //             teamAmergedStatsMap.set(name, {
-    //                 player_name: name,
-    //                 kills: existing.kills + stats.kills,
-    //                 deaths: existing.deaths + stats.deaths,
-    //                 assists: existing.assists + stats.assists,
-    //                 adr: existing.adr + stats.adr,
-    //                 damage: existing.damage + stats.damage,
-    //             });
-    //         } else {
-    //             teamAmergedStatsMap.set(name, stats);
-    //         }
-    //     });
-    // });
-
-    // const teamAStats = Array.from(teamAmergedStatsMap.values());
-
-    // const teamBmergedStatsMap = new Map<
-    //     string,
-    //     {
-    //         player_name: string;
-    //         kills: number;
-    //         deaths: number;
-    //         assists: number;
-    //         adr: number;
-    //         damage: number;
-    //     }
-    // >();
-
-    // maps.filter((map) => currentMapIds.includes(map.map_id)).forEach((map) => {
-    //     map.teams[1].players.forEach((player) => {
-    //         const name = player.player_name;
-    //         const existing = teamBmergedStatsMap.get(name);
-
-    //         const stats = {
-    //             player_name: name,
-    //             kills: player.stats.kills,
-    //             deaths: player.stats.deaths,
-    //             assists: player.stats.assists,
-    //             adr: player.stats.adr,
-    //             damage: player.stats.damage,
-    //         };
-
-    //         if (existing) {
-    //             teamBmergedStatsMap.set(name, {
-    //                 player_name: name,
-    //                 kills: existing.kills + stats.kills,
-    //                 deaths: existing.deaths + stats.deaths,
-    //                 assists: existing.assists + stats.assists,
-    //                 adr: existing.adr + stats.adr,
-    //                 damage: existing.damage + stats.damage,
-    //             });
-    //         } else {
-    //             teamBmergedStatsMap.set(name, stats);
-    //         }
-    //     });
-    // });
-
-    // const teamBStats = Array.from(teamBmergedStatsMap.values());
-
-    // const teamBStats = maps
-    //     .filter((map) => currentMapIds.includes(map.map_id)) // only selected maps
-    //     .flatMap((map) =>
-    //         map.teams[1].players.map((player) => ({
-    //             player_name: player.player_name,
-    //             kills: player.stats.kills,
-    //             deaths: player.stats.deaths,
-    //             assists: player.stats.assists,
-    //             adr: player.stats.adr,
-    //             damage: player.stats.damage,
-    //         })),
-    //     );
 
     return (
         <div className="flex flex-col items-center gap-y-8">
@@ -300,7 +197,7 @@ export default function MatchStats({ params }: MatchStatsProps) {
                     )}
                 </div>
                 <div className="flex flex-col gap-3">
-                    {maps.map((map) => (
+                    {maps?.map((map) => (
                         <div
                             key={map.map_id}
                             className={`flex min-w-64 flex-row items-center gap-x-4 rounded-lg bg-firstBg px-4 py-2 transition-colors hover:bg-secondBg ${

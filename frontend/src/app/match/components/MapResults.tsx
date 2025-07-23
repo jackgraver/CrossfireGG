@@ -36,7 +36,6 @@ export default function MapResults({ maps }: { maps: Map[] }) {
                         />
                         <span className="font-semibold">{map.map_name}</span>
                     </div>
-
                     <span className="flex flex-row gap-x-0.5">
                         {formatScore(
                             map.team1_score,

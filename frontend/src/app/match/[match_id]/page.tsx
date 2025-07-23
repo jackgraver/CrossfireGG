@@ -7,6 +7,7 @@ import MatchHeader from "../components/MatchHeader";
 import PlayerCard from "../components/PlayerCard";
 import MapResults from "../components/MapResults";
 import TeamDisplay from "../components/TeamDisplay";
+import { useRouter } from "next/navigation";
 
 type MatchProps = {
     params: Promise<{ match_id: string }>;
@@ -32,7 +33,7 @@ type Map = {
 };
 
 export default function MatchPage({ params }: MatchProps) {
-    // const queryClient = useQueryClient();
+    const router = useRouter();
 
     const { match_id } = use(params);
 
@@ -51,6 +52,7 @@ export default function MatchPage({ params }: MatchProps) {
     const match = data.match;
     const maps: Map[] = data.maps;
 
+    console.log(match);
     return (
         <div className="flex min-h-screen w-full flex-col items-center bg-black px-4 py-8 text-white">
             <MatchHeader team1={team1} team2={team2} match={match} />
@@ -61,9 +63,9 @@ export default function MatchPage({ params }: MatchProps) {
                 </div>
 
                 <div className="flex w-[320px] flex-col items-center justify-start gap-6 pt-16">
-                    <div className="flex flex-row gap-2 text-center">
+                    <div className="flex flex-col gap-4 text-center">
                         <button
-                            className="rounded bg-orange-500 px-4 py-2 text-sm font-bold"
+                            className="rounded bg-orange-500 px-6 py-2 text-sm font-bold"
                             onClick={() =>
                                 window.open(match.faceit_url, "_blank")
                             }
@@ -71,8 +73,15 @@ export default function MatchPage({ params }: MatchProps) {
                             VIEW FACEIT PAGE
                         </button>
                         {match.status === "FINISHED" && (
-                            <button className="rounded bg-blue-500 px-4 py-2 text-sm font-bold">
-                                STATS
+                            <button
+                                className="rounded bg-blue-500 px-6 py-2 text-sm font-bold"
+                                onClick={() =>
+                                    router.push(
+                                        `/match/${match.match_id}/stats`,
+                                    )
+                                }
+                            >
+                                MATCH STATS
                             </button>
                         )}
                     </div>

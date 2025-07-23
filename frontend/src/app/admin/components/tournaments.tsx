@@ -26,7 +26,7 @@ export default function ManageTournaments() {
                     <span>Current Tournament ID</span>
                     <input
                         type="text"
-                        className="bg-bgPrimary rounded border border-border p-2"
+                        className="rounded border border-border bg-black p-2"
                         placeholder="Enter current tournament ID"
                         value={current_tournaments.current_tournament.t_id}
                         onChange={(e) => {}}
@@ -36,7 +36,7 @@ export default function ManageTournaments() {
                     <span>Regular Season Tournament ID</span>
                     <input
                         type="text"
-                        className="bg-bgPrimary rounded border border-border p-2"
+                        className="rounded border border-border bg-black p-2"
                         placeholder="Enter regular season ID"
                         value={current_tournaments.current_regular_season.t_id}
                         onChange={(e) => {}}
@@ -46,7 +46,7 @@ export default function ManageTournaments() {
                     <span>Playoff Tournament ID</span>
                     <input
                         type="text"
-                        className="bg-bgPrimary rounded border border-border p-2"
+                        className="rounded border border-border bg-black p-2"
                         placeholder="Enter playoff ID"
                         value={current_tournaments.current_playoffs.t_id}
                         onChange={(e) => {}}

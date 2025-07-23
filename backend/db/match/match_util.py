@@ -11,7 +11,7 @@ from db.team.team_sql import get_team_record, update_team_record
 from db.tournament.tournament_sql import get_current_sub_tournament_id
 from db.metadata.metadata_sql import get_metadata_value
 from db.player.player_model import Player, PlayerStats
-from db.player.player_sql import insert_player, insert_player_stats
+from db.player.player_sql import get_all_players, insert_player, insert_player_stats
 
 load_dotenv()
 
@@ -22,7 +22,7 @@ FACEIT_API_URL = "https://open.faceit.com/data/v4/championships/f56331e8-131a-4c
 # FACEIT_API_URL = "https://open.faceit.com/data/v4/championships/b4cb8915-2a74-4899-b7df-220cb85f3916/matches?limit=70"
 MATCHES_FILE = Path(".test_data/flush_matches.json")
 PO_MATCHES_FILE = Path('.test_data/flush_playoffs_matches.json')
-DEBUG = False 
+DEBUG = True 
 
 def process_matches():
     try:
@@ -32,7 +32,7 @@ def process_matches():
             return []
         
         if DEBUG:
-            with open(PO_MATCHES_FILE, "r", encoding="utf-8") as f:
+            with open(MATCHES_FILE, "r", encoding="utf-8") as f:
                 matches = json.load(f).get("items", [])  # expects a list of matches
         else:
             response = requests.get(
@@ -45,7 +45,7 @@ def process_matches():
             response.raise_for_status()
             matches = response.json().get("items", [])
             matches_file = Path(".test_data/flush_matches.json")
-            with open(PO_MATCHES_FILE, "w", encoding="utf-8") as f:
+            with open(MATCHES_FILE, "w", encoding="utf-8") as f:
                 json.dump(matches, f, indent=4, default=str)
             
         all_matches = fetch_all_matches()
@@ -137,6 +137,11 @@ def process_players(players_data: list, team_id: str, sub_t_id: str = None):
         
         inserted_players = []
         
+        existing_players = get_all_players()
+        
+        existing_ids = {p.player_id for p in existing_players}
+        players_data = [p for p in players_data if p['player_id'] not in existing_ids]  
+        
         for player_data in players_data:
             # Extract player information from the data
             player_id = player_data.get("player_id")
@@ -169,7 +174,7 @@ def process_players(players_data: list, team_id: str, sub_t_id: str = None):
     
 
 STATS_FILE = Path(".test_data/reg_flush_stats.json")
-STATS_DEBUG = False 
+STATS_DEBUG = True 
 
 # @TODO: Implement sub_t_id
 def process_stats(match_id: str, sub_t_id: str = None):

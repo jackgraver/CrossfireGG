@@ -1,0 +1,12 @@
+[
+    {
+        "name": "team-alpha",
+        "role_name": "Alpha Team",
+        "message": "Welcome to Team Alpha! 🎉"
+    },
+    {
+        "name": "team-bravo",
+        "role_name": "Bravo Team",
+        "message": "Welcome to Team Bravo!"
+    }
+]

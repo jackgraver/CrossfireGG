@@ -50,7 +50,8 @@ def get_player_stats_by_match_id(match_id: str):
             .where(PlayerStats.match_id == match_id)
             .where(PlayerStats.player_id.in_(t2_ids))
         ).all()
-
+    
+        print(maps)
         return {"match": match, "team1": team1, "team2": team2, "maps": maps, "t1_players": t1_players, "t2_players": t2_players, "t1_stats": t1_stats, "t2_stats": t2_stats}
     
     

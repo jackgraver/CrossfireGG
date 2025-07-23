@@ -1,5 +1,3 @@
-"use client";
-
 import ManageTournaments from "./components/tournaments";
 import ManageUsers from "./components/users";
 import ManageTeams from "./components/teams";
@@ -17,9 +15,20 @@ export default function Admin() {
                     <ManageTournaments />
                     <ManageUsers />
                     {/* <ManageTeams /> */}
-                    <button onClick={() => api.get("/user/user-role")}>
-                        User Role
-                    </button>
+                    {/* <div className="gap-y-4">
+                        <button
+                            onClick={() => api.get("/user/user-role")}
+                            className="rounded-md bg-gray-600 p-2"
+                        >
+                            User Role
+                        </button>
+                        <button
+                            onClick={() => api.get("/match/refresh")}
+                            className="rounded-md bg-gray-600 p-2"
+                        >
+                            Refresh
+                        </button>
+                    </div> */}
                 </div>
             </div>
         </div>

@@ -58,16 +58,12 @@ export default function MatchCard({ match, margin }: MatchCardProps) {
                     >
                         <img src="/faceit.png" alt="F" className="h-5 w-5" />
                     </button>
-                    {match?.status === "FINISHED" && (
-                        <button
-                            onClick={() =>
-                                router.push(`/match/${match?.match_id}`)
-                            }
-                            className="h-10 w-10 cursor-pointer rounded-full bg-white text-lg transition hover:bg-gray-200"
-                        >
-                            📊
-                        </button>
-                    )}
+                    <button
+                        onClick={() => router.push(`/match/${match?.match_id}`)}
+                        className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-white transition hover:bg-gray-200"
+                    >
+                        <img src="/OSSLOGO.png" alt="OSS" className="h-8 w-8" />
+                    </button>
                 </div>
             )}
         </div>

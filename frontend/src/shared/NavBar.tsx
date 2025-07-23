@@ -14,6 +14,11 @@ function toggleDarkMode() {
     }
 }
 
+const preloadImage = (url: string) => {
+    const img = new Image();
+    img.src = url;
+};
+
 export async function logoutUser() {
     // await fetch("/api/user/logout", {
     //     method: "POST",
@@ -63,7 +68,7 @@ export default function NavBar() {
                         </Link>
                     </div>
                     <div className="mt-4 flex h-min items-center rounded-md bg-red-500 px-1 py-1">
-                        <p>ALPHA VERSION</p>
+                        <p className="pointer-events-none">ALPHA VERSION</p>
                     </div>
 
                     <div className="flex items-center">
@@ -207,6 +212,9 @@ export default function NavBar() {
                                                     await logoutUser();
                                                     window.location.href = "/";
                                                 }}
+                                                onMouseEnter={() =>
+                                                    preloadImage("/bg-city.png")
+                                                }
                                             >
                                                 Sign Out
                                             </Link>
@@ -217,6 +225,9 @@ export default function NavBar() {
                                                 role="menuitem"
                                                 onClick={() =>
                                                     setIsMenuOpen(false)
+                                                }
+                                                onMouseEnter={() =>
+                                                    preloadImage("/bg-city.png")
                                                 }
                                             >
                                                 Sign In

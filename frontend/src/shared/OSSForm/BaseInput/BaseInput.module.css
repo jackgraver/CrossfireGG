@@ -1,0 +1,62 @@
+.inputWrapper {
+    width: 100%;
+    position: relative;
+}
+
+.inputElement {
+    width: 100%;
+    border-radius: 0.375rem;
+    border: 1px solid var(--border-color, #ccc); /* fallback */
+    background-color: var(--second-bg, #1e1e1e); /* fallback */
+    padding: 0.5rem 1rem;
+    outline: none;
+    transition:
+        border 0.2s,
+        box-shadow 0.2s;
+}
+
+.inputElement:focus {
+    border-color: transparent;
+    box-shadow: 0 0 0 2px var(--focus-color, #3b82f6);
+}
+
+.inputElement:hover:not(:focus) {
+    border-color: #e5e7eb;
+}
+
+.inputElement:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+/* Error overrides */
+.hasError .inputElement {
+    border-color: #ef4444;
+    box-shadow: 0 0 0 2px #ef4444;
+}
+
+.hasError .inputElement:focus {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 2px #ef4444 !important;
+}
+
+/* Success overrides */
+.hasSuccess .inputElement {
+    border-color: #22c55e;
+    box-shadow: 0 0 0 2px #22c55e;
+}
+
+.hasSuccess .inputElement:focus {
+    border-color: #22c55e !important;
+    box-shadow: 0 0 0 2px #22c55e !important;
+}
+
+/* Error message styling */
+.errorText {
+    min-height: 1.25rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #ef4444;
+    font-family: sans-serif;
+    text-align: left;
+}

@@ -6,8 +6,8 @@ import { useMutation } from "@tanstack/react-query";
 import { api } from "../../lib/api";
 import { useRouter } from "next/navigation";
 import OSSForm from "@/shared/OSSForm/OSSForm";
-import BaseInput from "@/shared/OSSForm/BaseInput";
-import PasswordInput from "@/shared/OSSForm/PasswordInput";
+import BaseInput from "@/shared/OSSForm/BaseInput/BaseInput";
+import PasswordInput from "@/shared/OSSForm/PasswordInput/PasswordInput";
 import { useUser } from "@/context/UserContext";
 import UserForm from "@/shared/UserForm";
 
@@ -53,13 +53,24 @@ export default function SignIn() {
     });
 
     const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (email.length === 0) setEmailError("");
+
         const newEmail = e.target.value;
         setEmail(newEmail);
-        if (newEmail && !validateEmail(newEmail)) {
-            setEmailError("Please enter a valid email address");
-        } else {
+    };
+
+    const handleEmailBlur = () => {
+        if (email === "") {
             setEmailError("");
+            return;
         }
+        setTimeout(() => {
+            if (email && !validateEmail(email)) {
+                setEmailError("Please enter a valid email address");
+            } else {
+                setEmailError("");
+            }
+        }, 0);
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -76,82 +87,6 @@ export default function SignIn() {
     };
 
     return (
-        // <div className="flex h-full justify-center px-4 py-12 pt-24 sm:px-6 lg:px-8">
-        //     <div className="w-full max-w-md rounded-lg bg-firstBg p-8 shadow-lg">
-        //         <div className="flex flex-col items-center space-y-4">
-        //             <img
-        //                 src="/OSSLOGO.png"
-        //                 alt="OSS Logo"
-        //                 className="h-32 w-32"
-        //             />
-        //             <h1 className="text-2xl font-bold text-textPrimary">
-        //                 Welcome Back
-        //             </h1>
-        //             <p className="text-center text-textSecondary">
-        //                 Haven&apos;t signed up yet?{" "}
-        //                 <a
-        //                     href="/sign-up"
-        //                     className="text-blue-600 hover:text-blue-800"
-        //                 >
-        //                     Sign up
-        //                 </a>
-        //             </p>
-        //             <OSSForm onSubmit={handleSubmit} submitLabel="Sign In">
-        //                 <BaseInput
-        //                     type="email"
-        //                     placeholder="Email address"
-        //                     value={email}
-        //                     onChange={handleEmailChange}
-        //                     disabled={signInMutation.isPending}
-        //                     error={emailError}
-        //                 />
-        //                 <PasswordInput
-        //                     value={password}
-        //                     onChange={(e) => setPassword(e.target.value)}
-        //                     disabled={signInMutation.isPending}
-        //                 />
-        //             </OSSForm>
-        //         </div>
-        //     </div>
-        // </div>
-        // <div className="flex justify-center px-4 py-12 pt-24 sm:px-6 lg:px-8">
-        //     <div className="flex w-full max-w-4xl overflow-hidden rounded-lg bg-firstBg shadow-lg">
-        //         {/* Left side: logo with bg */}
-        //         <div className="flex w-1/2 flex-col items-center justify-center bg-[url('/bg-city.png')] bg-cover bg-center bg-no-repeat p-8">
-        //             <img
-        //                 src="/OSSLOGO.png"
-        //                 alt="OSS Logo"
-        //                 className="mb-6 h-64 w-64"
-        //             />
-        //         </div>
-        //         {/* Right side: form + heading, centered */}
-        //         <div className="flex w-1/2 flex-col items-center justify-center bg-firstBg p-8 text-center">
-        //             <h1 className="mb-2 text-2xl font-bold text-white">
-        //                 Welcome Back
-        //             </h1>
-        //             <OSSForm
-        //                 onSubmit={handleSubmit}
-        //                 submitLabel="Sign In"
-        //                 cancelLabel="Create Account"
-        //                 onCancel={() => {}}
-        //             >
-        //                 <BaseInput
-        //                     type="email"
-        //                     placeholder="Email address"
-        //                     value={email}
-        //                     onChange={handleEmailChange}
-        //                     disabled={signInMutation.isPending}
-        //                     error={emailError}
-        //                 />
-        //                 <PasswordInput
-        //                     value={password}
-        //                     onChange={(e) => setPassword(e.target.value)}
-        //                     disabled={signInMutation.isPending}
-        //                 />
-        //             </OSSForm>
-        //         </div>
-        //     </div>
-        // </div>
         <UserForm>
             <h1 className="mb-2 text-2xl font-bold text-white">Welcome Back</h1>
             <OSSForm
@@ -165,8 +100,10 @@ export default function SignIn() {
                     placeholder="Email address"
                     value={email}
                     onChange={handleEmailChange}
+                    onBlur={handleEmailBlur}
                     disabled={signInMutation.isPending}
                     error={emailError}
+                    success={validateEmail}
                 />
                 <PasswordInput
                     value={password}

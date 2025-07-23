@@ -1,0 +1,33 @@
+.spinner {
+    animation: spin infinite 1.5s linear;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.container {
+    position: relative;
+    width: 100%;
+}
+
+.icon {
+    width: 1.6rem;
+    height: 1.6rem;
+    position: absolute;
+    top: 48%;
+    right: 0.8rem;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: white;
+    transition: color 0.2s ease;
+    animation: spin infinite 2s linear;
+}
