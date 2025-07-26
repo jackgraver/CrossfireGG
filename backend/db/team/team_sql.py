@@ -165,3 +165,12 @@ def set_team_joined(team_id: str, joined: bool):
             session.commit()
             return
     return
+
+def create_team(team: Team):
+    if not team:
+        return
+    
+    with Session(get_db_connection()) as session:
+        session.add(team)
+        session.commit()
+        return

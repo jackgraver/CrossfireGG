@@ -152,11 +152,19 @@ def get_player_by_id(player_id: str):
         return player
     
 def insert_player(player: Player):
-    with Session(get_db_connection()) as session:
-        session.add(player)
-        session.commit()
-        session.refresh(player)
-        return player
+    try:
+        with Session(get_db_connection()) as session:
+            session.add(player)
+            session.commit()
+            session.refresh(player)
+            return player
+    except Exception as e:
+        print(f"❌ Failed to insert player: {e}")
+        # Optional: you can log the traceback too
+        import traceback
+        traceback.print_exc()
+        return None  # Or re-raise the error depending on your needs
+
 
 def insert_player_stats(player_stats: PlayerStats):
     with Session(get_db_connection()) as session:

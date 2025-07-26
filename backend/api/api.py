@@ -30,7 +30,7 @@ async def global_wrapper(request: Request, call_next):
 
 app.include_router(user_router, prefix="/user", tags=["User"], dependencies=[Depends(verify_api_key)])
 app.include_router(match_router, prefix="/match", tags=["Match"], dependencies=[Depends(verify_api_key)])
-app.include_router(team_router, prefix="/team", tags=["Team"], dependencies=[Depends(verify_api_key)])
+app.include_router(team_router, prefix="/team", tags=["Team"])#, dependencies=[Depends(verify_api_key)])
 app.include_router(metadata_router, prefix="/metadata", tags=["Metadata"], dependencies=[Depends(verify_api_key)])
 app.include_router(tournament_router, prefix="/tournament", tags=["Tournament"], dependencies=[Depends(verify_api_key)])
 app.include_router(stats_router, prefix="/stats", tags=["Stats"], dependencies=[Depends(verify_api_key)])
