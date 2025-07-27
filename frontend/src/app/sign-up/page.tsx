@@ -171,29 +171,38 @@ export default function SignUp() {
         }
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent): Promise<boolean> => {
         e.preventDefault();
-        if (!validateEmail(email)) {
-            setEmailError("Please enter a valid email address");
-            return;
-        }
-        if (password !== confirmPassword) {
-            setPasswordError("Passwords do not match");
-            return;
-        }
-        if (!privacyAgreed) {
-            alert("Please agree to the privacy policy");
-            return;
-        }
 
-        signUpMutation.mutate({
-            id: internalID,
-            email,
-            username: email,
-            faceit_id: faceitID,
-            team_id: faceitTeam.id,
-            password,
-        });
+        try {
+            if (!validateEmail(email)) {
+                setEmailError("Please enter a valid email address");
+                return false;
+            }
+            if (password !== confirmPassword) {
+                setPasswordError("Passwords do not match");
+                return false;
+            }
+            if (!privacyAgreed) {
+                alert("Please agree to the privacy policy");
+                return false;
+            }
+
+            signUpMutation.mutate({
+                id: internalID,
+                email,
+                username: email,
+                faceit_id: faceitID,
+                team_id: faceitTeam.id,
+                password,
+            });
+
+            return true;
+        } catch (err) {
+            console.error("Submission error:", err);
+            // return failure
+            return false;
+        }
     };
 
     const togglePasswordVisibility = () => {

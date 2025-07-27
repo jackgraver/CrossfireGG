@@ -1,3 +1,5 @@
+from asyncio import sleep
+import asyncio
 import os
 import uuid
 from fastapi import APIRouter, Request, Response, status
@@ -9,7 +11,7 @@ from db.player.player_sql import insert_player
 from utils.faceit_api import fetch_from_api, fetch_from_file
 from db.team.team_model import Team
 from db.metadata.metadata_sql import query_last_update
-from db.team.team_sql import create_team, fetch_all_teams, get_team_info, get_team_matches, set_team_joined, set_team_paid
+from db.team.team_sql import create_team, fetch_all_teams, get_team_info, get_team_info_by_name, get_team_matches, set_team_joined, set_team_paid
 
 router = APIRouter()
 
@@ -101,3 +103,53 @@ async def register_team(request: Request):
     if team_logo != "":
         return {'team_logo': team_logo}
     return {}
+
+@router.post("/reregister")
+async def reregister_team(request: Request):
+    data = await request.json()
+    team_name = data.get("team_name")
+ 
+    await asyncio.sleep(3)
+    
+    if not team_name:
+        return {"error": "Team name is required"}
+     
+    ts = await current_tournament()
+    sub_t_id = ts.get('current_regular_season').sub_t_id or ""
+    
+    if team_name:
+        team = get_team_info_by_name(team_name)
+        if not team:
+            return {"error": "Team not found"}
+        if team.get("sub_t_id") == sub_t_id:
+            return {"error": "Team already registered", "team_id": team.get("team_id")}
+    
+    create_team(Team(
+        team_id_i=team.get('team_id_i'),
+        team_id=team.get('team_id'),
+        sub_t_id=sub_t_id,
+        team_name=team_name,
+        team_logo=team.get('team_logo'),
+        seed=-1,
+        win=0,
+        loss=0,
+        paid=0,
+        joined_tournament=0
+    ))
+        # for player in players:
+        #     player_id = player.get("user_id")
+        #     team_id = team_id
+            
+        #     if not player_id or not team_id:
+        #         continue
+            
+        #     insert_player(Player(
+        #         player_id_i=str(uuid.uuid4()),
+        #         player_id=player_id,
+        #         team_id=team_id,
+        #         sub_t_id=sub_t_id,
+        #         player_name=player.get("nickname"),
+        #         player_logo=player.get("avatar")
+        #     ))
+    # TODO: Implement reregister functionality
+    return {"team_id" : team.get("team_id")}

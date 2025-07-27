@@ -3,13 +3,14 @@ import styles from "./BaseInput.module.css";
 type BaseInputProps = {
     type?: string;
     placeholder?: string;
-    value: string;
+    value?: string;
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
     onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
     disabled?: boolean;
     error?: string;
     success?: (value: string) => boolean;
     children?: React.ReactNode;
+    style?: string;
 };
 
 export default function BaseInput({
@@ -22,8 +23,9 @@ export default function BaseInput({
     error,
     success,
     children,
+    style = "",
 }: BaseInputProps) {
-    const showSuccess = success ? success(value) : false;
+    const showSuccess = success && value ? success(value) : false;
 
     const wrapperClass = [
         styles.inputWrapper,
@@ -38,11 +40,11 @@ export default function BaseInput({
             <input
                 type={type}
                 placeholder={placeholder}
-                value={value}
+                {...(type !== "file" ? { value } : {})}
                 onChange={onChange}
                 onBlur={onBlur}
                 disabled={disabled}
-                className={styles.inputElement}
+                className={styles.inputElement + " " + style}
             />
             {children}
         </div>

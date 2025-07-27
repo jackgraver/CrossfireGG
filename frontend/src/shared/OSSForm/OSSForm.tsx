@@ -1,20 +1,48 @@
-type OSSFormProps = {
-    onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-    children: React.ReactNode;
-    onCancel?: () => void;
-    submitLabel?: string;
-    cancelLabel?: string;
-};
+import { useState } from "react";
+import { Loader, Check } from "lucide-react";
+import styles from "./OSSForm.module.css"; // update path if needed
 
 export default function OSSForm({
-    onSubmit,
     children,
+    onSubmit,
     onCancel,
     submitLabel = "Submit",
     cancelLabel = "Cancel",
-}: OSSFormProps) {
+}: {
+    children: React.ReactNode;
+    onSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<boolean>; // return true if success, false if error
+    onCancel?: () => void;
+    submitLabel?: string;
+    cancelLabel?: string;
+}) {
+    const [submitStatus, setSubmitStatus] = useState<
+        "idle" | "submitting" | "success" | "error"
+    >("idle");
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        if (submitStatus === "submitting") return;
+
+        setSubmitStatus("submitting");
+
+        try {
+            const result = await onSubmit(e);
+            console.log(result);
+            if (result) {
+                setSubmitStatus("success");
+                setTimeout(() => {
+                    setSubmitStatus("idle");
+                }, 500);
+            } else {
+                setSubmitStatus("error");
+            }
+        } catch {
+            setSubmitStatus("error");
+        }
+    };
+
     return (
-        <form onSubmit={onSubmit} className="w-full">
+        <form onSubmit={handleSubmit} className="w-full">
             {children}
             <div className="mt-6 flex flex-row gap-4">
                 {onCancel && (
@@ -28,11 +56,23 @@ export default function OSSForm({
                 )}
                 <button
                     type="submit"
-                    className={`rounded bg-blue-500 px-4 py-2 text-textPrimary hover:bg-blue-600 focus:bg-blue-600 ${
+                    className={`flex items-center justify-center rounded bg-blue-500 px-4 py-2 text-textPrimary ${
                         onCancel ? "flex-1" : "w-full"
+                    } ${
+                        submitStatus === "submitting"
+                            ? "bg-secondBg"
+                            : "hover:bg-blue-600 focus:bg-blue-600"
                     }`}
+                    disabled={submitStatus === "submitting"}
                 >
-                    {submitLabel}
+                    {submitStatus === "idle" && submitLabel}
+                    {submitStatus === "submitting" && (
+                        <Loader className={styles.icon} />
+                    )}
+                    {submitStatus === "success" && (
+                        <Check className={styles.icon} />
+                    )}
+                    {submitStatus === "error" && submitLabel}
                 </button>
             </div>
         </form>

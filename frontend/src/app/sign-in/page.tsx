@@ -73,17 +73,26 @@ export default function SignIn() {
         }, 0);
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent): Promise<boolean> => {
         e.preventDefault();
-        // Reset previous error
-        setEmailError("");
 
-        if (!validateEmail(email)) {
-            setEmailError("Please enter a valid email address");
-            return;
+        try {
+            // Reset previous error
+            setEmailError("");
+
+            if (!validateEmail(email)) {
+                setEmailError("Please enter a valid email address");
+                return false;
+            }
+
+            signInMutation.mutate({ email, password });
+
+            return true;
+        } catch (err) {
+            console.error("Submission error:", err);
+            // return failure
+            return false;
         }
-
-        signInMutation.mutate({ email, password });
     };
 
     return (

@@ -1,0 +1,37 @@
+.icon {
+    width: 1.6rem;
+    height: 1.6rem;
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    color: white;
+    transition: color 0.2s ease;
+    animation: spin infinite 2s linear;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.spinner {
+    animation: spin infinite 1.3s linear;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.icon svg {
+    display: block;
+}
+
+/* Optional: Only spin the Loader, not the Check */
+.icon :global(svg.check) {
+    animation: none;
+}

@@ -93,7 +93,7 @@ bubagumpy
                         if team_logo:
                             print(team_logo)
                             role = await guild.create_role(name=data["team_name"], icon=team_logo)
-                        else:
+                        else: 
                             role = await guild.create_role(name=data["team_name"])
                     
                     # Add role to member

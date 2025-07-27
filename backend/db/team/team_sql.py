@@ -112,6 +112,14 @@ def get_team_info(team_id: str) -> dict:
         team = session.exec(stmt).first()
         return team.model_dump() if team else {}
     
+def get_team_info_by_name(team_name: str) -> dict:
+    if not team_name:
+        return {}   
+    with Session(get_db_connection()) as session:
+        stmt = select(Team).where(Team.team_name == team_name)
+        team = session.exec(stmt).first()
+        return team.model_dump() if team else {}
+    
 def get_team_matches(team_id: str) -> dict:
     with Session(get_db_connection()) as session:
         # Get matches where the team is either team1 or team2
