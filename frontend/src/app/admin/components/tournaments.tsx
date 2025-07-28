@@ -19,6 +19,10 @@ export default function ManageTournaments() {
         current_playoffs: any;
     } = data;
 
+    if (!current_tournaments) {
+        return;
+    }
+
     return (
         <div>
             <form className="mt-4 flex max-w-md flex-col gap-2">

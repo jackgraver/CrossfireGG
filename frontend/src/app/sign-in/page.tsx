@@ -10,6 +10,7 @@ import BaseInput from "@/shared/OSSForm/BaseInput/BaseInput";
 import PasswordInput from "@/shared/OSSForm/PasswordInput/PasswordInput";
 import { useUser } from "@/context/UserContext";
 import UserForm from "@/shared/UserForm";
+import { PromiseReturn } from "@/types/Types";
 
 interface SignInResponse {
     access_token: string;
@@ -40,6 +41,7 @@ export default function SignIn() {
         onSuccess: async (data) => {
             try {
                 const userData = await api.get<User>("/user/user-role");
+                console.log("this?");
                 setUser(userData); // ✅ now typed correctly
                 router.push("/");
             } catch (err) {
@@ -73,7 +75,7 @@ export default function SignIn() {
         }, 0);
     };
 
-    const handleSubmit = async (e: React.FormEvent): Promise<boolean> => {
+    const handleSubmit = async (e: React.FormEvent): Promise<PromiseReturn> => {
         e.preventDefault();
 
         try {
@@ -82,16 +84,16 @@ export default function SignIn() {
 
             if (!validateEmail(email)) {
                 setEmailError("Please enter a valid email address");
-                return false;
+                return { success: false, result: null };
             }
 
             signInMutation.mutate({ email, password });
 
-            return true;
+            return { success: true, result: null };
         } catch (err) {
             console.error("Submission error:", err);
             // return failure
-            return false;
+            return { success: false, result: null };
         }
     };
 

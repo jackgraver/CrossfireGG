@@ -7,6 +7,7 @@ import OSSForm from "@/shared/OSSForm/OSSForm";
 import UserForm from "@/shared/UserForm";
 import { useState } from "react";
 import ReRegisterModal from "./ReRegisterModal";
+import { PromiseReturn } from "@/types/Types";
 
 export default function RegisterPage() {
     const [teamName, setTeamName] = useState("");
@@ -18,7 +19,7 @@ export default function RegisterPage() {
 
     const [showModal, setShowModal] = useState(false);
 
-    const handleSubmit = async (e: React.FormEvent): Promise<boolean> => {
+    const handleSubmit = async (e: React.FormEvent): Promise<PromiseReturn> => {
         e.preventDefault();
 
         try {
@@ -29,11 +30,11 @@ export default function RegisterPage() {
             });
 
             // return success
-            return true;
+            return { success: true, result: null };
         } catch (err) {
             console.error("Submission error:", err);
             // return failure
-            return false;
+            return { success: false, result: null };
         }
     };
 

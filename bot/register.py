@@ -17,25 +17,6 @@ class RegisterModal(discord.ui.Modal, title="Team Registration"):
         required=True,
         style=discord.TextStyle.short
     )
-    starters = discord.ui.TextInput(
-        label="Player Names (Case Sensitive)",
-        placeholder="One per line:\nPlayer1\nPlayer2\nPlayer3\nPlayer4\nPlayer5",
-        required=True,
-        style=discord.TextStyle.paragraph,
-        max_length=500
-    )
-
-
-    async def download_image_as_base64(self, url: str) -> str | None:
-        try:
-            async with aiohttp.ClientSession() as session:
-                async with session.get(url) as resp:
-                    if resp.status == 200:
-                        img_bytes = await resp.read()
-                        return f"data:image/png;base64,{base64.b64encode(img_bytes).decode()}"
-        except Exception as e:
-            print(f"Failed to fetch image: {e}")
-        return None
 
     """
 https://www.faceit.com/en/teams/1933f0c2-c4fd-4e84-9d70-4b157317d3f2
@@ -66,11 +47,6 @@ bubagumpy
         data = {
             "team_name": "drugs n pugs",
             "faceit_link": "https://www.faceit.com/en/teams/a4b1806e-9cd9-4ffb-95a6-ca0e7a26b6fb",
-            "starters": """absolut-
-                            jBREEEZY
-                            Sunk_
-                            s3rum_
-                            LUKE4k"""
         }
 
         api_url = "http://localhost:8000/team/register"  # Replace with your actual API URL
@@ -90,11 +66,7 @@ bubagumpy
                     # Check if role exists
                     role = discord.utils.get(guild.roles, name=data["team_name"])
                     if not role:
-                        if team_logo:
-                            print(team_logo)
-                            role = await guild.create_role(name=data["team_name"], icon=team_logo)
-                        else: 
-                            role = await guild.create_role(name=data["team_name"])
+                        role = await guild.create_role(name=data["team_name"])
                     
                     # Add role to member
                     await member.add_roles(role, reason="Team registered via bot")

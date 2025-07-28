@@ -2,15 +2,19 @@ import { useState } from "react";
 import { Loader, Check } from "lucide-react";
 import styles from "./OSSForm.module.css"; // update path if needed
 
+import { PromiseReturn } from "@/types/Types";
+
 export default function OSSForm({
     children,
     onSubmit,
+    onSuccess,
     onCancel,
     submitLabel = "Submit",
     cancelLabel = "Cancel",
 }: {
     children: React.ReactNode;
-    onSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<boolean>; // return true if success, false if error
+    onSubmit: (e: React.FormEvent<HTMLFormElement>) => Promise<PromiseReturn>;
+    onSuccess?: (...args: any) => void;
     onCancel?: () => void;
     submitLabel?: string;
     cancelLabel?: string;
@@ -27,12 +31,12 @@ export default function OSSForm({
 
         try {
             const result = await onSubmit(e);
-            console.log(result);
-            if (result) {
+            if (result.success && result.result) {
                 setSubmitStatus("success");
                 setTimeout(() => {
                     setSubmitStatus("idle");
-                }, 500);
+                    onSuccess?.(result.result);
+                }, 1000);
             } else {
                 setSubmitStatus("error");
             }
@@ -67,12 +71,16 @@ export default function OSSForm({
                 >
                     {submitStatus === "idle" && submitLabel}
                     {submitStatus === "submitting" && (
-                        <Loader className={styles.icon} />
+                        <Loader
+                            className={`${styles.icon} ${styles.spinner}`}
+                        />
                     )}
                     {submitStatus === "success" && (
-                        <Check className={styles.icon} />
+                        <Check
+                            className={`${styles.icon} ${styles.checkPop}`}
+                        />
                     )}
-                    {submitStatus === "error" && submitLabel}
+                    {submitStatus === "error" && "Error"}
                 </button>
             </div>
         </form>

@@ -1,6 +1,7 @@
 import { api } from "@/lib/api";
 import BaseInput from "@/shared/OSSForm/BaseInput/BaseInput";
 import OSSForm from "@/shared/OSSForm/OSSForm";
+import { PromiseReturn } from "@/types/Types";
 import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -16,27 +17,26 @@ export default function ReRegisterModal({
 
     const [teamName, setTeamName] = useState("");
 
-    const handleSubmit = async (e: React.FormEvent): Promise<boolean> => {
+    const handleSubmit = async (e: React.FormEvent): Promise<PromiseReturn> => {
         e.preventDefault();
-        console.log(teamName);
 
         try {
-            await api
-                .post("/team/reregister", {
-                    team_name: teamName,
-                })
-                .then((data: any) => {
-                    console.log(data);
-                    if (data.team_id) {
-                        router.push(`/team/${data.team_id}`);
-                    }
-                });
+            const data: any = await api.post("/team/reregister", {
+                team_name: teamName,
+            });
 
-            return true;
-        } catch (err) {
-            console.error("Submission error:", err);
-            // return failure
-            return false;
+            if (data.team_id) {
+                return { success: true, result: data.team_id };
+            }
+
+            return { success: false, result: null };
+        } catch (err: any) {
+            console.error("Submission error (re-register):", err);
+            if (err.error === "Team already registered") {
+                return { success: true, result: err.team_id };
+            }
+
+            return { success: false, result: null };
         }
     };
 
@@ -54,7 +54,13 @@ export default function ReRegisterModal({
                         width={32}
                     />
                 </div>
-                <OSSForm onSubmit={handleSubmit} submitLabel="Register">
+                <OSSForm
+                    onSubmit={handleSubmit}
+                    onSuccess={(id) => {
+                        if (id) router.push(`/team/${id}`);
+                    }}
+                    submitLabel="Register"
+                >
                     <BaseInput
                         type="text"
                         placeholder="Team Name"
@@ -63,6 +69,7 @@ export default function ReRegisterModal({
                         onChange={(e) => {
                             setTeamName(e.target.value);
                         }}
+                        autoFocus={true}
                     />
                 </OSSForm>
             </div>

@@ -11,6 +11,7 @@ type BaseInputProps = {
     success?: (value: string) => boolean;
     children?: React.ReactNode;
     style?: string;
+    autoFocus?: boolean;
 };
 
 export default function BaseInput({
@@ -24,6 +25,7 @@ export default function BaseInput({
     success,
     children,
     style = "",
+    autoFocus = false,
 }: BaseInputProps) {
     const showSuccess = success && value ? success(value) : false;
 
@@ -45,6 +47,7 @@ export default function BaseInput({
                 onBlur={onBlur}
                 disabled={disabled}
                 className={styles.inputElement + " " + style}
+                autoFocus={autoFocus}
             />
             {children}
         </div>

@@ -16,7 +16,7 @@ class Player(SQLModel, table=True):
     player_id_i: str = Field(primary_key=True)
     player_id: str
     team_id: str = Field(foreign_key="team.team_id")
-    sub_t_id: Optional[str] = Field(default=None, foreign_key="sub_tournament.sub_t_id")
+    sub_t_id: Optional[str] = Field(default=None, foreign_key="sub_tournament.sub_t_id", primary_key=True)
     player_name: str
     player_logo: Optional[str] = None
     

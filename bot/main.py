@@ -63,24 +63,24 @@ async def setup_channels_and_roles(guild: discord.Guild):
         await asyncio.sleep(1)
 
 # 🟦 Example Slash Command
-@bot.tree.command(name="register_message", description="Sends a test embed")
-async def register_message(interaction: discord.Interaction):
-    embed = discord.Embed(
-        title="Secure Your Spot",
-        description='''
-            To register, create a ticket with your team details:
-            5 starters
-            Team name
-            Team logo (if available)
-            Team page link (Faceit)
-        '''
-,
-        color=discord.Color.blurple()
-    )
-    await interaction.response.send_message(embed=embed)
+# @bot.tree.command(name="register_message", description="Sends a test embed")
+# async def register_message(interaction: discord.Interaction):
+#     embed = discord.Embed(
+#         title="Secure Your Spot",
+#         description='''
+#             To register, create a ticket with your team details:
+#             5 starters
+#             Team name
+#             Team logo (if available)
+#             Team page link (Faceit)
+#         '''
+# ,
+#         color=discord.Color.blurple()
+#     )
+#     await interaction.response.send_message(embed=embed)
 
 # Command to trigger modal
-@bot.tree.command(name="other_name", description="Register your team")
+@bot.tree.command(name="register", description="Register your team")
 async def register_command(interaction: discord.Interaction):
     await interaction.response.send_modal(RegisterModal())
 

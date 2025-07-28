@@ -1,5 +1,6 @@
 "use client";
-import React, { createContext, useContext, useState } from "react";
+import { api } from "@/lib/api";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
 type User = {
     user_id: string;
@@ -17,6 +18,23 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const [user, setUser] = useState<User | null>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            api.get("/user/user-role")
+                .then((data: any) => {
+                    setUser(data);
+                })
+                .finally(() => {
+                    setLoading(false);
+                });
+        };
+
+        fetchUser();
+    }, []);
+
+    if (loading) return null; // or show a loading spinner
 
     return (
         <UserContext.Provider value={{ user, setUser }}>

@@ -12,6 +12,7 @@ import BaseInput from "@/shared/OSSForm/BaseInput/BaseInput";
 import PasswordInput from "@/shared/OSSForm/PasswordInput/PasswordInput";
 import SpinnerInput from "@/shared/OSSForm/SpinnerInput/SpinnerInput";
 import UserForm from "@/shared/UserForm";
+import { PromiseReturn } from "@/types/Types";
 
 interface SignUpResponse {
     access_token: string;
@@ -171,21 +172,21 @@ export default function SignUp() {
         }
     };
 
-    const handleSubmit = async (e: React.FormEvent): Promise<boolean> => {
+    const handleSubmit = async (e: React.FormEvent): Promise<PromiseReturn> => {
         e.preventDefault();
 
         try {
             if (!validateEmail(email)) {
                 setEmailError("Please enter a valid email address");
-                return false;
+                return { success: false, result: null };
             }
             if (password !== confirmPassword) {
                 setPasswordError("Passwords do not match");
-                return false;
+                return { success: false, result: null };
             }
             if (!privacyAgreed) {
                 alert("Please agree to the privacy policy");
-                return false;
+                return { success: false, result: null };
             }
 
             signUpMutation.mutate({
@@ -197,11 +198,11 @@ export default function SignUp() {
                 password,
             });
 
-            return true;
+            return { success: true, result: null };
         } catch (err) {
             console.error("Submission error:", err);
             // return failure
-            return false;
+            return { success: false, result: null };
         }
     };
 
