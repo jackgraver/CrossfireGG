@@ -10,6 +10,15 @@ ALGORITHM = "HS256"
 
 EXPECTED_API_KEY = "f5742404-28aa-435c-b6c8-333809cfac46"
 
+
+BOT_TOKEN = "VebSyEc9B4jVf9U9WLoKEFIkUJrs5wLf53D5HTF1KzRmq2gV7mEjUka9jPjaSsQ47BOvsRTlvd7CcqcAkkvJu3FP5AgwU9y2prnEYcrCQfz4qK5AcFdW8r8wdRyEMaj5"
+async def verify_bot_token(x_api_key: str = Header(...)):
+    if x_api_key != BOT_TOKEN:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Invalid or missing API key",
+        )
+
 async def verify_api_key(x_api_key: str = Header(...)):
     if x_api_key != EXPECTED_API_KEY:
         raise HTTPException(
