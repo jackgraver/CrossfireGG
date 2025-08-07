@@ -1,3 +1,5 @@
+import asyncio
+import json
 import discord
 from discord.ext import commands
 
@@ -14,20 +16,85 @@ async def on_ready():
         print(f"🔧 Synced {len(synced)} slash commands.")
     except Exception as e:
         print(f"Slash sync failed: {e}")
+
+@bot.tree.command(name="create_channels", description="Creates channels for teams")
+async def create_channels(interaction: discord.Interaction):
+    await interaction.response.defer()  # Acknowledge the command quickly
+    await setup_match_channels(interaction.guild)
+    await interaction.followup.send("✅ Channels set up!")
+
+async def setup_match_channels(guild: discord.Guild):
+    try:
+        with open(".test_data/sample_bot_matches.json", "r") as f:
+            config = json.load(f)
+    except Exception as e:
+        print(f"Error loading match data: {e}")
+        return
+
+    try:
+        for entry in config:
+            team1_name = entry["team1"]
+            team2_name = entry["team2"]
+            channel_name = f"{team1_name}-vs-{team2_name}".lower().replace(" ", "-")
+
+            # Find or create roles
+            role1 = discord.utils.get(guild.roles, name=team1_name)
+            role2 = discord.utils.get(guild.roles, name=team2_name)
+
+            if not role1:
+                print(f"⚠️ Role not found: {team1_name}")
+                continue
+            if not role2:
+                print(f"⚠️ Role not found: {team2_name}")
+                continue
+
+            # Set channel permissions
+            overwrites = {
+                guild.default_role: discord.PermissionOverwrite(read_messages=False),
+                role1: discord.PermissionOverwrite(read_messages=True, send_messages=True),
+                role2: discord.PermissionOverwrite(read_messages=True, send_messages=True),
+            }
+
+            # Create the channel if it doesn’t exist
+            channel = discord.utils.get(guild.text_channels, name=channel_name)
+            if not channel:
+                channel = await guild.create_text_channel(channel_name, overwrites=overwrites)
+                print(f"📺 Created channel: {channel_name}")
+
+            # Send welcome message, tagging roles
+            welcome_message = f"{role1.mention} {role2.mention}\n\nWelcome to the match page!"
+            await channel.send(welcome_message)
+
+            await asyncio.sleep(1)  # Prevent rate limits 
+    except Exception as e:
+        print(f"Error setting up channels: {e}")
         
-@bot.tree.command(name="register_message", description="Sends a test embed")
+@bot.tree.command(name="embeded_message", description="Sends a test embed")
 async def register_message(interaction: discord.Interaction):
-    print('rec reg msg')
-    embed = discord.Embed(
-        title="Secure Your Spot",
-        description='''
-            To register, create a ticket with your team details:
-            5 starters
-            Team name
-            Team logo (if available)
-            Team page link (Faceit)
-        '''
-    ,
-        color=discord.Color.blurple()
+    await interaction.response.send_modal(RegisterModal())
+
+class RegisterModal(discord.ui.Modal, title="Create Embed"):
+    e_title = discord.ui.TextInput(
+        label="Message Title",
+        required=True,
+        style=discord.TextStyle.short,
+        max_length=100,
     )
-    await interaction.response.send_message(embed=embed)
+    body = discord.ui.TextInput(
+        label="Message Body",
+        required=True,
+        style=discord.TextStyle.paragraph,
+        max_length=1000,
+    )
+
+    async def on_submit(self, interaction: discord.Interaction):
+        data = {
+            "title": self.e_title.value,
+            "body": self.body.value,
+        }
+        embed = discord.Embed(
+            title=data["title"],
+            description=data["body"],
+            color=discord.Color.blurple()
+        )
+        await interaction.response.send_message(embed=embed)
