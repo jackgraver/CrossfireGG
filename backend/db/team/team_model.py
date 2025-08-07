@@ -21,7 +21,7 @@ class Team(SQLModel, table=True):
     """
     team_id_i: str = Field(primary_key=True)
     team_id: str
-    sub_t_id: Optional[str] = Field(default=None, foreign_key="sub_tournament.sub_t_id")
+    sub_t_id: Optional[str] = Field(default=None, foreign_key="sub_tournament.sub_t_id", primary_key=True)
     team_name: str
     team_logo: Optional[str] = None
     seed: int = -1
@@ -30,4 +30,4 @@ class Team(SQLModel, table=True):
     paid: int = 1
     joined_tournament: int = 1
     
-    __table_args__ = (UniqueConstraint("team_id", "sub_t_id"),)
+    __table_args__ = (UniqueConstraint("team_id_i", "sub_t_id"),)

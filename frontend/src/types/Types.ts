@@ -93,3 +93,8 @@ export type MatchesWithCasters = {
         team_id: string;
     }[];
 };
+
+export type PromiseReturn = {
+    success: boolean;
+    result?: any;
+};

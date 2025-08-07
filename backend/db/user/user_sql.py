@@ -23,6 +23,8 @@ def get_role_name(role_id: int) -> str:
         role = session.exec(
             select(Role).where(Role.role_id == role_id)
         ).first()
+        if not role:
+            return "Unknown"
         return role.role_name
 
 def insert_user(id: str, email: str,  faceit_id: str, team_id: str, hashed_password: str, user_name: str = "temp-name"):

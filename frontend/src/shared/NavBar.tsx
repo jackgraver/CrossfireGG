@@ -20,10 +20,6 @@ const preloadImage = (url: string) => {
 };
 
 export async function logoutUser() {
-    // await fetch("/api/user/logout", {
-    //     method: "POST",
-    //     credentials: "include",
-    // });
     await api.post("/user/logout");
 }
 
@@ -32,31 +28,12 @@ export default function NavBar() {
 
     const { user } = useUser();
 
-    // useEffect(() => {
-    //     console.log("user", user);
-    //     if (!user) {
-    //         api.get("/user/user-role")
-    //             .then((data: any) => {
-    //                 setUser(data);
-    //             })
-    //             .catch((_) => {
-    //                 return;
-    //             });
-    //     }
-    // }, [user]);
-
     useEffect(() => {
         const darkPref = localStorage.getItem("theme") === "dark";
         if (darkPref) {
             document.documentElement.classList.add("dark");
         }
     }, []);
-
-    const token =
-        typeof window !== "undefined"
-            ? localStorage.getItem("access_token")
-            : null;
-    const signedIn = token !== null && token !== "";
 
     return (
         <nav className="sticky top-0 z-50 bg-mainBg bg-mainBgTransparent backdrop-blur-md">

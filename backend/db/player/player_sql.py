@@ -190,3 +190,8 @@ def check_player_exists(player_name: str):
             if team:
                 return player.player_id_i, team.team_id, team.team_name
     return None, None, None
+
+def get_players_of_team(team_id: str):
+    with Session(get_db_connection()) as session:
+        players = session.exec(select(Player).where(Player.team_id == team_id)).all()
+        return players

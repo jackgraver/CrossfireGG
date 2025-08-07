@@ -38,7 +38,9 @@ async def sign_in(request: Request):
         value=token,
         httponly=True,
         secure=True,
+        # secure=False,
         samesite="none",
+        # samesite="lax",
         max_age=3600,
         path="/"
     )

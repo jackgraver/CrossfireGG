@@ -12,6 +12,7 @@ import BaseInput from "@/shared/OSSForm/BaseInput/BaseInput";
 import PasswordInput from "@/shared/OSSForm/PasswordInput/PasswordInput";
 import SpinnerInput from "@/shared/OSSForm/SpinnerInput/SpinnerInput";
 import UserForm from "@/shared/UserForm";
+import { PromiseReturn } from "@/types/Types";
 
 interface SignUpResponse {
     access_token: string;
@@ -171,29 +172,38 @@ export default function SignUp() {
         }
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent): Promise<PromiseReturn> => {
         e.preventDefault();
-        if (!validateEmail(email)) {
-            setEmailError("Please enter a valid email address");
-            return;
-        }
-        if (password !== confirmPassword) {
-            setPasswordError("Passwords do not match");
-            return;
-        }
-        if (!privacyAgreed) {
-            alert("Please agree to the privacy policy");
-            return;
-        }
 
-        signUpMutation.mutate({
-            id: internalID,
-            email,
-            username: email,
-            faceit_id: faceitID,
-            team_id: faceitTeam.id,
-            password,
-        });
+        try {
+            if (!validateEmail(email)) {
+                setEmailError("Please enter a valid email address");
+                return { success: false, result: null };
+            }
+            if (password !== confirmPassword) {
+                setPasswordError("Passwords do not match");
+                return { success: false, result: null };
+            }
+            if (!privacyAgreed) {
+                alert("Please agree to the privacy policy");
+                return { success: false, result: null };
+            }
+
+            signUpMutation.mutate({
+                id: internalID,
+                email,
+                username: email,
+                faceit_id: faceitID,
+                team_id: faceitTeam.id,
+                password,
+            });
+
+            return { success: true, result: null };
+        } catch (err) {
+            console.error("Submission error:", err);
+            // return failure
+            return { success: false, result: null };
+        }
     };
 
     const togglePasswordVisibility = () => {
