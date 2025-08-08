@@ -5,8 +5,9 @@ import { api } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import { formatDateOnly } from "@/lib/dateUtils";
 import { notFound } from "next/navigation";
-import { use } from "react";
+import { use, useEffect } from "react";
 import TeamLogo from "@/shared/bracket/TeamLogo";
+import { toastService } from "@/shared/toast/toastService";
 
 const openInNewTab = (url: string) => {
     window.open(url, "_blank", "noopener,noreferrer");
@@ -27,6 +28,29 @@ export default function Team({ params }: TeamProps) {
             api.get<{ team: Team; matches: Match[] }>(`/team/${team_id}`),
     });
 
+    useEffect(() => {
+        // Show a one-time toast when arriving from the register page
+        if (typeof window === "undefined") return;
+        const url = new URL(window.location.href);
+        if (url.searchParams.get("from") === "register") {
+            toastService.display({
+                title: "Thanks for registering. Click below to pay",
+                body: (
+                    <div className="flex justify-center">
+                        <button className="rounded-md bg-blue-500 px-3 py-1 text-sm font-medium text-textPrimary hover:bg-blue-400">
+                            Pay
+                        </button>
+                    </div>
+                ),
+                durationMs: 5000,
+                variant: "center",
+            });
+            // Clean the URL to avoid re-triggering on refresh/back
+            url.searchParams.delete("from");
+            window.history.replaceState({}, "", url.toString());
+        }
+    }, []);
+
     if (isLoading) {
         return <div>Loading...</div>;
     }
@@ -36,6 +60,13 @@ export default function Team({ params }: TeamProps) {
     }
 
     const { team, matches } = data!;
+
+    const handlePay = async () => {
+        await api.post(`/team/paid/${team_id}`, { paid: true });
+        toastService.success(<p>Team Marked Paid</p>, "Payment Successful", {
+            durationMs: 3000,
+        });
+    };
 
     const formatDate = (timestamp: number) => {
         return formatDateOnly(timestamp);
@@ -92,6 +123,18 @@ export default function Team({ params }: TeamProps) {
                                 <span className="text-sm font-bold text-textSecondary">
                                     Status:
                                 </span>
+                                <div>
+                                    {team.paid ? (
+                                        <span>Paid</span>
+                                    ) : (
+                                        <button
+                                            className="rounded-md bg-blue-500 px-3 py-1 text-sm font-medium text-textPrimary hover:bg-blue-400"
+                                            onClick={handlePay}
+                                        >
+                                            Pay
+                                        </button>
+                                    )}
+                                </div>
                                 <span className="text-lg font-medium text-textSecondary">
                                     {team.paid ? "Paid" : "Unpaid"} •{" "}
                                     {team.joined_tournament

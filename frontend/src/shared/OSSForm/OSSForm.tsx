@@ -31,7 +31,7 @@ export default function OSSForm({
 
         try {
             const result = await onSubmit(e);
-            if (result.success && result.result) {
+            if (result.success) {
                 setSubmitStatus("success");
                 setTimeout(() => {
                     setSubmitStatus("idle");

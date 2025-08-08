@@ -9,8 +9,11 @@ import NonFinishedMatches from "../shared/NonFinishedMatches";
 import ViewSelector from "../shared/ViewSelector";
 import { api } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+    const router = useRouter();
+
     const [displayTab, setDisplayTab] = useState<
         "regseason" | "playoffs" | "standings"
     >("regseason");
@@ -122,7 +125,10 @@ export default function Home() {
                     <h2 className="text-4xl font-semibold text-textPrimary">
                         Now VRS Enabled!
                     </h2>
-                    <button className="pb mt-4 rounded bg-orange-500 px-3 pb-2 pt-1 text-xl font-semibold text-textPrimary hover:bg-orange-400">
+                    <button
+                        className="pb mt-4 rounded bg-orange-500 px-3 pb-2 pt-1 text-xl font-semibold text-textPrimary hover:bg-orange-400"
+                        onClick={() => router.push("/register")}
+                    >
                         Sign up for Season 9
                     </button>
                 </div>
