@@ -28,7 +28,8 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
                 })
                 .finally(() => {
                     setLoading(false);
-                });
+                })
+                .catch(() => {});
         };
 
         fetchUser();

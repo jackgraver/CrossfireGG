@@ -8,8 +8,11 @@ import UserForm from "@/shared/UserForm";
 import { useState } from "react";
 import ReRegisterModal from "./ReRegisterModal";
 import { PromiseReturn } from "@/types/Types";
+import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
+    const router = useRouter();
+
     const [teamName, setTeamName] = useState("");
 
     const [teamLink, setTeamLink] = useState("");
@@ -23,14 +26,16 @@ export default function RegisterPage() {
         e.preventDefault();
 
         try {
-            await api.post("/team/register", {
-                team_name: teamName,
-                faceit_link: teamLink,
-                starters: players.split("\n"),
-            });
-
+            const response: { team_id: string } = await api.post(
+                "/team/register",
+                {
+                    team_name: teamName,
+                    faceit_link: teamLink,
+                    starters: players.split("\n"),
+                },
+            );
             // return success
-            return { success: true, result: null };
+            return { success: true, result: response.team_id };
         } catch (err) {
             console.error("Submission error:", err);
             // return failure
@@ -54,34 +59,29 @@ export default function RegisterPage() {
                         here
                     </a>
                 </p>
-                <OSSForm onSubmit={handleSubmit} submitLabel="Register">
+                <OSSForm
+                    onSubmit={handleSubmit}
+                    onSuccess={(team_id: string) => {
+                        router.push(`/team/${team_id}?from=register`);
+                    }}
+                    submitLabel="Register"
+                >
                     <BaseInput
                         type="text"
-                        placeholder="Faceit Team"
+                        placeholder="Team Name"
                         value={teamName}
-                        disabled={false}
                         onChange={(e) => {
                             setTeamName(e.target.value);
                         }}
                     />
                     <BaseInput
                         type="text"
-                        placeholder="Faceit Team"
+                        placeholder="Faceit Link"
                         value={teamLink}
-                        disabled={false}
                         onChange={(e) => {
                             setTeamLink(e.target.value);
                         }}
                     />
-                    {/* <textarea
-                    placeholder="Players"
-                    value={players}
-                    disabled={false}
-                    onChange={(e) => {
-                        setPlayers(e.target.value);
-                    }}
-                    className="mt-6 w-full rounded-md border border-[#ccc] bg-firstBg p-2"
-                /> */}
                 </OSSForm>
             </UserForm>
         </>

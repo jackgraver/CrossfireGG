@@ -99,9 +99,9 @@ async def register_team(request: Request):
                 player_logo=player.get("avatar")
             ))
     
-    if team_logo != "":
-        return {'team_logo': team_logo}
-    return {}
+    # if team_logo != "":
+    #     return {'team_logo': team_logo}
+    return {"team_id": team_id}
 
 @router.post("/reregister")
 async def reregister_team(request: Request):
