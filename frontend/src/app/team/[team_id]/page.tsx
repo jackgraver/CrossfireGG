@@ -1,6 +1,7 @@
 "use client";
 
-import type { Match, Team } from "@/types/Types";
+import type { Match } from "@/types/Types";
+import type { Team } from "@/types/TeamModel";
 import { api } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import { formatDateOnly } from "@/lib/dateUtils";

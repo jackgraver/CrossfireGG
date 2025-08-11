@@ -1,4 +1,4 @@
-import type { Team } from "../../../types/Types";
+import type { Team } from "@/types/TeamModel";
 
 type QualElimCardProps = {
     team: Team;

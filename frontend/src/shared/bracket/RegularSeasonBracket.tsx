@@ -1,7 +1,5 @@
-// import { FAKEMATCHES } from "../../lib/Mock";
-import type { Round, Match, Team } from "../../types/Types";
-import { MatchTeam } from "./MatchTeam";
-import QualElimCard from "./qualelimcard/QualElimCard";
+import type { Match } from "../../types/Types";
+import type { Team } from "@/types/TeamModel";
 import RoundSection from "./RoundSection";
 import RoundCard from "./RoundCard";
 import { groupMatchesByRoundAndSort } from "./Bracket.util";

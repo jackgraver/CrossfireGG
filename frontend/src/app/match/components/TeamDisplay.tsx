@@ -1,4 +1,4 @@
-import { Team } from "@/types/Types";
+import type { Team } from "@/types/TeamModel";
 import PlayerCard from "./PlayerCard";
 import TeamLogo from "@/shared/bracket/TeamLogo";
 

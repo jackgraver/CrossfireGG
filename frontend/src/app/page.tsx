@@ -1,6 +1,7 @@
 "use client";
 
-import type { Match, Team } from "../types/Types";
+import type { Match } from "../types/Types";
+import type { Team } from "@/types/TeamModel";
 import { useState } from "react";
 import Standings from "../shared/Standings";
 import RegularSeasonBracket from "../shared/bracket/RegularSeasonBracket";

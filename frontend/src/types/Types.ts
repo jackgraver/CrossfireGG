@@ -1,3 +1,5 @@
+import type { Team } from "@/types/TeamModel";
+
 export type Match = {
     match_id: string;
     status: string;
@@ -28,17 +30,6 @@ export type Round =
     | "QF"
     | "SF"
     | "F";
-
-export type Team = {
-    team_id: string;
-    team_name: string;
-    team_logo: string;
-    seed: number;
-    win: number;
-    loss: number;
-    paid: boolean;
-    joined_tournament: boolean;
-};
 
 export type MatchMap = {
     map_id: string;

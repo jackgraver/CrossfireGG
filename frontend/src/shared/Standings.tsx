@@ -1,4 +1,5 @@
-import type { Team } from "../types/Types";
+import type { Team } from "@/types/TeamModel";
+
 import OSSTable from "./OSSTable";
 
 const rowBgColor = (row: Team) => {

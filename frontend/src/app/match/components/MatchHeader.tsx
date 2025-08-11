@@ -1,5 +1,6 @@
 import { formatMatchDate } from "@/lib/dateUtils";
-import { Round, Team } from "@/types/Types";
+import { Round } from "@/types/Types";
+import type { Team } from "@/types/TeamModel";
 import { useRouter } from "next/navigation";
 
 type Match = {

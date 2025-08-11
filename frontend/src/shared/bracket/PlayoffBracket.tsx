@@ -1,4 +1,5 @@
-import type { Match, Team } from "../../types/Types";
+import type { Match } from "../../types/Types";
+import type { Team } from "@/types/TeamModel";
 import RoundCard from "./RoundCard";
 import RoundSection from "./RoundSection";
 import { groupMatchesByRoundAndSort } from "./Bracket.util";

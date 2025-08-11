@@ -1,4 +1,4 @@
-import type { Team } from "../../types/Types";
+import type { Team } from "@/types/TeamModel";
 import TeamLogo from "./TeamLogo";
 
 export function MatchTeam({
