@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { Team } from "@/types/Types";
+import type { Team } from "@/types/TeamModel";
 import { api } from "@/lib/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import ProtectedRoute from "@/shared/ProtectedRoute";

@@ -1,4 +1,4 @@
-import { Team } from "@/types/Types";
+import { Team } from "@/types/TeamModel";
 
 export default function TeamLogo({
     team,

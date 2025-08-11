@@ -40,16 +40,6 @@ export type Team = {
     joined_tournament: boolean;
 };
 
-export type PlayerStats = {
-    player_id: string;
-    map_id: string;
-    kills: number;
-    deaths: number;
-    assists: number;
-    adr: number;
-    damage: number;
-};
-
 export type MatchMap = {
     map_id: string;
     match_id: string;

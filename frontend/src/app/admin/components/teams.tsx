@@ -1,7 +1,7 @@
 "use client";
 
 import { api } from "@/lib/api";
-import { Team } from "@/types/Types";
+import { Team } from "@/types/TeamModel";
 import { useQuery } from "@tanstack/react-query";
 
 export default function ManageTeams() {

@@ -15,6 +15,7 @@ class SubTournament(SQLModel, table=True):
     t_name: str
     start_date: Optional[int] = None
     end_date: Optional[int] = None
+    number_of_teams: Optional[int] = None
 
     tournament: Optional["Tournament"] = Relationship(back_populates="sub_tournament")
 
