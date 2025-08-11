@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { MatchMap, PlayerStats, Round, Team } from "@/types/Types";
+import type { MatchMap, Round, Team } from "@/types/Types";
+import type { PlayerStats } from "@/types/PlayerModel";
 import ViewSelector from "@/shared/ViewSelector";
 import OSSTable from "@/shared/OSSTable";
 import { api } from "@/lib/api";

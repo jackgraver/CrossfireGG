@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import type { MatchMap, PlayerStats, Round, Team } from "@/types/Types";
-import ViewSelector from "@/shared/ViewSelector";
+import type { Team } from "@/types/TeamModel";
+import type { Player, PlayerStats } from "@/types/PlayerModel";
 import OSSTable from "@/shared/OSSTable";
 import { api } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
@@ -10,50 +10,7 @@ import { formatMatchDate } from "@/lib/dateUtils";
 import { notFound, useRouter } from "next/navigation";
 import { use } from "react";
 import TeamLogo from "@/shared/bracket/TeamLogo";
-
-type Match = {
-    match_id: string;
-    status: string;
-    scheduled_at: number;
-    round: Round;
-    faceit_url: string;
-    winner: string;
-    teams: { team1: Team; team2: Team };
-    team1_score: number;
-    team2_score: number;
-    caster_id?: number;
-};
-
-type Map = {
-    map_id: string;
-    match_id: string;
-    map_name: string;
-    round: number;
-    winner_id: string;
-    team1_score: number;
-    team2_score: number;
-};
-
-type Stats = {
-    map_id: string;
-    match_id: string;
-    ps_id: string;
-    kills: number;
-    deaths: number;
-    assists: number;
-    adr: number;
-    damage: number;
-    player_id: string;
-};
-
-type Player = {
-    team_id: string;
-    player_id: string;
-    sub_t_id: string;
-    player_name: string;
-    player_logo: string;
-    player_id_i: string;
-};
+import { Match, MatchMap } from "@/types/MatchModel";
 
 /**
  * Extracts the map name from the map_name string (de_anubis -> Anubis)
@@ -87,7 +44,7 @@ type AggregatedStat = {
 };
 
 function aggregateStatsByPlayer(
-    stats: Stats[],
+    stats: PlayerStats[],
     players: Player[],
     currentMapIds: string[],
 ): AggregatedStat[] {
@@ -138,11 +95,11 @@ export default function MatchStats({ params }: MatchStatsProps) {
                 match: Match;
                 team1: Team;
                 team2: Team;
-                maps: Map[];
+                maps: MatchMap[];
                 t1_players: Player[];
                 t2_players: Player[];
-                t1_stats: Stats[];
-                t2_stats: Stats[];
+                t1_stats: PlayerStats[];
+                t2_stats: PlayerStats[];
             }>(`/stats/${match_id}`),
     });
 
@@ -165,8 +122,6 @@ export default function MatchStats({ params }: MatchStatsProps) {
         t2_stats,
     } = data!;
 
-    // const { match, maps } = data!;
-
     const t1_display_stats_array = aggregateStatsByPlayer(
         t1_stats,
         t1_players,
@@ -177,105 +132,6 @@ export default function MatchStats({ params }: MatchStatsProps) {
         t2_players,
         currentMapIds,
     );
-
-    // const teamAmergedStatsMap = new Map<
-    //     string,
-    //     {
-    //         player_name: string;
-    //         kills: number;
-    //         deaths: number;
-    //         assists: number;
-    //         adr: number;
-    //         damage: number;
-    //     }
-    // >();
-
-    // maps.filter((map) => currentMapIds.includes(map.map_id)).forEach((map) => {
-    //     map.teams[0].players.forEach((player) => {
-    //         const name = player.player_name;
-    //         const existing = teamAmergedStatsMap.get(name);
-
-    //         const stats = {
-    //             player_name: name,
-    //             kills: player.stats.kills,
-    //             deaths: player.stats.deaths,
-    //             assists: player.stats.assists,
-    //             adr: player.stats.adr,
-    //             damage: player.stats.damage,
-    //         };
-
-    //         if (existing) {
-    //             teamAmergedStatsMap.set(name, {
-    //                 player_name: name,
-    //                 kills: existing.kills + stats.kills,
-    //                 deaths: existing.deaths + stats.deaths,
-    //                 assists: existing.assists + stats.assists,
-    //                 adr: existing.adr + stats.adr,
-    //                 damage: existing.damage + stats.damage,
-    //             });
-    //         } else {
-    //             teamAmergedStatsMap.set(name, stats);
-    //         }
-    //     });
-    // });
-
-    // const teamAStats = Array.from(teamAmergedStatsMap.values());
-
-    // const teamBmergedStatsMap = new Map<
-    //     string,
-    //     {
-    //         player_name: string;
-    //         kills: number;
-    //         deaths: number;
-    //         assists: number;
-    //         adr: number;
-    //         damage: number;
-    //     }
-    // >();
-
-    // maps.filter((map) => currentMapIds.includes(map.map_id)).forEach((map) => {
-    //     map.teams[1].players.forEach((player) => {
-    //         const name = player.player_name;
-    //         const existing = teamBmergedStatsMap.get(name);
-
-    //         const stats = {
-    //             player_name: name,
-    //             kills: player.stats.kills,
-    //             deaths: player.stats.deaths,
-    //             assists: player.stats.assists,
-    //             adr: player.stats.adr,
-    //             damage: player.stats.damage,
-    //         };
-
-    //         if (existing) {
-    //             teamBmergedStatsMap.set(name, {
-    //                 player_name: name,
-    //                 kills: existing.kills + stats.kills,
-    //                 deaths: existing.deaths + stats.deaths,
-    //                 assists: existing.assists + stats.assists,
-    //                 adr: existing.adr + stats.adr,
-    //                 damage: existing.damage + stats.damage,
-    //             });
-    //         } else {
-    //             teamBmergedStatsMap.set(name, stats);
-    //         }
-    //     });
-    // });
-
-    // const teamBStats = Array.from(teamBmergedStatsMap.values());
-
-    // const teamBStats = maps
-    //     .filter((map) => currentMapIds.includes(map.map_id)) // only selected maps
-    //     .flatMap((map) =>
-    //         map.teams[1].players.map((player) => ({
-    //             player_name: player.player_name,
-    //             kills: player.stats.kills,
-    //             deaths: player.stats.deaths,
-    //             assists: player.stats.assists,
-    //             adr: player.stats.adr,
-    //             damage: player.stats.damage,
-    //         })),
-    //     );
 
     return (
         <div className="flex flex-col items-center gap-y-8">
@@ -296,7 +152,7 @@ export default function MatchStats({ params }: MatchStatsProps) {
                     </h1>
                     <h1 className="text-2xl">
                         {formatScore(
-                            match.team1_score,
+                            match.team1_score || 0,
                             match.winner === team1.team_id,
                         )}
                     </h1>
@@ -306,7 +162,7 @@ export default function MatchStats({ params }: MatchStatsProps) {
                 <div className="flex w-40 flex-shrink-0 flex-col items-center justify-center text-center">
                     <p className="text-textSecondary">{match.status}</p>
                     <p className="text-sm">
-                        {formatMatchDate(match.scheduled_at)}
+                        {formatMatchDate(match.scheduled_at || 0)}
                     </p>
                 </div>
 
@@ -314,7 +170,7 @@ export default function MatchStats({ params }: MatchStatsProps) {
                 <div className="flex min-w-0 flex-1 flex-row items-center justify-end gap-x-4">
                     <h1 className="text-2xl">
                         {formatScore(
-                            match.team2_score,
+                            match.team2_score || 0,
                             match.winner === team2.team_id,
                         )}
                     </h1>

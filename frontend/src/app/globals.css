@@ -65,3 +65,10 @@ button:hover {
 .city {
     background-image: url("/bg-city.png");
 }
+
+.limit-width {
+    display: inline-block;
+    max-width: 60ch; /* ~25 characters before wrapping */
+    white-space: normal;
+    word-break: keep-all;
+}

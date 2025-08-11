@@ -1,7 +1,7 @@
 "use client";
 
 import type { Match, Team } from "../types/Types";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Standings from "../shared/Standings";
 import RegularSeasonBracket from "../shared/bracket/RegularSeasonBracket";
 import PlayoffBracket from "../shared/bracket/PlayoffBracket";
@@ -9,11 +9,9 @@ import NonFinishedMatches from "../shared/NonFinishedMatches";
 import ViewSelector from "../shared/ViewSelector";
 import { api } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+import RegisterForTournament from "./RegisterForTournament";
 
 export default function Home() {
-    const router = useRouter();
-
     const [displayTab, setDisplayTab] = useState<
         "regseason" | "playoffs" | "standings"
     >("regseason");
@@ -75,13 +73,6 @@ export default function Home() {
         ? { reg_season: [], playoffs: [] }
         : matchData!;
 
-    // useEffect(() => {
-    //     console.log(regSeasonMatches.length);
-    //     if (regSeasonMatches.length >= 66) {
-    //         setDisplayTab("playoffs");
-    //     }
-    // }, [regSeasonMatches]);
-
     const nonFinishedMatches = [...regSeasonMatches, ...playoffsMatches].filter(
         (match) => match.status !== "FINISHED",
     );
@@ -114,24 +105,13 @@ export default function Home() {
                             <br />
                             SHENANIGANS
                         </h1>
-                        <p className="text-2xl text-textSecondary">
+                        <p className="limit-width text-2xl text-textSecondary">
                             Off Season Shenanigans the ultimate Counter-Strike
-                            <br />
                             tournament during the off seasons!
                         </p>
                     </div>
                 </div>
-                <div className="flex flex-col items-center justify-center">
-                    <h2 className="text-4xl font-semibold text-textPrimary">
-                        Now VRS Enabled!
-                    </h2>
-                    <button
-                        className="pb mt-4 rounded bg-orange-500 px-3 pb-2 pt-1 text-xl font-semibold text-textPrimary hover:bg-orange-400"
-                        onClick={() => router.push("/register")}
-                    >
-                        Sign up for Season 9
-                    </button>
-                </div>
+                <RegisterForTournament />
             </div>
             <div className="mb-8">
                 <NonFinishedMatches matches={nonFinishedMatches} />
