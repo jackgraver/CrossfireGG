@@ -182,3 +182,8 @@ def create_team(team: Team):
         session.add(team)
         session.commit()
         return
+    
+def get_teams_by_sub_t_id(sub_t_id: str):
+    with Session(get_db_connection()) as session:
+        teams = session.exec(select(Team).where(Team.sub_t_id == sub_t_id)).all()
+        return teams    

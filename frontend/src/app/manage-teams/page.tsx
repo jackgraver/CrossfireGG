@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { Team } from "@/types/TeamModel";
+import { PaymentStatus, type Team } from "@/types/TeamModel";
 import { api } from "@/lib/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import ProtectedRoute from "@/shared/ProtectedRoute";
@@ -31,7 +31,7 @@ export default function ManageTeams() {
             seed: 0,
             win: 0,
             loss: 0,
-            paid: false,
+            paid: 0,
             joined_tournament: false,
         },
     ]);
@@ -63,8 +63,13 @@ export default function ManageTeams() {
     });
 
     const paidMutation = useMutation({
-        mutationFn: ({ team_id, paid }: { team_id: string; paid: boolean }) =>
-            api.post(`/team/paid/${team_id}`, { paid }),
+        mutationFn: ({
+            team_id,
+            paid,
+        }: {
+            team_id: string;
+            paid: PaymentStatus;
+        }) => api.post(`/team/paid/${team_id}`, { paid }),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["teams"] });
         },
@@ -178,12 +183,22 @@ export default function ManageTeams() {
                                         <div className="mt-1 flex gap-2">
                                             <span
                                                 className={`rounded px-2 py-0.5 text-xs font-medium ${
-                                                    team.paid
+                                                    team.paid ===
+                                                    PaymentStatus.Paid
                                                         ? "bg-green-100 text-green-800"
-                                                        : "bg-red-100 text-red-800"
+                                                        : team.paid ===
+                                                            PaymentStatus.Pending
+                                                          ? "bg-yellow-100 text-yellow-800"
+                                                          : "bg-red-100 text-red-800"
                                                 }`}
                                             >
-                                                {team.paid ? "Paid" : "Unpaid"}
+                                                {team.paid ===
+                                                PaymentStatus.Paid
+                                                    ? "Paid"
+                                                    : team.paid ===
+                                                        PaymentStatus.Pending
+                                                      ? "Pending"
+                                                      : "Unpaid"}
                                             </span>
                                             <span
                                                 className={`rounded px-2 py-0.5 text-xs font-medium ${
@@ -217,7 +232,7 @@ export default function ManageTeams() {
                                             onClick={() =>
                                                 paidMutation.mutate({
                                                     team_id: team.team_id,
-                                                    paid: !team.paid,
+                                                    paid: team.paid + 1,
                                                 })
                                             }
                                         >

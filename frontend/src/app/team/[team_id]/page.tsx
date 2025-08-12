@@ -1,7 +1,7 @@
 "use client";
 
 import type { Match } from "@/types/Types";
-import type { Team } from "@/types/TeamModel";
+import { PaymentStatus, type Team } from "@/types/TeamModel";
 import { api } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import { formatDateOnly } from "@/lib/dateUtils";
@@ -136,8 +136,23 @@ export default function Team({ params }: TeamProps) {
                                         </button>
                                     )}
                                 </div>
+                                <span
+                                    className={`rounded px-2 py-0.5 text-xs font-medium ${
+                                        team.paid === PaymentStatus.Paid
+                                            ? "bg-green-100 text-green-800"
+                                            : team.paid ===
+                                                PaymentStatus.Pending
+                                              ? "bg-yellow-100 text-yellow-800"
+                                              : "bg-red-100 text-red-800"
+                                    }`}
+                                >
+                                    {team.paid === PaymentStatus.Paid
+                                        ? "Paid"
+                                        : team.paid === PaymentStatus.Pending
+                                          ? "Pending"
+                                          : "Unpaid"}
+                                </span>
                                 <span className="text-lg font-medium text-textSecondary">
-                                    {team.paid ? "Paid" : "Unpaid"} •{" "}
                                     {team.joined_tournament
                                         ? "Joined"
                                         : "Not Joined"}

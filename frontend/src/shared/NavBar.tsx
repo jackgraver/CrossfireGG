@@ -45,7 +45,7 @@ export default function NavBar() {
                         </Link>
                     </div>
                     <div className="mt-4 flex h-min items-center rounded-md bg-red-500 px-1 py-1">
-                        <p className="pointer-events-none">ALPHA VERSION</p>
+                        <p className="pointer-events-none">ALPHA RELEASE</p>
                     </div>
 
                     <div className="flex items-center">
@@ -179,6 +179,17 @@ export default function NavBar() {
                                         >
                                             Toggle Dark Mode
                                         </div>
+                                        {localStorage.getItem("team_id") && (
+                                            <div>
+                                                <Link
+                                                    href={`/team/${localStorage.getItem("team_id")}`}
+                                                >
+                                                    <div className="block px-4 py-2 text-sm text-textSecondary hover:bg-secondBg">
+                                                        Manage Team
+                                                    </div>
+                                                </Link>
+                                            </div>
+                                        )}
                                         {user ? (
                                             <Link
                                                 href="/"

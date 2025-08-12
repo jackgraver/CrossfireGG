@@ -34,6 +34,7 @@ export default function RegisterPage() {
                     starters: players.split("\n"),
                 },
             );
+            localStorage.setItem("team_id", response.team_id);
             // return success
             return { success: true, result: response.team_id };
         } catch (err) {
@@ -54,7 +55,7 @@ export default function RegisterPage() {
                     Returning teams can sign-up{" "}
                     <a
                         onClick={() => setShowModal(true)}
-                        className="text-blue-600 hover:text-blue-800"
+                        className="cursor-pointer text-blue-600 hover:text-blue-800"
                     >
                         here
                     </a>

@@ -6,8 +6,9 @@
 .inputElement {
     width: 100%;
     border-radius: 0.375rem;
-    border: 1px solid var(--border-color, #ccc); /* fallback */
-    background-color: var(--second-bg, #1e1e1e); /* fallback */
+    border: 1px solid var(--color-third-bg); /* fallback */
+    background-color: var(--color-second-bg); /* fallback */
+    color: var(--color-text-primary);
     padding: 0.5rem 1rem;
     outline: none;
     transition:

@@ -1,6 +1,7 @@
 from asyncio import sleep
 import asyncio
 import os
+import re
 import uuid
 from fastapi import APIRouter, Request, Response, status
 import requests
@@ -11,7 +12,7 @@ from db.player.player_sql import get_players_of_team, insert_player
 from utils.faceit_api import fetch_from_api, fetch_from_file
 from db.team.team_model import Team
 from db.metadata.metadata_sql import query_last_update
-from db.team.team_sql import create_team, fetch_all_teams, get_team_info, get_team_info_by_name, get_team_matches, set_team_joined, set_team_paid
+from db.team.team_sql import create_team, fetch_all_teams, get_team_info, get_team_info_by_name, get_team_matches, get_teams_by_sub_t_id, set_team_joined, set_team_paid
 
 router = APIRouter()
 
@@ -35,6 +36,11 @@ def get_team(team_id: str):
     }
     return res
 
+@router.get('/{sub_t_id}/teams')
+def get_teams_by_sub_tournament(sub_t_id: str):
+    teams = get_teams_by_sub_t_id(sub_t_id)
+    return teams
+
 @router.post("/paid/{team_id}")
 async def team_paid(request: Request, team_id: str):
     data = await request.json()
@@ -56,7 +62,12 @@ REG_DEBUG = True
 async def register_team(request: Request):
     data = await request.json()
     team_id_i = str(uuid.uuid4())
-    team_id = data.get("faceit_link").split("/")[-1]
+    link = data.get("faceit_link", "")
+    match = re.search(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", link, re.IGNORECASE)
+    team_id = match.group(0) if match else None
+    if not team_id:
+        return {"error": "Invalid Faceit link"}
+    
     ts = await current_tournament()
     sub_t_id = ts.get('current_regular_season').sub_t_id or ""
     team_name = data.get("team_name")
@@ -99,8 +110,6 @@ async def register_team(request: Request):
                 player_logo=player.get("avatar")
             ))
     
-    # if team_logo != "":
-    #     return {'team_logo': team_logo}
     return {"team_id": team_id}
 
 @router.post("/reregister")
