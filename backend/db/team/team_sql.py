@@ -1,3 +1,6 @@
+import os
+from dotenv import load_dotenv
+import requests
 from sqlmodel import Session, select
 from typing import List, Dict
 from db.db import get_db_connection
@@ -148,6 +151,19 @@ def get_team_matches(team_id: str) -> dict:
         
         return result
     
+def set_team_seed(team_id: str, seed: int):
+    with Session(get_db_connection()) as session:
+        stmt = select(Team).where(
+            Team.team_id == team_id
+        )
+        team = session.exec(stmt).first()
+        
+        if team:
+            team.seed = seed
+            session.commit()
+            return
+    return
+    
 def set_team_paid(team_id: str, paid: bool):
     with Session(get_db_connection()) as session:
         stmt = select(Team).where(
@@ -187,3 +203,24 @@ def get_teams_by_sub_t_id(sub_t_id: str):
     with Session(get_db_connection()) as session:
         teams = session.exec(select(Team).where(Team.sub_t_id == sub_t_id)).all()
         return teams    
+    
+load_dotenv()
+
+FACEIT_API_KEY = os.getenv("FACEIT_API_KEY")
+if not FACEIT_API_KEY:
+    raise RuntimeError("FACEIT_API_KEY not set.")
+
+def fetch_faceit_info(team_id: str):
+    try:
+        response = requests.get(
+            f'https://open.faceit.com/data/v4/teams/{team_id}',
+            headers={
+                "Authorization": f"Bearer {FACEIT_API_KEY}",
+                "Accept": "application/json",
+            },
+        )
+        response.raise_for_status()
+        id = response.json().get("team_id")
+        return id
+    except Exception as e:
+        return None

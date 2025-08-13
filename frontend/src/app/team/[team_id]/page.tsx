@@ -97,7 +97,7 @@ export default function Team({ params }: TeamProps) {
                 <div className="flex items-center gap-5">
                     <TeamLogo
                         team={team}
-                        styling="h-20 w-20 rounded-full border-4 border-border object-cover"
+                        styling="h-32 w-32 rounded-full border-4 border-border object-cover"
                     />
                     <div className="flex-1">
                         <h1 className="mb-3 text-3xl font-bold text-textPrimary">
@@ -120,43 +120,65 @@ export default function Team({ params }: TeamProps) {
                                     {team.seed}
                                 </span>
                             </div>
-                            <div className="flex flex-col gap-1">
-                                <span className="text-sm font-bold text-textSecondary">
-                                    Status:
-                                </span>
-                                <div>
-                                    {team.paid ? (
-                                        <span>Paid</span>
-                                    ) : (
-                                        <button
-                                            className="rounded-md bg-blue-500 px-3 py-1 text-sm font-medium text-textPrimary hover:bg-blue-400"
-                                            onClick={handlePay}
-                                        >
-                                            Pay
-                                        </button>
-                                    )}
-                                </div>
-                                <span
-                                    className={`rounded px-2 py-0.5 text-xs font-medium ${
-                                        team.paid === PaymentStatus.Paid
-                                            ? "bg-green-100 text-green-800"
+                            <div className="flex flex-col">
+                                <span>Paid Status</span>
+                                {team.paid === PaymentStatus.Unpaid ? (
+                                    <button
+                                        className="rounded-md bg-blue-500 px-3 py-1 text-sm font-medium text-textPrimary hover:bg-blue-400"
+                                        onClick={handlePay}
+                                    >
+                                        Pay
+                                    </button>
+                                ) : (
+                                    <span
+                                        className={`rounded px-2 py-0.5 text-xs font-medium ${
+                                            team.paid === PaymentStatus.Paid
+                                                ? "bg-green-100 text-green-800"
+                                                : team.paid ===
+                                                    PaymentStatus.Pending
+                                                  ? "bg-yellow-100 text-yellow-800"
+                                                  : "bg-red-100 text-red-800"
+                                        }`}
+                                    >
+                                        {team.paid === PaymentStatus.Paid
+                                            ? "Paid"
                                             : team.paid ===
                                                 PaymentStatus.Pending
-                                              ? "bg-yellow-100 text-yellow-800"
-                                              : "bg-red-100 text-red-800"
-                                    }`}
-                                >
-                                    {team.paid === PaymentStatus.Paid
-                                        ? "Paid"
-                                        : team.paid === PaymentStatus.Pending
-                                          ? "Pending"
-                                          : "Unpaid"}
-                                </span>
-                                <span className="text-lg font-medium text-textSecondary">
-                                    {team.joined_tournament
-                                        ? "Joined"
-                                        : "Not Joined"}
-                                </span>
+                                              ? "Pending"
+                                              : "Unpaid"}
+                                    </span>
+                                )}
+                            </div>
+                            <div className="flex flex-col">
+                                <span>Joined Tournament</span>
+                                {team.joined_tournament ? (
+                                    <span className="text-lg font-medium text-textSecondary">
+                                        {team.joined_tournament
+                                            ? "Joined"
+                                            : "Not Joined"}
+                                    </span>
+                                ) : (
+                                    <button
+                                        className="rounded-md bg-blue-500 px-3 py-1 text-sm font-medium text-textPrimary hover:bg-blue-400"
+                                        onClick={() => {
+                                            openInNewTab(
+                                                "https://www.faceit.com/en/championship/f56331e8-131a-4c50-b7db-eec8b010ff98/Off%20Season%20Shenanigans%20S8",
+                                            );
+                                            toastService.display({
+                                                body: (
+                                                    <div>
+                                                        <p>Confirm in Faceit</p>
+                                                        <button>Confirm</button>
+                                                    </div>
+                                                ),
+                                                durationMs: -1,
+                                                variant: "center",
+                                            });
+                                        }}
+                                    >
+                                        Join Tournament
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </div>

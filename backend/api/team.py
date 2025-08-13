@@ -12,7 +12,7 @@ from db.player.player_sql import get_players_of_team, insert_player
 from utils.faceit_api import fetch_from_api, fetch_from_file
 from db.team.team_model import Team
 from db.metadata.metadata_sql import query_last_update
-from db.team.team_sql import create_team, fetch_all_teams, get_team_info, get_team_info_by_name, get_team_matches, get_teams_by_sub_t_id, set_team_joined, set_team_paid
+from db.team.team_sql import create_team, fetch_all_teams, fetch_faceit_info, get_team_info, get_team_info_by_name, get_team_matches, get_teams_by_sub_t_id, set_team_joined, set_team_paid, set_team_seed
 
 router = APIRouter()
 
@@ -41,6 +41,12 @@ def get_teams_by_sub_tournament(sub_t_id: str):
     teams = get_teams_by_sub_t_id(sub_t_id)
     return teams
 
+@router.post("/seed/{team_id}")
+async def team_seed(request: Request, team_id: str):
+    data = await request.json()
+    seed = data.get("seed")
+    return set_team_seed(team_id, seed)
+
 @router.post("/paid/{team_id}")
 async def team_paid(request: Request, team_id: str):
     data = await request.json()
@@ -55,6 +61,28 @@ async def team_joined(request: Request, team_id: str):
 
 FACEIT_API_KEY = os.getenv("FACEIT_API_KEY")
 
+def extract_faceit_id_from_link(link: str):
+    match = re.search(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", link, re.IGNORECASE)
+    team_id = match.group(0) if match else None
+    if not team_id:
+        return None
+    return team_id
+
+
+@router.get("/test_faceit_link/{link}")
+async def test_faceit_link(link: str):
+    print(link)
+    if not link:
+        return {"id": "1"}
+
+    if team_id := extract_faceit_id_from_link(link):
+        if not fetch_faceit_info(team_id):
+            return {"id": "2"}
+
+        has_competed = get_team_info(team_id)
+        return {"id": team_id, "reregister": has_competed}
+
+    return {"id": "3"}
 
 
 REG_DEBUG = True

@@ -10,6 +10,7 @@ type SpinnerInputProps = {
     error?: string;
     disabled?: boolean;
     placeholder?: string;
+    loading?: boolean; // NEW
 };
 
 export default function SpinnerInput({
@@ -18,20 +19,19 @@ export default function SpinnerInput({
     error,
     disabled = false,
     placeholder = "",
+    loading = false,
 }: SpinnerInputProps) {
-    const [showFaceitLinkSpinner, setShowFaceitLinkSpinner] = useState(false);
-
     return (
         <div className={styles.container}>
             <BaseInput
-                type={"text"}
+                type="text"
                 value={value}
                 onChange={onChange}
                 error={error}
                 disabled={disabled}
                 placeholder={placeholder}
             >
-                {showFaceitLinkSpinner && <Loader className={styles.icon} />}
+                {loading && <Loader className={styles.icon} />}
             </BaseInput>
         </div>
     );

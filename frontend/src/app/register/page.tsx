@@ -9,6 +9,18 @@ import { useState } from "react";
 import ReRegisterModal from "./ReRegisterModal";
 import { PromiseReturn } from "@/types/Types";
 import { useRouter } from "next/navigation";
+import SpinnerInput from "@/shared/OSSForm/SpinnerInput/SpinnerInput";
+import { toastService } from "@/shared/toast/toastService";
+
+function extractFaceitIdFromLink(link: string): string | null {
+    const match = link.match(
+        /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i,
+    );
+    return match ? match[0] : null;
+}
+
+const faceitUrlRegex =
+    /^https:\/\/www\.faceit\.com\/en\/teams\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(\/.*)?$/i;
 
 export default function RegisterPage() {
     const router = useRouter();
@@ -16,11 +28,43 @@ export default function RegisterPage() {
     const [teamName, setTeamName] = useState("");
 
     const [teamLink, setTeamLink] = useState("");
-    const [faceitLinkError, setFaceitLinkError] = useState("");
-
-    const [players, setPlayers] = useState("");
+    const [checkingTeamLink, setCheckingTeamLink] = useState(false);
 
     const [showModal, setShowModal] = useState(false);
+
+    const handleFaceitLinkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setCheckingTeamLink(true);
+        setTeamLink(e.target.value);
+
+        if (!faceitUrlRegex.test(e.target.value)) {
+            setCheckingTeamLink(false);
+            return;
+        }
+
+        api.get(
+            `/team/test_faceit_link/${extractFaceitIdFromLink(e.target.value)}`,
+        ).then((data: any) => {
+            console.log(data);
+            if (data.id) {
+                setCheckingTeamLink(false);
+            }
+            if (data.reregister) {
+                toastService.display({
+                    body: (
+                        <div>
+                            <p>Would you like to reregister?</p>
+                            <div className="flex flex-row justify-end">
+                                <button>Yes</button>
+                                <button>No</button>
+                            </div>
+                        </div>
+                    ),
+                    durationMs: -1,
+                    variant: "center",
+                });
+            }
+        });
+    };
 
     const handleSubmit = async (e: React.FormEvent): Promise<PromiseReturn> => {
         e.preventDefault();
@@ -31,15 +75,12 @@ export default function RegisterPage() {
                 {
                     team_name: teamName,
                     faceit_link: teamLink,
-                    starters: players.split("\n"),
                 },
             );
             localStorage.setItem("team_id", response.team_id);
-            // return success
             return { success: true, result: response.team_id };
         } catch (err) {
             console.error("Submission error:", err);
-            // return failure
             return { success: false, result: null };
         }
     };
@@ -75,13 +116,14 @@ export default function RegisterPage() {
                             setTeamName(e.target.value);
                         }}
                     />
-                    <BaseInput
-                        type="text"
+                    <SpinnerInput
                         placeholder="Faceit Link"
                         value={teamLink}
                         onChange={(e) => {
-                            setTeamLink(e.target.value);
+                            // setTeamLink(e.target.value);
+                            handleFaceitLinkChange(e);
                         }}
+                        loading={checkingTeamLink}
                     />
                 </OSSForm>
             </UserForm>

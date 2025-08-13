@@ -6,7 +6,7 @@ import { api } from "@/lib/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import ProtectedRoute from "@/shared/ProtectedRoute";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import Seed from "./Seed";
+import SeedControl from "./SeedControl";
 
 type Filter = "name" | "paid" | "joined";
 
@@ -18,8 +18,6 @@ type TeamsResponse = {
 
 export default function ManageTeams() {
     const queryClient = useQueryClient();
-
-    const [seed, setSeed] = useState(0);
 
     const [allTeams, setAllTeams] = useState<Team[]>();
     const [filteredTeams, setFilteredTeams] = useState<Team[]>([]);
@@ -60,6 +58,14 @@ export default function ManageTeams() {
     const { data, isLoading, error } = useQuery<TeamsResponse, Error>({
         queryKey: ["teams"],
         queryFn: () => api.get<TeamsResponse>("/team/all"),
+    });
+
+    const seedMutation = useMutation({
+        mutationFn: ({ team_id, seed }: { team_id: string; seed: number }) =>
+            api.post(`/team/seed/${team_id}`, { seed }),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["teams"] });
+        },
     });
 
     const paidMutation = useMutation({
@@ -168,14 +174,18 @@ export default function ManageTeams() {
                                 key={i}
                                 className="relative flex flex-row rounded-md bg-firstBg p-4 text-textPrimary shadow-md"
                             >
-                                {/* Seed on the left, full vertical */}
                                 <div className="mr-4 flex flex-col items-center justify-center">
-                                    <Seed seed={seed} setSeed={setSeed} />
+                                    <SeedControl
+                                        seed={team.seed}
+                                        setSeed={(newSeed) =>
+                                            seedMutation.mutate({
+                                                team_id: team.team_id,
+                                                seed: newSeed,
+                                            })
+                                        }
+                                    />
                                 </div>
-
-                                {/* Team Info + Buttons */}
                                 <div className="flex flex-1 flex-col justify-between">
-                                    {/* Team name + indicators */}
                                     <div>
                                         <p className="text-2xl font-semibold">
                                             {team.team_name}
@@ -213,11 +223,9 @@ export default function ManageTeams() {
                                             </span>
                                         </div>
                                     </div>
-
-                                    {/* Buttons row at the bottom */}
                                     <div className="mt-4 flex flex-row gap-2">
                                         <button
-                                            className="rounded border border-border px-3 py-1 text-sm"
+                                            className="rounded border border-orange-500 px-3 py-1 text-sm hover:bg-orange-600"
                                             onClick={() =>
                                                 window.open(
                                                     `https://www.faceit.com/en/teams/${team.team_id}/leagues`,
@@ -228,7 +236,7 @@ export default function ManageTeams() {
                                             Visit Faceit
                                         </button>
                                         <button
-                                            className="rounded border border-border px-3 py-1 text-sm"
+                                            className="rounded border border-green-600 px-3 py-1 text-sm hover:bg-green-600"
                                             onClick={() =>
                                                 paidMutation.mutate({
                                                     team_id: team.team_id,
@@ -236,10 +244,10 @@ export default function ManageTeams() {
                                                 })
                                             }
                                         >
-                                            Set Paid
+                                            Confirm Paid
                                         </button>
                                         <button
-                                            className="rounded border border-border px-3 py-1 text-sm"
+                                            className="rounded border border-blue-500 px-3 py-1 text-sm hover:bg-blue-600"
                                             onClick={() =>
                                                 joinedMutation.mutate({
                                                     team_id: team.team_id,
@@ -247,7 +255,7 @@ export default function ManageTeams() {
                                                 })
                                             }
                                         >
-                                            Set Joined
+                                            Confirmed Joined
                                         </button>
                                     </div>
                                 </div>

@@ -10,7 +10,6 @@ if not FACEIT_API_KEY:
 
 def fetch_faceit_info(player_name: str):
     try:
-        
         response = requests.get(
             f'https://open.faceit.com/data/v4/players?nickname={player_name}',
             headers={
