@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { PaymentStatus, type Team } from "@/types/TeamModel";
+import { BooleanStatus, type Team } from "@/types/TeamModel";
 import { api } from "@/lib/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import ProtectedRoute from "@/shared/ProtectedRoute";
@@ -30,7 +30,7 @@ export default function ManageTeams() {
             win: 0,
             loss: 0,
             paid: 0,
-            joined_tournament: false,
+            joined_tournament: 0,
         },
     ]);
 
@@ -74,7 +74,7 @@ export default function ManageTeams() {
             paid,
         }: {
             team_id: string;
-            paid: PaymentStatus;
+            paid: BooleanStatus;
         }) => api.post(`/team/paid/${team_id}`, { paid }),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["teams"] });
@@ -194,32 +194,40 @@ export default function ManageTeams() {
                                             <span
                                                 className={`rounded px-2 py-0.5 text-xs font-medium ${
                                                     team.paid ===
-                                                    PaymentStatus.Paid
+                                                    BooleanStatus.True
                                                         ? "bg-green-100 text-green-800"
                                                         : team.paid ===
-                                                            PaymentStatus.Pending
+                                                            BooleanStatus.Pending
                                                           ? "bg-yellow-100 text-yellow-800"
                                                           : "bg-red-100 text-red-800"
                                                 }`}
                                             >
                                                 {team.paid ===
-                                                PaymentStatus.Paid
+                                                BooleanStatus.True
                                                     ? "Paid"
                                                     : team.paid ===
-                                                        PaymentStatus.Pending
+                                                        BooleanStatus.Pending
                                                       ? "Pending"
                                                       : "Unpaid"}
                                             </span>
                                             <span
                                                 className={`rounded px-2 py-0.5 text-xs font-medium ${
-                                                    team.joined_tournament
-                                                        ? "bg-blue-100 text-blue-800"
-                                                        : "bg-gray-100 text-gray-800"
+                                                    team.joined_tournament ===
+                                                    BooleanStatus.True
+                                                        ? "bg-green-100 text-green-800"
+                                                        : team.joined_tournament ===
+                                                            BooleanStatus.Pending
+                                                          ? "bg-yellow-100 text-yellow-800"
+                                                          : "bg-red-100 text-red-800"
                                                 }`}
                                             >
-                                                {team.joined_tournament
+                                                {team.joined_tournament ===
+                                                BooleanStatus.True
                                                     ? "Joined"
-                                                    : "Not Joined"}
+                                                    : team.joined_tournament ===
+                                                        BooleanStatus.Pending
+                                                      ? "Pending"
+                                                      : "Not Joined"}
                                             </span>
                                         </div>
                                     </div>

@@ -8,10 +8,12 @@ import { useState } from "react";
 
 type ReRegisterModalProps = {
     setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+    title?: string;
 };
 
 export default function ReRegisterModal({
     setShowModal,
+    title,
 }: ReRegisterModalProps) {
     const router = useRouter();
 
@@ -42,18 +44,21 @@ export default function ReRegisterModal({
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-[1px]">
-            <div className="w-[400px] max-w-full rounded-lg bg-firstBg p-6 shadow-lg">
-                <div className="flex flex-row items-end pb-4">
-                    <h1 className="flex-1 text-2xl font-bold text-textPrimary">
-                        Enter Team Name
+            <div className="w-[500px] max-w-[90vw] rounded-lg bg-firstBg p-6 shadow-lg">
+                <div className="flex flex-row items-center justify-between pb-4">
+                    <h1 className="truncate pr-4 text-2xl font-bold text-textPrimary">
+                        {title === "" ? "Re-Register" : title}
                     </h1>
                     <X
                         onClick={() => setShowModal(false)}
-                        className="rounded-md bg-none p-1 hover:bg-secondBg"
+                        className="flex-shrink-0 rounded-md bg-none p-1 hover:bg-secondBg"
                         height={32}
                         width={32}
                     />
                 </div>
+                <h2 className="text-xl font-bold text-textPrimary">
+                    Confirm Team Name
+                </h2>
                 <OSSForm
                     onSubmit={handleSubmit}
                     onSuccess={(id) => {

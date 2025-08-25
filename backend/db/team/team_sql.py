@@ -3,9 +3,10 @@ from dotenv import load_dotenv
 import requests
 from sqlmodel import Session, select
 from typing import List, Dict
+from db.metadata.metadata_sql import get_metadata_value
 from db.db import get_db_connection
 from db.team.team_model import Team
-from db.tournament.tournament_sql import get_sub_tournament_name_by_id, get_current_sub_tournament_by_name
+from db.tournament.tournament_sql import get_current_sub_tournament_id, get_current_tournament, get_sub_tournament_name_by_id, get_current_sub_tournament_by_name
 from db.match.match_model import Match
 
 def fetch_all_teams() -> Dict[str, List[Dict]]:
@@ -151,7 +152,7 @@ def get_team_matches(team_id: str) -> dict:
         
         return result
     
-def set_team_seed(team_id: str, seed: int):
+def set_team_seed(team_id: str, seed: int) -> bool:
     with Session(get_db_connection()) as session:
         stmt = select(Team).where(
             Team.team_id == team_id
@@ -161,10 +162,10 @@ def set_team_seed(team_id: str, seed: int):
         if team:
             team.seed = seed
             session.commit()
-            return
-    return
+            return True
+        return False
     
-def set_team_paid(team_id: str, paid: bool):
+def set_team_paid(team_id: str, paid: int) -> bool:
     with Session(get_db_connection()) as session:
         stmt = select(Team).where(
             Team.team_id == team_id
@@ -174,10 +175,10 @@ def set_team_paid(team_id: str, paid: bool):
         if team:
             team.paid = paid
             session.commit()
-            return
-    return
+            return True
+        return False
 
-def set_team_joined(team_id: str, joined: bool):
+def set_team_joined(team_id: str, joined: int) -> bool:
     with Session(get_db_connection()) as session:
         stmt = select(Team).where(
             Team.team_id == team_id
@@ -187,8 +188,8 @@ def set_team_joined(team_id: str, joined: bool):
         if team:
             team.joined_tournament = joined
             session.commit()
-            return
-    return
+            return True
+        return False
 
 def create_team(team: Team):
     if not team:
@@ -220,7 +221,17 @@ def fetch_faceit_info(team_id: str):
             },
         )
         response.raise_for_status()
+        print(response.json())
         id = response.json().get("team_id")
         return id
     except Exception as e:
+        print(e)
         return None
+    
+def check_already_registered(team_id: str):
+    current_tournament = get_current_sub_tournament_id()
+    
+    with Session(get_db_connection()) as session:
+        stmt = select(Team).where(Team.team_id == team_id).where(Team.sub_t_id == current_tournament)
+        team = session.exec(stmt).first()
+        return team

@@ -1,12 +1,12 @@
 "use client";
 
 import type { Match } from "@/types/Types";
-import { PaymentStatus, type Team } from "@/types/TeamModel";
+import { BooleanStatus, type Team } from "@/types/TeamModel";
 import { api } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import { formatDateOnly } from "@/lib/dateUtils";
 import { notFound } from "next/navigation";
-import { use, useEffect } from "react";
+import { ReactNode, use, useEffect } from "react";
 import TeamLogo from "@/shared/bracket/TeamLogo";
 import { toastService } from "@/shared/toast/toastService";
 
@@ -63,10 +63,43 @@ export default function Team({ params }: TeamProps) {
     const { team, matches } = data!;
 
     const handlePay = async () => {
-        await api.post(`/team/paid/${team_id}`, { paid: true });
-        toastService.success(<p>Team Marked Paid</p>, "Payment Successful", {
-            durationMs: 3000,
-        });
+        await api
+            .post(`/team/paid/${team_id}`, { paid: 2 })
+            .then((res: any) => {
+                if (res.success) {
+                    toastService.success(
+                        <p>Updated paid status, waiting for confirmation</p>,
+                        "Team Marked Paid",
+                        {
+                            durationMs: 3000,
+                        },
+                    );
+                } else {
+                    toastService.error(<p>{res.message}</p>, "Update failed", {
+                        durationMs: 3000,
+                    });
+                }
+            });
+    };
+
+    const handleJoined = async () => {
+        await api
+            .post(`/team/joined/${team_id}`, { joined: 2 })
+            .then((res: any) => {
+                if (res.success) {
+                    toastService.success(
+                        <p>Updated joined status, waiting for confirmation</p>,
+                        "Team Marked Joined",
+                        {
+                            durationMs: 3000,
+                        },
+                    );
+                } else {
+                    toastService.error(<p>{res.message}</p>, "Update failed", {
+                        durationMs: 3000,
+                    });
+                }
+            });
     };
 
     const formatDate = (timestamp: number) => {
@@ -92,7 +125,6 @@ export default function Team({ params }: TeamProps) {
 
     return (
         <div className="mx-auto min-h-screen max-w-[1200px] p-5 font-sans">
-            {/* Team Header */}
             <div className="mb-8 rounded-xl bg-firstBg p-8 shadow-md">
                 <div className="flex items-center gap-5">
                     <TeamLogo
@@ -100,86 +132,80 @@ export default function Team({ params }: TeamProps) {
                         styling="h-32 w-32 rounded-full border-4 border-border object-cover"
                     />
                     <div className="flex-1">
-                        <h1 className="mb-3 text-3xl font-bold text-textPrimary">
-                            {team.team_name}
-                        </h1>
+                        <div className="flex flex-row gap-x-2">
+                            <h1 className="mb-3 text-3xl font-bold text-textPrimary">
+                                {team.team_name}
+                            </h1>
+                            <h2 className="mt-1 text-2xl font-bold text-textSecondary">{`(${team.win}-${team.loss})`}</h2>
+                        </div>
                         <div className="flex flex-wrap gap-8 text-textPrimary">
-                            <div className="flex flex-col gap-1">
-                                <span className="text-sm font-bold text-textSecondary">
-                                    Record:
-                                </span>
-                                <span className="text-lg font-medium text-textSecondary">
-                                    {team.win}-{team.loss}
-                                </span>
-                            </div>
-                            <div className="flex flex-col gap-1">
-                                <span className="text-sm font-bold text-textSecondary">
-                                    Seed:
-                                </span>
-                                <span className="text-lg font-medium text-textSecondary">
-                                    {team.seed}
-                                </span>
-                            </div>
-                            <div className="flex flex-col">
-                                <span>Paid Status</span>
-                                {team.paid === PaymentStatus.Unpaid ? (
-                                    <button
-                                        className="rounded-md bg-blue-500 px-3 py-1 text-sm font-medium text-textPrimary hover:bg-blue-400"
-                                        onClick={handlePay}
-                                    >
-                                        Pay
-                                    </button>
-                                ) : (
-                                    <span
-                                        className={`rounded px-2 py-0.5 text-xs font-medium ${
-                                            team.paid === PaymentStatus.Paid
-                                                ? "bg-green-100 text-green-800"
+                            <TeamDetail
+                                title="Seed:"
+                                body={team.seed === -1 ? "-" : team.seed}
+                            />
+                            <TeamDetail
+                                title="Paid:"
+                                body={
+                                    team.paid === BooleanStatus.False ? (
+                                        <button
+                                            className="rounded-md bg-blue-500 px-3 py-1 text-sm font-medium text-textPrimary hover:bg-blue-400"
+                                            onClick={handlePay}
+                                        >
+                                            Pay
+                                        </button>
+                                    ) : (
+                                        <span
+                                            className={`rounded px-2 py-0.5 text-xs font-medium ${
+                                                team.paid === BooleanStatus.True
+                                                    ? "bg-green-100 text-green-800"
+                                                    : team.paid ===
+                                                        BooleanStatus.Pending
+                                                      ? "bg-yellow-100 text-yellow-800"
+                                                      : "bg-red-100 text-red-800"
+                                            }`}
+                                        >
+                                            {team.paid === BooleanStatus.True
+                                                ? "Paid"
                                                 : team.paid ===
-                                                    PaymentStatus.Pending
-                                                  ? "bg-yellow-100 text-yellow-800"
-                                                  : "bg-red-100 text-red-800"
-                                        }`}
-                                    >
-                                        {team.paid === PaymentStatus.Paid
-                                            ? "Paid"
-                                            : team.paid ===
-                                                PaymentStatus.Pending
-                                              ? "Pending"
-                                              : "Unpaid"}
-                                    </span>
-                                )}
-                            </div>
-                            <div className="flex flex-col">
-                                <span>Joined Tournament</span>
-                                {team.joined_tournament ? (
-                                    <span className="text-lg font-medium text-textSecondary">
-                                        {team.joined_tournament
-                                            ? "Joined"
-                                            : "Not Joined"}
-                                    </span>
-                                ) : (
-                                    <button
-                                        className="rounded-md bg-blue-500 px-3 py-1 text-sm font-medium text-textPrimary hover:bg-blue-400"
-                                        onClick={() => {
-                                            openInNewTab(
-                                                "https://www.faceit.com/en/championship/f56331e8-131a-4c50-b7db-eec8b010ff98/Off%20Season%20Shenanigans%20S8",
-                                            );
-                                            toastService.display({
-                                                body: (
-                                                    <div>
-                                                        <p>Confirm in Faceit</p>
-                                                        <button>Confirm</button>
-                                                    </div>
-                                                ),
-                                                durationMs: -1,
-                                                variant: "center",
-                                            });
-                                        }}
-                                    >
-                                        Join Tournament
-                                    </button>
-                                )}
-                            </div>
+                                                    BooleanStatus.Pending
+                                                  ? "Pending"
+                                                  : "Unpaid"}
+                                        </span>
+                                    )
+                                }
+                            />
+                            <TeamDetail
+                                title="Joined Tournament:"
+                                body={
+                                    team.joined_tournament ===
+                                    BooleanStatus.False ? (
+                                        <button
+                                            className="rounded-md bg-blue-500 px-3 py-1 text-sm font-medium text-textPrimary hover:bg-blue-400"
+                                            onClick={handlePay}
+                                        >
+                                            Pay
+                                        </button>
+                                    ) : (
+                                        <span
+                                            className={`rounded px-2 py-0.5 text-xs font-medium ${
+                                                team.paid === BooleanStatus.True
+                                                    ? "bg-green-100 text-green-800"
+                                                    : team.paid ===
+                                                        BooleanStatus.Pending
+                                                      ? "bg-yellow-100 text-yellow-800"
+                                                      : "bg-red-100 text-red-800"
+                                            }`}
+                                        >
+                                            {team.paid === BooleanStatus.True
+                                                ? "Paid"
+                                                : team.paid ===
+                                                    BooleanStatus.Pending
+                                                  ? "Pending"
+                                                  : "Unpaid"}
+                                        </span>
+                                    )
+                                }
+                            />
                         </div>
                     </div>
                 </div>
@@ -249,6 +275,24 @@ export default function Team({ params }: TeamProps) {
                     </div>
                 )}
             </div>
+        </div>
+    );
+}
+
+type TeamDetailProps = {
+    title: string;
+    body: ReactNode | string;
+};
+
+function TeamDetail({ title, body }: TeamDetailProps) {
+    return (
+        <div className="flex flex-col items-center gap-1">
+            <span className="text-sm font-bold text-textSecondary">
+                {title}
+            </span>
+            <span className="text-lg font-medium text-textSecondary">
+                {body}
+            </span>
         </div>
     );
 }

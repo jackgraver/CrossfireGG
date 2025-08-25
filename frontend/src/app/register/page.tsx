@@ -31,6 +31,7 @@ export default function RegisterPage() {
     const [checkingTeamLink, setCheckingTeamLink] = useState(false);
 
     const [showModal, setShowModal] = useState(false);
+    const [modalTitle, setModalTitle] = useState("");
 
     const handleFaceitLinkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setCheckingTeamLink(true);
@@ -45,23 +46,48 @@ export default function RegisterPage() {
             `/team/test_faceit_link/${extractFaceitIdFromLink(e.target.value)}`,
         ).then((data: any) => {
             console.log(data);
-            if (data.id) {
+            if (data.status === "error") {
                 setCheckingTeamLink(false);
+                switch (data.code) {
+                    case "-1":
+                        toastService.error(<p>{data.message}</p>, "Error");
+                        break;
+                    case "-2":
+                        toastService.error(<p>{data.message}</p>, "Error");
+                        break;
+                }
             }
-            if (data.reregister) {
-                toastService.display({
-                    body: (
-                        <div>
-                            <p>Would you like to reregister?</p>
-                            <div className="flex flex-row justify-end">
-                                <button>Yes</button>
-                                <button>No</button>
-                            </div>
-                        </div>
-                    ),
-                    durationMs: -1,
-                    variant: "center",
-                });
+            if (data.status === "success") {
+                switch (data.code) {
+                    case 0:
+                        setCheckingTeamLink(false);
+                        break;
+                    case 1:
+                        setCheckingTeamLink(false);
+                        setModalTitle("We see you are a returning team");
+                        setShowModal(true);
+                        break;
+                    case 2:
+                        const toastId = toastService.display({
+                            title: "Team already registered",
+                            body: (
+                                <div className="flex items-center justify-center">
+                                    <button
+                                        className="rounded-md bg-blue-500 p-2 hover:bg-blue-600"
+                                        onClick={() => {
+                                            toastService.dismiss(toastId);
+                                            router.push(`/team/${data.id}`);
+                                        }}
+                                    >
+                                        View Team
+                                    </button>
+                                </div>
+                            ),
+                            durationMs: -1,
+                            variant: "center",
+                        });
+                        break;
+                }
             }
         });
     };
@@ -87,7 +113,12 @@ export default function RegisterPage() {
 
     return (
         <>
-            {showModal && <ReRegisterModal setShowModal={setShowModal} />}
+            {showModal && (
+                <ReRegisterModal
+                    setShowModal={setShowModal}
+                    title={modalTitle}
+                />
+            )}
             <UserForm>
                 <h1 className="text-2xl font-bold text-textPrimary">
                     Register for OSS

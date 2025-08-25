@@ -7,12 +7,12 @@ export type Team = {
     seed: number; // default -1
     win: number; // default 0
     loss: number; // default 0
-    paid: PaymentStatus; // default 1
-    joined_tournament: boolean; // default 1
+    paid: BooleanStatus; // default 1
+    joined_tournament: BooleanStatus; // default 1
 };
 
-export enum PaymentStatus {
-    Unpaid = 0,
-    Paid = 1,
+export enum BooleanStatus {
+    False = 0,
+    True = 1,
     Pending = 2,
 }
