@@ -6,6 +6,7 @@ from fastapi.concurrency import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
 
 from api.auth import verify_api_key, verify_bot_token
+from db.db import get_db_connection
 
 from .user import router as user_router
 from .match import router as match_router
@@ -35,6 +36,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.get("/")
+def root():
+    get_db_connection()
+    return {"hello"}
 
 # Global middleware
 @app.middleware("http")
