@@ -12,7 +12,7 @@ def init_tables():
     SQLModel.metadata.create_all(engine)
     
 def generate_static_data():
-    if not check_roles_created():
+    if check_roles_created():
         with Session(engine) as session:    
             admin = Role(role_id=1, role_name='ADMIN')
             production_lead = Role(role_id=2, role_name='PRODUCTION_LEAD')
@@ -22,7 +22,7 @@ def generate_static_data():
             session.add(production_lead)
             session.add(production)
             session.commit()
-    if not check_sudo_role():
+    if check_sudo_role():
         with Session(engine) as session:    
             sudo = User(user_id='e6148f84-7998-4a98-969b-025699d471f0',
                         user_name='SUDO',
@@ -40,9 +40,9 @@ def generate_static_data():
 def check_roles_created() -> bool:
     with Session(engine) as session:
         roles = session.exec(select(Role)).first()
-        return roles != None
+        return roles == None
     
 def check_sudo_role() -> bool:
     with Session(engine) as session:
-        sudo_user = session.exec(select(User).where(User.email == 'sudo@test.net')).first()
-        return sudo_user != None
+        sudo_user = session.exec(select(User).where(User.email == 'sudo')).first()
+        return sudo_user == None
