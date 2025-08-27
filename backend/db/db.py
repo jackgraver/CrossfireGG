@@ -1,3 +1,4 @@
+import os
 from sqlmodel import SQLModel, Session, create_engine, select
 from db.user.user_model import Role, User, UserRole
 
@@ -23,19 +24,23 @@ def generate_static_data():
             session.add(production)
             session.commit()
     if check_sudo_role():
-        with Session(engine) as session:    
-            sudo = User(user_id='e6148f84-7998-4a98-969b-025699d471f0',
-                        user_name='SUDO',
-                        email='sudo@test.net',
-                        password='$2b$12$QA3XuIEfxPpQLSFuXZUQ.OrO55Fw4F4WiBoSYQYkaO2Zrcooy7QQu')
-        
-            session.add(sudo)
-            sudo_admin = UserRole(user_id='e6148f84-7998-4a98-969b-025699d471f0', role_id=1)
-            sudo_prod_lead = UserRole(user_id='e6148f84-7998-4a98-969b-025699d471f0', role_id=2)
+        username = os.getenv("SUPER_ADMIN_USERNAME")
+        email = os.getenv("SUPER_ADMIN_EMAIL")
+        password = os.getenv("SUPER_ADMIN_PASS")
+        if username and email and password:
+            with Session(engine) as session:    
+                sudo = User(user_id='e6148f84-7998-4a98-969b-025699d471f0',
+                            user_name=username,
+                            email=email,
+                            password=password)
             
-            session.add(sudo_admin)
-            session.add(sudo_prod_lead)
-            session.commit()
+                session.add(sudo)
+                sudo_admin = UserRole(user_id='e6148f84-7998-4a98-969b-025699d471f0', role_id=1)
+                sudo_prod_lead = UserRole(user_id='e6148f84-7998-4a98-969b-025699d471f0', role_id=2)
+                
+                session.add(sudo_admin)
+                session.add(sudo_prod_lead)
+                session.commit()
         
 def check_roles_created() -> bool:
     with Session(engine) as session:
@@ -44,5 +49,5 @@ def check_roles_created() -> bool:
     
 def check_sudo_role() -> bool:
     with Session(engine) as session:
-        sudo_user = session.exec(select(User).where(User.email == 'sudo')).first()
+        sudo_user = session.exec(select(User).where(User.user_id == 'e6148f84-7998-4a98-969b-025699d471f0')).first()
         return sudo_user == None
