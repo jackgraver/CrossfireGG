@@ -1,6 +1,13 @@
+import os
 from sqlmodel import SQLModel, create_engine
 
-engine = create_engine("sqlite:///oss.db", echo=False)
+from dotenv import load_dotenv
+
+load_dotenv()
+
+SQLITE_PATH = os.getenv("SQLITE_PATH")
+
+engine = create_engine(SQLITE_PATH, echo=False)
 
 def get_db_connection():
     init_tables()
