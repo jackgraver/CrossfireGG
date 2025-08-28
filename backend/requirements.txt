@@ -16,7 +16,7 @@ bcrypt==4.0.1
 discord.py==2.5.2
 
 # HTTP & API
-requests==2.31.0
+requests==2.32.4
 aiohttp==3.12.15
 
 # Environment & Utilities
