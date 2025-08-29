@@ -5,6 +5,7 @@ from pathlib import Path
 import json
 import requests
 
+from bot.bot import setup_match_channels
 from db.db import get_db_connection
 from db.match.match_sql import fetch_all_matches, write_match, write_map
 from db.team.team_sql import get_team_record, update_team_record
@@ -24,7 +25,7 @@ MATCHES_FILE = Path(".test_data/flush_matches.json")
 PO_MATCHES_FILE = Path('.test_data/flush_playoffs_matches.json')
 DEBUG = True 
 
-def process_matches():
+async def process_matches():
     try:
         current_sub_t_id = get_current_sub_tournament_id()
         current_stage = get_metadata_value("current_stage")
@@ -51,7 +52,8 @@ def process_matches():
         all_matches = fetch_all_matches()
         processed_matches = {match["match_id"] for group in all_matches.values() for match in group}
         nonprocess_matches = [match for match in matches if match["match_id"] not in processed_matches] 
-
+        
+        returned_matches = []
         for proc_match in reversed(nonprocess_matches):  
             if proc_match.get("status") == "CANCELLED":
                 continue
@@ -105,13 +107,15 @@ def process_matches():
                 "team1_score": results.get("score", {}).get("faction1", 0),
                 "team2_score": results.get("score", {}).get("faction2", 0)
             }               
+            returned_matches.append({"team1_id": match["team1_id"], "team2_id": match["team2_id"]})
             write_match(match)
             
             update_team_record(team1, won=(team1["team_id"] == winner_id), current_sub_t_id=current_sub_t_id)
             update_team_record(team2, won=(team2["team_id"] == winner_id), current_sub_t_id=current_sub_t_id)
             
             process_stats(match.get("match_id"), current_sub_t_id)
-            
+        
+        await setup_match_channels(None, returned_matches) 
         return matches
 
     except (requests.RequestException, json.JSONDecodeError, FileNotFoundError) as err:

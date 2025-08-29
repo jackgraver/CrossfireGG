@@ -29,8 +29,8 @@ export default function NavBar() {
     const { user } = useUser();
 
     useEffect(() => {
-        const darkPref = localStorage.getItem("theme") === "dark";
-        if (darkPref) {
+        const darkPref = localStorage.getItem("theme");
+        if (!darkPref || darkPref === "dark") {
             document.documentElement.classList.add("dark");
         }
     }, []);
@@ -56,9 +56,8 @@ export default function NavBar() {
                             >
                                 <span className="sr-only">Open main menu</span>
                                 <svg
-                                    className={`${
-                                        isMenuOpen ? "hidden" : "block"
-                                    } h-6 w-6`}
+                                    className={`${isMenuOpen ? "hidden" : "block"
+                                        } h-6 w-6`}
                                     xmlns="http://www.w3.org/2000/svg"
                                     fill="none"
                                     viewBox="0 0 24 24"
@@ -72,9 +71,8 @@ export default function NavBar() {
                                     />
                                 </svg>
                                 <svg
-                                    className={`${
-                                        isMenuOpen ? "block" : "hidden"
-                                    } h-6 w-6`}
+                                    className={`${isMenuOpen ? "block" : "hidden"
+                                        } h-6 w-6`}
                                     xmlns="http://www.w3.org/2000/svg"
                                     fill="none"
                                     viewBox="0 0 24 24"
@@ -149,17 +147,17 @@ export default function NavBar() {
                                             "PRODUCTION_LEAD",
                                             "PRODUCTION",
                                         ) && (
-                                            <Link
-                                                href="/casting"
-                                                className="block px-4 py-2 text-sm text-textSecondary hover:bg-secondBg"
-                                                role="menuitem"
-                                                onClick={() =>
-                                                    setIsMenuOpen(false)
-                                                }
-                                            >
-                                                Casting
-                                            </Link>
-                                        )}
+                                                <Link
+                                                    href="/casting"
+                                                    className="block px-4 py-2 text-sm text-textSecondary hover:bg-secondBg"
+                                                    role="menuitem"
+                                                    onClick={() =>
+                                                        setIsMenuOpen(false)
+                                                    }
+                                                >
+                                                    Casting
+                                                </Link>
+                                            )}
                                         {matchesRole(user?.roles, "ADMIN") && (
                                             <Link
                                                 href="/admin"

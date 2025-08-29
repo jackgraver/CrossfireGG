@@ -12,11 +12,9 @@
     --color-text-primary: hsl(0, 0%, 0%);
     --color-text-secondary: hsl(0, 0%, 50%);
     --color-border: hsl(0, 0%, 80%);
-    --color-gradient: linear-gradient(
-        0deg,
-        var(--color-bg),
-        var(--color-bg-light)
-    );
+    --color-gradient: linear-gradient(0deg,
+            var(--color-bg),
+            var(--color-bg-light));
 }
 
 .dark {
@@ -29,11 +27,9 @@
     --color-text-primary: hsl(0, 0%, 95%);
     --color-text-secondary: hsl(0, 0%, 70%);
     --color-border: hsl(0, 0%, 30%);
-    --color-gradient: linear-gradient(
-        0deg,
-        var(--color-bg),
-        var(--color-bg-dark)
-    );
+    --color-gradient: linear-gradient(0deg,
+            var(--color-bg),
+            var(--color-bg-dark));
 }
 
 html,
@@ -47,11 +43,13 @@ body,
 }
 
 button {
-    background: var(--color-bg-light);
+    background: #4b4a88;
+    padding: 0% 2%;
+    border-radius: 5px;
 }
 
 button:hover {
-    background-color: var(--color-bg-extra-light);
+    background-color: #373663;
 }
 
 .grow {
@@ -68,7 +66,8 @@ button:hover {
 
 .limit-width {
     display: inline-block;
-    max-width: 60ch; /* ~25 characters before wrapping */
+    max-width: 60ch;
+    /* ~25 characters before wrapping */
     white-space: normal;
     word-break: keep-all;
 }

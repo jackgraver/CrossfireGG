@@ -108,13 +108,13 @@ def update_team_record(team: dict, won: bool, current_sub_t_id: str = None):
         session.add(new_team)
         session.commit()
 
-def get_team_info(team_id: str) -> dict:
+def get_team_info(team_id: str):
     if not team_id:
         return {}   
     with Session(get_db_connection()) as session:
         stmt = select(Team).where(Team.team_id == team_id)
         team = session.exec(stmt).first()
-        return team.model_dump() if team else {}
+        return team if team else None
     
 def get_team_info_by_name(team_name: str) -> dict:
     if not team_name:

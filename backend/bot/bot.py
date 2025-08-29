@@ -3,6 +3,8 @@ import json
 import discord
 from discord.ext import commands
 
+from db.team.team_sql import get_team_info
+
 intents = discord.Intents.default()
 intents.message_content = True
 bot = commands.Bot(command_prefix="!", intents=intents)
@@ -23,18 +25,27 @@ async def create_channels(interaction: discord.Interaction):
     await setup_match_channels(interaction.guild)
     await interaction.followup.send("✅ Channels set up!")
 
-async def setup_match_channels(guild: discord.Guild):
-    try:
-        with open(".test_data/sample_bot_matches.json", "r") as f:
-            config = json.load(f)
-    except Exception as e:
-        print(f"Error loading match data: {e}")
-        return
+async def setup_match_channels(guild: discord.Guild, matches = None):
+    if not matches:
+        try:
+            with open(".test_data/sample_bot_matches.json", "r") as f:
+                config = json.load(f)
+        except Exception as e:
+            print(f"Error loading match data: {e}")
+            return
+    else:
+        config = matches
 
     try:
         for entry in config:
-            team1_name = entry["team1"]
-            team2_name = entry["team2"]
+            team1 = get_team_info(entry["team1_id"])
+            team2 = get_team_info(entry["team2_id"])
+            
+            if not team1 or not team2:
+                continue
+            
+            team1_name = team1.team_name
+            team2_name = team2.team_name
             channel_name = f"{team1_name}-vs-{team2_name}".lower().replace(" ", "-")
 
             # Find or create roles

@@ -14,8 +14,8 @@ from datetime import datetime
 router = APIRouter()
 
 @router.get("/refresh")
-def refresh_teams():
-    process_matches()
+async def refresh_teams():
+    await process_matches()
     write_metadata("last_refresh", str(int(datetime.now().timestamp())))
     return {"teams:": [], "matches": []}
 
