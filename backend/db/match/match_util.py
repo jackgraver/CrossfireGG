@@ -107,7 +107,7 @@ async def process_matches():
                 "team1_score": results.get("score", {}).get("faction1", 0),
                 "team2_score": results.get("score", {}).get("faction2", 0)
             }               
-            returned_matches.append({"team1_id": match["team1_id"], "team2_id": match["team2_id"]})
+            returned_matches.append({"team1_id": match["team1_id"], "team2_id": match["team2_id"], "round": match["round"], "date": match["scheduled_at"]})
             write_match(match)
             
             update_team_record(team1, won=(team1["team_id"] == winner_id), current_sub_t_id=current_sub_t_id)
@@ -115,7 +115,7 @@ async def process_matches():
             
             process_stats(match.get("match_id"), current_sub_t_id)
         
-        await setup_match_channels(None, returned_matches) 
+        await setup_match_channels(matches=returned_matches, delete=False) 
         return matches
 
     except (requests.RequestException, json.JSONDecodeError, FileNotFoundError) as err:

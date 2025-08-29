@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import ManageTournaments from "./components/tournaments";
 import ManageUsers from "./components/users";
@@ -14,7 +14,10 @@ export default function Admin() {
             <div className="flex flex-col gap-y-4">
                 <h1>Admin Configuation</h1>
                 <div>
-                    <button onClick={() => api.get("/match/refresh")}>
+                    <button
+                        className="rounded-md bg-gray-600 p-2"
+                        onClick={() => api.get("/match/refresh")}
+                    >
                         Refresh Teams
                     </button>
                     {/* <ManageTournaments /> */}

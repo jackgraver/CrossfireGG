@@ -12,9 +12,11 @@
     --color-text-primary: hsl(0, 0%, 0%);
     --color-text-secondary: hsl(0, 0%, 50%);
     --color-border: hsl(0, 0%, 80%);
-    --color-gradient: linear-gradient(0deg,
-            var(--color-bg),
-            var(--color-bg-light));
+    --color-gradient: linear-gradient(
+        0deg,
+        var(--color-bg),
+        var(--color-bg-light)
+    );
 }
 
 .dark {
@@ -27,9 +29,11 @@
     --color-text-primary: hsl(0, 0%, 95%);
     --color-text-secondary: hsl(0, 0%, 70%);
     --color-border: hsl(0, 0%, 30%);
-    --color-gradient: linear-gradient(0deg,
-            var(--color-bg),
-            var(--color-bg-dark));
+    --color-gradient: linear-gradient(
+        0deg,
+        var(--color-bg),
+        var(--color-bg-dark)
+    );
 }
 
 html,
@@ -42,7 +46,7 @@ body,
     padding: 0;
 }
 
-button {
+/* button {
     background: #4b4a88;
     padding: 0% 2%;
     border-radius: 5px;
@@ -50,7 +54,7 @@ button {
 
 button:hover {
     background-color: #373663;
-}
+} */
 
 .grow {
     transition: all 0.2s ease-in-out;

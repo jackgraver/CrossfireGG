@@ -87,3 +87,7 @@ todo.md
 o_frontend/
 
 _*
+
+stress_test.py
+
+*.db-*
