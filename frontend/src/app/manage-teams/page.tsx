@@ -45,7 +45,6 @@ export default function ManageTeams() {
                 );
                 break;
             case "paid":
-                console.log(typeof allTeams[0].paid);
                 res = res.filter((team) => team.paid === f);
                 break;
             case "joined":
@@ -97,13 +96,11 @@ export default function ManageTeams() {
     const handleChange = (index: number, field: string, value: any) => {
         const updated = [...newTeams];
         updated[index] = { ...updated[index], [field]: value };
-        console.log(updated);
         setNewTeams(updated);
     };
 
     useEffect(() => {
         if (data) {
-            console.log(data.reg_season);
             const combined = [...data.reg_season, ...data.playoffs];
             setAllTeams(combined);
             setFilteredTeams(combined.sort((a, b) => a.seed - b.seed));

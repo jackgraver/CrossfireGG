@@ -41,7 +41,6 @@ export default function SignIn() {
         onSuccess: async (data) => {
             try {
                 const userData = await api.get<User>("/user/user-role");
-                console.log("this?");
                 setUser(userData); // ✅ now typed correctly
                 router.push("/");
             } catch (err) {

@@ -55,9 +55,15 @@ def fetch_all_matches() -> Dict[str, List[Dict]]:
         for m in results:
             match_dict = m.model_dump()
 
-            # Fetch team information directly instead of using get_team_info
-            team1_stmt = select(Team).where(Team.team_id == m.team1_id)
-            team2_stmt = select(Team).where(Team.team_id == m.team2_id)
+            # Fetch team information based on both team_id AND sub_t_id to get the correct version
+            team1_stmt = select(Team).where(
+                Team.team_id == m.team1_id,
+                Team.sub_t_id == m.sub_t_id
+            )
+            team2_stmt = select(Team).where(
+                Team.team_id == m.team2_id,
+                Team.sub_t_id == m.sub_t_id
+            )
             
             team1 = session.exec(team1_stmt).first()
             team2 = session.exec(team2_stmt).first()

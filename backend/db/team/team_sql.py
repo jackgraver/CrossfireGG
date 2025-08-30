@@ -37,6 +37,12 @@ def fetch_all_teams() -> Dict[str, List[Dict]]:
             "playoffs": playoffs_teams
         }
     
+def get_team_names() -> List[str]:
+    with Session(get_db_connection()) as session:
+        stmt = select(Team).where(Team.sub_t_id == get_current_sub_tournament_id())
+        teams = session.exec(stmt).all()
+        return [team.team_name for team in teams]
+
 def get_team_record(team_id: str, sub_t_id: str = None, tournament_name: str = None) -> str:
     with Session(get_db_connection()) as session:
         if sub_t_id:
@@ -221,11 +227,10 @@ def fetch_faceit_info(team_id: str):
             },
         )
         response.raise_for_status()
-        print(response.json())
         id = response.json().get("team_id")
         return id
     except Exception as e:
-        print(e)
+        print('Exception fetching faceit info', e)
         return None
     
 def check_already_registered(team_id: str):

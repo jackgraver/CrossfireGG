@@ -2,58 +2,63 @@ import type { Match } from "../../types/Types";
 import type { Team } from "@/types/TeamModel";
 import RoundSection from "./RoundSection";
 import RoundCard from "./RoundCard";
-import { groupMatchesByRoundAndSort } from "./Bracket.util";
+import {
+    filterAndSortMatchesByRound,
+    groupMatchesByRoundAndSort,
+} from "./Bracket.util";
 
 type BracketProps = {
-    teams: Team[];
     matches: Match[];
 };
 
-export default function RegularSeasonBracket({ teams, matches }: BracketProps) {
-    console.log("matches", matches);
-    const rounds = groupMatchesByRoundAndSort(matches);
-
-    const qualifiedTeams: Team[] = teams.filter((team) => team.win >= 3);
-    const eliminatedTeams: Team[] = teams.filter((team) => team.loss >= 3);
-
+export default function RegularSeasonBracket({ matches }: BracketProps) {
     return (
         <div className="flex flex-row items-center overflow-x-auto">
             <RoundSection round_num={1}>
-                <RoundCard round="0-0" matches={rounds.get("0-0")} />
+                <RoundCard
+                    round="0-0"
+                    matches={filterAndSortMatchesByRound(matches, "0-0")}
+                />
             </RoundSection>
-
             <RoundSection round_num={2}>
-                <RoundCard round="1-0" matches={rounds.get("1-0")} />
-                <RoundCard round="0-1" matches={rounds.get("0-1")} />
+                <RoundCard
+                    round="1-0"
+                    matches={filterAndSortMatchesByRound(matches, "1-0")}
+                />
+                <RoundCard
+                    round="0-1"
+                    matches={filterAndSortMatchesByRound(matches, "0-1")}
+                />
             </RoundSection>
-
             <RoundSection round_num={3}>
-                <RoundCard round="2-0" matches={rounds.get("2-0")} />
-                <RoundCard round="1-1" matches={rounds.get("1-1")} />
-                <RoundCard round="0-2" matches={rounds.get("0-2")} />
+                <RoundCard
+                    round="2-0"
+                    matches={filterAndSortMatchesByRound(matches, "2-0")}
+                />
+                <RoundCard
+                    round="1-1"
+                    matches={filterAndSortMatchesByRound(matches, "1-1")}
+                />
+                <RoundCard
+                    round="0-2"
+                    matches={filterAndSortMatchesByRound(matches, "0-2")}
+                />
             </RoundSection>
-
             <RoundSection round_num={4}>
-                {/* <div>
-                    {qualifiedTeams
-                        .filter((t) => t.loss === 0)
-                        .map((t, i) => (
-                            <QualElimCard key={i} team={t} qualified={true} />
-                        ))}
-                </div> */}
-                <RoundCard round="2-1" matches={rounds.get("2-1")} />{" "}
-                <RoundCard round="1-2" matches={rounds.get("1-2")} />
-                {/* <div>
-                    {eliminatedTeams
-                        .filter((t) => t.win === 0)
-                        .map((t, i) => (
-                            <QualElimCard key={i} team={t} qualified={false} />
-                        ))}
-                </div> */}
+                <RoundCard
+                    round="2-1"
+                    matches={filterAndSortMatchesByRound(matches, "2-1")}
+                />
+                <RoundCard
+                    round="1-2"
+                    matches={filterAndSortMatchesByRound(matches, "1-2")}
+                />
             </RoundSection>
-
             <RoundSection round_num={5}>
-                <RoundCard round="2-2" matches={rounds.get("2-2")} />
+                <RoundCard
+                    round="2-2"
+                    matches={filterAndSortMatchesByRound(matches, "2-2")}
+                />
             </RoundSection>
         </div>
     );

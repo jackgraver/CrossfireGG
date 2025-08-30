@@ -114,9 +114,11 @@ export default function Home() {
                 </div>
                 <RegisterForTournament />
             </div>
-            <div className="mb-8">
-                <NonFinishedMatches matches={nonFinishedMatches} />
-            </div>
+            {nonFinishedMatches.length > 0 && (
+                <div className="mb-8">
+                    <NonFinishedMatches matches={nonFinishedMatches} />
+                </div>
+            )}
             <div className="my-6">
                 <ViewSelector
                     views={viewOptions}
@@ -127,18 +129,12 @@ export default function Home() {
             <div className="relative mt-4 flex flex-col items-center justify-center">
                 {displayTab === "regseason" && (
                     <div className="w-full">
-                        <RegularSeasonBracket
-                            teams={regSeasonTeams}
-                            matches={regSeasonMatches}
-                        />
+                        <RegularSeasonBracket matches={regSeasonMatches} />
                     </div>
                 )}
                 {displayTab === "playoffs" && (
                     <div className="w-full">
-                        <PlayoffBracket
-                            teams={playoffsTeams}
-                            matches={playoffsMatches}
-                        />
+                        <PlayoffBracket matches={playoffsMatches} />
                     </div>
                 )}
                 {displayTab === "standings" && (

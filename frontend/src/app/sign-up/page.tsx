@@ -79,7 +79,6 @@ export default function SignUp() {
     useEffect(() => {
         const handleLink = async (link: string) => {
             checkLinkBackend(faceitLink).then((data) => {
-                console.log(data);
                 if (data.player) {
                     setFaceitID(data.player.id);
                     setInternalID(data.player.i_id);
@@ -126,7 +125,6 @@ export default function SignUp() {
             password: string;
         }) => api.post<SignUpResponse>("/user/sign-up", userData),
         onSuccess: (data) => {
-            console.log(data);
             if (typeof window !== "undefined") {
                 localStorage.setItem("access_token", data.access_token);
             }

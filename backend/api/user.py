@@ -38,7 +38,7 @@ async def sign_in(request: Request):
         # secure=False,
         samesite="none",
         # samesite="lax",
-        max_age=3600,
+        max_age=2592000,
         path="/"
     )
     
