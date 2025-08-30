@@ -1,10 +1,30 @@
+# Web Framework
 fastapi==0.104.1
-gunicorn
 uvicorn[standard]==0.24.0
-python-dotenv==1.0.0
-requests==2.31.0
-python-jose[cryptography]==3.3.0
+gunicorn
+
+# Database
 sqlmodel==0.0.14
 sqlalchemy==2.0.23
-bcrypt<4.1
-passlib>=1.7.4
+
+# Authentication & Security
+python-jose[cryptography]==3.4.0
+passlib[bcrypt]==1.7.4
+bcrypt==4.0.1
+
+# Discord Bot
+discord.py==2.5.2
+
+# HTTP & API
+requests==2.32.4
+aiohttp==3.12.15
+
+# Environment & Utilities
+python-dotenv==1.0.0
+
+# Additional dependencies that might be needed
+pydantic>=2.0.0
+starlette>=0.27.0
+watchfiles>=1.1.0
+
+pytz==2024.1

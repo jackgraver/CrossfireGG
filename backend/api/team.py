@@ -12,7 +12,7 @@ from db.player.player_sql import get_players_of_team, insert_player
 from utils.faceit_api import fetch_from_api, fetch_from_file
 from db.team.team_model import Team
 from db.metadata.metadata_sql import query_last_update
-from db.team.team_sql import create_team, fetch_all_teams, fetch_faceit_info, get_team_info, get_team_info_by_name, get_team_matches, get_teams_by_sub_t_id, set_team_joined, set_team_paid, set_team_seed
+from db.team.team_sql import check_already_registered, create_team, fetch_all_teams, fetch_faceit_info, get_team_info, get_team_info_by_name, get_team_matches, get_teams_by_sub_t_id, set_team_joined, set_team_paid, set_team_seed
 
 router = APIRouter()
 
@@ -45,19 +45,43 @@ def get_teams_by_sub_tournament(sub_t_id: str):
 async def team_seed(request: Request, team_id: str):
     data = await request.json()
     seed = data.get("seed")
-    return set_team_seed(team_id, seed)
+    
+    if seed is None:
+        return {"success": False, "message": "Seed value is required", "status": 400}
+    
+    result = set_team_seed(team_id, seed)
+    if not result:
+        return {"success": False, "message": "Team not found or failed to update seed", "status": 404}
+    
+    return {"success": True, "message": "Team seed updated successfully", "status": 200}
 
 @router.post("/paid/{team_id}")
 async def team_paid(request: Request, team_id: str):
     data = await request.json()
     paid = data.get("paid")
-    return set_team_paid(team_id, paid)
+    
+    if paid is None:
+        return {"success": False, "message": "Paid status is required", "status": 400}
+    
+    result = set_team_paid(team_id, paid)
+    if not result:
+        return {"success": False, "message": "Team not found or failed to update paid status", "status": 404}
+    
+    return {"success": True, "message": "Team paid status updated successfully", "status": 200}
 
 @router.post("/joined/{team_id}")
 async def team_joined(request: Request, team_id: str):
     data = await request.json()
     joined = data.get("joined")
-    return set_team_joined(team_id, joined)
+    
+    if joined is None:
+        return {"success": False, "message": "Joined status is required", "status": 400}
+    
+    result = set_team_joined(team_id, joined)
+    if not result:
+        return {"success": False, "message": "Team not found or failed to update joined status", "status": 404}
+    
+    return {"success": True, "message": "Team joined status updated successfully", "status": 200}
 
 FACEIT_API_KEY = os.getenv("FACEIT_API_KEY")
 
@@ -71,18 +95,21 @@ def extract_faceit_id_from_link(link: str):
 
 @router.get("/test_faceit_link/{link}")
 async def test_faceit_link(link: str):
-    print(link)
     if not link:
-        return {"id": "1"}
+        return {"status": "error", "code": -1, "message": "Missing link"}
 
     if team_id := extract_faceit_id_from_link(link):
+        print('extracted', team_id)
+        if team := check_already_registered(team_id):
+            return {"status": "success", "code": 2, "message": "Team already registered", "id": team.team_id}
+        
         if not fetch_faceit_info(team_id):
-            return {"id": "2"}
+            return {"status": "error", "code": -2, "message": "Failed to fetch Faceit info"}
 
-        has_competed = get_team_info(team_id)
-        return {"id": team_id, "reregister": has_competed}
+        if get_team_info(team_id):
+            return {"status": "success", "code": 1, "id": team_id}
 
-    return {"id": "3"}
+    return {"status": "success", "code": 0}
 
 
 REG_DEBUG = True

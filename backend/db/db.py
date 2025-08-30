@@ -2,7 +2,15 @@ import os
 from sqlmodel import SQLModel, Session, create_engine, select
 from db.user.user_model import Role, User, UserRole
 
-engine = create_engine("sqlite:///oss.db", echo=False)
+from dotenv import load_dotenv
+
+load_dotenv()
+
+SQLITE_PATH = os.getenv("SQLITE_PATH")
+if not SQLITE_PATH:
+    raise RuntimeError("SQLITE_PATH not set.")
+
+engine = create_engine(SQLITE_PATH, echo=False)
 
 def get_db_connection():
     init_tables()
