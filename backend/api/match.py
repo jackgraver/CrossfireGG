@@ -1,15 +1,16 @@
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request, Query
 from fastapi.responses import JSONResponse
 
 from api.auth import get_auth_user
 from db.user.user_sql import get_user_by_id
 from db.match.match_caster_sql import claim_match, get_matches_with_casters, unclaim_match
 from db.metadata.metadata_sql import write_metadata
-from db.match.match_sql import fetch_all_matches, fetch_match
+from db.match.match_sql import fetch_all_matches, fetch_match, fetch_matches_by_tournament
+from db.tournament.tournament_sql import get_current_tournament, get_all_tournaments
 from db.match.match_util import process_matches
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 router = APIRouter()
 
@@ -20,8 +21,23 @@ async def refresh_teams():
     return {"teams:": [], "matches": []}
 
 @router.get("/all")
-def get_matches():
-    res = fetch_all_matches()
+def get_matches(tournament_id: str = Query(None, description="Optional tournament ID to filter matches")):
+    if tournament_id:
+        # Use the tournament_id passed in query params
+        res = fetch_matches_by_tournament(tournament_id)
+    else:
+        # No tournament_id provided, use current tournament logic
+        current_tournament = get_current_tournament()
+        print(current_tournament)
+        if current_tournament.start_date > datetime.now(timezone.utc).timestamp():
+            print("s9 not started yet")
+            all_tournaments = get_all_tournaments()
+            most_recent_tournament = max(filter(lambda t: t.t_id != current_tournament.t_id, all_tournaments), key=lambda t: t.start_date)
+            print(most_recent_tournament)
+            res = fetch_matches_by_tournament(most_recent_tournament.t_id)
+        else:
+            print("s9 started yet")
+            res = fetch_matches_by_tournament(get_current_tournament().t_id)
     return res
 
 @router.get("/casting")

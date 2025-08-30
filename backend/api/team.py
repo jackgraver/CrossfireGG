@@ -98,7 +98,6 @@ async def test_faceit_link(link: str):
         return {"status": "error", "code": -1, "message": "Missing link"}
 
     if team_id := extract_faceit_id_from_link(link):
-        print('extracted', team_id)
         if team := check_already_registered(team_id):
             return {"status": "success", "code": 2, "message": "Team already registered", "id": team.team_id}
         

@@ -2,7 +2,7 @@
 
 import type { Match } from "../types/Types";
 import type { Team } from "@/types/TeamModel";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Standings from "../shared/Standings";
 import RegularSeasonBracket from "../shared/bracket/RegularSeasonBracket";
 import PlayoffBracket from "../shared/bracket/PlayoffBracket";
@@ -11,11 +11,13 @@ import ViewSelector from "../shared/ViewSelector";
 import { api } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import RegisterForTournament from "./RegisterForTournament";
+import TournamentSelector from "./TournamentSelector";
 
 export default function Home() {
     const [displayTab, setDisplayTab] = useState<
         "regseason" | "playoffs" | "standings"
     >("regseason");
+    const [selectedTournament, setSelectedTournament] = useState<string>("");
 
     const viewOptions = [
         { key: "regseason", label: "Regular Season" },
@@ -53,9 +55,17 @@ export default function Home() {
         isLoading: matchesLoading,
         error: matchesError,
     } = useQuery({
-        queryKey: ["matches"],
+        queryKey: ["matches", selectedTournament],
         queryFn: () =>
-            api.get<{ reg_season: Match[]; playoffs: Match[] }>("/match/all"),
+            api.get<{
+                reg_season: Match[];
+                playoffs: Match[];
+                tournament_id: string;
+            }>(
+                selectedTournament
+                    ? `/match/all?tournament_id=${selectedTournament}`
+                    : "/match/all",
+            ),
     });
 
     const loading = teamsLoading || matchesLoading;
@@ -95,7 +105,7 @@ export default function Home() {
     return (
         <div className="transform- flex flex-col items-center justify-center">
             <div className="mb-16 flex flex-col items-center justify-center">
-                <div className="mb-8 flex w-5/6 flex-col items-center justify-center sm:flex-row">
+                <div className="mb-6 flex w-5/6 flex-col items-center justify-center sm:flex-row">
                     <img
                         src="/OSSLOGO.png"
                         className="h-48 w-48 sm:h-72 sm:w-72"
@@ -115,11 +125,11 @@ export default function Home() {
                 <RegisterForTournament />
             </div>
             {nonFinishedMatches.length > 0 && (
-                <div className="mb-8">
+                <div className="mb-6">
                     <NonFinishedMatches matches={nonFinishedMatches} />
                 </div>
             )}
-            <div className="my-6">
+            <div className="mb-6">
                 <ViewSelector
                     views={viewOptions}
                     currentView={displayTab}
@@ -127,6 +137,12 @@ export default function Home() {
                 />
             </div>
             <div className="relative mt-4 flex flex-col items-center justify-center">
+                <div className="absolute left-0 top-0 z-10">
+                    <TournamentSelector
+                        selectedTournament={matchData?.tournament_id || ""}
+                        onTournamentChange={setSelectedTournament}
+                    />
+                </div>
                 {displayTab === "regseason" && (
                     <div className="w-full">
                         <RegularSeasonBracket matches={regSeasonMatches} />

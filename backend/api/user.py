@@ -60,11 +60,9 @@ async def sign_up(request: Request):
         team_id = None
 
     if not email or not username or not password:
-        print('fail 1')
         raise HTTPException(status_code=400, detail="Missing required fields")
 
     if user_exists(email):
-        print('fail 2')
         raise HTTPException(status_code=400, detail="Email already in use")
 
     hashed_password = hash_password(password)

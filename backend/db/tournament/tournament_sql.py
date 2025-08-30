@@ -5,6 +5,11 @@ from db.tournament.tournament_model import Tournament, SubTournament
 from typing import Optional
 from db.metadata.metadata_sql import get_metadata_value
 
+def get_all_tournaments() -> list[Tournament]:
+    with Session(get_db_connection()) as session:
+        stmt = select(Tournament).order_by(Tournament.start_date.desc())
+        return session.exec(stmt).all()
+
 def get_current_tournament() -> Optional[Tournament]:
     with Session(get_db_connection()) as session:
         # Get current tournament ID from metadata

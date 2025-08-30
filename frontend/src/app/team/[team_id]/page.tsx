@@ -136,7 +136,7 @@ export default function Team({ params }: TeamProps) {
                             <h1 className="mb-3 text-3xl font-bold text-textPrimary">
                                 {team.team_name}
                             </h1>
-                            <h2 className="mt-1 text-2xl font-bold text-textSecondary">{`(${team.win}-${team.loss})`}</h2>
+                            <h2 className="mt-0.5 text-2xl font-bold text-textSecondary">{`(${team.win}-${team.loss})`}</h2>
                         </div>
                         <div className="flex flex-wrap gap-8 text-textPrimary">
                             <TeamDetail
@@ -218,56 +218,60 @@ export default function Team({ params }: TeamProps) {
                 </h2>
                 {matches && matches.length > 0 ? (
                     <div className="flex flex-col gap-4">
-                        {matches.map((match) => (
-                            <div
-                                key={match.match_id}
-                                className="cursor-pointer rounded-lg border border-border bg-secondBg p-5 transition-all hover:bg-thirdBg hover:shadow-lg"
-                                onClick={() => {
-                                    if (match.faceit_url) {
-                                        openInNewTab(match.faceit_url);
-                                    }
-                                }}
-                            >
-                                <div className="mb-4 flex items-center justify-between">
-                                    <span className="bg-firstbg-thirdBg rounded-full px-3 py-1 text-sm font-medium text-textSecondary">
-                                        {match.round}
-                                    </span>
-                                    <span className="text-sm text-textSecondary">
-                                        {formatDate(match.scheduled_at)}
-                                    </span>
-                                </div>
-                                <div className="flex items-center justify-between">
-                                    <div className="flex flex-1 items-center gap-4">
-                                        <span className="font-semibold text-textPrimary">
-                                            {team.team_name}
+                        {matches
+                            .sort((a, b) => b.scheduled_at - a.scheduled_at)
+                            .map((match) => (
+                                <div
+                                    key={match.match_id}
+                                    className="cursor-pointer rounded-lg border border-border bg-secondBg p-5 transition-all hover:bg-thirdBg hover:shadow-lg"
+                                    onClick={() => {
+                                        if (match.faceit_url) {
+                                            openInNewTab(match.faceit_url);
+                                        }
+                                    }}
+                                >
+                                    <div className="mb-4 flex items-center justify-between">
+                                        <span className="bg-firstbg-thirdBg rounded-full py-1 text-sm font-medium text-textSecondary">
+                                            {match.round}
                                         </span>
-                                        <span className="min-w-[60px] text-center text-lg font-bold text-textPrimary">
-                                            {getMatchScore(match)}
-                                        </span>
-                                        <span className="font-semibold text-textPrimary">
-                                            {getOpponent(match)}
+                                        <span className="text-sm text-textSecondary">
+                                            {formatDate(match.scheduled_at)}
                                         </span>
                                     </div>
-                                    <div className="flex flex-col items-end gap-1">
-                                        <span
-                                            className={`min-w-[30px] rounded-full px-3 py-1 text-center text-sm font-bold ${
-                                                getMatchResult(match) === "W"
-                                                    ? "bg-green-100 text-green-700"
-                                                    : getMatchResult(match) ===
-                                                        "L"
-                                                      ? "bg-red-100 text-red-700"
-                                                      : "bg-orange-100 text-orange-600"
-                                            }`}
-                                        >
-                                            {getMatchResult(match)}
-                                        </span>
-                                        <span className="text-xs uppercase text-textSecondary">
-                                            {match.status}
-                                        </span>
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex flex-1 items-center gap-4">
+                                            <span className="font-semibold text-textPrimary">
+                                                {team.team_name}
+                                            </span>
+                                            <span className="min-w-[60px] text-center text-lg font-bold text-textPrimary">
+                                                {getMatchScore(match)}
+                                            </span>
+                                            <span className="font-semibold text-textPrimary">
+                                                {getOpponent(match)}
+                                            </span>
+                                        </div>
+                                        <div className="flex flex-col items-end gap-1">
+                                            <span
+                                                className={`min-w-[30px] rounded-full px-3 py-1 text-center text-sm font-bold ${
+                                                    getMatchResult(match) ===
+                                                    "W"
+                                                        ? "bg-green-100 text-green-700"
+                                                        : getMatchResult(
+                                                                match,
+                                                            ) === "L"
+                                                          ? "bg-red-100 text-red-700"
+                                                          : "bg-orange-100 text-orange-600"
+                                                }`}
+                                            >
+                                                {getMatchResult(match)}
+                                            </span>
+                                            <span className="text-xs uppercase text-textSecondary">
+                                                {match.status}
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
                     </div>
                 ) : (
                     <div className="py-10 text-center text-base text-textSecondary">

@@ -2,9 +2,13 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse
 
 from db.metadata.metadata_sql import write_metadata
-from db.tournament.tournament_sql import get_current_sub_tournament_by_name, get_current_tournament
+from db.tournament.tournament_sql import get_all_tournaments, get_current_sub_tournament_by_name, get_current_tournament
 
 router = APIRouter()
+
+@router.get("/all")
+async def all_tournaments():
+    return {"tournaments": get_all_tournaments()}
 
 @router.post("/update_current_tournament")
 async def update_current_tournament(request: Request):

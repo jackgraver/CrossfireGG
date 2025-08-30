@@ -5,6 +5,7 @@ from db.db import get_db_connection
 from typing import List, Dict
 from db.team.team_model import Team
 from db.tournament.tournament_sql import get_current_sub_tournament_by_name
+from db.tournament.tournament_model import Tournament, SubTournament
 
 def write_match(match_dict: dict):
     match = Match(**match_dict)
@@ -86,4 +87,64 @@ def fetch_all_matches() -> Dict[str, List[Dict]]:
         return {
             "reg_season": reg_season_matches,
             "playoffs": playoffs_matches
+        }
+
+def fetch_matches_by_tournament(tournament_id: str) -> Dict[str, List[Dict]]:
+    """Fetch matches for a specific tournament by tournament ID"""
+    with Session(get_db_connection()) as session:
+        # Fetch tournament with sub_tournaments eagerly loaded
+        tournament_stmt = select(Tournament).where(Tournament.t_id == tournament_id)
+        tournament = session.exec(tournament_stmt).first()
+        
+        if not tournament:
+            return {"reg_season": [], "playoffs": []}
+        
+        # Get sub-tournament IDs for this tournament
+        reg_season_sub_t = next((st for st in tournament.sub_tournament if st.t_name == "REGULAR SEASON"), None)
+        playoffs_sub_t = next((st for st in tournament.sub_tournament if st.t_name == "PLAYOFFS"), None)
+        
+        reg_season_id = reg_season_sub_t.sub_t_id if reg_season_sub_t else None
+        playoffs_id = playoffs_sub_t.sub_t_id if playoffs_sub_t else None
+        
+        # Fetch matches for this tournament
+        results = session.exec(select(Match)).all()
+        
+        reg_season_matches = []
+        playoffs_matches = []
+        
+        for m in results:
+            match_dict = m.model_dump()
+
+            # Fetch team information based on both team_id AND sub_t_id to get the correct version
+            team1_stmt = select(Team).where(
+                Team.team_id == m.team1_id,
+                Team.sub_t_id == m.sub_t_id
+            )
+            team2_stmt = select(Team).where(
+                Team.team_id == m.team2_id,
+                Team.sub_t_id == m.sub_t_id
+            )
+            
+            team1 = session.exec(team1_stmt).first()
+            team2 = session.exec(team2_stmt).first()
+
+            match_dict["teams"] = {
+                "team1": team1.model_dump() if team1 else {},
+                "team2": team2.model_dump() if team2 else {}
+            }
+
+            # Optionally remove raw team IDs from top-level
+            match_dict.pop("team1_id", None)
+            match_dict.pop("team2_id", None)
+
+            # Split matches based on sub_t_id
+            if m.sub_t_id == reg_season_id:
+                reg_season_matches.append(match_dict)
+            elif m.sub_t_id == playoffs_id:
+                playoffs_matches.append(match_dict)
+
+        return {
+            "reg_season": reg_season_matches,
+            "playoffs": playoffs_matches,
+            "tournament_id": tournament.t_id
         }
