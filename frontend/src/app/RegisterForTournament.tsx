@@ -54,7 +54,6 @@ export default function RegisterForTournament() {
     const remainingSpots =
         16 - (tournamentData?.current_regular_season.number_of_teams ?? 0);
 
-    console.log("?", tournamentData?.current_regular_season.number_of_teams);
     return (
         <div className="flex flex-col items-center justify-center">
             <h2 className="text-4xl font-semibold text-textPrimary">

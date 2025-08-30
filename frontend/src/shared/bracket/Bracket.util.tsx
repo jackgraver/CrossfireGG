@@ -32,3 +32,12 @@ export const groupMatchesByRoundAndSort = (matches: Match[]) => {
 
     return rounds;
 };
+
+export const filterAndSortMatchesByRound = (
+    matches: Match[],
+    round: string,
+) => {
+    return matches
+        .filter((m) => m.round === round)
+        .sort((a, b) => a.teams.team1.seed - b.teams.team1.seed);
+};

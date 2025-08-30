@@ -1,4 +1,5 @@
 import type { Team } from "@/types/TeamModel";
+import TeamLogo from "../TeamLogo";
 
 type QualElimCardProps = {
     team: Team;
@@ -16,11 +17,12 @@ export default function QualElimCard({ team, qualified }: QualElimCardProps) {
                 className={`flex items-center gap-x-3 bg-gray-400 p-2 ${bg}`}
                 data-testid="qual-elim-card"
             >
-                <img
+                {/* <img
                     src="https://distribution.faceit-cdn.net/images/c417aaf4-d6ac-4f5b-8fe6-d3a339cb8385.jpeg"
                     className="h-6 w-6"
                     alt="?"
-                />
+                /> */}
+                <TeamLogo team={team} styling="h-6 w-6 rounded object-cover" />
 
                 <div className="min-w-[24px] text-left">
                     <span>{team?.seed}</span>

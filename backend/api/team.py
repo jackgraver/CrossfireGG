@@ -1,12 +1,11 @@
 from asyncio import sleep
-import asyncio
 import os
 import re
 import uuid
-from fastapi import APIRouter, Request, Response, status
-import requests
+from fastapi import APIRouter, Request 
 
 from api.tournament import current_tournament
+from bot.bot import setup_team_channel
 from db.player.player_model import Player
 from db.player.player_sql import get_players_of_team, insert_player
 from utils.faceit_api import fetch_from_api, fetch_from_file
@@ -110,7 +109,6 @@ async def test_faceit_link(link: str):
             return {"status": "success", "code": 1, "id": team_id}
 
     return {"status": "success", "code": 0}
-
 
 REG_DEBUG = True
 @router.post("/register")

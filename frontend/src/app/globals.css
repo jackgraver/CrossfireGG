@@ -56,13 +56,13 @@ button:hover {
     background-color: #373663;
 } */
 
-.grow {
+/* .grow {
     transition: all 0.2s ease-in-out;
 }
 
 .grow:hover {
     transform: scale(1.02);
-}
+} */
 
 .city {
     background-image: url("/bg-city.png");

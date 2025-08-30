@@ -23,17 +23,18 @@ FACEIT_API_URL = "https://open.faceit.com/data/v4/championships/f56331e8-131a-4c
 # FACEIT_API_URL = "https://open.faceit.com/data/v4/championships/b4cb8915-2a74-4899-b7df-220cb85f3916/matches?limit=70"
 MATCHES_FILE = Path(".test_data/flush_matches.json")
 PO_MATCHES_FILE = Path('.test_data/flush_playoffs_matches.json')
-DEBUG = True 
+DEBUG = False 
 
 async def process_matches():
     try:
         current_sub_t_id = get_current_sub_tournament_id()
         current_stage = get_metadata_value("current_stage")
         if not current_sub_t_id:
+            print('no current_sub_t_id')
             return []
         
         if DEBUG:
-            with open(MATCHES_FILE, "r", encoding="utf-8") as f:
+            with open(PO_MATCHES_FILE, "r", encoding="utf-8") as f:
                 matches = json.load(f).get("items", [])  # expects a list of matches
         else:
             response = requests.get(
@@ -45,15 +46,19 @@ async def process_matches():
             )
             response.raise_for_status()
             matches = response.json().get("items", [])
-            matches_file = Path(".test_data/flush_matches.json")
-            with open(MATCHES_FILE, "w", encoding="utf-8") as f:
-                json.dump(matches, f, indent=4, default=str)
+            # matches_file = Path(".test_data/flush_matches.json")
+            # with open(PO_MATCHES_FILE, "w", encoding="utf-8") as f:
+            #     json.dump(matches, f, indent=4, default=str)
             
         all_matches = fetch_all_matches()
+        print('all_matches', len(all_matches))
         processed_matches = {match["match_id"] for group in all_matches.values() for match in group}
+        print('processed_matches', len(processed_matches))
         nonprocess_matches = [match for match in matches if match["match_id"] not in processed_matches] 
+        print('nonprocess_matches', len(nonprocess_matches))
         
         returned_matches = []
+        print('processing', len(nonprocess_matches))
         for proc_match in reversed(nonprocess_matches):  
             if proc_match.get("status") == "CANCELLED":
                 continue
@@ -178,7 +183,7 @@ def process_players(players_data: list, team_id: str, sub_t_id: str = None):
     
 
 STATS_FILE = Path(".test_data/reg_flush_stats.json")
-STATS_DEBUG = True 
+STATS_DEBUG = False 
 
 # @TODO: Implement sub_t_id
 def process_stats(match_id: str, sub_t_id: str = None):

@@ -16,7 +16,11 @@ export default function Admin() {
                 <div>
                     <button
                         className="rounded-md bg-gray-600 p-2"
-                        onClick={() => api.get("/match/refresh")}
+                        onClick={() =>
+                            api
+                                .get("/match/refresh")
+                                .then((data) => console.log(data))
+                        }
                     >
                         Refresh Teams
                     </button>

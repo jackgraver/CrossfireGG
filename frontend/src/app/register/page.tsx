@@ -45,7 +45,6 @@ export default function RegisterPage() {
         api.get(
             `/team/test_faceit_link/${extractFaceitIdFromLink(e.target.value)}`,
         ).then((data: any) => {
-            console.log(data);
             if (data.status === "error") {
                 setCheckingTeamLink(false);
                 switch (data.code) {
