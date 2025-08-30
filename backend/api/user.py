@@ -26,11 +26,8 @@ async def sign_in(request: Request):
 
     user = get_user_by_email(email)
     if not user or not verify_password(password, user["hashed_password"]):
-        print(user)
-        print(verify_password(password, user["hashed_password"]))
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    print(user['roles'])
     token = create_access_token({"user_id": user["user_id"], "roles": user["roles"], "email": user["email"]})
     response = JSONResponse(content={"message": "Login successful"})
     response.set_cookie(

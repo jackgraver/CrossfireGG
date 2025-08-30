@@ -60,13 +60,11 @@ export default function OSSForm({
                 )}
                 <button
                     type="submit"
-                    className={`flex items-center justify-center rounded bg-blue-500 px-4 py-2 text-textPrimary ${
-                        onCancel ? "flex-1" : "w-full"
-                    } ${
-                        submitStatus === "submitting"
+                    className={`flex items-center justify-center rounded bg-blue-500 px-4 py-2 text-textPrimary ${onCancel ? "flex-1" : "w-full"
+                        } ${submitStatus === "submitting"
                             ? "bg-secondBg"
                             : "hover:bg-blue-600 focus:bg-blue-600"
-                    }`}
+                        }`}
                     disabled={submitStatus === "submitting"}
                 >
                     {submitStatus === "idle" && submitLabel}

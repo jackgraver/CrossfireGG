@@ -86,7 +86,6 @@ export default function SignIn() {
                 setEmailError("Please enter a valid email address");
                 return { success: false, result: null };
             }
-
             signInMutation.mutate({ email, password });
 
             return { success: true, result: null };
@@ -104,7 +103,7 @@ export default function SignIn() {
                 onSubmit={handleSubmit}
                 submitLabel="Sign In"
                 cancelLabel="Create Account"
-                onCancel={() => {}}
+                onCancel={() => { }}
             >
                 <BaseInput
                     type="email"
