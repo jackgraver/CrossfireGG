@@ -11,7 +11,7 @@ def get_matches_with_casters() -> Dict[str, List[Dict]]:
     """
     Get all matches with caster information.
     Returns matches in two categories: claimed (with caster) and unclaimed (without caster)
-    Only includes matches with status "FINISHED"
+    Only includes matches with status "SCHEDULED"
     """
     all_matches = fetch_all_matches()
     
@@ -25,7 +25,7 @@ def get_matches_with_casters() -> Dict[str, List[Dict]]:
         unclaimed_matches = []
         claimed_match_caster = {}
         
-        for match in all_matches["reg_season"]:
+        for match in all_matches["reg_season"] + all_matches["playoffs"]:
             if match["status"] == "SCHEDULED":
                 if match["match_id"] in claimed_match_ids:
                     caster_stmt = select(MatchCaster).where(MatchCaster.match_id == match["match_id"])
@@ -33,32 +33,15 @@ def get_matches_with_casters() -> Dict[str, List[Dict]]:
                     
                     caster = get_user_by_id(caster_id.caster_id)
                     
-                    # match["caster_id"] = caster.caster_id if caster else None
-                    claimed_match_caster.append(caster if caster else None)
+                    claimed_match_caster[match.get("match_id")] = caster if caster else None
                     claimed_matches.append(match)
                 else:
                     unclaimed_matches.append(match)
-        
-        
-        for match in all_matches["playoffs"]:
-            if match["status"] == "SCHEDULED":
-                if match["match_id"] in claimed_match_ids:
-                    caster_stmt = select(MatchCaster).where(MatchCaster.match_id == match["match_id"])
-                    caster_id = session.exec(caster_stmt).first()
-                    
-                    caster = get_user_by_id(caster_id.caster_id)
-                    
-                    # match["caster_id"] = caster.caster_id if caster else None
-                    claimed_match_caster[match["match_id"]] = caster if caster else None
-                    claimed_matches.append(match)
-                else:
-                    unclaimed_matches.append(match)
-
-        return {
-            "claimed": claimed_matches,
-            "unclaimed": unclaimed_matches,
-            "claimed_match_caster": claimed_match_caster
-        }
+    return {
+        "claimed": claimed_matches,
+        "unclaimed": unclaimed_matches,
+        "claimed_match_caster": claimed_match_caster
+    }
         
 def claim_match(match_id: str, caster_id: int) -> bool:
     """

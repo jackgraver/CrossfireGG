@@ -14,7 +14,6 @@ engine = create_engine(SQLITE_PATH, echo=False)
 
 def get_db_connection():
     init_tables()
-    generate_static_data()
     return engine
 
 def init_tables():

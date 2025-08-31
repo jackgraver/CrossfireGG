@@ -193,7 +193,7 @@ export default function Casting() {
                     >
                         View
                     </button>
-                    <ProtectedElement roles={["PRODUCTION"]}>
+                    <ProtectedElement roles={["PRODUCTION", "PRODUCTION_LEAD"]}>
                         {!isClaimed ? (
                             <button
                                 onClick={() => handleClaimMatch(match.match_id)}

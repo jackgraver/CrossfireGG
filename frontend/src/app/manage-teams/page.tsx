@@ -5,10 +5,9 @@ import { BooleanStatus, type Team } from "@/types/TeamModel";
 import { api } from "@/lib/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import ProtectedRoute from "@/shared/ProtectedRoute";
-import { ChevronDown, ChevronUp } from "lucide-react";
 import SeedControl from "./SeedControl";
 
-type Filter = "name" | "paid" | "joined";
+type Filter = "name" | "paid" | "joined" | "stage";
 
 type TeamsResponse = {
     reg_season: Team[];
@@ -19,25 +18,17 @@ type TeamsResponse = {
 export default function ManageTeams() {
     const queryClient = useQueryClient();
 
-    const [allTeams, setAllTeams] = useState<Team[]>();
+    const [regSeasonTeams, setRegSeasonTeams] = useState<Team[]>([]);
+    const [playoffsTeams, setPlayoffsTeams] = useState<Team[]>([]);
+    const [displaySwitch, setDisplaySwitch] = useState<
+        "Regular Season" | "Playoffs"
+    >("Regular Season");
     const [filteredTeams, setFilteredTeams] = useState<Team[]>([]);
-    const [newTeams, setNewTeams] = useState<Team[]>([
-        {
-            team_id: "",
-            team_name: "",
-            team_logo: "",
-            seed: 0,
-            win: 0,
-            loss: 0,
-            paid: 0,
-            joined_tournament: 0,
-        },
-    ]);
 
     const filterTeams = (filter: Filter, f: any) => {
-        if (!allTeams) return;
+        if (!filteredTeams) return;
 
-        let res: Team[] = allTeams;
+        let res: Team[] = filteredTeams;
         switch (filter) {
             case "name":
                 res = res.filter((team) =>
@@ -49,6 +40,10 @@ export default function ManageTeams() {
                 break;
             case "joined":
                 res = res.filter((team) => team.joined_tournament === f);
+                break;
+            case "stage":
+                setDisplaySwitch(f);
+                res = f === "Regular Season" ? regSeasonTeams : playoffsTeams;
                 break;
         }
         setFilteredTeams(res);
@@ -93,17 +88,12 @@ export default function ManageTeams() {
         },
     });
 
-    const handleChange = (index: number, field: string, value: any) => {
-        const updated = [...newTeams];
-        updated[index] = { ...updated[index], [field]: value };
-        setNewTeams(updated);
-    };
-
     useEffect(() => {
         if (data) {
-            const combined = [...data.reg_season, ...data.playoffs];
-            setAllTeams(combined);
-            setFilteredTeams(combined.sort((a, b) => a.seed - b.seed));
+            const sorted = data.reg_season.sort((a, b) => a.seed - b.seed);
+            setRegSeasonTeams(sorted);
+            setPlayoffsTeams(data.playoffs.sort((a, b) => a.seed - b.seed));
+            setFilteredTeams(sorted);
         }
     }, [data]);
 
@@ -114,8 +104,8 @@ export default function ManageTeams() {
         <ProtectedRoute>
             <div className="flex flex-row justify-center space-x-16 pt-12">
                 <div className="flex flex-col items-center justify-center">
-                    <div className="mb-2 flex flex-wrap items-end gap-4 rounded-md bg-firstBg p-2 shadow">
-                        <div className="flex flex-col">
+                    <div className="mb-2 flex flex-wrap items-end gap-8 rounded-md bg-firstBg p-2 shadow">
+                        <div className="ml-2 flex flex-col">
                             <input
                                 id="search"
                                 type="text"
@@ -126,6 +116,7 @@ export default function ManageTeams() {
                                 }
                             />
                         </div>
+                        <div className="border-second-bg h-full border border-border" />
                         <div className="flex flex-col">
                             <label
                                 htmlFor="paid"
@@ -145,6 +136,7 @@ export default function ManageTeams() {
                                 }
                             />
                         </div>
+                        <div className="border-second-bg h-full border border-border" />
                         <div className="flex flex-col">
                             <label
                                 htmlFor="joined"
@@ -162,6 +154,16 @@ export default function ManageTeams() {
                                         e.target.checked ? 1 : 0,
                                     )
                                 }
+                            />
+                        </div>
+                        <div className="border-second-bg h-full border border-border" />
+                        <div className="mb-2 mr-2 flex flex-col">
+                            <StageSelector
+                                options={["Regular Season", "Playoffs"]}
+                                selectedOption={displaySwitch}
+                                onOptionSelect={(option) => {
+                                    filterTeams("stage", option);
+                                }}
                             />
                         </div>
                     </div>
@@ -240,28 +242,33 @@ export default function ManageTeams() {
                                         >
                                             Visit Faceit
                                         </button>
-                                        <button
-                                            className="rounded border border-green-600 px-3 py-1 text-sm hover:bg-green-600"
-                                            onClick={() =>
-                                                paidMutation.mutate({
-                                                    team_id: team.team_id,
-                                                    paid: team.paid + 1,
-                                                })
-                                            }
-                                        >
-                                            Confirm Paid
-                                        </button>
-                                        <button
-                                            className="rounded border border-blue-500 px-3 py-1 text-sm hover:bg-blue-600"
-                                            onClick={() =>
-                                                joinedMutation.mutate({
-                                                    team_id: team.team_id,
-                                                    joined: !team.joined_tournament,
-                                                })
-                                            }
-                                        >
-                                            Confirmed Joined
-                                        </button>
+                                        {team.paid !== BooleanStatus.True && (
+                                            <button
+                                                className="rounded border border-green-600 px-3 py-1 text-sm hover:bg-green-600"
+                                                onClick={() =>
+                                                    paidMutation.mutate({
+                                                        team_id: team.team_id,
+                                                        paid: team.paid + 1,
+                                                    })
+                                                }
+                                            >
+                                                Confirm Paid
+                                            </button>
+                                        )}
+                                        {team.joined_tournament !==
+                                            BooleanStatus.True && (
+                                            <button
+                                                className="rounded border border-blue-500 px-3 py-1 text-sm hover:bg-blue-600"
+                                                onClick={() =>
+                                                    joinedMutation.mutate({
+                                                        team_id: team.team_id,
+                                                        joined: !team.joined_tournament,
+                                                    })
+                                                }
+                                            >
+                                                Confirmed Joined
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -270,5 +277,34 @@ export default function ManageTeams() {
                 </div>
             </div>
         </ProtectedRoute>
+    );
+}
+
+function StageSelector({
+    options = ["Option 1", "Option 2"],
+    selectedOption,
+    onOptionSelect,
+}: {
+    options?: [string, string];
+    selectedOption?: string;
+    onOptionSelect: (...args: any) => any;
+}) {
+    console.log(selectedOption);
+    return (
+        <div className="flex">
+            <h1
+                className={`hover:cursor-pointer ${selectedOption === options[0] ? "font-bold" : ""}`}
+                onClick={() => onOptionSelect(options[0])}
+            >
+                {options[0]}
+            </h1>
+            <span className="mx-2">/</span>
+            <h1
+                className={`hover:cursor-pointer ${selectedOption === options[1] ? "font-bold" : ""}`}
+                onClick={() => onOptionSelect(options[1])}
+            >
+                {options[1]}
+            </h1>
+        </div>
     );
 }

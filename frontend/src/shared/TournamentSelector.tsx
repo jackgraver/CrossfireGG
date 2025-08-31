@@ -42,7 +42,7 @@ export default function TournamentSelector({
                     console.log(e.target.value);
                     onTournamentChange(e.target.value || "");
                 }}
-                className="text-text-primary rounded-lg bg-secondBg px-4 py-2 shadow-sm focus:border-thirdBg focus:outline-none focus:ring-1 focus:ring-thirdBg"
+                className="text-text-primary rounded-lg bg-secondBg px-4 py-2 shadow-sm focus:border-thirdBg focus:outline-none"
             >
                 {tournaments.map((tournament) => (
                     <option key={tournament.t_id} value={tournament.t_id}>

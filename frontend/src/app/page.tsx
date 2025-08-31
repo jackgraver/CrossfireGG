@@ -11,7 +11,7 @@ import ViewSelector from "../shared/ViewSelector";
 import { api } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import RegisterForTournament from "./RegisterForTournament";
-import TournamentSelector from "./TournamentSelector";
+import TournamentSelector from "../shared/TournamentSelector";
 
 export default function Home() {
     const [displayTab, setDisplayTab] = useState<
