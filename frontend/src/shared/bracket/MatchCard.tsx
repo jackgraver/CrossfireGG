@@ -3,10 +3,7 @@
 import { useRouter } from "next/navigation";
 import type { Match } from "../../types/Types";
 import { MatchTeam } from "./MatchTeam";
-
-const openInNewTab = (url: string) => {
-    window.open(url, "_blank", "noopener,noreferrer");
-};
+import { openInNewTab } from "@/lib/NewTab";
 
 type MatchCardProps = {
     match: Match | undefined;

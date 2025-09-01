@@ -2,10 +2,7 @@ import type { Match } from "../../types/Types";
 import { MatchTeam } from "./MatchTeam";
 import { formatMatchDate } from "../../lib/dateUtils";
 import MatchCard from "./MatchCard";
-
-const openInNewTab = (url: string) => {
-    window.open(url, "_blank", "noopener,noreferrer");
-};
+import { openInNewTab } from "@/lib/NewTab";
 
 type ScheduledCardProps = {
     match: Match | undefined;

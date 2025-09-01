@@ -14,7 +14,7 @@ export default function Admin() {
             <div className="flex flex-col gap-y-4">
                 <h1>Admin Configuation</h1>
                 <div>
-                    <button
+                    {/* <button
                         className="rounded-md bg-gray-600 p-2"
                         onClick={() =>
                             api
@@ -23,11 +23,11 @@ export default function Admin() {
                         }
                     >
                         Refresh Teams
-                    </button>
-                    {/* <ManageTournaments /> */}
-                    {/* <ManageUsers /> */}
-                    {/* <ManageTeams /> */}
-                    {/* <div className="gap-y-4">
+                    </button> */}
+                    <ManageTournaments />
+                    {/* <ManageUsers />
+                    <ManageTeams />
+                    <div className="gap-y-4">
                         <button
                             onClick={() => api.get("/user/user-role")}
                             className="rounded-md bg-gray-600 p-2"

@@ -1,7 +1,15 @@
 "use client";
 
 import { api } from "@/lib/api";
+import BaseInput from "@/shared/OSSForm/BaseInput/BaseInput";
+import OSSForm from "@/shared/OSSForm/OSSForm";
+import SelectInput from "@/shared/OSSForm/SelectInput/SelectInput";
+import { toastService } from "@/shared/toast/toastService";
+import TournamentSelector from "@/shared/TournamentSelector";
+import { Tournament } from "@/types/TournamentModel";
+import { PromiseReturn } from "@/types/Types";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 
 export default function ManageTournaments() {
     const { data, isLoading, error } = useQuery({
@@ -25,44 +33,114 @@ export default function ManageTournaments() {
 
     return (
         <div>
-            <form className="mt-4 flex max-w-md flex-col gap-2">
-                <label className="flex flex-col">
-                    <span>Current Tournament ID</span>
-                    <input
-                        type="text"
-                        className="rounded border border-border bg-black p-2"
-                        placeholder="Enter current tournament ID"
-                        value={current_tournaments.current_tournament.t_id}
-                        onChange={(e) => {}}
-                    />
-                </label>
-                <label className="flex flex-col">
-                    <span>Regular Season Tournament ID</span>
-                    <input
-                        type="text"
-                        className="rounded border border-border bg-black p-2"
-                        placeholder="Enter regular season ID"
-                        value={current_tournaments.current_regular_season.t_id}
-                        onChange={(e) => {}}
-                    />
-                </label>
-                <label className="flex flex-col">
-                    <span>Playoff Tournament ID</span>
-                    <input
-                        type="text"
-                        className="rounded border border-border bg-black p-2"
-                        placeholder="Enter playoff ID"
-                        value={current_tournaments.current_playoffs.t_id}
-                        onChange={(e) => {}}
-                    />
-                </label>
-                <button
-                    type="submit"
-                    className="bg-accent mt-2 rounded p-2 font-semibold text-white"
-                >
-                    Submit
-                </button>
-            </form>
+            <h1>Manage Tournaments</h1>
+            <SelectTournament />
+            <button
+                className="mt-2 rounded bg-firstBg p-2 font-semibold text-white hover:bg-secondBg"
+                onClick={() =>
+                    toastService.display({
+                        title: "New Tournament",
+                        body: <NewTournamentToast />,
+                        variant: "center",
+                        durationMs: -1,
+                    })
+                }
+            >
+                New Tournament
+            </button>
+        </div>
+    );
+}
+
+function SelectTournament() {
+    const [selectedTournament, setSelectedTournament] = useState<string>("");
+
+    const { data, isLoading, error } = useQuery({
+        queryKey: ["all_tournaments"],
+        queryFn: () =>
+            api.get<{ tournaments: Tournament[] }>("/tournament/all"),
+    });
+
+    if (isLoading) return <div>Loading...</div>;
+    if (error) return <div>Error: {error.message}</div>;
+    if (!data) return <div>No data</div>;
+
+    const tournaments = data.tournaments;
+
+    return (
+        <div>
+            <h1>Select Tournament</h1>
+            <select
+                id="tournament-select"
+                value={selectedTournament || ""}
+                onChange={(e) => setSelectedTournament(e.target.value || "")}
+                className="text-text-primary rounded-lg bg-secondBg px-4 py-2 shadow-sm focus:border-thirdBg focus:outline-none"
+            >
+                {tournaments.map((tournament: Tournament) => (
+                    <option key={tournament.t_id} value={tournament.t_id}>
+                        {tournament.t_name}
+                    </option>
+                ))}
+            </select>
+        </div>
+    );
+}
+
+function extractFaceitIdFromLink(link: string): string | null {
+    const match = link.match(
+        /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i,
+    );
+    return match ? match[0] : null;
+}
+
+function NewTournamentToast() {
+    const [tournamentLink, setTournamentLink] = useState("");
+    const [tournamentName, setTournamentName] = useState("");
+
+    const handleSubmit = async (e: React.FormEvent): Promise<PromiseReturn> => {
+        e.preventDefault();
+
+        console.log(tournamentLink, tournamentName);
+        try {
+            const response: { team_id: string } = await api.post(
+                "/tournament/create",
+                {
+                    tournament_id: extractFaceitIdFromLink(tournamentLink),
+                    tournament_name: tournamentName,
+                },
+            );
+            localStorage.setItem("team_id", response.team_id);
+            return { success: true, result: response.team_id };
+        } catch (err) {
+            console.error("Submission error:", err);
+            return { success: false, result: null };
+        }
+    };
+
+    return (
+        <div>
+            <h1>New Tournament</h1>
+            <OSSForm onSubmit={handleSubmit} onSuccess={() => {}}>
+                <BaseInput
+                    onChange={(e) => setTournamentLink(e.target.value)}
+                    type="text"
+                    placeholder="Tournament Link"
+                />
+                <BaseInput
+                    onChange={(e) => setTournamentName(e.target.value)}
+                    type="text"
+                    placeholder="Tournament Name"
+                />
+                {/* <SelectInput
+                    placeholder="Current Stage"
+                    options={["REGULAR SEASON", "PLAYOFFS"]}
+                    value="REGULAR SEASON"
+                    onChange={function (value: string): void {
+                        throw new Error("Function not implemented.");
+                    }}
+                /> */}
+                <h1>Stage/End</h1>
+            </OSSForm>
         </div>
     );
 }

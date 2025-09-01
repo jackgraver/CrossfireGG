@@ -187,11 +187,19 @@ def set_team_seed(team_id: str, seed: int) -> bool:
             return True
         return False
     
-def set_team_paid(team_id: str, paid: int) -> bool:
+def set_team_paid(team_id: str, paid: int, tournament_id: str = None, stage: str = None) -> bool:
     with Session(get_db_connection()) as session:
+        if tournament_id and stage:
+            sub_tournament = sub_tournament_by_tournament_and_stage(tournament_id, stage)
+        else:
+            sub_tournament = None
         stmt = select(Team).where(
             Team.team_id == team_id
-        )
+        )  
+        if sub_tournament:
+            stmt = stmt.where(Team.sub_t_id == sub_tournament.sub_t_id)
+        else:
+            stmt = stmt.where(Team.sub_t_id == get_current_sub_tournament_id())
         team = session.exec(stmt).first()
         
         if team:
@@ -200,11 +208,20 @@ def set_team_paid(team_id: str, paid: int) -> bool:
             return True
         return False
 
-def set_team_joined(team_id: str, joined: int) -> bool:
+def set_team_joined(team_id: str, joined: int, tournament_id: str = None, stage: str = None ) -> bool:
     with Session(get_db_connection()) as session:
+        if tournament_id and stage:
+            sub_tournament = sub_tournament_by_tournament_and_stage(tournament_id, stage)
+        else:
+            sub_tournament = None
         stmt = select(Team).where(
             Team.team_id == team_id
         )
+
+        if sub_tournament:
+                stmt = stmt.where(Team.sub_t_id == sub_tournament.sub_t_id)
+        else:
+            stmt = stmt.where(Team.sub_t_id == get_current_sub_tournament_id())
         team = session.exec(stmt).first()
         
         if team:

@@ -11,10 +11,7 @@ import TeamLogo from "@/shared/bracket/TeamLogo";
 import { toastService } from "@/shared/toast/toastService";
 import TournamentSelector from "@/shared/TournamentSelector";
 import StageSelector from "@/shared/StageSelector";
-
-const openInNewTab = (url: string) => {
-    window.open(url, "_blank", "noopener,noreferrer");
-};
+import { openInNewTab } from "@/lib/NewTab";
 
 type TeamProps = {
     params: Promise<{ team_id: string }>;
@@ -59,7 +56,7 @@ export default function Team({ params }: TeamProps) {
                         </button>
                     </div>
                 ),
-                durationMs: 5000,
+                durationMs: 10000,
                 variant: "center",
             });
             // Clean the URL to avoid re-triggering on refresh/back
@@ -79,43 +76,151 @@ export default function Team({ params }: TeamProps) {
     const { team, matches } = data!;
 
     const handlePay = async () => {
-        await api
-            .post(`/team/paid/${team_id}`, { paid: 2 })
-            .then((res: any) => {
-                if (res.success) {
-                    toastService.success(
-                        <p>Updated paid status, waiting for confirmation</p>,
-                        "Team Marked Paid",
-                        {
-                            durationMs: 3000,
-                        },
-                    );
-                } else {
-                    toastService.error(<p>{res.message}</p>, "Update failed", {
-                        durationMs: 3000,
-                    });
-                }
-            });
+        const toastId = toastService.display({
+            title: "Click below to pay",
+            body: (
+                <div className="flex justify-center">
+                    <button
+                        className="rounded-md bg-blue-500 px-3 py-1 text-sm font-medium text-textPrimary hover:bg-blue-400"
+                        onClick={async () => {
+                            openInNewTab(
+                                "https://www.paypal.com/paypalme/OSSCSL/75?currencyCode=USD",
+                            );
+                            toastService.dismiss(toastId);
+
+                            try {
+                                const res = await api.post(
+                                    `/team/paid/${team_id}`,
+                                    {
+                                        paid: 2,
+                                        tournament_id: selectedTournament,
+                                        stage: displaySwitch,
+                                    },
+                                );
+                                if (
+                                    res &&
+                                    typeof res === "object" &&
+                                    "success" in res &&
+                                    res.success
+                                ) {
+                                    toastService.success(
+                                        <p>
+                                            Updated paid status, waiting for
+                                            confirmation
+                                        </p>,
+                                        "Team Marked Paid",
+                                        {
+                                            durationMs: 3000,
+                                        },
+                                    );
+                                } else {
+                                    const message =
+                                        res &&
+                                        typeof res === "object" &&
+                                        "message" in res &&
+                                        typeof res.message === "string"
+                                            ? res.message
+                                            : "Unknown error";
+                                    toastService.error(
+                                        <p>{message}</p>,
+                                        "Update failed",
+                                        {
+                                            durationMs: 3000,
+                                        },
+                                    );
+                                }
+                            } catch (error) {
+                                toastService.error(
+                                    <p>Failed to update payment status</p>,
+                                    "Update failed",
+                                    {
+                                        durationMs: 3000,
+                                    },
+                                );
+                            }
+                        }}
+                    >
+                        Pay
+                    </button>
+                </div>
+            ),
+            durationMs: -1,
+            variant: "center",
+        });
     };
 
     const handleJoined = async () => {
-        await api
-            .post(`/team/joined/${team_id}`, { joined: 2 })
-            .then((res: any) => {
-                if (res.success) {
-                    toastService.success(
-                        <p>Updated joined status, waiting for confirmation</p>,
-                        "Team Marked Joined",
-                        {
-                            durationMs: 3000,
-                        },
-                    );
-                } else {
-                    toastService.error(<p>{res.message}</p>, "Update failed", {
-                        durationMs: 3000,
-                    });
-                }
-            });
+        const toastId = toastService.display({
+            title: "Click below to pay",
+            body: (
+                <div className="flex justify-center">
+                    <button
+                        className="rounded-md bg-blue-500 px-3 py-1 text-sm font-medium text-textPrimary hover:bg-blue-400"
+                        onClick={async () => {
+                            openInNewTab(
+                                "https://www.faceit.com/en/championship/f56331e8-131a-4c50-b7db-eec8b010ff98/Off%20Season%20Shenanigans%20S8",
+                            );
+                            toastService.dismiss(toastId);
+
+                            try {
+                                const res = await api.post(
+                                    `/team/joined/${team_id}`,
+                                    {
+                                        joined: 2,
+                                        tournament_id: selectedTournament,
+                                        stage: displaySwitch,
+                                    },
+                                );
+                                if (
+                                    res &&
+                                    typeof res === "object" &&
+                                    "success" in res &&
+                                    res.success
+                                ) {
+                                    toastService.success(
+                                        <p>
+                                            Updated joined status, waiting for
+                                            confirmation
+                                        </p>,
+                                        "Team Marked Paid",
+                                        {
+                                            durationMs: 3000,
+                                        },
+                                    );
+                                } else {
+                                    const message =
+                                        res &&
+                                        typeof res === "object" &&
+                                        "message" in res &&
+                                        typeof res.message === "string"
+                                            ? res.message
+                                            : "Unknown error";
+                                    toastService.error(
+                                        <p>{message}</p>,
+                                        "Update failed",
+                                        {
+                                            durationMs: 3000,
+                                        },
+                                    );
+                                }
+                            } catch (error) {
+                                toastService.error(
+                                    <p>Failed to update payment status</p>,
+                                    "Update failed",
+                                    {
+                                        durationMs: 3000,
+                                    },
+                                );
+                            }
+                        }}
+                    >
+                        Pay
+                    </button>
+                </div>
+            ),
+            durationMs: -1,
+            variant: "center",
+        });
     };
 
     const formatDate = (timestamp: number) => {
@@ -139,6 +244,7 @@ export default function Team({ params }: TeamProps) {
             : match?.teams?.team1?.team_name;
     };
 
+    console.log(team);
     return (
         <div className="mx-auto min-h-screen max-w-[1200px] p-5 font-sans">
             <div className="mb-8 rounded-xl bg-firstBg p-8 shadow-md">
@@ -183,23 +289,17 @@ export default function Team({ params }: TeamProps) {
                                         >
                                             Pay
                                         </button>
+                                    ) : team.paid === BooleanStatus.True ? (
+                                        <span className="rounded bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
+                                            Paid
+                                        </span>
+                                    ) : team.paid === BooleanStatus.Pending ? (
+                                        <span className="rounded bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800">
+                                            Pending
+                                        </span>
                                     ) : (
-                                        <span
-                                            className={`rounded px-2 py-0.5 text-xs font-medium ${
-                                                team.paid === BooleanStatus.True
-                                                    ? "bg-green-100 text-green-800"
-                                                    : team.paid ===
-                                                        BooleanStatus.Pending
-                                                      ? "bg-yellow-100 text-yellow-800"
-                                                      : "bg-red-100 text-red-800"
-                                            }`}
-                                        >
-                                            {team.paid === BooleanStatus.True
-                                                ? "Paid"
-                                                : team.paid ===
-                                                    BooleanStatus.Pending
-                                                  ? "Pending"
-                                                  : "Unpaid"}
+                                        <span className="rounded bg-red-100 px-2 py-0.5 text-xs font-medium text-red-800">
+                                            Unknown
                                         </span>
                                     )
                                 }
@@ -211,9 +311,9 @@ export default function Team({ params }: TeamProps) {
                                     BooleanStatus.False ? (
                                         <button
                                             className="rounded-md bg-blue-500 px-3 py-1 text-sm font-medium text-textPrimary hover:bg-blue-400"
-                                            onClick={handlePay}
+                                            onClick={handleJoined}
                                         >
-                                            Pay
+                                            Join
                                         </button>
                                     ) : (
                                         <span

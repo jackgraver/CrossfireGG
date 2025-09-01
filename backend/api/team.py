@@ -55,7 +55,7 @@ async def team_seed(request: Request, team_id: str):
     return {"success": True, "message": "Team seed updated successfully", "status": 200}
 
 @router.post("/paid/{team_id}")
-async def team_paid(request: Request, team_id: str):
+async def team_paid(request: Request, team_id: str, tournament_id: str = None, stage: str = None):
     data = await request.json()
     paid = data.get("paid")
     
@@ -69,7 +69,7 @@ async def team_paid(request: Request, team_id: str):
     return {"success": True, "message": "Team paid status updated successfully", "status": 200}
 
 @router.post("/joined/{team_id}")
-async def team_joined(request: Request, team_id: str):
+async def team_joined(request: Request, team_id: str, tournament_id: str = None, stage: str = None):
     data = await request.json()
     joined = data.get("joined")
     

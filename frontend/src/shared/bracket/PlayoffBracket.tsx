@@ -10,7 +10,7 @@ type PlayoffBracketProps = {
 
 export default function PlayoffBracket({ matches }: PlayoffBracketProps) {
     return (
-        <div className="flex flex-row items-center overflow-x-auto">
+        <div className="flex flex-row overflow-x-auto">
             <RoundSection round_num={1}>
                 <RoundCard
                     round="RO16"

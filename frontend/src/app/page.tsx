@@ -135,14 +135,14 @@ export default function Home() {
                     currentView={displayTab}
                     onViewChange={handleViewChange}
                 />
-            </div>
-            <div className="relative mt-4 flex flex-col items-center justify-center">
-                <div className="absolute left-0 top-0 z-10">
+                <div className="mt-4">
                     <TournamentSelector
                         selectedTournament={matchData?.tournament_id || ""}
                         onTournamentChange={setSelectedTournament}
                     />
                 </div>
+            </div>
+            <div className="relative mt-4 flex flex-col items-center justify-center">
                 {displayTab === "regseason" && (
                     <div className="w-full">
                         <RegularSeasonBracket matches={regSeasonMatches} />

@@ -10,6 +10,11 @@ def get_all_tournaments() -> list[Tournament]:
         stmt = select(Tournament).order_by(Tournament.start_date.desc())
         return session.exec(stmt).all()
 
+def insert_tournament(tournament: Tournament):
+    with Session(get_db_connection()) as session:
+        session.add(tournament)
+        session.commit()
+
 def get_current_tournament() -> Optional[Tournament]:
     with Session(get_db_connection()) as session:
         # Get current tournament ID from metadata

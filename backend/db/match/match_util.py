@@ -38,7 +38,7 @@ async def process_matches():
                 matches = json.load(f).get("items", [])  # expects a list of matches
         else:
             response = requests.get(
-                f'https://open.faceit.com/data/v4/championships/{current_sub_t_id}/matches?limit=100',
+                f'https://open.faceit.com/data/v4/championships/81e36970-81ec-4e53-b2af-c0a1c0b52938/matches?limit=100',
                 headers={
                     "Authorization": f"Bearer {FACEIT_API_KEY}",
                     "Accept": "application/json",
