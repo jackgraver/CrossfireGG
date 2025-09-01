@@ -30,13 +30,11 @@ def get_matches(tournament_id: str = Query(None, description="Optional tournamen
         current_tournament = get_current_tournament()
         print(current_tournament)
         if current_tournament.start_date > datetime.now(timezone.utc).timestamp():
-            print("s9 not started yet")
             all_tournaments = get_all_tournaments()
             most_recent_tournament = max(filter(lambda t: t.t_id != current_tournament.t_id, all_tournaments), key=lambda t: t.start_date)
             print(most_recent_tournament)
             res = fetch_matches_by_tournament(most_recent_tournament.t_id)
         else:
-            print("s9 started yet")
             res = fetch_matches_by_tournament(get_current_tournament().t_id)
     return res
 

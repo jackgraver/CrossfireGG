@@ -6,6 +6,7 @@ import { api } from "@/lib/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import ProtectedRoute from "@/shared/ProtectedRoute";
 import SeedControl from "./SeedControl";
+import StageSelector from "@/shared/StageSelector";
 
 type Filter = "name" | "paid" | "joined" | "stage";
 
@@ -277,34 +278,5 @@ export default function ManageTeams() {
                 </div>
             </div>
         </ProtectedRoute>
-    );
-}
-
-function StageSelector({
-    options = ["Option 1", "Option 2"],
-    selectedOption,
-    onOptionSelect,
-}: {
-    options?: [string, string];
-    selectedOption?: string;
-    onOptionSelect: (...args: any) => any;
-}) {
-    console.log(selectedOption);
-    return (
-        <div className="flex">
-            <h1
-                className={`hover:cursor-pointer ${selectedOption === options[0] ? "font-bold" : ""}`}
-                onClick={() => onOptionSelect(options[0])}
-            >
-                {options[0]}
-            </h1>
-            <span className="mx-2">/</span>
-            <h1
-                className={`hover:cursor-pointer ${selectedOption === options[1] ? "font-bold" : ""}`}
-                onClick={() => onOptionSelect(options[1])}
-            >
-                {options[1]}
-            </h1>
-        </div>
     );
 }

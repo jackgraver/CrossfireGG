@@ -1,7 +1,7 @@
 import { api } from "@/lib/api";
 import { Tournament } from "@/types/TournamentModel";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface TournamentSelectorProps {
     selectedTournament: string | null;
@@ -38,10 +38,7 @@ export default function TournamentSelector({
             <select
                 id="tournament-select"
                 value={selectedTournament || ""}
-                onChange={(e) => {
-                    console.log(e.target.value);
-                    onTournamentChange(e.target.value || "");
-                }}
+                onChange={(e) => onTournamentChange(e.target.value || "")}
                 className="text-text-primary rounded-lg bg-secondBg px-4 py-2 shadow-sm focus:border-thirdBg focus:outline-none"
             >
                 {tournaments.map((tournament) => (

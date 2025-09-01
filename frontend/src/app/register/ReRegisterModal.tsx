@@ -11,6 +11,13 @@ type ReRegisterModalProps = {
     title?: string;
 };
 
+function extractFaceitIdFromLink(link: string): string | null {
+    const match = link.match(
+        /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i,
+    );
+    return match ? match[0] : null;
+}
+
 export default function ReRegisterModal({
     setShowModal,
     title,
@@ -23,10 +30,13 @@ export default function ReRegisterModal({
         e.preventDefault();
 
         try {
+            const id = extractFaceitIdFromLink(teamName);
+            console.log("id", id);
             const data: any = await api.post("/team/reregister", {
-                team_name: teamName,
+                team_link: id,
             });
 
+            console.log(data);
             if (data.team_id) {
                 return { success: true, result: data.team_id };
             }
@@ -57,7 +67,7 @@ export default function ReRegisterModal({
                     />
                 </div>
                 <h2 className="text-xl font-bold text-textPrimary">
-                    Confirm Team Name
+                    Confirm Team Link
                 </h2>
                 <OSSForm
                     onSubmit={handleSubmit}
@@ -68,7 +78,7 @@ export default function ReRegisterModal({
                 >
                     <BaseInput
                         type="text"
-                        placeholder="Team Name"
+                        placeholder="https://www.faceit.com/en/teams/..."
                         value={teamName}
                         disabled={false}
                         onChange={(e) => {

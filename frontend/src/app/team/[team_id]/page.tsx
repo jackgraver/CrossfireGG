@@ -6,9 +6,11 @@ import { api } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import { formatDateOnly } from "@/lib/dateUtils";
 import { notFound } from "next/navigation";
-import { ReactNode, use, useEffect } from "react";
+import { ReactNode, use, useEffect, useState } from "react";
 import TeamLogo from "@/shared/bracket/TeamLogo";
 import { toastService } from "@/shared/toast/toastService";
+import TournamentSelector from "@/shared/TournamentSelector";
+import StageSelector from "@/shared/StageSelector";
 
 const openInNewTab = (url: string) => {
     window.open(url, "_blank", "noopener,noreferrer");
@@ -23,10 +25,24 @@ export default function Team({ params }: TeamProps) {
 
     if (!team_id) return notFound();
 
+    const [displaySwitch, setDisplaySwitch] = useState<
+        "Regular Season" | "Playoffs"
+    >("Regular Season");
+    const [selectedTournament, setSelectedTournament] = useState<string>("");
+
     const { data, isLoading, error } = useQuery({
-        queryKey: ["team", team_id],
-        queryFn: () =>
-            api.get<{ team: Team; matches: Match[] }>(`/team/${team_id}`),
+        queryKey: ["team", team_id, selectedTournament, displaySwitch],
+        queryFn: () => {
+            const params = new URLSearchParams();
+            if (selectedTournament)
+                params.append("tournament_id", selectedTournament);
+            if (displaySwitch) params.append("stage", displaySwitch);
+
+            const queryString = params.toString();
+            const url = `/team/${team_id}${queryString ? `?${queryString}` : ""}`;
+
+            return api.get<{ team: Team; matches: Match[] }>(url);
+        },
     });
 
     useEffect(() => {
@@ -139,6 +155,20 @@ export default function Team({ params }: TeamProps) {
                             <h2 className="mt-0.5 text-2xl font-bold text-textSecondary">{`(${team.win}-${team.loss})`}</h2>
                         </div>
                         <div className="flex flex-wrap gap-8 text-textPrimary">
+                            <div className="flex flex-col items-start gap-2">
+                                <TournamentSelector
+                                    selectedTournament={selectedTournament}
+                                    onTournamentChange={(t) =>
+                                        setSelectedTournament(t)
+                                    }
+                                />
+                                <StageSelector
+                                    options={["Regular Season", "Playoffs"]}
+                                    selectedOption={displaySwitch}
+                                    onOptionSelect={(d) => setDisplaySwitch(d)}
+                                />
+                            </div>
+
                             <TeamDetail
                                 title="Seed:"
                                 body={team.seed === -1 ? "-" : team.seed}
@@ -275,7 +305,7 @@ export default function Team({ params }: TeamProps) {
                     </div>
                 ) : (
                     <div className="py-10 text-center text-base text-textSecondary">
-                        No matches found for this team.
+                        No matches yet played this season.
                     </div>
                 )}
             </div>

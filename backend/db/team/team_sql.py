@@ -6,8 +6,9 @@ from typing import List, Dict
 from db.metadata.metadata_sql import get_metadata_value
 from db.db import get_db_connection
 from db.team.team_model import Team
-from db.tournament.tournament_sql import get_current_sub_tournament_id, get_current_tournament, get_sub_tournament_name_by_id, get_current_sub_tournament_by_name
+from db.tournament.tournament_sql import get_current_sub_tournament_id, get_current_tournament, get_sub_tournament_name_by_id, get_current_sub_tournament_by_name, sub_tournament_by_tournament_and_stage
 from db.match.match_model import Match
+from db.tournament.tournament_model import SubTournament
 
 def fetch_all_teams() -> Dict[str, List[Dict]]:
     # Get current tournament's regular season and playoffs sub-tournaments
@@ -114,11 +115,17 @@ def update_team_record(team: dict, won: bool, current_sub_t_id: str = None):
         session.add(new_team)
         session.commit()
 
-def get_team_info(team_id: str):
+def get_team_info(team_id: str, tournament_id: str = None, stage: str = None):
     if not team_id:
         return {}   
     with Session(get_db_connection()) as session:
+        sub_tournament = sub_tournament_by_tournament_and_stage(tournament_id, stage)
+        
         stmt = select(Team).where(Team.team_id == team_id)
+        if sub_tournament:
+            stmt = stmt.where(Team.sub_t_id == sub_tournament.sub_t_id)
+        else:
+            stmt = stmt.where(Team.sub_t_id == get_current_sub_tournament_id())
         team = session.exec(stmt).first()
         return team if team else None
     
@@ -130,12 +137,20 @@ def get_team_info_by_name(team_name: str) -> dict:
         team = session.exec(stmt).first()
         return team.model_dump() if team else {}
     
-def get_team_matches(team_id: str) -> dict:
+def get_team_matches(team_id: str, tournament_id: str = None, stage: str = None) -> dict:
     with Session(get_db_connection()) as session:
         # Get matches where the team is either team1 or team2
         stmt = select(Match).where(
             (Match.team1_id == team_id) | (Match.team2_id == team_id)
         )
+        
+        sub_tournament = sub_tournament_by_tournament_and_stage(tournament_id, stage)
+        print(sub_tournament    )
+        if sub_tournament:
+            stmt = stmt.where(Match.sub_t_id == sub_tournament.sub_t_id)
+        else:
+            stmt = stmt.where(Match.sub_t_id == get_current_sub_tournament_id())
+            
         matches = session.exec(stmt).all()
         
         result = []
@@ -159,6 +174,7 @@ def get_team_matches(team_id: str) -> dict:
         return result
     
 def set_team_seed(team_id: str, seed: int) -> bool:
+    
     with Session(get_db_connection()) as session:
         stmt = select(Team).where(
             Team.team_id == team_id

@@ -8,7 +8,7 @@ import requests
 from bot.bot import setup_match_channels
 from db.db import get_db_connection
 from db.match.match_sql import fetch_all_matches, write_match, write_map
-from db.team.team_sql import get_team_record, update_team_record
+from db.team.team_sql import get_team_info_by_name, get_team_record, update_team_record
 from db.tournament.tournament_sql import get_current_sub_tournament_id
 from db.metadata.metadata_sql import get_metadata_value
 from db.player.player_model import Player, PlayerStats
@@ -72,8 +72,14 @@ async def process_matches():
             process_players(faction1.get("roster", []), faction1.get("faction_id"), current_sub_t_id)
             process_players(faction2.get("roster", []), faction2.get("faction_id"), current_sub_t_id)
 
-            team1 = {"team_id_i": str(uuid4()), "team_id": faction1.get("faction_id"), "name": faction1.get("name"), "team_logo": faction1.get("avatar"), "sub_t_id": current_sub_t_id}
-            team2 = {"team_id_i": str(uuid4()), "team_id": faction2.get("faction_id"), "name": faction2.get("name"), "team_logo": faction2.get("avatar"), "sub_t_id": current_sub_t_id}
+            team1 = get_team_info_by_name(faction1.get("name"))
+            team2 = get_team_info_by_name(faction2.get("name"))
+    
+            team1_i_id = team1.get("team_id_i") if team1 else uuid4()
+            team2_i_id = team2.get("team_id_i") if team2 else uuid4()
+
+            team1 = {"team_id_i": team1_i_id, "team_id": faction1.get("faction_id"), "name": faction1.get("name"), "team_logo": faction1.get("avatar"), "sub_t_id": current_sub_t_id}
+            team2 = {"team_id_i": team2_i_id, "team_id": faction2.get("faction_id"), "name": faction2.get("name"), "team_logo": faction2.get("avatar"), "sub_t_id": current_sub_t_id}
             
             if not winner_key:
                 match = {

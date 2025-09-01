@@ -26,9 +26,9 @@ def get_teams():
     }
     
 @router.get("/{team_id}")
-def get_team(team_id: str):
-    team_info = get_team_info(team_id)
-    matches = get_team_matches(team_id)
+def get_team(team_id: str, tournament_id: str = None, stage: str = None):
+    team_info = get_team_info(team_id, tournament_id, stage)
+    matches = get_team_matches(team_id, tournament_id, stage)
     res = {
         "team": team_info,
         "matches": matches
@@ -167,30 +167,28 @@ async def register_team(request: Request):
 @router.post("/reregister")
 async def reregister_team(request: Request):
     data = await request.json()
-    team_name = data.get("team_name")
- 
-    # await asyncio.sleep(3)
+    team_id = data.get("team_link")
+    # team_id = extract_faceit_id_from_link(team_link)
     
-    if not team_name:
+    if not team_id:
         return {"error": "Team name is required"}
      
     ts = await current_tournament()
     sub_t_id = ts.get('current_regular_season').sub_t_id or ""
     
-    if team_name:
-        team = get_team_info_by_name(team_name)
+    if team_id:
+        team = get_team_info(team_id)
         if not team:
             return {"error": "Team not found"}
-        team_id = team.get("team_id")
-        if team.get("sub_t_id") == sub_t_id:
+        if team.sub_t_id == sub_t_id:
             return {"error": "Team already registered", "team_id": team_id}
     
     create_team(Team(
-        team_id_i=team.get('team_id_i'),
+        team_id_i=team.team_id_i,
         team_id=team_id,
         sub_t_id=sub_t_id,
-        team_name=team_name,
-        team_logo=team.get('team_logo'),
+        team_name=team.team_name,
+        team_logo=team.team_logo,
         seed=-1,
         win=0,
         loss=0,
@@ -201,9 +199,9 @@ async def reregister_team(request: Request):
     prev_players = get_players_of_team(team_id)
     for player in prev_players:
         insert_player(Player(
-            player_id_i=str(uuid.uuid4()),
+            player_id_i=player.player_id_i,
             player_id=player.player_id, 
-            team_id=team.get('team_id'),
+            team_id=team_id,
             sub_t_id=sub_t_id,
             player_name=player.player_name,
             player_logo=player.player_logo
@@ -238,4 +236,4 @@ async def reregister_team(request: Request):
             player_logo=player.get("avatar")
         ))
 
-    return {"team_id" : team.get("team_id")}
+    return {"team_id" : team_id}
