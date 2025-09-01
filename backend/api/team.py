@@ -92,20 +92,19 @@ def extract_faceit_id_from_link(link: str):
     return team_id
 
 
-@router.get("/test_faceit_link/{link}")
-async def test_faceit_link(link: str):
-    if not link:
-        return {"status": "error", "code": -1, "message": "Missing link"}
+@router.get("/test_faceit_link/{team_id}")
+async def test_faceit_link(team_id: str):
+    if not team_id:
+        return {"status": "error", "code": -1, "message": "Missing team id"}
 
-    if team_id := extract_faceit_id_from_link(link):
-        if team := check_already_registered(team_id):
-            return {"status": "success", "code": 2, "message": "Team already registered", "id": team.team_id}
-        
-        if not fetch_faceit_info(team_id):
-            return {"status": "error", "code": -2, "message": "Failed to fetch Faceit info"}
+    if team := check_already_registered(team_id):
+        return {"status": "success", "code": 2, "message": "Team already registered", "id": team.team_id}
+    
+    if not fetch_faceit_info(team_id):
+        return {"status": "error", "code": -2, "message": "Failed to fetch Faceit info"}
 
-        if get_team_info(team_id):
-            return {"status": "success", "code": 1, "id": team_id}
+    if get_team_info(team_id):
+        return {"status": "success", "code": 1, "id": team_id}
 
     return {"status": "success", "code": 0}
 

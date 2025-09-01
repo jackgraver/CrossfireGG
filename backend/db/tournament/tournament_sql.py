@@ -72,7 +72,8 @@ def get_sub_tournament_name_by_id(sub_t_id: str) -> Optional[str]:
         return sub_tournament.t_name if sub_tournament else None
     
 def sub_tournament_by_tournament_and_stage(tournament_id: str, stage: str):
-    print(tournament_id, stage)
+    if not tournament_id or not stage:
+        return None
     with Session(get_db_connection()) as session:
         stmt = select(SubTournament).where(
             SubTournament.t_id == tournament_id,

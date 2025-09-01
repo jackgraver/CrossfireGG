@@ -84,7 +84,7 @@ export default function Toast({
                 <button
                     type="button"
                     onClick={onClose}
-                    className="ml-2 rounded p-1.5 transition-colors hover:bg-white/20"
+                    className="ml-2 rounded transition-colors hover:bg-white/20"
                     aria-label="Close"
                 >
                     <X />
