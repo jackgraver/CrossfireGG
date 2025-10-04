@@ -25,7 +25,8 @@ type Stage struct {
 	TournamentID uint
 	Tournament Tournament
 	Name string
-	Format string 
+	Format string
+	IsCurrent    bool 
 	Scheduled Scheduled `gorm:"embedded"`
 	Groups []Group
 }

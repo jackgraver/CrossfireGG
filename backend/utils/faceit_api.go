@@ -10,9 +10,15 @@ import (
 
 var FACEIT_API_KEY = os.Getenv("FACEIT_API_KEY")
 
-func FetchFromAPI(url string, writeToFile string) (map[string]interface{}, error) {
+func init() {
+	if FACEIT_API_KEY == "" {
+		panic("FACEIT_API_KEY not set")
+	}
+}
+
+func FetchFromAPI(url string, writeToFile string) (map[string]any, error) {
 	if url == "" {
-		return map[string]interface{}{}, nil
+		return map[string]any{}, nil
 	}
 
 	client := &http.Client{}
@@ -34,7 +40,7 @@ func FetchFromAPI(url string, writeToFile string) (map[string]interface{}, error
 		return nil, errors.New(resp.Status)
 	}
 
-	var result map[string]interface{}
+	var result map[string]any
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
 		return nil, err
 	}
@@ -50,9 +56,9 @@ func FetchFromAPI(url string, writeToFile string) (map[string]interface{}, error
 	return result, nil
 }
 
-func ReadFromFile(fileName string) (map[string]interface{}, error) {
+func ReadFromFile(fileName string) (map[string]any, error) {
 	if fileName == "" {
-		return map[string]interface{}{}, nil
+		return map[string]any{}, nil
 	}
 
 	filePath := filepath.Join(".test_data", fileName)
@@ -61,7 +67,7 @@ func ReadFromFile(fileName string) (map[string]interface{}, error) {
 		return nil, err
 	}
 
-	var result map[string]interface{}
+	var result map[string]any
 	if err := json.Unmarshal(data, &result); err != nil {
 		return nil, err
 	}

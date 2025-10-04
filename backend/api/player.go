@@ -5,10 +5,22 @@ import (
 	"gorm.io/gorm"
 )
 
-func DefinePlayerRoutes(router *gin.Engine, db *gorm.DB) {
+type PlayerFeature struct {
+	db *gorm.DB
+}
+
+func (f *PlayerFeature) DefinePlayerRoutes(router *gin.Engine) {
 	player := router.Group("/player")
 	{
-		player.GET("/all", func(c *gin.Context) {})
-		player.GET("/:id", func(c *gin.Context) {})
+		player.GET("/all", f.getAll)
+		player.GET("/:id", f.getByID)
 	}
+}
+
+func (f *PlayerFeature) getAll(c *gin.Context) {
+
+}
+
+func (f *PlayerFeature) getByID(c *gin.Context) {	
+
 }

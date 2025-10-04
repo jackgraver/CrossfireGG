@@ -5,16 +5,52 @@ import (
 	"gorm.io/gorm"
 )
 
-func DefineTeamRoutes(router *gin.Engine, db *gorm.DB) {
+type TeamFeature struct {
+	db *gorm.DB
+}
+
+func (f *TeamFeature) DefineTeamRoutes(router *gin.Engine) {
 	team := router.Group("/team")
 	{
-		team.GET("/all", func(c *gin.Context) {})
-		team.GET("/:id", func(c *gin.Context) {})
-		team.POST("/:id/seed", func(c *gin.Context) {})
-		team.POST("/:id/paid", func(c *gin.Context) {})
-		team.POST("/:id/signedup", func(c *gin.Context) {})
-		team.POST("/:id/test_faceit_link", func(c *gin.Context) {})
-		team.POST("/register", func(c *gin.Context) {})
-		team.POST("/re-register", func(c *gin.Context) {})
+		team.GET("/all", f.getAll)
+		team.GET("/:id", f.getByID)
+		team.POST("/:id/seed", f.postSeed)
+		team.POST("/:id/paid", f.postPaid)
+		team.POST("/:id/signedup", f.postSignedup)
+		team.POST("/:id/test_faceit_link", f.postTestFaceitLink)
+		team.POST("/register", f.postRegister)
+		team.POST("/re-register", f.postReRegister)
 	}
+}
+
+func (f *TeamFeature) getAll(c *gin.Context) {
+
+}
+
+func (f *TeamFeature) getByID(c *gin.Context) {
+
+}
+
+func (f *TeamFeature) postSeed(c *gin.Context) {
+
+}
+
+func (f *TeamFeature) postPaid(c *gin.Context) {
+
+}
+
+func (f *TeamFeature) postSignedup(c *gin.Context) {
+
+}
+
+func (f *TeamFeature) postTestFaceitLink(c *gin.Context) {
+
+}
+
+func (f *TeamFeature) postRegister(c *gin.Context) {
+
+}	
+
+func (f *TeamFeature) postReRegister(c *gin.Context) {	
+
 }

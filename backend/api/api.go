@@ -2,6 +2,7 @@ package api
 
 import (
 	"cf-apiserver/db"
+	"fmt"
 	"time"
 
 	"github.com/gin-contrib/cors"
@@ -10,6 +11,8 @@ import (
 
 func InitAPI() {
 	router := gin.Default()
+
+	router.Use(globalMiddleware())
 
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:5173"},
@@ -26,10 +29,24 @@ func InitAPI() {
 		panic(err)
 	}
 
-	DefineMatchRoutes(router, db)
-	DefinePlayerRoutes(router, db)
-	DefineTeamRoutes(router, db)
-	DefineTournamentRoutes(router, db)
+	matchFeature := MatchFeature{db}
+	matchFeature.DefineMatchRoutes(router)
+
+	playerFeature := PlayerFeature{db}
+	playerFeature.DefinePlayerRoutes(router)
+
+	teamFeature := TeamFeature{db}
+	teamFeature.DefineTeamRoutes(router)
+
+	tournamentFeature := TournamentFeature{db}
+	tournamentFeature.DefineTournamentRoutes(router)
 
 	router.Run("127.0.0.1:8080")
+}
+
+func globalMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		fmt.Println("Middleware pre-setup")
+		c.Next();
+	}
 }

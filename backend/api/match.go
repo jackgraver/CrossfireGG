@@ -5,14 +5,42 @@ import (
 	"gorm.io/gorm"
 )
 
-func DefineMatchRoutes(router *gin.Engine, db *gorm.DB) {
+type MatchFeature struct {
+	db *gorm.DB
+}
+
+func (f *MatchFeature) DefineMatchRoutes(router *gin.Engine) {
 	match := router.Group("/match")
 	{
-		match.GET("/refresh", func(c *gin.Context) {})
-		match.GET("/all", func(c *gin.Context) {})
-		match.GET("/casters", func(c *gin.Context) {})
-		match.GET("/:id", func(c *gin.Context) {})
-		match.POST("/claim", func(c *gin.Context) {})
-		match.POST("/unclaim", func(c *gin.Context) {})
+		match.GET("/all", f.getAll)
+		match.GET("/:id", f.getByID)
+		match.POST("/refresh", f.postRefresh)
+		match.GET("/casters", f.getCasters)
+		match.POST("/claim", f.postClaim)
+		match.POST("/unclaim", f.postUnclaim)
 	}
+}
+
+func (f *MatchFeature) postRefresh(c *gin.Context) {
+
+}
+
+func (f *MatchFeature) getAll(c *gin.Context) {
+
+}
+
+func (f *MatchFeature) getByID(c *gin.Context) {
+
+}
+
+func (f *MatchFeature) getCasters(c *gin.Context) {
+
+}
+
+func (f *MatchFeature) postClaim(c *gin.Context) {
+
+}
+
+func (f *MatchFeature) postUnclaim(c *gin.Context) {
+
 }
