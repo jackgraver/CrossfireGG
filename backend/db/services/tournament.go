@@ -15,10 +15,10 @@ func AllTournaments(db *gorm.DB) ([]models.Tournament, error) {
 	return tournaments, nil
 }
 
-func CreateTournament(db *gorm.DB, tournament models.Tournament) error {
-	err := db.Create(&tournament).Error
+func CreateTournament(db *gorm.DB, tournament models.Tournament) (models.Tournament, error) {
+	err := db.Create(&tournament).Error;
 	if err != nil {
-		return err
+		return models.Tournament{}, err
 	}
-	return nil
+	return tournament, nil
 }

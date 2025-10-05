@@ -1,6 +1,7 @@
 package api
 
 import (
+	"cf-apiserver/db/models"
 	"cf-apiserver/db/services"
 
 	"github.com/gin-gonic/gin"
@@ -35,7 +36,22 @@ func (f *TournamentFeature) getAll(c *gin.Context) {
 } 
 
 func (f *TournamentFeature) postCreate(c *gin.Context) {
-
+    var createTournament models.CreateTournament
+    if err := c.ShouldBindJSON(&createTournament); err != nil {
+        c.JSON(400, gin.H{"error": err.Error()})
+        return
+    }
+    tournament, err := services.CreateTournament(f.db, models.Tournament{
+        Name: createTournament.TournamentName,
+        FaceitID: createTournament.FaceitID,
+        Scheduled: createTournament.Scheduled,
+    })
+ 
+    if err != nil {
+        c.JSON(500, gin.H{"error": err.Error()})
+        return
+    }
+    c.JSON(200, gin.H{"tournament": tournament})
 }
 
 func (f *TournamentFeature) currentTournamentGetAll(c *gin.Context) {

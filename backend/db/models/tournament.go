@@ -20,6 +20,12 @@ type Tournament struct {
 	Stages []Stage
 }
 
+type CreateTournament struct {
+	TournamentName string `json:"tournament_name"`
+	Scheduled Scheduled `json:"scheduled"`
+	FaceitID string `json:"faceit_id"`
+}
+
 type Stage struct {
 	gorm.Model
 	TournamentID uint
