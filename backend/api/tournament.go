@@ -16,6 +16,7 @@ func (f *TournamentFeature) DefineTournamentRoutes(router *gin.Engine) {
     tournament := router.Group("/tournament")
     {
         tournament.GET("/all", f.getAll)
+        tournament.GET("/:id", f.getByID)
         tournament.POST("/create", f.postCreate)
 
         current := tournament.Group("/current_tournament")
@@ -34,6 +35,16 @@ func (f *TournamentFeature) getAll(c *gin.Context) {
     }
     c.JSON(200, gin.H{"tournaments": tournaments})
 } 
+
+func (f *TournamentFeature) getByID(c *gin.Context) {
+    id := c.Param("id")
+    tournament, err := services.GetTournament(f.db, id)
+    if err != nil {
+        c.JSON(500, gin.H{"error": err.Error()})
+        return
+    }
+    c.JSON(200, gin.H{"tournament": tournament})
+}
 
 func (f *TournamentFeature) postCreate(c *gin.Context) {
     var createTournament models.CreateTournament
@@ -55,7 +66,12 @@ func (f *TournamentFeature) postCreate(c *gin.Context) {
 }
 
 func (f *TournamentFeature) currentTournamentGetAll(c *gin.Context) {
-
+    tournament, err := services.CurrentTournament(f.db)
+    if err != nil {
+        c.JSON(500, gin.H{"error": err.Error()})
+        return
+    }
+    c.JSON(200, gin.H{"tournament": tournament})
 }
 
 func (f *TournamentFeature) currentTournamentPostUpdate(c *gin.Context) {

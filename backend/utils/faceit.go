@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
 )
 
 var FACEIT_API_KEY = os.Getenv("FACEIT_API_KEY")
@@ -73,4 +74,13 @@ func ReadFromFile(fileName string) (map[string]any, error) {
 	}
 
 	return result, nil
+}
+
+func ExtractIDFromLink(link string) *string {
+    re := regexp.MustCompile(`(?i)[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}`)
+    match := re.FindString(link)
+    if match == "" {
+        return nil
+    }
+    return &match
 }

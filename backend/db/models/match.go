@@ -38,10 +38,10 @@ type Map struct {
 	Team2Score uint
 }
 
-// type MatchCaster struct {
-// 	gorm.Model
-// 	MatchID uint
-// 	Match Match
-// 	CasterID uint
-// 	Caster Caster
-// }
+type MatchCaster struct {
+	gorm.Model
+	MatchID  uint
+	Match    Match
+	CasterID uint 
+	Caster   User `gorm:"foreignKey:CasterID"`
+}
