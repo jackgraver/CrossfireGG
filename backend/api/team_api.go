@@ -6,11 +6,17 @@ import (
 	"cf-apiserver/utils"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 type TeamFeature struct {
 	*BaseFeature[models.Team]
 }
+
+func NewTeamFeature(db *gorm.DB) *TeamFeature {
+	return &TeamFeature{BaseFeature: &BaseFeature[models.Team]{db}}
+}
+
 
 func (f *TeamFeature) DefineTeamRoutes(router *gin.Engine) {
 	f.BaseFeature.DefineRoutes(router)

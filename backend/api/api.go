@@ -29,13 +29,13 @@ func InitAPI() {
 		panic(err)
 	}
 
-	matchFeature := MatchFeature{db}
+	matchFeature := NewMatchFeature(db)
 	matchFeature.DefineMatchRoutes(router)
 
-	playerFeature := PlayerFeature{db}
+	playerFeature := NewPlayerFeature(db)
 	playerFeature.DefinePlayerRoutes(router)
 
-	teamFeature := TeamFeature{db}
+	teamFeature := NewTeamFeature(db)
 	teamFeature.DefineTeamRoutes(router)
 
 	tournamentFeature := NewTournamentFeature(db)

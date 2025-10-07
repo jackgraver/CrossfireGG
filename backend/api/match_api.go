@@ -6,10 +6,15 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 type MatchFeature struct {
 	*BaseFeature[models.Match]
+}
+
+func NewMatchFeature(db *gorm.DB) *MatchFeature {
+	return &MatchFeature{BaseFeature: &BaseFeature[models.Match]{db}}
 }
 
 func (f *MatchFeature) DefineMatchRoutes(router *gin.Engine) {
