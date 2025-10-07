@@ -6,6 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
+//TODO: Status ENUM?
 type Match struct {
 	gorm.Model
 	GroupID uint
@@ -15,6 +16,7 @@ type Match struct {
 	ScheduledAt time.Time `gorm:"type:date"`
 	FaceitURL string
 	Participants []MatchParticipant
+	Casters []MatchCaster
 }
 
 type MatchParticipant struct {
@@ -44,4 +46,5 @@ type MatchCaster struct {
 	Match    Match
 	CasterID uint 
 	Caster   User `gorm:"foreignKey:CasterID"`
+	AssignedAt time.Time
 }

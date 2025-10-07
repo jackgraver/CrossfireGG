@@ -3,6 +3,7 @@ package api
 import (
 	"cf-apiserver/db/models"
 	"cf-apiserver/db/services"
+	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -23,7 +24,8 @@ func (f *MatchFeature) DefineMatchRoutes(router *gin.Engine) {
 	match := router.Group("/match")
 	{
 		match.POST("/refresh", f.postRefresh)
-		match.GET("/:id/casters", f.getCasters)
+		match.GET("/:id/casters", f.getMatchCasters)
+		match.GET("/casters", f.getAllMatchesCasters)
 		match.POST("/:id/claim", f.postClaim)
 		match.POST("/:id/unclaim", f.postUnclaim)
 	}
@@ -33,8 +35,24 @@ func (f *MatchFeature) postRefresh(c *gin.Context) {
 
 }
 
-func (f *MatchFeature) getCasters(c *gin.Context) {
+func (f *MatchFeature) getMatchCasters(c *gin.Context) {
+	id := c.Param("id")
+	casters, err := services.MatchCasters(f.db, id)
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(200, gin.H{"casters": casters})
+}
 
+func (f *MatchFeature) getAllMatchesCasters(c *gin.Context) {
+	matches, err := services.AllMatchCasters(f.db)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"matches": matches})
 }
 
 func (f *MatchFeature) postClaim(c *gin.Context) {
