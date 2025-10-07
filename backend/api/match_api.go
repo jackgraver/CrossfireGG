@@ -6,42 +6,22 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 type MatchFeature struct {
-	db *gorm.DB
+	*BaseFeature[models.Match]
 }
 
 func (f *MatchFeature) DefineMatchRoutes(router *gin.Engine) {
+	f.BaseFeature.DefineRoutes(router)
+
 	match := router.Group("/match")
 	{
-		match.GET("/all", f.getAll)
-		match.GET("/:id", f.getByID)
 		match.POST("/refresh", f.postRefresh)
 		match.GET("/:id/casters", f.getCasters)
 		match.POST("/:id/claim", f.postClaim)
 		match.POST("/:id/unclaim", f.postUnclaim)
 	}
-}
-
-func (f *MatchFeature) getAll(c *gin.Context) {
-    matches, err := services.AllMatches(f.db)
-    if err != nil {
-        c.JSON(500, gin.H{"error": err.Error()})
-        return
-    }
-    c.JSON(200, gin.H{"tournaments": matches})
-}
-
-func (f *MatchFeature) getByID(c *gin.Context) {
-    id := c.Param("id")
-    match, err := services.GetMatch(f.db, id)
-    if err != nil {
-        c.JSON(500, gin.H{"error": err.Error()})
-        return
-    }
-    c.JSON(200, gin.H{"tournament": match})
 }
 
 func (f *MatchFeature) postRefresh(c *gin.Context) {

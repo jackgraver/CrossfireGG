@@ -1,26 +1,20 @@
 package api
 
 import (
+	"cf-apiserver/db/models"
+
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 type PlayerFeature struct {
-	db *gorm.DB
+	*BaseFeature[models.Player]
 }
 
 func (f *PlayerFeature) DefinePlayerRoutes(router *gin.Engine) {
+	f.BaseFeature.DefineRoutes(router)
+
 	player := router.Group("/player")
 	{
-		player.GET("/all", f.getAll)
-		player.GET("/:id", f.getByID)
+		player.GET("/", func(ctx *gin.Context) {})
 	}
-}
-
-func (f *PlayerFeature) getAll(c *gin.Context) {
-
-}
-
-func (f *PlayerFeature) getByID(c *gin.Context) {	
-
 }

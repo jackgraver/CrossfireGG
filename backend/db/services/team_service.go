@@ -6,24 +6,6 @@ import (
 	"gorm.io/gorm"
 )
 
-func AllTeams(db *gorm.DB) ([]models.Team, error) {
-	var team []models.Team
-	err := db.Find(&team).Error
-	if err != nil {
-		return nil, err
-	}
-	return team, nil
-}
-
-func GetTeam(db *gorm.DB, id string) (*models.Team, error) {
-	var team models.Team
-	err := db.Where("id = ?", id).First(&team).Error
-	if err != nil {
-		return nil, err
-	}
-	return &team, nil
-}
-
 func InsertTeam(db *gorm.DB, team models.Team) (*models.Team, error) {
 	err := db.Create(&team).Error
 	return &team, err

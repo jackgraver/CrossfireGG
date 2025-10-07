@@ -6,18 +6,17 @@ import (
 	"cf-apiserver/utils"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/gorm"
 )
 
 type TeamFeature struct {
-	db *gorm.DB
+	*BaseFeature[models.Team]
 }
 
 func (f *TeamFeature) DefineTeamRoutes(router *gin.Engine) {
+	f.BaseFeature.DefineRoutes(router)
+
 	team := router.Group("/team")
 	{
-		team.GET("/all", f.getAll)
-		team.GET("/:id", f.getByID)
 		team.POST("/:id/seed", f.postSeed)
 		team.POST("/:id/paid", f.postPaid)
 		team.POST("/:id/signedup", f.postSignedup)
@@ -25,25 +24,6 @@ func (f *TeamFeature) DefineTeamRoutes(router *gin.Engine) {
 		team.POST("/register", f.postRegister)
 		team.POST("/re-register", f.postReRegister)
 	}
-}
-
-func (f *TeamFeature) getAll(c *gin.Context) {
-	teams, err := services.AllTeams(f.db)
-	if err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
-		return
-	}
-	c.JSON(200, gin.H{"teams": teams})
-}
-
-func (f *TeamFeature) getByID(c *gin.Context) {
-	id := c.Param("id")
-	team, err := services.GetTeam(f.db, id)
-	if err != nil {
-		c.JSON(500, gin.H{"error": err.Error()})
-		return
-	}
-	c.JSON(200, gin.H{"team": team})
 }
 
 func (f *TeamFeature) postSeed(c *gin.Context) {
@@ -129,7 +109,7 @@ func (f *TeamFeature) postRegister(c *gin.Context) {
 
 	faceitID := utils.ExtractIDFromLink(body.FaceitLink)
 
-	existingTeam, err := services.GetTeam(f.db, *faceitID)
+	existingTeam, err := services.GetObject[models.Team](f.db, *faceitID)
 	if err != nil {
 		c.JSON(500, gin.H{"error": err.Error()})
 		return

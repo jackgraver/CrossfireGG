@@ -9,14 +9,18 @@ import (
 )
 
 type TournamentFeature struct {
-    db *gorm.DB
+    *BaseFeature[models.Tournament]
+}
+
+func NewTournamentFeature(db *gorm.DB) *TournamentFeature {
+	return &TournamentFeature{BaseFeature: &BaseFeature[models.Tournament]{db}}
 }
 
 func (f *TournamentFeature) DefineTournamentRoutes(router *gin.Engine) {
+    f.BaseFeature.DefineRoutes(router)
+
     tournament := router.Group("/tournament")
     {
-        tournament.GET("/all", f.getAll)
-        tournament.GET("/:id", f.getByID)
         tournament.POST("/create", f.postCreate)
 
         current := tournament.Group("/current_tournament")
@@ -25,25 +29,6 @@ func (f *TournamentFeature) DefineTournamentRoutes(router *gin.Engine) {
             current.POST("/update", f.currentTournamentPostUpdate)
         }
     }
-}
-
-func (f *TournamentFeature) getAll(c *gin.Context) {
-    tournaments, err := services.AllTournaments(f.db)
-    if err != nil {
-        c.JSON(500, gin.H{"error": err.Error()})
-        return
-    }
-    c.JSON(200, gin.H{"tournaments": tournaments})
-} 
-
-func (f *TournamentFeature) getByID(c *gin.Context) {
-    id := c.Param("id")
-    tournament, err := services.GetTournament(f.db, id)
-    if err != nil {
-        c.JSON(500, gin.H{"error": err.Error()})
-        return
-    }
-    c.JSON(200, gin.H{"tournament": tournament})
 }
 
 func (f *TournamentFeature) postCreate(c *gin.Context) {

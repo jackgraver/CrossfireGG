@@ -38,7 +38,7 @@ func InitAPI() {
 	teamFeature := TeamFeature{db}
 	teamFeature.DefineTeamRoutes(router)
 
-	tournamentFeature := TournamentFeature{db}
+	tournamentFeature := NewTournamentFeature(db)
 	tournamentFeature.DefineTournamentRoutes(router)
 
 	router.Run("127.0.0.1:8080")
