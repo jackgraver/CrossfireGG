@@ -2,17 +2,17 @@ package api
 
 import (
 	"cf-apiserver/db"
-	"fmt"
 	"time"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-)
+) 
 
 func InitAPI() {
 	router := gin.Default()
 
-	router.Use(globalMiddleware())
+	router.Use(CheckAPIKey())
+	router.Use(ProcessJWT())
 
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"http://localhost:5173"},
@@ -42,11 +42,4 @@ func InitAPI() {
 	tournamentFeature.DefineTournamentRoutes(router)
 
 	router.Run("127.0.0.1:8080")
-}
-
-func globalMiddleware() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		fmt.Println("Middleware pre-setup")
-		c.Next();
-	}
 }

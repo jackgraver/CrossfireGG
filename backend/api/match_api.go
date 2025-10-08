@@ -4,7 +4,6 @@ import (
 	"cf-apiserver/db/models"
 	"cf-apiserver/db/services"
 	"net/http"
-	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -55,11 +54,14 @@ func (f *MatchFeature) getAllMatchesCasters(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"matches": matches})
 }
 
+type ClaimingParams struct {
+	MatchID uint `uri:"match_id" binding:"required"`
+}
+
 func (f *MatchFeature) postClaim(c *gin.Context) {
-	matchID, err := strconv.ParseUint(c.Param("id"), 10, 0)
-	if err != nil {
-		c.JSON(400, gin.H{"error": "invalid id"})
-		return
+	var params ClaimingParams
+	if err := c.ShouldBindUri(&params); err != nil {
+		c.JSON(400, gin.H{"error": "invalid params"})
 	}
 
 	var body struct {
@@ -71,10 +73,10 @@ func (f *MatchFeature) postClaim(c *gin.Context) {
 	}
 
 	matchCaster := models.MatchCaster{
-		MatchID: uint(matchID),
+		MatchID: params.MatchID,
 		CasterID: body.CasterID,
 	}
-	err = services.CreateMatchCaster(f.db, matchCaster)
+	err := services.CreateMatchCaster(f.db, matchCaster)
 	if err != nil {
 		c.JSON(500, gin.H{"error": err.Error()})
 		return
@@ -83,10 +85,9 @@ func (f *MatchFeature) postClaim(c *gin.Context) {
 }
 
 func (f *MatchFeature) postUnclaim(c *gin.Context) {
-	matchID, err := strconv.ParseUint(c.Param("id"), 10, 0)
-	if err != nil {
-		c.JSON(400, gin.H{"error": "invalid id"})
-		return
+	var params ClaimingParams
+	if err := c.ShouldBindUri(&params); err != nil {
+		c.JSON(400, gin.H{"error": "invalid params"})
 	}
 
 	var body struct {
@@ -98,10 +99,10 @@ func (f *MatchFeature) postUnclaim(c *gin.Context) {
 	}
 
 	matchCaster := models.MatchCaster{
-		MatchID: uint(matchID),
+		MatchID:  params.MatchID,
 		CasterID: body.CasterID,
 	}
-	err = services.RemoveMatchCaster(f.db, matchCaster)
+	err := services.RemoveMatchCaster(f.db, matchCaster)
 	if err != nil {
 		c.JSON(500, gin.H{"error": err.Error()})
 		return
