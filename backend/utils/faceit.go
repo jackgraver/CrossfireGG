@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"cf-apiserver/config"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -9,13 +10,14 @@ import (
 	"regexp"
 )
 
-var FACEIT_API_KEY = os.Getenv("FACEIT_API_KEY")
+// var FACEIT_API_KEY = os.Getenv("FACEIT_API_KEY")
+var FACEIT_API_KEY = config.FaceitAPI
 
-func init() {
-	if FACEIT_API_KEY == "" {
-		panic("FACEIT_API_KEY not set")
-	}
-}
+// func init() {
+// 	if FACEIT_API_KEY == "" {
+// 		panic("FACEIT_API_KEY not set")
+// 	}
+// }
 
 func FetchFromAPI(url string, writeToFile string) (map[string]any, error) {
 	if url == "" {

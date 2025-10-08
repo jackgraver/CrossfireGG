@@ -16,7 +16,7 @@ type Tournament struct {
 	Name string
 	Scheduled Scheduled `gorm:"embedded"`
 	FaceitID string
-	Teams []Team
+	Teams []TournamentTeam
 	Stages []Stage
 }
 

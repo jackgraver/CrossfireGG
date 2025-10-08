@@ -14,7 +14,7 @@ type TeamFeature struct {
 }
 
 func NewTeamFeature(db *gorm.DB) *TeamFeature {
-	return &TeamFeature{BaseFeature: &BaseFeature[models.Team]{db}}
+	return &TeamFeature{BaseFeature: &BaseFeature[models.Team]{db, "/team"}}
 }
 
 

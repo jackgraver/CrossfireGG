@@ -13,16 +13,15 @@ type PlayerFeature struct {
 }
 
 func NewPlayerFeature(db *gorm.DB) *PlayerFeature {
-	return &PlayerFeature{BaseFeature: &BaseFeature[models.Player]{db}}
+	return &PlayerFeature{BaseFeature: &BaseFeature[models.Player]{db, "/player"}}
 }
-
 
 func (f *PlayerFeature) DefinePlayerRoutes(router *gin.Engine) {
 	f.BaseFeature.DefineRoutes(router)
 
 	player := router.Group("/player")
 	{
-		player.GET("/:matchID", f.GetPlayerMatchStats)
+		player.GET("/stats/:matchID", f.GetPlayerMatchStats)
 	}
 }
 

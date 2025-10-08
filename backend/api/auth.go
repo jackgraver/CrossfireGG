@@ -1,25 +1,17 @@
 package api
 
 import (
+	"cf-apiserver/config"
 	"fmt"
 	"net/http"
-	"os"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 )
 
-var API_KEY = os.Getenv("VALID_API_KEY")
-var SECRET = os.Getenv("JWT_SECRET_KEY")
-func init() {
-	if API_KEY == "" {
-		panic("API_KEY not set")
-	}
-	if SECRET == "" {
-		panic("SECRET not set")
-	}
-}
+var API_KEY = config.APIKey
+var SECRET = config.SECRET
 
 func CheckAPIKey() gin.HandlerFunc {
 	return func(c *gin.Context) {

@@ -93,3 +93,5 @@ stress_test.py
 *.db-*
 
 backend_py/*
+backend/tmp/
+backend/tmp/

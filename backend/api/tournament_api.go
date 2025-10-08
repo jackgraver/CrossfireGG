@@ -13,7 +13,7 @@ type TournamentFeature struct {
 }
 
 func NewTournamentFeature(db *gorm.DB) *TournamentFeature {
-	return &TournamentFeature{BaseFeature: &BaseFeature[models.Tournament]{db}}
+	return &TournamentFeature{BaseFeature: &BaseFeature[models.Tournament]{db, "/tournament"}}
 }
 
 func (f *TournamentFeature) DefineTournamentRoutes(router *gin.Engine) {

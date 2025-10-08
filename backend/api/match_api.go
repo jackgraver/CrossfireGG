@@ -14,7 +14,7 @@ type MatchFeature struct {
 }
 
 func NewMatchFeature(db *gorm.DB) *MatchFeature {
-	return &MatchFeature{BaseFeature: &BaseFeature[models.Match]{db}}
+	return &MatchFeature{BaseFeature: &BaseFeature[models.Match]{db, "/match"}}
 }
 
 func (f *MatchFeature) DefineMatchRoutes(router *gin.Engine) {
