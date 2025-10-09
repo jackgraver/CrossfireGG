@@ -29,17 +29,15 @@ func ProcessJWT() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenString := c.GetHeader("Authorization")
 		if tokenString == "" {
-			c.Next() // no token, continue unauthenticated
+			c.Next() 
 			return
 		}
 
-		// Example for "Authorization: Bearer <token>"
 		parts := strings.Split(tokenString, " ")
 		if len(parts) == 2 && parts[0] == "Bearer" {
 			tokenString = parts[1]
 		}
 
-		// Parse and validate token
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
@@ -51,7 +49,6 @@ func ProcessJWT() gin.HandlerFunc {
 			c.Set("user", token.Claims)
 		}
 
-		// Even if invalid or missing, continue
 		c.Next()
 	}
 }

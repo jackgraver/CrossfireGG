@@ -4,8 +4,8 @@ import "gorm.io/gorm"
 
 type User struct {
 	gorm.Model
-	Name string
-	Email string
+	Name string `json:"name"`
+	Email string `json:"email"`
 	Password string
 }
 
@@ -23,13 +23,13 @@ func (u *User) Public() PublicUser {
 
 type Role struct {
 	gorm.Model
-	Name string
+	Name string `json:"name"`
 }
 
 type UserRole struct {
 	gorm.Model
-	UserID uint
-	User User
-	RoleID uint
-	Role Role
+	UserID uint `json:"user_id"`
+	User User `json:"user"`
+	RoleID uint `json:"role_id"`
+	Role Role `json:"role"`
 }

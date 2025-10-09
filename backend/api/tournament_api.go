@@ -25,7 +25,7 @@ func (f *TournamentFeature) DefineTournamentRoutes(router *gin.Engine) {
 
         current := tournament.Group("/current_tournament")
         {
-            current.GET("/all", f.currentTournamentGetAll)
+            current.GET("", f.GetCurrentTournament)
             current.POST("/update", f.currentTournamentPostUpdate)
         }
     }
@@ -50,7 +50,7 @@ func (f *TournamentFeature) postCreate(c *gin.Context) {
     c.JSON(200, gin.H{"tournament": tournament})
 }
 
-func (f *TournamentFeature) currentTournamentGetAll(c *gin.Context) {
+func (f *TournamentFeature) GetCurrentTournament(c *gin.Context) {
     tournament, err := services.CurrentTournament(f.db)
     if err != nil {
         c.JSON(500, gin.H{"error": err.Error()})

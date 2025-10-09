@@ -7,17 +7,17 @@ import (
 )
 
 type Scheduled struct {
-	StartDate time.Time `gorm:"type:date"`
-	EndDate time.Time `gorm:"type:date"`
+	StartDate time.Time `gorm:"type:date" json:"start_date"`
+	EndDate time.Time `gorm:"type:date" json:"end_date"`
 }
 
 type Tournament struct {
 	gorm.Model
-	Name string
+	Name string `json:"name"`
 	Scheduled Scheduled `gorm:"embedded"`
-	FaceitID string
-	Teams []TournamentTeam
-	Stages []Stage
+	FaceitID string `json:"faceit_id"`
+	Teams []TournamentTeam `json:"teams"`
+	Stages []Stage `json:"stages"`
 }
 
 type CreateTournament struct {
@@ -28,23 +28,19 @@ type CreateTournament struct {
 
 type Stage struct {
 	gorm.Model
-	TournamentID uint
-	Tournament Tournament
-	Name string
-	Format string
-	IsCurrent    bool 
+	TournamentID uint `json:"tournament_id"`
+	Tournament Tournament `json:"tournament"`
+	Name string `json:"name"`
+	Format string `json:"format"`
+	IsCurrent    bool `json:"is_current"`
 	Scheduled Scheduled `gorm:"embedded"`
-	Groups []Group
+	Groups []Group `json:"groups"`
 }
 
 type Group struct {
 	gorm.Model
-	Name string
-	StageID uint
-	Stage Stage
-	Matches []Match
+	Name string `json:"name"`
+	StageID uint `json:"stage_id"`
+	Stage Stage `json:"stage"`
+	Matches []Match `json:"matches"`
 }
-
-// type SubTournament struct {
-	
-// }
