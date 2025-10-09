@@ -23,7 +23,7 @@ export default function RegisterForTournament() {
         queryKey: ["tournament"],
         queryFn: async () => {
             const res = await api.get<TournamentResponse>(
-                "/tournament/current_tournaments",
+                "/tournament/current_tournament",
             );
             return {
                 ...res,
