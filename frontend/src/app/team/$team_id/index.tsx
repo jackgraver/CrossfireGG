@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import type { Match } from "@/types/Types";
 import { BooleanStatus } from "@/types/TeamModel";
 import {
@@ -9,20 +9,112 @@ import {
     useRemovePlayerFromTeam,
 } from "../queries/teamQueries";
 import { formatDateOnly } from "@/lib/dateUtils";
-import { notFound } from "@tanstack/react-router";
 import TeamLogo from "@/shared/bracket/TeamLogo";
 import { openInNewTab } from "@/lib/NewTab";
 import { useState, useRef, useEffect } from "react";
 import type { Player } from "@/types/PlayerModel";
+import { useUser } from "@/context/UserContext";
 
 export const Route = createFileRoute("/team/$team_id/")({
     component: Team,
 });
 
+function TeamNotFoundFallback({ message }: { message?: string }) {
+    return (
+        <div className="flex min-h-screen items-center justify-center">
+            <div className="bg-firstBg rounded-xl p-8 text-center shadow-md">
+                <h1 className="text-textPrimary mb-4 text-3xl font-bold">
+                    Team Not Found
+                </h1>
+                <p className="text-textSecondary mb-6 text-lg">
+                    {message ||
+                        "The team you're looking for doesn't exist or could not be loaded. Please check the URL and try again."}
+                </p>
+                <Link
+                    to="/"
+                    className="bg-secondBg hover:bg-thirdBg text-textPrimary inline-block rounded-lg px-6 py-3 font-semibold transition-colors"
+                >
+                    Go Home
+                </Link>
+            </div>
+        </div>
+    );
+}
+
 function Team() {
     const { team_id } = Route.useParams();
+    const navigate = useNavigate();
+    const { user, loading: userLoading } = useUser();
 
-    if (!team_id) return notFound();
+    useEffect(() => {
+        if (userLoading) {
+            return;
+        }
+
+        if (!user) {
+            navigate({
+                to: "/sign-in",
+                replace: true,
+            });
+            return;
+        }
+
+        const isAdmin = user.roles?.includes("ADMIN");
+        if (isAdmin) {
+            return;
+        }
+
+        const routeTeamId = parseInt(team_id || "");
+        const userTeamId = user.team_id;
+
+        if (!userTeamId) {
+            navigate({
+                to: "/",
+                search: {
+                    error: "You are not part of a team",
+                },
+                replace: true,
+            });
+            return;
+        }
+
+        if (userTeamId !== routeTeamId) {
+            navigate({
+                to: "/",
+                search: {
+                    error: "You do not have access to this team",
+                },
+                replace: true,
+            });
+            return;
+        }
+    }, [user, userLoading, team_id, navigate]);
+
+    if (!team_id) {
+        return (
+            <TeamNotFoundFallback message="The team ID is missing or invalid. Please check the URL and try again." />
+        );
+    }
+
+    if (userLoading) {
+        return (
+            <div className="flex min-h-screen items-center justify-center">
+                <div className="text-textPrimary">Loading...</div>
+            </div>
+        );
+    }
+
+    if (!user) {
+        return null;
+    }
+
+    const isAdmin = user.roles?.includes("ADMIN");
+    const routeTeamId = parseInt(team_id);
+    const userTeamId = user.team_id;
+
+    if (!isAdmin && (!userTeamId || userTeamId !== routeTeamId)) {
+        return null;
+    }
 
     const { data, isLoading, error } = useTeam(team_id);
     const { data: players, isLoading: playersLoading } =
@@ -93,20 +185,12 @@ function Team() {
 
     if (error) {
         return (
-            <div className="flex min-h-screen items-center justify-center">
-                <div className="text-red-500">
-                    Error loading team: {error.message}
-                </div>
-            </div>
+            <TeamNotFoundFallback message="Failed to load team information. The team may not exist or there was an error connecting to the server." />
         );
     }
 
     if (!data) {
-        return (
-            <div className="flex min-h-screen items-center justify-center">
-                <div className="text-textSecondary">Team not found</div>
-            </div>
-        );
+        return <TeamNotFoundFallback />;
     }
 
     const { team, matches } = data;

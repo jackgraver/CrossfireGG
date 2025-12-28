@@ -2,15 +2,17 @@ import { api } from "@/lib/api";
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 type User = {
-    user_id: string;
-    user_name: string;
+    id: number;
+    name: string;
     email: string;
+    team_id?: number;
     roles: string[];
 };
 
 type UserContextType = {
     user: User | null;
     setUser: (user: User | null) => void;
+    loading: boolean;
 };
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -21,23 +23,21 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
     useEffect(() => {
         const fetchUser = async () => {
-            api.get("/user/user-role")
-                .then((data: any) => {
-                    setUser(data);
-                })
-                .finally(() => {
-                    setLoading(false);
-                })
-                .catch(() => {});
+            try {
+                const data = await api.get<User>("/user/user-role");
+                setUser(data);
+            } catch (error) {
+                setUser(null);
+            } finally {
+                setLoading(false);
+            }
         };
 
         fetchUser();
     }, []);
 
-    if (loading) return null; // or show a loading spinner
-
     return (
-        <UserContext.Provider value={{ user, setUser }}>
+        <UserContext.Provider value={{ user, setUser, loading }}>
             {children}
         </UserContext.Provider>
     );

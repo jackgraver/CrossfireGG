@@ -20,12 +20,6 @@ axiosInstance.interceptors.request.use(
         if (apiKey) {
             config.headers["x-api-key"] = apiKey;
         }
-
-        const token = localStorage.getItem("token");
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-
         return config;
     },
     (error: AxiosError) => {
@@ -35,11 +29,38 @@ axiosInstance.interceptors.request.use(
 
 axiosInstance.interceptors.response.use(
     (response) => response,
-    (error: AxiosError) => {
-        if (error.response?.status === 401) {
-            localStorage.removeItem("token");
-            window.location.href = "/sign-in";
+    async (error: AxiosError) => {
+        const originalRequest = error.config as InternalAxiosRequestConfig & {
+            _retry?: boolean;
+        };
+
+        if (!originalRequest) {
+            return Promise.reject(error);
         }
+
+        const url = originalRequest.url || "";
+        const isAuthEndpoint =
+            url.includes("/user/refresh") ||
+            url.includes("/user/sign-in") ||
+            url.includes("/user/sign-up");
+
+        if (
+            error.response?.status === 401 &&
+            !originalRequest._retry &&
+            !isAuthEndpoint
+        ) {
+            originalRequest._retry = true;
+
+            try {
+                await axiosInstance.post("/user/refresh");
+                return axiosInstance(originalRequest);
+            } catch (refreshError) {
+                originalRequest._retry = false;
+                window.location.href = "/sign-in";
+                return Promise.reject(refreshError);
+            }
+        }
+
         return Promise.reject(error);
     },
 );

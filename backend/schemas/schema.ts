@@ -6,6 +6,9 @@ export const users = sqliteTable("users", {
     name: text("name").notNull(),
     email: text("email").notNull().unique(),
     password: text("password").notNull(),
+    team_id: integer("team_id").references(() => teams.ID),
+    refresh_token: text("refresh_token"),
+    token_version: integer("token_version").default(0),
     CreatedAt: integer("CreatedAt", { mode: "timestamp" })
         .notNull()
         .$defaultFn(() => new Date()),
@@ -257,7 +260,11 @@ export const tournamentTeams = sqliteTable(
     })
 );
 
-export const usersRelations = relations(users, ({ many }) => ({
+export const usersRelations = relations(users, ({ one, many }) => ({
+    team: one(teams, {
+        fields: [users.team_id],
+        references: [teams.ID],
+    }),
     userRoles: many(userRoles),
     matchCasters: many(matchCasters),
 }));

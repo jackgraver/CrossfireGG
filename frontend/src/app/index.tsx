@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { MoveUpRight } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -6,6 +6,8 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
+    const navigate = useNavigate();
+
     return (
         <div className="flex h-screen flex-col items-center">
             <div className="flex flex-row items-center">
@@ -17,29 +19,32 @@ function Home() {
                     </p>
                 </div>
             </div>
-            <div className="flex flex-col items-center gap-y-4">
-                <h2 className="text-center text-4xl font-bold">
-                    Don't miss your chance to play for $1000 and VRS!
-                </h2>
-                <button className="flex w-64 items-center justify-center gap-2 rounded-md border border-[#ffd700] bg-[#ffd700] px-4 py-2 font-bold text-black">
-                    Sign Up Here
-                </button>
-            </div>
             <div className="flex flex-row gap-32 pt-64">
-                <button className="flex w-64 items-center justify-center gap-2 rounded-md bg-red-600 px-40 py-2 text-white">
+                <button
+                    onClick={() => navigate({ to: "/tournament" })}
+                    className="flex w-64 items-center justify-center gap-2 rounded-md bg-red-600 px-4 py-2 text-white"
+                >
                     Browse Tournaments
                     <MoveUpRight className="h-5 w-5" />
                 </button>
-                <button className="flex w-64 items-center justify-center gap-2 rounded-md bg-red-600 px-4 py-2 text-white">
-                    Other Button
+                <button
+                    onClick={() =>
+                        navigate({
+                            to: "/team/$team_id",
+                            params: { team_id: "1" },
+                        })
+                    }
+                    className="flex w-64 items-center justify-center gap-2 rounded-md bg-red-600 px-4 py-2 text-white"
+                >
+                    Manage / Create Team
                     <MoveUpRight className="h-5 w-5" />
                 </button>
                 <button className="flex w-64 items-center justify-center gap-2 rounded-md bg-red-600 px-4 py-2 text-white">
-                    Other Button
+                    ---
                     <MoveUpRight className="h-5 w-5" />
                 </button>
                 <button className="flex w-64 items-center justify-center gap-2 rounded-md bg-red-600 px-4 py-2 text-white">
-                    Other Button
+                    ---
                     <MoveUpRight className="h-5 w-5" />
                 </button>
             </div>

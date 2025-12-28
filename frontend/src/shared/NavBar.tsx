@@ -135,9 +135,7 @@ export default function NavBar() {
                                                             </div>
                                                             <div className="ml-3">
                                                                 <p className="text-textPrimary text-lg font-medium">
-                                                                    {
-                                                                        user?.user_name
-                                                                    }
+                                                                    {user.name}
                                                                 </p>
                                                             </div>
                                                         </div>

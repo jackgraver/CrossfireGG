@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import { jwtUtils } from "../../lib/jwt";
 
 export function authMiddleware(
     req: Request,
@@ -6,14 +7,24 @@ export function authMiddleware(
     next: NextFunction
 ) {
     const apiKey = req.headers["x-api-key"];
-    const token = req.headers.authorization?.replace("Bearer ", "");
 
     if (apiKey) {
         req.apiKey = apiKey as string;
     }
 
-    if (token) {
-        req.userToken = token;
+    const accessToken = req.cookies?.accessToken;
+
+    if (accessToken) {
+        try {
+            const payload = jwtUtils.verifyAccessToken(accessToken);
+            req.user = {
+                userId: payload.userId,
+                username: payload.username,
+                teamId: payload.teamId,
+            };
+        } catch (error) {
+            req.user = undefined;
+        }
     }
 
     next();
@@ -23,8 +34,11 @@ declare global {
     namespace Express {
         interface Request {
             apiKey?: string;
-            userToken?: string;
+            user?: {
+                userId: number;
+                username: string;
+                teamId?: number;
+            };
         }
     }
 }
-

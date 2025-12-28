@@ -16,16 +16,20 @@ export const Route = createFileRoute("/sign-in/")({
 });
 
 interface SignInResponse {
-    access_token: string;
+    user: {
+        id: number;
+        name: string;
+        email: string;
+        team_id?: number;
+        roles: string[];
+    };
 }
 
-interface SignInError {
-    detail: string;
-}
 type User = {
-    user_id: string;
-    user_name: string;
+    id: number;
+    name: string;
     email: string;
+    team_id?: number;
     roles: string[];
 };
 
@@ -43,15 +47,14 @@ function SignIn() {
             api.post<SignInResponse>("/user/sign-in", credentials),
         onSuccess: async (data) => {
             try {
-                const userData = await api.get<User>("/user/user-role");
-                setUser(userData); // ✅ now typed correctly
-                // router.push("/");
+                setUser(data.user);
+                router({ to: "/" });
             } catch (err) {
                 console.error("Post-login setup failed:", err);
             }
         },
         onError: (error: any) => {
-            const errorMessage = error.response?.data?.detail || "Login failed";
+            const errorMessage = error.response?.data?.error || "Login failed";
             setEmailError(errorMessage);
         },
     });

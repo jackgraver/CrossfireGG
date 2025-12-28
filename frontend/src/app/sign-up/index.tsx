@@ -14,11 +14,13 @@ import UserForm from "@/shared/UserForm";
 import { PromiseReturn } from "@/types/Types";
 
 interface SignUpResponse {
-    access_token: string;
-}
-
-interface SignUpError {
-    detail: string;
+    user: {
+        id: number;
+        name: string;
+        email: string;
+        team_id?: number;
+        roles: string[];
+    };
 }
 
 export const Route = createFileRoute("/sign-up/")({
@@ -120,22 +122,17 @@ function SignUp() {
 
     const signUpMutation = useMutation({
         mutationFn: (userData: {
-            id: string;
             email: string;
-            username: string;
-            faceit_id: string;
-            team_id: string;
+            name: string;
             password: string;
+            team_id?: number;
         }) => api.post<SignUpResponse>("/user/sign-up", userData),
         onSuccess: (data) => {
-            if (typeof window !== "undefined") {
-                localStorage.setItem("access_token", data.access_token);
-            }
             navigate({ to: "/" });
         },
         onError: (error: any) => {
             const errorMessage =
-                error.response?.data?.detail || "Sign Up failed";
+                error.response?.data?.error || "Sign Up failed";
             setEmailError(errorMessage);
         },
     });
@@ -191,12 +188,10 @@ function SignUp() {
             }
 
             signUpMutation.mutate({
-                id: internalID,
                 email,
-                username: email,
-                faceit_id: faceitID,
-                team_id: faceitTeam.id,
+                name: email.split("@")[0],
                 password,
+                team_id: faceitTeam.id ? parseInt(faceitTeam.id) : undefined,
             });
 
             return { success: true, result: null };
