@@ -4,8 +4,9 @@ import {
     tournamentTeams,
     matches,
     matchParticipants,
+    players,
 } from "../../schemas/schema";
-import { eq, and, isNull, inArray } from "drizzle-orm";
+import { eq, and, isNull, inArray, like, or, ne } from "drizzle-orm";
 
 export const teamRepository = {
     findById: async (teamId: number) => {
@@ -74,5 +75,57 @@ export const teamRepository = {
                     isNull(teams.DeletedAt)
                 )
             );
+    },
+
+    findPlayersByTeamId: async (teamId: number) => {
+        return await db
+            .select()
+            .from(players)
+            .where(and(eq(players.team_id, teamId), isNull(players.DeletedAt)));
+    },
+
+    searchPlayers: async (searchQuery: string, excludeTeamId?: number) => {
+        const baseConditions = [
+            isNull(players.DeletedAt),
+            like(players.player_name, `%${searchQuery}%`),
+        ];
+
+        const teamCondition = excludeTeamId
+            ? or(isNull(players.team_id), ne(players.team_id, excludeTeamId))
+            : undefined;
+
+        const allConditions = teamCondition
+            ? [...baseConditions, teamCondition]
+            : baseConditions;
+
+        return await db
+            .select()
+            .from(players)
+            .where(and(...allConditions))
+            .limit(20);
+    },
+
+    addPlayerToTeam: async (playerId: number, teamId: number) => {
+        const result = await db
+            .update(players)
+            .set({
+                team_id: teamId,
+                UpdatedAt: new Date(),
+            })
+            .where(and(eq(players.ID, playerId), isNull(players.DeletedAt)))
+            .returning();
+        return result[0];
+    },
+
+    removePlayerFromTeam: async (playerId: number) => {
+        const result = await db
+            .update(players)
+            .set({
+                team_id: null,
+                UpdatedAt: new Date(),
+            })
+            .where(and(eq(players.ID, playerId), isNull(players.DeletedAt)))
+            .returning();
+        return result[0];
     },
 };

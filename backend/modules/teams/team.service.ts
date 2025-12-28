@@ -104,4 +104,57 @@ export const teamService = {
             matches: formattedMatches,
         };
     },
+
+    getTeamPlayers: async (teamId: number) => {
+        const teamPlayers = await teamRepository.findPlayersByTeamId(teamId);
+        return teamPlayers.map((player) => ({
+            player_id: player.ID.toString(),
+            player_name: player.player_name,
+            faceit_id: player.faceit_id || null,
+            team_id: player.team_id?.toString() || null,
+            player_logo: player.player_logo || null,
+        }));
+    },
+
+    searchPlayers: async (searchQuery: string, excludeTeamId?: number) => {
+        const foundPlayers = await teamRepository.searchPlayers(
+            searchQuery,
+            excludeTeamId
+        );
+        return foundPlayers.map((player) => ({
+            player_id: player.ID.toString(),
+            player_name: player.player_name,
+            faceit_id: player.faceit_id || null,
+            team_id: player.team_id?.toString() || null,
+            player_logo: player.player_logo || null,
+        }));
+    },
+
+    addPlayerToTeam: async (playerId: number, teamId: number) => {
+        const player = await teamRepository.addPlayerToTeam(playerId, teamId);
+        if (!player) {
+            return null;
+        }
+        return {
+            player_id: player.ID.toString(),
+            player_name: player.player_name,
+            faceit_id: player.faceit_id || null,
+            team_id: player.team_id?.toString() || null,
+            player_logo: player.player_logo || null,
+        };
+    },
+
+    removePlayerFromTeam: async (playerId: number) => {
+        const player = await teamRepository.removePlayerFromTeam(playerId);
+        if (!player) {
+            return null;
+        }
+        return {
+            player_id: player.ID.toString(),
+            player_name: player.player_name,
+            faceit_id: player.faceit_id || null,
+            team_id: player.team_id?.toString() || null,
+            player_logo: player.player_logo || null,
+        };
+    },
 };

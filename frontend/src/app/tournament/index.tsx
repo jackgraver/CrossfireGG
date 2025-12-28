@@ -71,15 +71,22 @@ function RouteComponent() {
                                         {formatDateOnly(tournament.end_date)}
                                     </div>
                                 )}
-                                {tournament.sub_tournament &&
-                                    tournament.sub_tournament.length > 0 && (
+                                {tournament.stages &&
+                                    tournament.stages.length > 0 && (
                                         <div>
                                             <span className="font-semibold">
                                                 Stages:{" "}
                                             </span>
-                                            {tournament.sub_tournament.length}
+                                            {tournament.stages.length}
                                         </div>
                                     )}
+                                {tournament.faceit_id ? (
+                                    <div>
+                                        <button onClick={() => {}}>
+                                            Open in Faceit
+                                        </button>
+                                    </div>
+                                ) : null}
                             </div>
                         </div>
                     ))}

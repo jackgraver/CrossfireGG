@@ -14,6 +14,11 @@ export default function MatchCard({ match, margin }: MatchCardProps) {
     }
 
     const navigate = useNavigate();
+
+    if (!match) {
+        return <h1>No Match</h1>;
+    }
+
     return (
         <div
             className={`group border-border bg-firstBg text-textPrimary relative flex grow flex-col border ${
@@ -23,22 +28,14 @@ export default function MatchCard({ match, margin }: MatchCardProps) {
             }`}
         >
             <MatchTeam
-                team={match?.teams?.team1 ?? undefined}
-                winner={
-                    match
-                        ? match?.winner === match?.teams?.team1?.team_id
-                        : undefined
-                }
-                score={match?.team1_score ?? undefined}
+                team={match.teams!.team1!}
+                winner={match.winner === match.teams!.team1!.team_id}
+                score={match.team1_score!}
             />
             <MatchTeam
-                team={match?.teams?.team2 ?? undefined}
-                winner={
-                    match
-                        ? match?.winner === match?.teams?.team2?.team_id
-                        : undefined
-                }
-                score={match?.team2_score ?? undefined}
+                team={match.teams!.team2!}
+                winner={match.winner === match.teams!.team2!.team_id}
+                score={match.team2_score!}
             />
 
             {match && (
