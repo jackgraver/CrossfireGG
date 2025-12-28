@@ -1,5 +1,3 @@
-"use client";
-
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useUser } from "@/context/UserContext"; // or your auth hook/context

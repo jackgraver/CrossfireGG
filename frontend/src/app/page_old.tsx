@@ -1,5 +1,3 @@
-"use client";
-
 import type { Match } from "../types/Types";
 import type { Team } from "@/types/TeamModel";
 import { useEffect, useState } from "react";
@@ -110,13 +108,13 @@ export default function HomeOld() {
                         src="/OSSLOGO.png"
                         className="h-48 w-48 sm:h-72 sm:w-72"
                     />
-                    <div className="flex flex-col text-textPrimary">
+                    <div className="text-textPrimary flex flex-col">
                         <h1 className="text-4xl font-semibold sm:text-7xl">
                             OFF SEASON
                             <br />
                             SHENANIGANS
                         </h1>
-                        <p className="limit-width text-2xl text-textSecondary">
+                        <p className="limit-width text-textSecondary text-2xl">
                             Off Season Shenanigans the ultimate Counter-Strike
                             tournament during the off seasons!
                         </p>

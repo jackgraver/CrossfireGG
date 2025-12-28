@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "@tanstack/react-router";
 import { useUser } from "@/context/UserContext";

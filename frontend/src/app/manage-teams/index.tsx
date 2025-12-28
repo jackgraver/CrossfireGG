@@ -1,5 +1,3 @@
-"use client";
-
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { BooleanStatus, type Team } from "@/types/TeamModel";
@@ -110,30 +108,30 @@ function ManageTeams() {
         <ProtectedRoute>
             <div className="flex flex-row justify-center space-x-16 pt-12">
                 <div className="flex flex-col items-center justify-center">
-                    <div className="mb-2 flex flex-wrap items-end gap-8 rounded-md bg-firstBg p-2 shadow">
+                    <div className="bg-firstBg mb-2 flex flex-wrap items-end gap-8 rounded-md p-2 shadow">
                         <div className="ml-2 flex flex-col">
                             <input
                                 id="search"
                                 type="text"
                                 placeholder="Search for team"
-                                className="rounded-md border border-border bg-transparent px-2 py-1"
+                                className="border-border rounded-md border bg-transparent px-2 py-1"
                                 onChange={(e) =>
                                     filterTeams("name", e.target.value)
                                 }
                             />
                         </div>
-                        <div className="border-second-bg h-full border border-border" />
+                        <div className="border-second-bg border-border h-full border" />
                         <div className="flex flex-col">
                             <label
                                 htmlFor="paid"
-                                className="mb-1 text-sm text-textSecondary"
+                                className="text-textSecondary mb-1 text-sm"
                             >
                                 Paid Teams
                             </label>
                             <input
                                 id="paid"
                                 type="checkbox"
-                                className="rounded-md border border-border bg-transparent px-2 py-1"
+                                className="border-border rounded-md border bg-transparent px-2 py-1"
                                 onChange={(e) =>
                                     filterTeams(
                                         "paid",
@@ -142,18 +140,18 @@ function ManageTeams() {
                                 }
                             />
                         </div>
-                        <div className="border-second-bg h-full border border-border" />
+                        <div className="border-second-bg border-border h-full border" />
                         <div className="flex flex-col">
                             <label
                                 htmlFor="joined"
-                                className="mb-1 text-sm text-textSecondary"
+                                className="text-textSecondary mb-1 text-sm"
                             >
                                 Teams in Tournament
                             </label>
                             <input
                                 id="joined"
                                 type="checkbox"
-                                className="rounded-md border border-border bg-transparent px-2 py-1"
+                                className="border-border rounded-md border bg-transparent px-2 py-1"
                                 onChange={(e) =>
                                     filterTeams(
                                         "paid",
@@ -162,8 +160,8 @@ function ManageTeams() {
                                 }
                             />
                         </div>
-                        <div className="border-second-bg h-full border border-border" />
-                        <div className="mb-2 mr-2 flex flex-col">
+                        <div className="border-second-bg border-border h-full border" />
+                        <div className="mr-2 mb-2 flex flex-col">
                             <StageSelector
                                 options={["Regular Season", "Playoffs"]}
                                 selectedOption={displaySwitch}
@@ -177,7 +175,7 @@ function ManageTeams() {
                         {filteredTeams.map((team, i) => (
                             <div
                                 key={i}
-                                className="relative flex flex-row rounded-md bg-firstBg p-4 text-textPrimary shadow-md"
+                                className="bg-firstBg text-textPrimary relative flex flex-row rounded-md p-4 shadow-md"
                             >
                                 <div className="mr-4 flex flex-col items-center justify-center">
                                     <SeedControl

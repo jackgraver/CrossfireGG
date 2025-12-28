@@ -1,5 +1,3 @@
-"use client";
-
 import { api } from "@/lib/api";
 import { Team } from "@/types/TeamModel";
 import { SubTournament, Tournament } from "@/types/TournamentModel";
@@ -56,12 +54,12 @@ export default function RegisterForTournament() {
 
     return (
         <div className="flex flex-col items-center justify-center">
-            <h2 className="text-4xl font-semibold text-textPrimary">
+            <h2 className="text-textPrimary text-4xl font-semibold">
                 Now VRS Enabled!
             </h2>
             {remainingSpots > 0 && <h3>{remainingSpots} Spots left!</h3>}
             <button
-                className="mt-4 rounded bg-orange-500 px-3 py-1 pb-2 text-xl font-semibold text-textPrimary hover:bg-orange-400"
+                className="text-textPrimary mt-4 rounded bg-orange-500 px-3 py-1 pb-2 text-xl font-semibold hover:bg-orange-400"
                 onClick={() => navigate({ to: "/register" })}
             >
                 Sign up for Season 9

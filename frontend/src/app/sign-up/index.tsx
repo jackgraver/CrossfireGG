@@ -1,5 +1,3 @@
-"use client";
-
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { validateEmail } from "@/lib/SignInUp.util";
@@ -219,7 +217,7 @@ function SignUp() {
 
     return (
         <UserForm>
-            <h1 className="text-2xl font-bold text-textPrimary">
+            <h1 className="text-textPrimary text-2xl font-bold">
                 Create Account
             </h1>
             <p className="text-textSecondary">

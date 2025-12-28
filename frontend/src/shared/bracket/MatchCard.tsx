@@ -1,5 +1,3 @@
-"use client";
-
 import { useNavigate } from "@tanstack/react-router";
 import type { Match } from "../../types/Types";
 import { MatchTeam } from "./MatchTeam";

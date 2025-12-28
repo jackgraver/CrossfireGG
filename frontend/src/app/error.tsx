@@ -1,5 +1,3 @@
-"use client";
-
 import { createFileRoute } from "@tanstack/react-router";
 import { Link } from "@tanstack/react-router";
 
@@ -15,7 +13,7 @@ function Error() {
             </h1>
             <Link
                 to="/"
-                className="mt-4 rounded bg-firstBg px-3 pb-2 pt-1 text-xl font-semibold text-textPrimary hover:bg-secondBg"
+                className="bg-firstBg text-textPrimary hover:bg-secondBg mt-4 rounded px-3 pt-1 pb-2 text-xl font-semibold"
             >
                 Go Home
             </Link>

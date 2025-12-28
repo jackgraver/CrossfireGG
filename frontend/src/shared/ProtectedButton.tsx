@@ -1,5 +1,3 @@
-"use client";
-
 import { useUser } from "@/context/UserContext"; // or your auth hook/context
 
 export default function ProtectedElement({

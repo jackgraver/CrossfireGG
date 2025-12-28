@@ -1,5 +1,3 @@
-"use client";
-
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import type { Team } from "@/types/TeamModel";

@@ -1,5 +1,3 @@
-"use client";
-
 import { api } from "@/lib/api";
 import BaseInput from "@/shared/OSSForm/BaseInput/BaseInput";
 import OSSForm from "@/shared/OSSForm/OSSForm";
@@ -36,7 +34,7 @@ export default function ManageTournaments() {
             <h1>Manage Tournaments</h1>
             <SelectTournament />
             <button
-                className="mt-2 rounded bg-firstBg p-2 font-semibold text-white hover:bg-secondBg"
+                className="bg-firstBg hover:bg-secondBg mt-2 rounded p-2 font-semibold text-white"
                 onClick={() =>
                     toastService.display({
                         title: "New Tournament",
@@ -74,7 +72,7 @@ function SelectTournament() {
                 id="tournament-select"
                 value={selectedTournament || ""}
                 onChange={(e) => setSelectedTournament(e.target.value || "")}
-                className="text-text-primary rounded-lg bg-secondBg px-4 py-2 shadow-sm focus:border-thirdBg focus:outline-none"
+                className="text-text-primary bg-secondBg focus:border-thirdBg rounded-lg px-4 py-2 shadow-sm focus:outline-none"
             >
                 {tournaments.map((tournament: Tournament) => (
                     <option key={tournament.t_id} value={tournament.t_id}>

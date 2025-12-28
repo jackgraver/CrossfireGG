@@ -1,5 +1,3 @@
-"use client";
-
 import { createFileRoute } from "@tanstack/react-router";
 import type { Match, MatchesWithCasters } from "@/types/Types";
 import { useState } from "react";
@@ -110,7 +108,7 @@ function Casting() {
     if (isLoading) {
         return (
             <div className="flex min-h-screen items-center justify-center">
-                <div className="text-xl text-textPrimary">
+                <div className="text-textPrimary text-xl">
                     Loading matches...
                 </div>
             </div>
@@ -144,12 +142,12 @@ function Casting() {
         match: Match;
         isClaimed: boolean;
     }) => (
-        <div className="rounded-lg border border-border bg-firstBg p-4 transition-colors hover:bg-secondBg">
+        <div className="border-border bg-firstBg hover:bg-secondBg rounded-lg border p-4 transition-colors">
             <div className="mb-3 flex items-start justify-between">
                 <div className="flex-1">
                     <div className="mb-2 flex items-center gap-2">
                         <span className="text-sm text-gray-400">Round:</span>
-                        <span className="font-medium text-textPrimary">
+                        <span className="text-textPrimary font-medium">
                             {match.round}
                         </span>
                         <div className="ml-8">
@@ -169,7 +167,7 @@ function Casting() {
                                 team={match.teams.team1}
                                 styling="h-6 w-6 rounded"
                             />
-                            <span className="font-medium text-textPrimary">
+                            <span className="text-textPrimary font-medium">
                                 {match.teams.team1.team_name}
                             </span>
                         </div>
@@ -179,7 +177,7 @@ function Casting() {
                                 team={match.teams.team1}
                                 styling="h-6 w-6 rounded"
                             />
-                            <span className="font-medium text-textPrimary">
+                            <span className="text-textPrimary font-medium">
                                 {match.teams.team2.team_name}
                             </span>
                         </div>
@@ -194,7 +192,7 @@ function Casting() {
                 <div className="flex flex-col gap-2">
                     <button
                         onClick={() => handleViewMatch(match.match_id)}
-                        className="text-text rounded border border-border bg-firstBg px-3 py-1 text-sm text-textPrimary transition-colors hover:bg-secondBg"
+                        className="text-text border-border bg-firstBg text-textPrimary hover:bg-secondBg rounded border px-3 py-1 text-sm transition-colors"
                     >
                         View
                     </button>
@@ -234,7 +232,7 @@ function Casting() {
                 {/* Status Notification */}
                 {claimStatus.type && (
                     <div
-                        className={`fixed right-4 top-4 z-50 rounded-lg p-4 shadow-lg ${
+                        className={`fixed top-4 right-4 z-50 rounded-lg p-4 shadow-lg ${
                             claimStatus.type === "success"
                                 ? "bg-green-600 text-white"
                                 : "bg-red-600 text-white"
@@ -245,7 +243,7 @@ function Casting() {
                 )}
 
                 <div className="mb-8">
-                    <h1 className="mb-2 text-4xl font-bold text-textPrimary">
+                    <h1 className="text-textPrimary mb-2 text-4xl font-bold">
                         Match Casting
                     </h1>
                     <p className="text-textSecondary">
@@ -258,10 +256,10 @@ function Casting() {
                     {/* Unclaimed Matches */}
                     <div>
                         <div className="mb-4">
-                            <h2 className="mb-2 text-2xl font-semibold text-textPrimary">
+                            <h2 className="text-textPrimary mb-2 text-2xl font-semibold">
                                 Available Matches
                             </h2>
-                            <p className="text-sm text-textSecondary">
+                            <p className="text-textSecondary text-sm">
                                 {unclaimed.length} match
                                 {unclaimed.length !== 1 ? "es" : ""} available
                                 for casting
@@ -287,10 +285,10 @@ function Casting() {
                     {/* Claimed Matches */}
                     <div>
                         <div className="mb-4">
-                            <h2 className="mb-2 text-2xl font-semibold text-textPrimary">
+                            <h2 className="text-textPrimary mb-2 text-2xl font-semibold">
                                 Claimed Matches
                             </h2>
-                            <p className="text-sm text-textSecondary">
+                            <p className="text-textSecondary text-sm">
                                 {claimed.length} match
                                 {claimed.length !== 1 ? "es" : ""} assigned to
                                 casters

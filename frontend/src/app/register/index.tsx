@@ -1,5 +1,3 @@
-"use client";
-
 import { createFileRoute } from "@tanstack/react-router";
 import { api } from "@/lib/api";
 import BaseInput from "@/shared/OSSForm/BaseInput/BaseInput";
@@ -126,7 +124,7 @@ function RegisterPage() {
                 />
             )}
             <UserForm>
-                <h1 className="text-2xl font-bold text-textPrimary">
+                <h1 className="text-textPrimary text-2xl font-bold">
                     Register for OSS
                 </h1>
                 <p className="text-textSecondary">

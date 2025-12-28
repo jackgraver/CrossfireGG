@@ -1,5 +1,3 @@
-"use client";
-
 import { api } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 
@@ -29,7 +27,7 @@ export default function ManageUsers() {
                 {users.map((user) => (
                     <div
                         key={user.user_id}
-                        className="rounded-md bg-firstBg p-2"
+                        className="bg-firstBg rounded-md p-2"
                     >
                         <div>{user.user_id}</div>
                         <div>{user.email}</div>

@@ -1,5 +1,3 @@
-"use client";
-
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import type { MatchMap, Round } from "@/types/Types";
