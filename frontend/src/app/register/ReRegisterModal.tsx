@@ -3,7 +3,7 @@ import BaseInput from "@/shared/OSSForm/BaseInput/BaseInput";
 import OSSForm from "@/shared/OSSForm/OSSForm";
 import { PromiseReturn } from "@/types/Types";
 import { X } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 
 type ReRegisterModalProps = {
@@ -22,7 +22,7 @@ export default function ReRegisterModal({
     setShowModal,
     title,
 }: ReRegisterModalProps) {
-    const router = useRouter();
+    const navigate = useNavigate();
 
     const [teamName, setTeamName] = useState("");
 
@@ -72,7 +72,7 @@ export default function ReRegisterModal({
                 <OSSForm
                     onSubmit={handleSubmit}
                     onSuccess={(id) => {
-                        if (id) router.push(`/team/${id}`);
+                        if (id) navigate({ to: `/team/${id}` });
                     }}
                     submitLabel="Register"
                 >

@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import { Link, useLocation } from "@tanstack/react-router";
 import { useUser } from "@/context/UserContext";
 import { api } from "@/lib/api";
 import { match } from "assert";
 import { matchesRole } from "@/lib/role.util";
-import { usePathname } from "next/navigation";
+import { useNavigate } from "@tanstack/react-router";
 
 function toggleDarkMode() {
     const isDark = document.documentElement.classList.toggle("dark");
@@ -27,7 +27,7 @@ export async function logoutUser() {
 export default function NavBar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-    const pathname = usePathname();
+    // const pathname = usePathname();
 
     const { user } = useUser();
 
@@ -40,13 +40,13 @@ export default function NavBar() {
 
     return (
         <>
-            {pathname !== "/" && (
-                <nav className="sticky top-0 z-50 bg-mainBg bg-mainBgTransparent backdrop-blur-md">
+            {useLocation().pathname !== "/" && (
+                <nav className="bg-mainBg bg-mainBgTransparent sticky top-0 z-50 backdrop-blur-md">
                     {true && <div></div>}
                     <div className="w-full pr-4">
                         <div className="flex h-16 justify-between">
                             <div className="flex items-center">
-                                <Link href="/" className="flex-shrink-0">
+                                <Link to="/" className="flex-shrink-0">
                                     {/* <h1 className="text-2xl font-bold">OSS</h1> */}
                                     <img
                                         src="/crossfire.png"
@@ -66,7 +66,7 @@ export default function NavBar() {
                                         onClick={() =>
                                             setIsMenuOpen(!isMenuOpen)
                                         }
-                                        className="inline-flex items-center justify-center rounded-md p-2 text-textSecondary hover:bg-secondBg hover:text-textPrimary focus:outline-none"
+                                        className="text-textSecondary hover:bg-secondBg hover:text-textPrimary inline-flex items-center justify-center rounded-md p-2 focus:outline-none"
                                     >
                                         <span className="sr-only">
                                             Open main menu
@@ -106,20 +106,20 @@ export default function NavBar() {
                                     </button>
                                     {isMenuOpen && (
                                         <div
-                                            className="absolute right-0 mt-2 w-64 origin-top-right rounded-md bg-gradient-to-b from-secondBg to-firstBg shadow-lg ring-1 ring-black ring-opacity-5"
+                                            className="from-secondBg to-firstBg ring-opacity-5 absolute right-0 mt-2 w-64 origin-top-right rounded-md bg-gradient-to-b shadow-lg ring-1 ring-black"
                                             onMouseLeave={() =>
                                                 setIsMenuOpen(false)
                                             }
                                         >
                                             {user && (
-                                                <div className="border-b border-border px-4 py-3">
-                                                    <Link href="/user">
+                                                <div className="border-border border-b px-4 py-3">
+                                                    <Link to="/user">
                                                         <div className="flex items-center">
                                                             <div className="flex-shrink-0">
-                                                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-secondBg">
+                                                                <div className="bg-secondBg flex h-10 w-10 items-center justify-center rounded-full">
                                                                     <svg
                                                                         xmlns="http://www.w3.org/2000/svg"
-                                                                        className="h-6 w-6 text-textSecondary"
+                                                                        className="text-textSecondary h-6 w-6"
                                                                         fill="none"
                                                                         viewBox="0 0 24 24"
                                                                         stroke="currentColor"
@@ -136,7 +136,7 @@ export default function NavBar() {
                                                                 </div>
                                                             </div>
                                                             <div className="ml-3">
-                                                                <p className="text-lg font-medium text-textPrimary">
+                                                                <p className="text-textPrimary text-lg font-medium">
                                                                     {
                                                                         user?.user_name
                                                                     }
@@ -156,8 +156,8 @@ export default function NavBar() {
                                                     "ADMIN",
                                                 ) && (
                                                     <Link
-                                                        href="/manage-teams"
-                                                        className="block px-4 py-2 text-sm text-textSecondary hover:bg-secondBg"
+                                                        to="/manage-teams"
+                                                        className="text-textSecondary hover:bg-secondBg block px-4 py-2 text-sm"
                                                         role="menuitem"
                                                         onClick={() =>
                                                             setIsMenuOpen(false)
@@ -173,8 +173,8 @@ export default function NavBar() {
                                                     "PRODUCTION",
                                                 ) && (
                                                     <Link
-                                                        href="/casting"
-                                                        className="block px-4 py-2 text-sm text-textSecondary hover:bg-secondBg"
+                                                        to="/casting"
+                                                        className="text-textSecondary hover:bg-secondBg block px-4 py-2 text-sm"
                                                         role="menuitem"
                                                         onClick={() =>
                                                             setIsMenuOpen(false)
@@ -188,8 +188,8 @@ export default function NavBar() {
                                                     "ADMIN",
                                                 ) && (
                                                     <Link
-                                                        href="/admin"
-                                                        className="block px-4 py-2 text-sm text-textSecondary hover:bg-secondBg"
+                                                        to="/admin"
+                                                        className="text-textSecondary hover:bg-secondBg block px-4 py-2 text-sm"
                                                         role="menuitem"
                                                         onClick={() =>
                                                             setIsMenuOpen(false)
@@ -199,7 +199,7 @@ export default function NavBar() {
                                                     </Link>
                                                 )}
                                                 <div
-                                                    className="block cursor-pointer px-4 py-2 text-sm text-textSecondary hover:bg-secondBg"
+                                                    className="text-textSecondary hover:bg-secondBg block cursor-pointer px-4 py-2 text-sm"
                                                     role="menuitem"
                                                     onClick={() =>
                                                         toggleDarkMode()
@@ -212,9 +212,15 @@ export default function NavBar() {
                                                 ) && (
                                                     <div>
                                                         <Link
-                                                            href={`/team/${localStorage.getItem("team_id")}`}
+                                                            to={`/team/$team_id`}
+                                                            params={{
+                                                                team_id:
+                                                                    localStorage.getItem(
+                                                                        "team_id",
+                                                                    ) ?? "",
+                                                            }}
                                                         >
-                                                            <div className="block px-4 py-2 text-sm text-textSecondary hover:bg-secondBg">
+                                                            <div className="text-textSecondary hover:bg-secondBg block px-4 py-2 text-sm">
                                                                 Manage Team
                                                             </div>
                                                         </Link>
@@ -222,14 +228,12 @@ export default function NavBar() {
                                                 )}
                                                 {user ? (
                                                     <Link
-                                                        href="/"
-                                                        className="block px-4 py-2 text-sm text-textSecondary hover:bg-secondBg"
+                                                        to="/"
+                                                        className="text-textSecondary hover:bg-secondBg block px-4 py-2 text-sm"
                                                         role="menuitem"
                                                         onClick={async (e) => {
                                                             e.preventDefault();
                                                             await logoutUser();
-                                                            window.location.href =
-                                                                "/";
                                                         }}
                                                         onMouseEnter={() =>
                                                             preloadImage(
@@ -241,8 +245,8 @@ export default function NavBar() {
                                                     </Link>
                                                 ) : (
                                                     <Link
-                                                        href="/sign-in"
-                                                        className="block px-4 py-2 text-sm text-textSecondary hover:bg-secondBg"
+                                                        to="/sign-in"
+                                                        className="text-textSecondary hover:bg-secondBg block px-4 py-2 text-sm"
                                                         role="menuitem"
                                                         onClick={() =>
                                                             setIsMenuOpen(false)

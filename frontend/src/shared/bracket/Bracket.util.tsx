@@ -5,10 +5,10 @@ export const groupMatchesByRound = (matches: Match[]) => {
 
     matches.forEach((match) => {
         const key = match.round;
-        if (!rounds.has(key)) {
-            rounds.set(key, []);
+        if (!rounds.has(key ?? "")) {
+            rounds.set(key ?? "", []);
         }
-        rounds.get(key)!.push(match);
+        rounds.get(key ?? "")!.push(match);
     });
 
     return rounds;
@@ -16,8 +16,14 @@ export const groupMatchesByRound = (matches: Match[]) => {
 
 export const sortMatchesBySeed = (matches: Match[]) => {
     return matches.sort((a, b) => {
-        const aMinSeed = Math.min(a.teams.team1.seed, a.teams.team2.seed);
-        const bMinSeed = Math.min(b.teams.team1.seed, b.teams.team2.seed);
+        const aMinSeed = Math.min(
+            a.teams?.team1?.seed ?? 0,
+            a.teams?.team2?.seed ?? 0,
+        );
+        const bMinSeed = Math.min(
+            b.teams?.team1?.seed ?? 0,
+            b.teams?.team2?.seed ?? 0,
+        );
         return aMinSeed - bMinSeed;
     });
 };
@@ -39,5 +45,7 @@ export const filterAndSortMatchesByRound = (
 ) => {
     return matches
         .filter((m) => m.round === round)
-        .sort((a, b) => a.teams.team1.seed - b.teams.team1.seed);
+        .sort(
+            (a, b) => (a.teams?.team1?.seed ?? 0) - (b.teams?.team1?.seed ?? 0),
+        );
 };

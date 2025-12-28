@@ -1,7 +1,6 @@
 import { formatMatchDate } from "@/lib/dateUtils";
 import { Round } from "@/types/Types";
 import type { Team } from "@/types/TeamModel";
-import { useRouter } from "next/navigation";
 
 type Match = {
     match_id: string;
@@ -57,7 +56,6 @@ type MatchHeaderProps = {
 export default function MatchHeader({ team1, team2, match }: MatchHeaderProps) {
     if (!team1 || !team2 || !match) return null;
 
-    const router = useRouter();
 
     return (
         <div className="flex max-w-5xl items-center justify-between gap-x-16 px-4">

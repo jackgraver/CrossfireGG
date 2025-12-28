@@ -1,12 +1,4 @@
-type Map = {
-    map_id: string;
-    match_id: string;
-    map_name: string;
-    round: number;
-    winner_id: string;
-    team1_score: number;
-    team2_score: number;
-};
+import { MatchMap } from "@/types/Types";
 
 const formatScore = (score: number, winner: boolean) => {
     if (winner) {
@@ -15,10 +7,10 @@ const formatScore = (score: number, winner: boolean) => {
     return <p className="text-red-500">{score}</p>;
 };
 
-export default function MapResults({ maps }: { maps: Map[] }) {
+export default function MapResults({ maps }: { maps: MatchMap[] }) {
     return (
         <div className="flex w-full flex-col gap-2">
-            {maps.map((map: Map, i: number) => (
+            {maps.map((map: MatchMap, i: number) => (
                 <div
                     key={i}
                     className={`flex items-center justify-between rounded bg-zinc-800 px-4 py-2 ${

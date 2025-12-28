@@ -1,3 +1,9 @@
+export type User = {
+    user_id: string; // primary key (ID)
+    name: string;
+    email: string;
+};
+
 export type UserPublic = {
     user_id: string;
     user_name: string;
@@ -7,11 +13,12 @@ export type UserPublic = {
 };
 
 export type UserRole = {
-    user_id: string;
-    role_id: number;
+    ID: string; // primary key
+    user_id: string; // foreign key users.ID
+    role_id: string; // foreign key roles.ID
 };
 
 export type Role = {
-    role_id: number;
-    role_name: string;
+    role_id: string; // primary key (ID)
+    role_name: string; // name
 };

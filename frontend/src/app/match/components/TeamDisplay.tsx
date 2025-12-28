@@ -1,7 +1,7 @@
 import type { Team } from "@/types/TeamModel";
 import PlayerCard from "./PlayerCard";
 import TeamLogo from "@/shared/bracket/TeamLogo";
-import { useRouter } from "next/navigation";
+import { useNavigate } from "@tanstack/react-router";
 
 type Player = {
     player_id: string;
@@ -19,14 +19,14 @@ export default function TeamDisplay({
     team: Team;
     players: Player[];
 }) {
-    const router = useRouter();
+    const navigate = useNavigate();
     return (
         <div className="flex flex-col gap-4">
             <div className="flex items-center justify-center gap-4">
                 <TeamLogo team={team} styling="h-12 w-12 rounded" />
                 <h1
                     className="truncate text-2xl font-bold hover:cursor-pointer"
-                    onClick={() => router.push(`/team/${team.team_id}`)}
+                    onClick={() => navigate({ to: `/team/${team.team_id}` })}
                 >
                     {team.team_name}
                 </h1>

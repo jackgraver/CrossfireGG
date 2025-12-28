@@ -4,7 +4,7 @@ import { api } from "@/lib/api";
 import { Team } from "@/types/TeamModel";
 import { SubTournament, Tournament } from "@/types/TournamentModel";
 import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+import { useNavigate } from "@tanstack/react-router";
 
 type TournamentResponse = {
     current_tournament: Tournament;
@@ -13,7 +13,7 @@ type TournamentResponse = {
 };
 
 export default function RegisterForTournament() {
-    const router = useRouter();
+    const navigate = useNavigate();
 
     const {
         data: tournamentData,
@@ -62,7 +62,7 @@ export default function RegisterForTournament() {
             {remainingSpots > 0 && <h3>{remainingSpots} Spots left!</h3>}
             <button
                 className="mt-4 rounded bg-orange-500 px-3 py-1 pb-2 text-xl font-semibold text-textPrimary hover:bg-orange-400"
-                onClick={() => router.push("/register")}
+                onClick={() => navigate({ to: "/register" })}
             >
                 Sign up for Season 9
             </button>

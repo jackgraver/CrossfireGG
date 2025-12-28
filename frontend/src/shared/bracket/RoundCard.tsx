@@ -9,14 +9,14 @@ type RoundCardProps = {
 const numMatchesForRound = (round: Round): number => {
     switch (round) {
         case "0-0":
-            return 16;
+            return 8;
         case "0-1":
         case "1-0":
         case "1-1":
-            return 8;
+            return 4;
         case "2-0":
         case "0-2":
-            return 4;
+            return 2;
         case "2-1":
         case "1-2":
         case "2-2":
@@ -56,7 +56,7 @@ export default function RoundCard({ round, matches }: RoundCardProps) {
     return (
         <div className="m-2 flex flex-col p-2">
             <div className="flex items-center justify-center">
-                <h1 className="min-w-16 bg-firstBg px-2 py-1 text-2xl text-textPrimary">
+                <h1 className="bg-firstBg text-textPrimary min-w-16 px-2 py-1 text-2xl">
                     {displayRound}
                 </h1>
             </div>

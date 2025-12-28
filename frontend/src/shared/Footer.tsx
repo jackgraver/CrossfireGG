@@ -1,12 +1,14 @@
 export default function Footer() {
     return (
-        <footer className="mt-12 bg-firstBg shadow-md">
+        <footer className="bg-firstBg mt-12 shadow-md">
             <div className="w-full px-4 py-4">
                 <div className="flex items-center justify-between">
-                    <div className="text-textSecondary">Organized by OSS</div>
+                    <div className="text-textSecondary">
+                        Organized by CrossFireGG
+                    </div>
                     <div className="flex space-x-4">
                         <a
-                            href="https://twitter.com/OSSCSLeague"
+                            href="https://x.com/playcrossfiregg"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-textSecondary hover:text-textPrimary"
@@ -21,7 +23,7 @@ export default function Footer() {
                             </svg>
                         </a>
                         <a
-                            href="https://discord.gg/QBJYTNXRqW"
+                            href="https://discord.gg/x77gWSYDZk"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-textSecondary hover:text-textPrimary"

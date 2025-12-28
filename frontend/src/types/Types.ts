@@ -2,17 +2,20 @@ import type { Team } from "@/types/TeamModel";
 
 export type Match = {
     match_id: string;
-    status: string;
-    scheduled_at: number;
-    round: Round;
-    faceit_url: string;
-    winner: string;
-    teams: {
-        team1: Team;
-        team2: Team;
+    group_id?: string; // foreign key groups.ID
+    status?: string | null;
+    scheduled_at?: number | null;
+    round?: Round | null;
+    faceit_url?: string | null;
+    team1_id?: string | null;
+    team2_id?: string | null;
+    winner?: string | null;
+    teams?: {
+        team1: Team | null;
+        team2: Team | null;
     };
-    team1_score: number;
-    team2_score: number;
+    team1_score?: number | null;
+    team2_score?: number | null;
     caster_id?: number;
 };
 
@@ -59,8 +62,10 @@ export type MatchMap = {
 };
 
 export type MatchCaster = {
+    ID: string;
     match_id: string;
-    caster_id: number;
+    caster_id: string;
+    assigned_at?: number | null;
 };
 
 export type MatchesWithCasters = {
