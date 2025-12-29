@@ -86,7 +86,15 @@ function RouteComponent() {
                                                                 className="font-semibold"
                                                             >
                                                                 {stage.name}
-                                                                {" (0/?) "}
+                                                                {"("}
+                                                                {
+                                                                    stage.teams_count
+                                                                }
+                                                                {" / "}
+                                                                {
+                                                                    stage.max_teams
+                                                                }
+                                                                {") "}
                                                             </span>
                                                         ),
                                                     )}

@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "ce7771d0-0c79-4ba5-a023-6e6248c52beb",
+  "id": "75bd86b5-ed9d-43c6-8fad-316b17ad66a1",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "roles": {
@@ -394,8 +394,8 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
-    "stages": {
-      "name": "stages",
+    "stage_formats": {
+      "name": "stage_formats",
       "columns": {
         "ID": {
           "name": "ID",
@@ -403,109 +403,31 @@
           "primaryKey": true,
           "notNull": true,
           "autoincrement": true
-        },
-        "tournament_id": {
-          "name": "tournament_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "name": {
-          "name": "name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "faceit_id": {
-          "name": "faceit_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "max_teams": {
-          "name": "max_teams",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false,
-          "default": 0
         },
         "format": {
           "name": "format",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "is_current": {
-          "name": "is_current",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false,
-          "default": false
-        },
-        "start_date": {
-          "name": "start_date",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "end_date": {
-          "name": "end_date",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "integer",
-          "primaryKey": false,
           "notNull": true,
-          "autoincrement": false
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "deleted_at": {
-          "name": "deleted_at",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
           "autoincrement": false
         }
       },
-      "indexes": {},
-      "foreignKeys": {
-        "stages_tournament_id_tournaments_ID_fk": {
-          "name": "stages_tournament_id_tournaments_ID_fk",
-          "tableFrom": "stages",
-          "tableTo": "tournaments",
-          "columnsFrom": [
-            "tournament_id"
+      "indexes": {
+        "stage_formats_format_unique": {
+          "name": "stage_formats_format_unique",
+          "columns": [
+            "format"
           ],
-          "columnsTo": [
-            "ID"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "isUnique": true
         }
       },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
-    "tournament_teams": {
-      "name": "tournament_teams",
+    "stage_teams": {
+      "name": "stage_teams",
       "columns": {
         "ID": {
           "name": "ID",
@@ -514,8 +436,8 @@
           "notNull": true,
           "autoincrement": true
         },
-        "tournament_id": {
-          "name": "tournament_id",
+        "stage_id": {
+          "name": "stage_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
@@ -598,22 +520,22 @@
         }
       },
       "indexes": {
-        "tournament_teams_tournament_id_team_id_unique": {
-          "name": "tournament_teams_tournament_id_team_id_unique",
+        "stage_teams_stage_id_team_id_unique": {
+          "name": "stage_teams_stage_id_team_id_unique",
           "columns": [
-            "tournament_id",
+            "stage_id",
             "team_id"
           ],
           "isUnique": true
         }
       },
       "foreignKeys": {
-        "tournament_teams_tournament_id_tournaments_ID_fk": {
-          "name": "tournament_teams_tournament_id_tournaments_ID_fk",
-          "tableFrom": "tournament_teams",
-          "tableTo": "tournaments",
+        "stage_teams_stage_id_stages_ID_fk": {
+          "name": "stage_teams_stage_id_stages_ID_fk",
+          "tableFrom": "stage_teams",
+          "tableTo": "stages",
           "columnsFrom": [
-            "tournament_id"
+            "stage_id"
           ],
           "columnsTo": [
             "ID"
@@ -621,9 +543,9 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "tournament_teams_team_id_teams_ID_fk": {
-          "name": "tournament_teams_team_id_teams_ID_fk",
-          "tableFrom": "tournament_teams",
+        "stage_teams_team_id_teams_ID_fk": {
+          "name": "stage_teams_team_id_teams_ID_fk",
+          "tableFrom": "stage_teams",
           "tableTo": "teams",
           "columnsFrom": [
             "team_id"
@@ -634,12 +556,135 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "tournament_teams_group_id_groups_ID_fk": {
-          "name": "tournament_teams_group_id_groups_ID_fk",
-          "tableFrom": "tournament_teams",
+        "stage_teams_group_id_groups_ID_fk": {
+          "name": "stage_teams_group_id_groups_ID_fk",
+          "tableFrom": "stage_teams",
           "tableTo": "groups",
           "columnsFrom": [
             "group_id"
+          ],
+          "columnsTo": [
+            "ID"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "stages": {
+      "name": "stages",
+      "columns": {
+        "ID": {
+          "name": "ID",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": true
+        },
+        "tournament_id": {
+          "name": "tournament_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "faceit_id": {
+          "name": "faceit_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "max_teams": {
+          "name": "max_teams",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": 0
+        },
+        "format_id": {
+          "name": "format_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "is_current": {
+          "name": "is_current",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false,
+          "default": false
+        },
+        "start_date": {
+          "name": "start_date",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "end_date": {
+          "name": "end_date",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "stages_tournament_id_tournaments_ID_fk": {
+          "name": "stages_tournament_id_tournaments_ID_fk",
+          "tableFrom": "stages",
+          "tableTo": "tournaments",
+          "columnsFrom": [
+            "tournament_id"
+          ],
+          "columnsTo": [
+            "ID"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "stages_format_id_stage_formats_ID_fk": {
+          "name": "stages_format_id_stage_formats_ID_fk",
+          "tableFrom": "stages",
+          "tableTo": "stage_formats",
+          "columnsFrom": [
+            "format_id"
           ],
           "columnsTo": [
             "ID"

@@ -15,6 +15,11 @@ export const tournaments = sqliteTable("tournaments", {
     deleted_at: integer("deleted_at", { mode: "timestamp" }),
 });
 
+export const stageFormats = sqliteTable("stage_formats", {
+    ID: integer("ID").primaryKey({ autoIncrement: true }),
+    format: text("format").notNull().unique(),
+});
+
 export const stages = sqliteTable("stages", {
     ID: integer("ID").primaryKey({ autoIncrement: true }),
     tournament_id: integer("tournament_id")
@@ -23,7 +28,7 @@ export const stages = sqliteTable("stages", {
     name: text("name").notNull(),
     faceit_id: text("faceit_id"),
     max_teams: integer("max_teams").default(0),
-    format: text("format"),
+    format_id: integer("format_id").references(() => stageFormats.ID),
     is_current: integer("is_current", { mode: "boolean" }).default(false),
     start_date: integer("start_date", { mode: "timestamp" }),
     end_date: integer("end_date", { mode: "timestamp" }),
@@ -51,13 +56,13 @@ export const groups = sqliteTable("groups", {
     deleted_at: integer("deleted_at", { mode: "timestamp" }),
 });
 
-export const tournamentTeams = sqliteTable(
-    "tournament_teams",
+export const stageTeams = sqliteTable(
+    "stage_teams",
     {
         ID: integer("ID").primaryKey({ autoIncrement: true }),
-        tournament_id: integer("tournament_id")
+        stage_id: integer("stage_id")
             .notNull()
-            .references(() => tournaments.ID),
+            .references(() => stages.ID),
         team_id: integer("team_id")
             .notNull()
             .references((): any => require("./team").teams.ID),
@@ -75,20 +80,27 @@ export const tournamentTeams = sqliteTable(
             .$defaultFn(() => new Date()),
         deleted_at: integer("deleted_at", { mode: "timestamp" }),
     },
-    (table) => [unique().on(table.tournament_id, table.team_id)]
+    (table) => [unique().on(table.stage_id, table.team_id)]
 );
 
 // ============================== RELATIONS ============================== //
 
 /**
+ * Defines relationships for the tournamentTypes table.
+ * A tournament type is a simple key-value pair for categorizing tournaments.
+ */
+export const stageFormatsRelations = relations(stageFormats, ({ many }) => ({
+    stages: many(stages),
+}));
+
+/**
  * Defines relationships for the tournaments table.
  * A tournament can:
+ * - Have one tournament type (optional)
  * - Have multiple stages (e.g., Group Stage, Playoffs, Finals)
- * - Have multiple teams registered (via tournamentTeams)
  */
-export const tournamentsRelations = relations(tournaments, ({ many }) => ({
+export const tournamentsRelations = relations(tournaments, ({ one, many }) => ({
     stages: many(stages),
-    tournamentTeams: many(tournamentTeams),
 }));
 
 /**
@@ -96,6 +108,7 @@ export const tournamentsRelations = relations(tournaments, ({ many }) => ({
  * A stage can:
  * - Belong to one tournament
  * - Contain multiple groups (for group-based stages)
+ * - Have multiple teams registered (via stageTeams)
  */
 export const stagesRelations = relations(stages, ({ one, many }) => ({
     tournament: one(tournaments, {
@@ -103,6 +116,7 @@ export const stagesRelations = relations(stages, ({ one, many }) => ({
         references: [tournaments.ID],
     }),
     groups: many(groups),
+    stageTeams: many(stageTeams),
 }));
 
 /**
@@ -110,7 +124,7 @@ export const stagesRelations = relations(stages, ({ one, many }) => ({
  * A group can:
  * - Belong to one stage
  * - Contain multiple matches
- * - Have multiple teams assigned to it (via tournamentTeams)
+ * - Have multiple teams assigned to it (via stageTeams)
  */
 export const groupsRelations = relations(groups, ({ one, many }) => ({
     stage: one(stages, {
@@ -118,31 +132,28 @@ export const groupsRelations = relations(groups, ({ one, many }) => ({
         references: [stages.ID],
     }),
     matches: many(require("./match").matches),
-    tournamentTeams: many(tournamentTeams),
+    stageTeams: many(stageTeams),
 }));
 
 /**
- * Defines relationships for the tournamentTeams junction table.
- * Links tournaments to teams with tournament-specific data:
- * - Each record belongs to one tournament
+ * Defines relationships for the stageTeams junction table.
+ * Links stages to teams with stage-specific data:
+ * - Each record belongs to one stage
  * - Each record belongs to one team
- * - Optionally assigned to a specific group within the tournament
- * Stores tournament-specific team data: seed, wins, losses, payment status, signup status
+ * - Optionally assigned to a specific group within the stage (for group-based stages)
+ * Stores stage-specific team data: seed, wins, losses, payment status, signup status
  */
-export const tournamentTeamsRelations = relations(
-    tournamentTeams,
-    ({ one }) => ({
-        tournament: one(tournaments, {
-            fields: [tournamentTeams.tournament_id],
-            references: [tournaments.ID],
-        }),
-        team: one(require("./team").teams, {
-            fields: [tournamentTeams.team_id],
-            references: [require("./team").teams.ID],
-        }),
-        group: one(groups, {
-            fields: [tournamentTeams.group_id],
-            references: [groups.ID],
-        }),
-    })
-);
+export const stageTeamsRelations = relations(stageTeams, ({ one }) => ({
+    stage: one(stages, {
+        fields: [stageTeams.stage_id],
+        references: [stages.ID],
+    }),
+    team: one(require("./team").teams, {
+        fields: [stageTeams.team_id],
+        references: [require("./team").teams.ID],
+    }),
+    group: one(groups, {
+        fields: [stageTeams.group_id],
+        references: [groups.ID],
+    }),
+}));

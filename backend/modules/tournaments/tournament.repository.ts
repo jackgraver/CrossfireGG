@@ -4,7 +4,7 @@ import {
     stages,
     groups,
     matches,
-    tournamentTeams,
+    stageTeams,
 } from "../../schemas";
 import { eq, and, isNull, count, inArray } from "drizzle-orm";
 import { TournamentListItem } from "./tournament.types";
@@ -102,16 +102,47 @@ export const tournamentRepository = {
             );
     },
 
-    countTeamsByTournamentId: async (tournamentId: number) => {
+    countTeamsByStageId: async (stageId: number) => {
         const result = await db
             .select({ count: count() })
-            .from(tournamentTeams)
+            .from(stageTeams)
             .where(
                 and(
-                    eq(tournamentTeams.tournament_id, tournamentId),
-                    isNull(tournamentTeams.deleted_at)
+                    eq(stageTeams.stage_id, stageId),
+                    isNull(stageTeams.deleted_at)
                 )
             );
         return result[0]?.count || 0;
+    },
+
+    countTeamsByStageIds: async (stageIds: number[]) => {
+        if (stageIds.length === 0) return new Map<number, number>();
+
+        const results = await db
+            .select({
+                stage_id: stageTeams.stage_id,
+                count: count(),
+            })
+            .from(stageTeams)
+            .where(
+                and(
+                    inArray(stageTeams.stage_id, stageIds),
+                    isNull(stageTeams.deleted_at)
+                )
+            )
+            .groupBy(stageTeams.stage_id);
+
+        const countsMap = new Map<number, number>();
+        results.forEach((r) => {
+            countsMap.set(r.stage_id, r.count);
+        });
+
+        stageIds.forEach((id) => {
+            if (!countsMap.has(id)) {
+                countsMap.set(id, 0);
+            }
+        });
+
+        return countsMap;
     },
 };

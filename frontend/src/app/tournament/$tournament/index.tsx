@@ -85,10 +85,12 @@ function RouteComponent() {
                             )}
                         </div>
                     )}
-                    <div>
-                        <span className="font-semibold">Teams: </span>
-                        {tournament.teams_count}/{tournament.max_teams}
-                    </div>
+                    {currentStage && (
+                        <div>
+                            <span className="font-semibold">Teams: </span>
+                            {currentStage.teams_count ?? 0}/{currentStage.max_teams}
+                        </div>
+                    )}
                 </div>
             </div>
 

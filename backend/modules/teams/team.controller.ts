@@ -6,8 +6,8 @@ export const teamController = {
     getTeamById: async (req: Request, res: Response) => {
         try {
             const teamId = parseInt(req.params.teamId);
-            const tournamentId = req.query.tournament_id
-                ? parseInt(req.query.tournament_id as string)
+            const stageId = req.query.stage_id
+                ? parseInt(req.query.stage_id as string)
                 : undefined;
 
             if (isNaN(teamId)) {
@@ -16,7 +16,7 @@ export const teamController = {
 
             const teamDetails = await teamService.getTeamById(
                 teamId,
-                tournamentId
+                stageId
             );
 
             if (!teamDetails) {

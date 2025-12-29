@@ -229,7 +229,7 @@ function MatchStats() {
                             <img
                                 src={`/map_icons/${map.map_name}.png`}
                                 alt={map.map_name}
-                                className="h-8 w-8 flex-shrink-0 rounded object-cover"
+                                className="h-8 w-8 shrink-0 rounded object-cover"
                                 onError={(e) => {
                                     e.currentTarget.src =
                                         "/map_icons/default.png";

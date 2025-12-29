@@ -2,6 +2,7 @@ export interface Stage {
     ID: number;
     faceit_id: string | null;
     tournament_id: number;
+    max_teams: number;
     name: string;
     format: string | null;
     is_current: boolean;
@@ -11,6 +12,7 @@ export interface Stage {
     updated_at: Date;
     deleted_at: Date | null;
     groups?: Group[];
+    teams_count?: number;
 }
 
 export interface Group {
@@ -22,22 +24,29 @@ export interface Group {
     deleted_at: Date | null;
 }
 
+export interface TournamentType {
+    ID: number;
+    name: string;
+    created_at: Date;
+    updated_at: Date;
+    deleted_at: Date | null;
+}
+
 export interface Tournament {
     ID: number;
     name: string;
+    tournament_type_id?: number | null;
     start_date: Date | null;
     end_date: Date | null;
-    max_teams: number;
     created_at: Date;
     updated_at: Date;
     deleted_at: Date | null;
     stages: Stage[];
-    teams_count: number;
 }
 
-export interface TournamentTeam {
+export interface StageTeam {
     ID: string;
-    tournament_id: string;
+    stage_id: string;
     team_id: string;
     group_id?: string | null;
     seed: number;

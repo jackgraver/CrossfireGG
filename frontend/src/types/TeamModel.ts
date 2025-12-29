@@ -7,8 +7,8 @@ export type Team = {
     win: number;
     loss: number;
     seed: number;
-    paid?: BooleanStatus; // default false (from tournamentTeams.paid)
-    joined_tournament?: BooleanStatus; // default false (from tournamentTeams.signed_up)
+    paid?: BooleanStatus; // default false (from stageTeams.paid)
+    joined_tournament?: BooleanStatus; // default false (from stageTeams.signed_up)
 };
 
 export enum BooleanStatus {

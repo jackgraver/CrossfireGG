@@ -1,7 +1,7 @@
 import { db } from "../../config/database";
 import {
     teams,
-    tournamentTeams,
+    stageTeams,
     matches,
     matchParticipants,
     players,
@@ -18,17 +18,17 @@ export const teamRepository = {
         return result[0];
     },
 
-    findTournamentTeam: async (teamId: number, tournamentId?: number) => {
-        if (!tournamentId) return undefined;
+    findStageTeam: async (teamId: number, stageId?: number) => {
+        if (!stageId) return undefined;
 
         const result = await db
             .select()
-            .from(tournamentTeams)
+            .from(stageTeams)
             .where(
                 and(
-                    eq(tournamentTeams.team_id, teamId),
-                    eq(tournamentTeams.tournament_id, tournamentId),
-                    isNull(tournamentTeams.deleted_at)
+                    eq(stageTeams.team_id, teamId),
+                    eq(stageTeams.stage_id, stageId),
+                    isNull(stageTeams.deleted_at)
                 )
             )
             .limit(1);

@@ -8,7 +8,7 @@ import type {
 export const teamService = {
     getTeamById: async (
         teamId: number,
-        tournamentId?: number
+        stageId?: number
     ): Promise<TeamDetailResponse | null> => {
         const team = await teamRepository.findById(teamId);
 
@@ -16,8 +16,8 @@ export const teamService = {
             return null;
         }
 
-        const tournamentTeam = tournamentId
-            ? await teamRepository.findTournamentTeam(teamId, tournamentId)
+        const stageTeam = stageId
+            ? await teamRepository.findStageTeam(teamId, stageId)
             : undefined;
 
         const formattedTeam: FormattedTeam = {
@@ -26,18 +26,18 @@ export const teamService = {
             team_logo: team.team_logo || null,
             faceit_id: team.faceit_id || null,
             team_captain_id: team.team_captain_id.toString(),
-            win: tournamentTeam?.wins ?? undefined,
-            loss: tournamentTeam?.losses ?? undefined,
-            seed: tournamentTeam?.seed ?? undefined,
+            win: stageTeam?.wins ?? undefined,
+            loss: stageTeam?.losses ?? undefined,
+            seed: stageTeam?.seed ?? undefined,
             paid:
-                tournamentTeam?.paid !== undefined
-                    ? tournamentTeam.paid
+                stageTeam?.paid !== undefined
+                    ? stageTeam.paid
                         ? 1
                         : 0
                     : undefined,
             joined_tournament:
-                tournamentTeam?.signed_up !== undefined
-                    ? tournamentTeam.signed_up
+                stageTeam?.signed_up !== undefined
+                    ? stageTeam.signed_up
                         ? 1
                         : 0
                     : undefined,

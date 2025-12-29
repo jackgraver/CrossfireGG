@@ -26,7 +26,7 @@ export const teams = sqliteTable("teams", {
  * - Have one captain (user who leads the team)
  * - Have multiple players
  * - Participate in multiple matches (via matchParticipants)
- * - Be registered in multiple tournaments (via tournamentTeams)
+ * - Be registered in multiple stages (via stageTeams)
  */
 export const teamsRelations = relations(teams, ({ one, many }) => ({
     captain: one(require("./user").users, {
@@ -35,5 +35,5 @@ export const teamsRelations = relations(teams, ({ one, many }) => ({
     }),
     players: many(require("./player").players),
     matchParticipants: many(require("./match").matchParticipants),
-    tournamentTeams: many(require("./tournament").tournamentTeams),
+    stageTeams: many(require("./tournament").stageTeams),
 }));
