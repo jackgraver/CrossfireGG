@@ -27,7 +27,9 @@ export const matchService = {
                   ? team2Data.ID.toString()
                   : null;
 
-        const group = await matchRepository.findGroupById(match.group_id);
+        const group = match.group_id
+            ? await matchRepository.findGroupById(match.group_id)
+            : null;
         const stage = group
             ? await matchRepository.findStageById(group.stage_id)
             : null;

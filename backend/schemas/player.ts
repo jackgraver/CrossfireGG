@@ -46,6 +46,15 @@ export const playerStats = sqliteTable("player_stats", {
     deleted_at: integer("deleted_at", { mode: "timestamp" }),
 });
 
+// ============================== RELATIONS ============================== //
+
+/**
+ * Defines all relationships for the players table.
+ * A player can:
+ * - Belong to one team (optional - free agents have no team)
+ * - Be linked to one user account (optional - some players may not have accounts)
+ * - Have multiple statistics records across different matches and maps
+ */
 export const playersRelations = relations(players, ({ one, many }) => ({
     team: one(require("./team").teams, {
         fields: [players.team_id],
@@ -58,6 +67,14 @@ export const playersRelations = relations(players, ({ one, many }) => ({
     stats: many(playerStats),
 }));
 
+/**
+ * Defines relationships for the playerStats table.
+ * Player statistics are recorded per player, per match, per map:
+ * - Each record belongs to one player
+ * - Each record belongs to one match
+ * - Each record belongs to one map (within that match)
+ * Stores performance metrics: kills, deaths, assists, ADR, damage
+ */
 export const playerStatsRelations = relations(playerStats, ({ one }) => ({
     player: one(players, {
         fields: [playerStats.player_id],

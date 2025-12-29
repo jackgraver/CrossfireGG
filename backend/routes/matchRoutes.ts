@@ -66,11 +66,13 @@ router.get("/:matchId", async (req: Request, res: Response) => {
                 ? team2Data.ID.toString()
                 : null;
 
-        const group = await db
-            .select()
-            .from(groups)
-            .where(eq(groups.ID, match.group_id))
-            .limit(1);
+        const group = match.group_id
+            ? await db
+                  .select()
+                  .from(groups)
+                  .where(eq(groups.ID, match.group_id))
+                  .limit(1)
+            : [];
 
         const stage =
             group.length > 0

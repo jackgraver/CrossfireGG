@@ -18,6 +18,16 @@ export const teams = sqliteTable("teams", {
     deleted_at: integer("deleted_at", { mode: "timestamp" }),
 });
 
+// ============================== RELATIONS ============================== //
+
+/**
+ * Defines all relationships for the teams table.
+ * A team can:
+ * - Have one captain (user who leads the team)
+ * - Have multiple players
+ * - Participate in multiple matches (via matchParticipants)
+ * - Be registered in multiple tournaments (via tournamentTeams)
+ */
 export const teamsRelations = relations(teams, ({ one, many }) => ({
     captain: one(require("./user").users, {
         fields: [teams.team_captain_id],

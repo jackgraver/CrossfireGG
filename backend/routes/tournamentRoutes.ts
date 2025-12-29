@@ -186,7 +186,7 @@ router.get("/:tournamentId", async (req: Request, res: Response) => {
 
                 return {
                     match_id: match.ID.toString(),
-                    group_id: match.group_id.toString(),
+                    group_id: match.group_id?.toString() || null,
                     status: match.status || null,
                     scheduled_at: match.scheduled_at
                         ? Math.floor(match.scheduled_at.getTime() / 1000)
@@ -267,7 +267,6 @@ router.get("/:tournamentId", async (req: Request, res: Response) => {
                 end_date: tournamentData.end_date
                     ? Math.floor(tournamentData.end_date.getTime() / 1000)
                     : null,
-                faceit_id: tournamentData.faceit_id || null,
                 teams_signed_up: teamsSignedUp.length,
                 stages: stagesWithGroups,
             },

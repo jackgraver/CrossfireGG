@@ -3,9 +3,9 @@ import { relations } from "drizzle-orm";
 
 export const matches = sqliteTable("matches", {
     ID: integer("ID").primaryKey({ autoIncrement: true }),
-    group_id: integer("group_id")
-        .notNull()
-        .references((): any => require("./tournament").groups.ID),
+    group_id: integer("group_id").references(
+        (): any => require("./tournament").groups.ID
+    ),
     round: text("round"),
     status: text("status"),
     scheduled_at: integer("scheduled_at", { mode: "timestamp" }),
@@ -76,6 +76,17 @@ export const matchCasters = sqliteTable("match_casters", {
     deleted_at: integer("deleted_at", { mode: "timestamp" }),
 });
 
+// ============================== RELATIONS ============================== //
+
+/**
+ * Defines all relationships for the matches table.
+ * A match can:
+ * - Belong to one group (optional - matches can exist outside of groups)
+ * - Have multiple participants (teams playing in the match)
+ * - Have multiple casters assigned
+ * - Have multiple maps played
+ * - Have multiple player statistics recorded
+ */
 export const matchesRelations = relations(matches, ({ one, many }) => ({
     group: one(require("./tournament").groups, {
         fields: [matches.group_id],
@@ -87,6 +98,13 @@ export const matchesRelations = relations(matches, ({ one, many }) => ({
     playerStats: many(require("./player").playerStats),
 }));
 
+/**
+ * Defines relationships for the matchParticipants table.
+ * A match participant represents one team's participation in a match:
+ * - Belongs to one match
+ * - Represents one team
+ * - Can be the winner of multiple maps (reverse relationship from maps.winner_id)
+ */
 export const matchParticipantsRelations = relations(
     matchParticipants,
     ({ one, many }) => ({
@@ -102,6 +120,13 @@ export const matchParticipantsRelations = relations(
     })
 );
 
+/**
+ * Defines relationships for the maps table.
+ * A map represents one map played within a match:
+ * - Belongs to one match
+ * - Has one winner (matchParticipant who won this map)
+ * - Has multiple player statistics recorded for this map
+ */
 export const mapsRelations = relations(maps, ({ one, many }) => ({
     match: one(matches, {
         fields: [maps.match_id],
@@ -114,6 +139,12 @@ export const mapsRelations = relations(maps, ({ one, many }) => ({
     playerStats: many(require("./player").playerStats),
 }));
 
+/**
+ * Defines relationships for the matchCasters table.
+ * Links matches to users who are casting them:
+ * - Each record belongs to one match
+ * - Each record belongs to one user (the caster)
+ */
 export const matchCastersRelations = relations(matchCasters, ({ one }) => ({
     match: one(matches, {
         fields: [matchCasters.match_id],

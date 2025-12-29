@@ -50,11 +50,20 @@ export const userRoles = sqliteTable(
             .$defaultFn(() => new Date()),
         deleted_at: integer("deleted_at", { mode: "timestamp" }),
     },
-    (table) => ({
-        uniqueUserRole: unique().on(table.user_id, table.role_id),
-    })
+    (table) => [unique().on(table.user_id, table.role_id)]
 );
 
+// ============================== RELATIONS ============================== //
+
+/**
+ * Defines all relationships for the users table.
+ * A user can:
+ * - Belong to a team (via team_id)
+ * - Be the captain of a team (reverse relationship from teams.team_captain_id)
+ * - Have a linked player profile (via players.user_id)
+ * - Have multiple role assignments (many-to-many through userRoles)
+ * - Cast multiple matches (via matchCasters)
+ */
 export const usersRelations = relations(users, ({ one, many }) => ({
     team: one(require("./team").teams, {
         fields: [users.team_id],
@@ -72,10 +81,20 @@ export const usersRelations = relations(users, ({ one, many }) => ({
     matchCasters: many(require("./match").matchCasters),
 }));
 
+/**
+ * Defines relationships for the roles table.
+ * A role can be assigned to multiple users (many-to-many through userRoles).
+ */
 export const rolesRelations = relations(roles, ({ many }) => ({
     userRoles: many(userRoles),
 }));
 
+/**
+ * Defines relationships for the userRoles junction table.
+ * Links users to their assigned roles:
+ * - Each record belongs to one user
+ * - Each record belongs to one role
+ */
 export const userRolesRelations = relations(userRoles, ({ one }) => ({
     user: one(users, {
         fields: [userRoles.user_id],
