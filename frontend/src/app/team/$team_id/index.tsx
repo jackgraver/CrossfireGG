@@ -18,7 +18,8 @@ import TeamLogo from "@/shared/bracket/TeamLogo";
 import { openInNewTab } from "@/lib/NewTab";
 import { useState, useRef, useEffect } from "react";
 import type { Player } from "@/types/PlayerModel";
-import { getCurrentUserFn } from "@/lib/server/auth.server";
+import { fetchSession, getCurrentUserFn } from "@/lib/server/auth.server";
+import { useAppSession } from "@/contexts/session";
 
 function TeamNotFoundFallback({ message }: { message?: string }) {
     return (
@@ -46,14 +47,15 @@ export const Route = createFileRoute("/team/$team_id/")({
     component: Team,
     beforeLoad: async ({ params }) => {
         const { team_id } = params;
-        const user = await getCurrentUserFn();
+        const session = await fetchSession();
 
-        if (!user || !user.team_id || user.team_id !== parseInt(team_id)) {
+        if (
+            !session ||
+            !session.team_id ||
+            session.team_id !== parseInt(team_id)
+        ) {
             throw redirect({
                 to: "/",
-                search: {
-                    error: "You do not have access to this team",
-                },
                 replace: true,
             });
         }

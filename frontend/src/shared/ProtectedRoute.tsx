@@ -1,6 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { useUser } from "@/context/UserContext"; // or your auth hook/context
+import { useAuth } from "@/contexts/auth";
 
 export default function ProtectedRoute({
     children,
@@ -8,16 +8,20 @@ export default function ProtectedRoute({
     children: React.ReactNode;
 }) {
     const navigate = useNavigate();
-    const { user } = useUser(); // loading useful if user is fetched async
+    const { user, isLoading } = useAuth();
 
     useEffect(() => {
-        if (!user) {
-            navigate({ to: "/", replace: true });
+        if (!isLoading && !user) {
+            navigate({ to: "/sign-in", replace: true });
         }
-    }, [user, navigate]);
+    }, [user, isLoading, navigate]);
+
+    if (isLoading) {
+        return null;
+    }
 
     if (!user) {
-        return null; // or loading spinner
+        return null;
     }
 
     return <>{children}</>;

@@ -1,9 +1,19 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { redirect } from "@tanstack/react-router";
-import type { User } from "../hooks/useUser";
+import { useQuery } from "@tanstack/react-query";
+import axiosInstance from "../axios";
+import { useAppSession } from "@/contexts/session";
 
 const API_BASE_URL = process.env.VITE_API_BASE_URL || "http://localhost:3000";
+
+export type User = {
+    id: number;
+    name: string;
+    email: string;
+    team_id?: number;
+    roles: string[];
+};
 
 interface SignInCredentials {
     email: string;
@@ -25,38 +35,79 @@ interface SignUpResponse {
     user: User;
 }
 
+async function authenticateUser(data: SignInCredentials) {
+    const response = await axiosInstance.post("/user/sign-in", data);
+    return response.data;
+}
+
+export const fetchSession = createServerFn({ method: "GET" }).handler(
+    async () => {
+        const session = await useAppSession();
+        return session.data;
+    },
+);
+
 export const loginFn = createServerFn({ method: "POST" })
     .inputValidator((data: SignInCredentials) => data)
     .handler(async ({ data }) => {
         try {
-            const request = getRequest();
-            const cookieHeader = request.headers.get("cookie") || "";
-            const response = await fetch(`${API_BASE_URL}/user/sign-in`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Cookie: cookieHeader,
-                },
-                credentials: "include",
-                body: JSON.stringify(data),
+            const response = await authenticateUser(data);
+
+            if (!response.user) {
+                return { error: "Invalid credentials" }; // TODO: more specific error?
+            }
+
+            const session = await useAppSession();
+            await session.update({
+                id: response.user.id,
+                name: response.user.name,
+                email: response.user.email,
+                team_id: response.user.team_id,
+                roles: response.user.roles,
             });
 
-            if (!response.ok) {
-                const error = await response.json().catch(() => ({
-                    error: "Login failed",
-                }));
-                return { error: error.error || "Login failed" };
-            }
+            return { success: true, result: response.user };
 
-            const result: SignInResponse = await response.json();
+            // throw redirect({ to: "/" });
 
-            if (!result.user) {
-                return { error: "Invalid credentials" };
-            }
-
-            throw redirect({ to: "/" });
+            // const request = getRequest();
+            // console.log("request", request);
+            // const cookieHeader = request.headers.get("cookie") || "";
+            // const response = await fetch(`${API_BASE_URL}/user/sign-in`, {
+            //     method: "POST",
+            //     headers: {
+            //         "Content-Type": "application/json",
+            //         Cookie: cookieHeader,
+            //     },
+            //     credentials: "include",
+            //     body: JSON.stringify(data),
+            // });
+            // const {
+            //     data: response,
+            //     isLoading,
+            //     error,
+            // } = useQuery({
+            //     queryKey: ["sign-in"],
+            //     queryFn: async () => {
+            //         axiosInstance.post("/user/sign-in", data);
+            //     },
+            // });
+            // console.log("data", data, isLoading, error);
+            // if (!response.ok) {
+            //     const error = await response.json().catch(() => ({
+            //         error: "Login failed",
+            //     }));
+            //     return { error: error.error || "Login failed" };
+            // }
+            // const result: SignInResponse = await response.json();
+            // if (!result.user) {
+            //     return { error: "Invalid credentials" };
+            // }
+            // console.log("redirecting to /");
+            // throw redirect({ to: "/" });
         } catch (error: any) {
-            if (error.to) {
+            console.log("error server", error, error.status === 307);
+            if (error.status === 307) {
                 throw error;
             }
             return { error: error.message || "Login failed" };
@@ -141,11 +192,7 @@ export const getCurrentUserFn = createServerFn({ method: "GET" }).handler(
                 credentials: "include",
             });
 
-            if (response.status === 401) {
-                return null;
-            }
-
-            if (!response.ok) {
+            if (response.status === 401 || !response.ok) {
                 return null;
             }
 

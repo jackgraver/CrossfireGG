@@ -21,10 +21,11 @@ export const userController = {
             });
 
             const isProduction = process.env.NODE_ENV === "production";
+            const sameSiteValue = isProduction ? "strict" : "lax";
             const cookieOptions = {
                 httpOnly: true,
                 secure: isProduction,
-                sameSite: "strict" as const,
+                sameSite: sameSiteValue as "strict" | "lax",
                 maxAge: 7 * 24 * 60 * 60 * 1000,
                 path: "/",
             };
@@ -44,6 +45,7 @@ export const userController = {
     signIn: async (req: Request, res: Response) => {
         try {
             const credentials = req.body;
+            console.log("credentials", credentials);
             const authResponse = await userService.signIn(credentials);
 
             const accessToken = jwtUtils.generateAccessToken({
@@ -52,7 +54,9 @@ export const userController = {
                 teamId: authResponse.user.team_id,
             });
 
-            const userFromDb = await userRepository.findById(authResponse.user.id);
+            const userFromDb = await userRepository.findById(
+                authResponse.user.id
+            );
             if (!userFromDb) {
                 throw new Error("User not found");
             }
@@ -63,10 +67,11 @@ export const userController = {
             });
 
             const isProduction = process.env.NODE_ENV === "production";
+            const sameSiteValue = isProduction ? "strict" : "lax";
             const cookieOptions = {
                 httpOnly: true,
                 secure: isProduction,
-                sameSite: "strict" as const,
+                sameSite: sameSiteValue as "strict" | "lax",
                 path: "/",
             };
 
@@ -89,7 +94,9 @@ export const userController = {
         try {
             const refreshToken = req.cookies.refreshToken;
             if (!refreshToken) {
-                return res.status(401).json({ error: "Refresh token required" });
+                return res
+                    .status(401)
+                    .json({ error: "Refresh token required" });
             }
 
             const authResponse = await userService.refreshToken(refreshToken);
@@ -103,10 +110,11 @@ export const userController = {
             const newRefreshToken = authResponse.refreshToken!;
 
             const isProduction = process.env.NODE_ENV === "production";
+            const sameSiteValue = isProduction ? "strict" : "lax";
             const cookieOptions = {
                 httpOnly: true,
                 secure: isProduction,
-                sameSite: "strict" as const,
+                sameSite: sameSiteValue as "strict" | "lax",
                 path: "/",
             };
 
@@ -159,4 +167,3 @@ export const userController = {
         }
     },
 };
-
