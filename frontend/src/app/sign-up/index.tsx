@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { validateEmail } from "@/lib/SignInUp.util";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { signUpFn } from "@/lib/server/auth.server";
+import { useAuth } from "@/contexts/auth";
 import { api } from "../../lib/api";
-import { useNavigate } from "@tanstack/react-router";
 
 import { FaSpinner } from "react-icons/fa";
 import OSSForm from "@/shared/OSSForm/OSSForm";
@@ -28,7 +29,9 @@ export const Route = createFileRoute("/sign-up/")({
 });
 
 function SignUp() {
-    const navigate = useNavigate();
+    const [isSigningUp, setIsSigningUp] = useState(false);
+    const { refetch } = useAuth();
+    const signUp = useServerFn(signUpFn);
 
     const [showFaceitLinkSpinner, setShowFaceitLinkSpinner] = useState(false);
     const validFaceitLink =
@@ -120,22 +123,29 @@ function SignUp() {
         handleLink(faceitLink);
     }, [faceitLink]);
 
-    const signUpMutation = useMutation({
-        mutationFn: (userData: {
-            email: string;
-            name: string;
-            password: string;
-            team_id?: number;
-        }) => api.post<SignUpResponse>("/user/sign-up", userData),
-        onSuccess: (data) => {
-            navigate({ to: "/" });
-        },
-        onError: (error: any) => {
-            const errorMessage =
-                error.response?.data?.error || "Sign Up failed";
-            setEmailError(errorMessage);
-        },
-    });
+    const handleSignUp = async (userData: {
+        email: string;
+        name: string;
+        password: string;
+        team_id?: number;
+    }) => {
+        setIsSigningUp(true);
+        try {
+            const result = await signUp({ data: userData });
+            if (result?.error) {
+                setEmailError(result.error);
+            } else {
+                await refetch();
+            }
+        } catch (error: any) {
+            if (error.to) {
+                throw error;
+            }
+            setEmailError(error.message || "Sign up failed");
+        } finally {
+            setIsSigningUp(false);
+        }
+    };
 
     const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (email.length === 0) setEmailError("");
@@ -187,7 +197,7 @@ function SignUp() {
                 return { success: false, result: null };
             }
 
-            signUpMutation.mutate({
+            await handleSignUp({
                 email,
                 name: email.split("@")[0],
                 password,
@@ -238,7 +248,7 @@ function SignUp() {
                     placeholder="Faceit Link"
                     value={faceitLink}
                     onChange={(e) => setFaceitLink(e.target.value)}
-                    disabled={signUpMutation.isPending}
+                    disabled={isSigningUp}
                     error={faceitLinkError}
                 />
                 <BaseInput
@@ -251,7 +261,7 @@ function SignUp() {
                 <PasswordInput
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    disabled={signUpMutation.isPending}
+                    disabled={isSigningUp}
                 />
             </OSSForm>
         </UserForm>

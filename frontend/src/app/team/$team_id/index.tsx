@@ -18,7 +18,7 @@ import TeamLogo from "@/shared/bracket/TeamLogo";
 import { openInNewTab } from "@/lib/NewTab";
 import { useState, useRef, useEffect } from "react";
 import type { Player } from "@/types/PlayerModel";
-import { useUser } from "@/context/UserContext";
+import { getCurrentUserFn } from "@/lib/server/auth.server";
 
 function TeamNotFoundFallback({ message }: { message?: string }) {
     return (
@@ -44,25 +44,20 @@ function TeamNotFoundFallback({ message }: { message?: string }) {
 
 export const Route = createFileRoute("/team/$team_id/")({
     component: Team,
-    // beforeLoad: () => {
-    //     const { user, loading: userLoading } = useUser();
-    //     const { team_id } = Route.useParams();
+    beforeLoad: async ({ params }) => {
+        const { team_id } = params;
+        const user = await getCurrentUserFn();
 
-    //     console.log(user, userLoading);
-    //     if (userLoading) {
-    //         return;
-    //     }
-
-    //     if (!user || !user.team_id || user.team_id !== parseInt(team_id)) {
-    //         throw redirect({
-    //             to: "/",
-    //             search: {
-    //                 error: "You do not have access to this team",
-    //             },
-    //             replace: true,
-    //         });
-    //     }
-    // },
+        if (!user || !user.team_id || user.team_id !== parseInt(team_id)) {
+            throw redirect({
+                to: "/",
+                search: {
+                    error: "You do not have access to this team",
+                },
+                replace: true,
+            });
+        }
+    },
 });
 
 function Team() {

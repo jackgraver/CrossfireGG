@@ -116,6 +116,7 @@ function RouteComponent() {
                                     {true ? ( // TODO: make sure sign up open and not already signed up
                                         <button
                                             onClick={(e) => {
+                                                // TODO: three logic, no user, user but no team, user and team but not joined tournament
                                                 e.stopPropagation();
                                             }}
                                             className="rounded-md bg-blue-500 px-4 py-2 font-bold text-gray-100 hover:bg-blue-600"

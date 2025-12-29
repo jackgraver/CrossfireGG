@@ -3,6 +3,8 @@ import axios, {
     AxiosInstance,
     InternalAxiosRequestConfig,
 } from "axios";
+import { queryClient } from "@/lib/queryClient";
+import { USER_QUERY_KEY } from "@/lib/hooks/useUser";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
 
@@ -66,6 +68,8 @@ axiosInstance.interceptors.response.use(
         }
 
         if (error.response?.status === 401 && url.includes("/user/refresh")) {
+            queryClient.setQueryData(USER_QUERY_KEY, null);
+            queryClient.removeQueries({ queryKey: USER_QUERY_KEY });
             if (window.location.pathname !== "/sign-in") {
                 window.location.href = "/sign-in";
             }

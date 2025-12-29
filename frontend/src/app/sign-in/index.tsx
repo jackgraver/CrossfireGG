@@ -1,13 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { validateEmail } from "@/lib/SignInUp.util";
-import { useMutation } from "@tanstack/react-query";
-import { api } from "../../lib/api";
-import { useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import { loginFn } from "@/lib/server/auth.server";
+import { useAuth } from "@/contexts/auth";
 import OSSForm from "@/shared/OSSForm/OSSForm";
 import BaseInput from "@/shared/OSSForm/BaseInput/BaseInput";
 import PasswordInput from "@/shared/OSSForm/PasswordInput/PasswordInput";
-import { useUser } from "@/context/UserContext";
 import UserForm from "@/shared/UserForm";
 import { PromiseReturn } from "@/types/Types";
 
@@ -15,49 +14,36 @@ export const Route = createFileRoute("/sign-in/")({
     component: SignIn,
 });
 
-interface SignInResponse {
-    user: {
-        id: number;
-        name: string;
-        email: string;
-        team_id?: number;
-        roles: string[];
-    };
-}
-
-type User = {
-    id: number;
-    name: string;
-    email: string;
-    team_id?: number;
-    roles: string[];
-};
-
 function SignIn() {
-    const router = useNavigate();
-
     const [email, setEmail] = useState("");
     const [emailError, setEmailError] = useState("");
     const [password, setPassword] = useState("");
+    const [isPending, setIsPending] = useState(false);
+    const { refetch } = useAuth();
 
-    const { setUser } = useUser(); // ✅ move this OUTSIDE the mutation
+    const login = useServerFn(loginFn);
 
-    const signInMutation = useMutation({
-        mutationFn: (credentials: { email: string; password: string }) =>
-            api.post<SignInResponse>("/user/sign-in", credentials),
-        onSuccess: async (data) => {
-            try {
-                setUser(data.user);
-                router({ to: "/" });
-            } catch (err) {
-                console.error("Post-login setup failed:", err);
+    const handleLogin = async (credentials: {
+        email: string;
+        password: string;
+    }) => {
+        setIsPending(true);
+        try {
+            const result = await login({ data: credentials });
+            if (result?.error) {
+                setEmailError(result.error);
+            } else {
+                await refetch();
             }
-        },
-        onError: (error: any) => {
-            const errorMessage = error.response?.data?.error || "Login failed";
-            setEmailError(errorMessage);
-        },
-    });
+        } catch (error: any) {
+            if (error.to) {
+                throw error;
+            }
+            setEmailError(error.message || "Login failed");
+        } finally {
+            setIsPending(false);
+        }
+    };
 
     const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (email.length === 0) setEmailError("");
@@ -91,7 +77,7 @@ function SignIn() {
                 setEmailError("Please enter a valid email address");
                 return { success: false, result: null };
             }
-            signInMutation.mutate({ email, password });
+            await handleLogin({ email, password });
 
             return { success: true, result: null };
         } catch (err) {
@@ -116,14 +102,14 @@ function SignIn() {
                     value={email}
                     onChange={handleEmailChange}
                     onBlur={handleEmailBlur}
-                    disabled={signInMutation.isPending}
+                    disabled={isPending}
                     error={emailError}
                     success={validateEmail}
                 />
                 <PasswordInput
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    disabled={signInMutation.isPending}
+                    disabled={isPending}
                 />
             </OSSForm>
         </UserForm>

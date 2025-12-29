@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "@tanstack/react-router";
-import { useUser } from "@/context/UserContext";
-import { api } from "@/lib/api";
+import { useServerFn } from "@tanstack/react-start";
+import { logoutFn } from "@/lib/server/auth.server";
+import { useAuth } from "@/contexts/auth";
 import { match } from "assert";
 import { matchesRole } from "@/lib/role.util";
-import { useNavigate } from "@tanstack/react-router";
 
 function toggleDarkMode() {
     const isDark = document.documentElement.classList.toggle("dark");
@@ -18,16 +18,13 @@ const preloadImage = (url: string) => {
     img.src = url;
 };
 
-export async function logoutUser() {
-    await api.post("/user/logout");
-}
-
 export default function NavBar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     // const pathname = usePathname();
 
-    const { user } = useUser();
+    const { user } = useAuth();
+    const logout = useServerFn(logoutFn);
 
     useEffect(() => {
         const darkPref = localStorage.getItem("theme");
@@ -227,9 +224,9 @@ export default function NavBar() {
                                                         to="/"
                                                         className="text-textSecondary hover:bg-secondBg block px-4 py-2 text-sm"
                                                         role="menuitem"
-                                                        onClick={async (e) => {
+                                                        onClick={(e) => {
                                                             e.preventDefault();
-                                                            await logoutUser();
+                                                            logout();
                                                         }}
                                                         onMouseEnter={() =>
                                                             preloadImage(

@@ -18,6 +18,7 @@ import { Route as SignUpIndexRouteImport } from './app/sign-up/index'
 import { Route as SignInIndexRouteImport } from './app/sign-in/index'
 import { Route as RegisterIndexRouteImport } from './app/register/index'
 import { Route as ManageTeamsIndexRouteImport } from './app/manage-teams/index'
+import { Route as CreateTeamIndexRouteImport } from './app/create-team/index'
 import { Route as CastingIndexRouteImport } from './app/casting/index'
 import { Route as AdminIndexRouteImport } from './app/admin/index'
 import { Route as TournamentTournamentIndexRouteImport } from './app/tournament/$tournament/index'
@@ -71,6 +72,11 @@ const ManageTeamsIndexRoute = ManageTeamsIndexRouteImport.update({
   path: '/manage-teams/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CreateTeamIndexRoute = CreateTeamIndexRouteImport.update({
+  id: '/create-team/',
+  path: '/create-team/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CastingIndexRoute = CastingIndexRouteImport.update({
   id: '/casting/',
   path: '/casting/',
@@ -114,6 +120,7 @@ export interface FileRoutesByFullPath {
   '/not-found': typeof NotFoundRoute
   '/admin': typeof AdminIndexRoute
   '/casting': typeof CastingIndexRoute
+  '/create-team': typeof CreateTeamIndexRoute
   '/manage-teams': typeof ManageTeamsIndexRoute
   '/register': typeof RegisterIndexRoute
   '/sign-in': typeof SignInIndexRoute
@@ -132,6 +139,7 @@ export interface FileRoutesByTo {
   '/not-found': typeof NotFoundRoute
   '/admin': typeof AdminIndexRoute
   '/casting': typeof CastingIndexRoute
+  '/create-team': typeof CreateTeamIndexRoute
   '/manage-teams': typeof ManageTeamsIndexRoute
   '/register': typeof RegisterIndexRoute
   '/sign-in': typeof SignInIndexRoute
@@ -151,6 +159,7 @@ export interface FileRoutesById {
   '/not-found': typeof NotFoundRoute
   '/admin/': typeof AdminIndexRoute
   '/casting/': typeof CastingIndexRoute
+  '/create-team/': typeof CreateTeamIndexRoute
   '/manage-teams/': typeof ManageTeamsIndexRoute
   '/register/': typeof RegisterIndexRoute
   '/sign-in/': typeof SignInIndexRoute
@@ -171,6 +180,7 @@ export interface FileRouteTypes {
     | '/not-found'
     | '/admin'
     | '/casting'
+    | '/create-team'
     | '/manage-teams'
     | '/register'
     | '/sign-in'
@@ -189,6 +199,7 @@ export interface FileRouteTypes {
     | '/not-found'
     | '/admin'
     | '/casting'
+    | '/create-team'
     | '/manage-teams'
     | '/register'
     | '/sign-in'
@@ -207,6 +218,7 @@ export interface FileRouteTypes {
     | '/not-found'
     | '/admin/'
     | '/casting/'
+    | '/create-team/'
     | '/manage-teams/'
     | '/register/'
     | '/sign-in/'
@@ -226,6 +238,7 @@ export interface RootRouteChildren {
   NotFoundRoute: typeof NotFoundRoute
   AdminIndexRoute: typeof AdminIndexRoute
   CastingIndexRoute: typeof CastingIndexRoute
+  CreateTeamIndexRoute: typeof CreateTeamIndexRoute
   ManageTeamsIndexRoute: typeof ManageTeamsIndexRoute
   RegisterIndexRoute: typeof RegisterIndexRoute
   SignInIndexRoute: typeof SignInIndexRoute
@@ -304,6 +317,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ManageTeamsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/create-team/': {
+      id: '/create-team/'
+      path: '/create-team'
+      fullPath: '/create-team'
+      preLoaderRoute: typeof CreateTeamIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/casting/': {
       id: '/casting/'
       path: '/casting'
@@ -362,6 +382,7 @@ const rootRouteChildren: RootRouteChildren = {
   NotFoundRoute: NotFoundRoute,
   AdminIndexRoute: AdminIndexRoute,
   CastingIndexRoute: CastingIndexRoute,
+  CreateTeamIndexRoute: CreateTeamIndexRoute,
   ManageTeamsIndexRoute: ManageTeamsIndexRoute,
   RegisterIndexRoute: RegisterIndexRoute,
   SignInIndexRoute: SignInIndexRoute,

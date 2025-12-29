@@ -7,7 +7,7 @@ import {
 } from "./tournament.validation";
 
 export const tournamentController = {
-    getAllTournaments: async (req: Request, res: Response) => {
+    getAllTournaments: async (_: Request, res: Response) => {
         try {
             const tournaments = await tournamentService.getAllTournaments();
             res.json({ tournaments });

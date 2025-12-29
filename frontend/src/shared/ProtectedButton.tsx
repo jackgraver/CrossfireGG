@@ -1,4 +1,4 @@
-import { useUser } from "@/context/UserContext"; // or your auth hook/context
+import { useAuth } from "@/contexts/auth";
 
 export default function ProtectedElement({
     children,
@@ -7,7 +7,7 @@ export default function ProtectedElement({
     children: React.ReactNode;
     roles?: string[];
 }) {
-    const { user } = useUser(); // loading useful if user is fetched async
+    const { user } = useAuth();
 
     if (user && roles && user.roles.some((role) => roles.includes(role))) {
         return <>{children}</>;
