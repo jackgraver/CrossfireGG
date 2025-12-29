@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import CloseButton from "./buttons/CloseButton";
 
@@ -26,7 +24,7 @@ export default function Notification({
 
     return (
         <div
-            className={`fixed bottom-4 right-4 rounded-lg px-4 py-3 text-black shadow-lg ${
+            className={`fixed right-4 bottom-4 rounded-lg px-4 py-3 text-black shadow-lg ${
                 error ? "bg-red-500" : "bg-green-500"
             }`}
         >

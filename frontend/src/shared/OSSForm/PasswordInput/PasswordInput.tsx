@@ -1,5 +1,3 @@
-"use client";
-
 import { useState } from "react";
 import BaseInput from "../BaseInput/BaseInput"; // adjust path if needed
 import { Eye, EyeOff } from "lucide-react";

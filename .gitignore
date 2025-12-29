@@ -95,3 +95,7 @@ stress_test.py
 backend_py/*
 backend/tmp/
 backend/tmp/
+
+MD/
+
+.cursor/rules/

@@ -77,3 +77,19 @@ export const isToday = (timestamp: number): boolean => {
     const today = new Date();
     return matchDate.toDateString() === today.toDateString();
 };
+
+/**
+ * Converts a date (ISO string, Date object, or Unix timestamp) to Unix timestamp in seconds
+ * @param date Date string, Date object, or Unix timestamp in seconds
+ * @returns Unix timestamp in seconds
+ */
+export const toUnixTimestamp = (
+    date: string | Date | number | null | undefined,
+): number | null => {
+    if (!date) return null;
+    if (typeof date === "number") return date;
+    if (typeof date === "string") {
+        return Math.floor(new Date(date).getTime() / 1000);
+    }
+    return Math.floor(date.getTime() / 1000);
+};

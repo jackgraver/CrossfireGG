@@ -1,14 +1,14 @@
 export type Team = {
-    team_id_i?: string;
-    team_id: string;
-    sub_t_id?: string | null;
+    team_id: string; // primary key
     team_name: string;
     team_logo?: string | null;
-    seed: number; // default -1
-    win: number; // default 0
-    loss: number; // default 0
-    paid: BooleanStatus; // default 1
-    joined_tournament: BooleanStatus; // default 1
+    faceit_id: string;
+    team_captain_id: string;
+    win: number;
+    loss: number;
+    seed: number;
+    paid?: BooleanStatus; // default false (from stageTeams.paid)
+    joined_tournament?: BooleanStatus; // default false (from stageTeams.signed_up)
 };
 
 export enum BooleanStatus {

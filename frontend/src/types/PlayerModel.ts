@@ -1,20 +1,20 @@
 export type Player = {
-    player_id_i: string;
-    player_id: string;
-    team_id: string;
-    sub_t_id?: string | null;
+    player_id: string; // primary key (ID)
     player_name: string;
+    faceit_id?: string | null;
+    team_id?: string | null; // foreign key teams.ID
+    user_id?: string | null; // foreign key users.ID
     player_logo?: string | null;
 };
 
 export type PlayerStats = {
-    ps_id: string;
-    player_id: string;
-    match_id: string;
-    map_id: string;
-    kills: number;
-    deaths: number;
-    assists: number;
-    adr: number;
-    damage: number;
+    ID: string; // primary key
+    player_id: string; // foreign key players.ID
+    match_id: string; // foreign key matches.ID
+    map_id: string; // foreign key maps.ID
+    kills: number; // default 0
+    deaths: number; // default 0
+    assists: number; // default 0
+    adr: number; // default 0
+    damage: number; // default 0
 };

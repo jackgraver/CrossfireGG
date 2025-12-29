@@ -1,5 +1,3 @@
-"use client";
-
 import { useRef, useEffect, useState } from "react";
 
 type ViewOption = {
@@ -51,7 +49,7 @@ export default function ViewSelector({
     return (
         <div
             ref={containerRef}
-            className={`relative inline-flex overflow-hidden rounded-md bg-firstBg shadow-md ${className}`}
+            className={`bg-firstBg relative inline-flex overflow-hidden rounded-md shadow-md ${className}`}
         >
             <div
                 className="absolute bottom-0 h-1 bg-orange-500 transition-all duration-300 ease-in-out"

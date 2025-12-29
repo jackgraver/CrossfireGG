@@ -1,5 +1,3 @@
-"use client";
-
 import { X } from "lucide-react";
 import React from "react";
 
@@ -75,7 +73,7 @@ export default function Toast({
             <div className="flex items-start gap-3 p-4">
                 <div className="flex-1">
                     {title && (
-                        <h3 className="mb-1 text-lg font-semibold leading-snug">
+                        <h3 className="mb-1 text-lg leading-snug font-semibold">
                             {title}
                         </h3>
                     )}

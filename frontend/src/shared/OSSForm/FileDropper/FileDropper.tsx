@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useCallback, useState, useRef } from "react";
 import styles from "./FileDropper.module.css";
 import BaseInput from "../BaseInput/BaseInput";
