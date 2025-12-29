@@ -17,11 +17,12 @@ export const tournaments = sqliteTable("tournaments", {
 
 export const stages = sqliteTable("stages", {
     ID: integer("ID").primaryKey({ autoIncrement: true }),
-    faceit_id: text("faceit_id"),
     tournament_id: integer("tournament_id")
         .notNull()
         .references(() => tournaments.ID),
     name: text("name").notNull(),
+    faceit_id: text("faceit_id"),
+    max_teams: integer("max_teams").default(0),
     format: text("format"),
     is_current: integer("is_current", { mode: "boolean" }).default(false),
     start_date: integer("start_date", { mode: "timestamp" }),

@@ -5,10 +5,9 @@ import {
     groups,
     matches,
     tournamentTeams,
-    teams,
-    matchParticipants,
 } from "../../schemas";
-import { eq, and, isNull, inArray } from "drizzle-orm";
+import { eq, and, isNull, count, inArray } from "drizzle-orm";
+import { TournamentListItem } from "./tournament.types";
 
 export const tournamentRepository = {
     findAll: async () => {
@@ -31,6 +30,34 @@ export const tournamentRepository = {
             )
             .limit(1);
         return result[0] || null;
+    },
+
+    findByIdWithStages: async (tournamentId: number) => {
+        const tournament = await db.query.tournaments.findFirst({
+            where: (t, { eq, and, isNull }) =>
+                and(eq(t.ID, tournamentId), isNull(t.deleted_at)),
+            with: {
+                stages: {
+                    with: {
+                        groups: true,
+                    },
+                },
+            },
+        });
+
+        if (!tournament) return null;
+
+        return {
+            ...tournament,
+            stages: tournament.stages
+                .filter((stage) => !stage.deleted_at)
+                .map((stage) => ({
+                    ...stage,
+                    groups: stage.groups
+                        ? stage.groups.filter((group) => !group.deleted_at)
+                        : undefined,
+                })),
+        };
     },
 
     findStagesByTournamentId: async (tournamentId: number) => {
@@ -58,65 +85,33 @@ export const tournamentRepository = {
             );
     },
 
-    findMatchesByGroupIds: async (groupIds: number[]) => {
-        if (groupIds.length === 0) return [];
-        return await db
-            .select()
-            .from(matches)
-            .where(
-                and(
-                    inArray(matches.group_id, groupIds),
-                    isNull(matches.deleted_at)
-                )
-            );
-    },
-
-    findMatchParticipants: async (matchId: number) => {
+    findMatchesByStageId: async (stageId: number) => {
         return await db
             .select({
-                participant: matchParticipants,
-                team: teams,
+                match: matches,
+                group: groups,
             })
-            .from(matchParticipants)
-            .innerJoin(teams, eq(matchParticipants.team_id, teams.ID))
+            .from(matches)
+            .innerJoin(groups, eq(matches.group_id, groups.ID))
             .where(
                 and(
-                    eq(matchParticipants.match_id, matchId),
-                    isNull(matchParticipants.deleted_at),
-                    isNull(teams.deleted_at)
+                    eq(groups.stage_id, stageId),
+                    isNull(matches.deleted_at),
+                    isNull(groups.deleted_at)
                 )
             );
     },
 
-    findTeamsSignedUp: async (tournamentId: number) => {
-        return await db
-            .select()
+    countTeamsByTournamentId: async (tournamentId: number) => {
+        const result = await db
+            .select({ count: count() })
             .from(tournamentTeams)
             .where(
                 and(
                     eq(tournamentTeams.tournament_id, tournamentId),
-                    eq(tournamentTeams.signed_up, true),
                     isNull(tournamentTeams.deleted_at)
                 )
             );
-    },
-
-    findTournamentTeams: async (tournamentId: number, groupIds: number[]) => {
-        if (groupIds.length === 0) return [];
-        return await db
-            .select({
-                tournamentTeam: tournamentTeams,
-                team: teams,
-            })
-            .from(tournamentTeams)
-            .innerJoin(teams, eq(tournamentTeams.team_id, teams.ID))
-            .where(
-                and(
-                    eq(tournamentTeams.tournament_id, tournamentId),
-                    inArray(tournamentTeams.group_id, groupIds),
-                    isNull(tournamentTeams.deleted_at),
-                    isNull(teams.deleted_at)
-                )
-            );
+        return result[0]?.count || 0;
     },
 };

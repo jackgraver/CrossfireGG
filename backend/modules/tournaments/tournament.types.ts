@@ -75,4 +75,3 @@ export type TournamentDetailResponse = {
     matches: MatchWithTeams[];
     teams: Team[];
 };
-

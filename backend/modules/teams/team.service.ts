@@ -85,7 +85,7 @@ export const teamService = {
 
                 return {
                     match_id: match.ID.toString(),
-                    group_id: match.group_id?.toString() || null,
+                    group_id: match.group_id?.toString() || "",
                     status: match.status || null,
                     scheduled_at: match.scheduled_at
                         ? Math.floor(match.scheduled_at.getTime() / 1000)

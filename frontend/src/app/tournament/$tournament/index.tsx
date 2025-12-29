@@ -1,7 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
-import { useTournament } from "../-queries/tournamentQueries";
-import { formatDateOnly } from "@/lib/dateUtils";
+import { useState, useMemo } from "react";
+import {
+    useTournament,
+    useMatchesByStage,
+} from "../-queries/tournamentQueries";
+import { formatDateOnly, toUnixTimestamp } from "@/lib/dateUtils";
 import RegularSeasonBracket from "@/shared/bracket/RegularSeasonBracket";
 import Standings from "@/shared/Standings";
 
@@ -14,7 +17,22 @@ function RouteComponent() {
     const [viewMode, setViewMode] = useState<"bracket" | "standings">(
         "bracket",
     );
-    const { data, isLoading, error } = useTournament(tournamentId);
+    const { data: tournament, isLoading, error } = useTournament(tournamentId);
+
+    const currentStage = useMemo(() => {
+        if (!tournament?.stages) return null;
+        return (
+            tournament.stages.find((stage) => stage.is_current) ||
+            tournament.stages[0] ||
+            null
+        );
+    }, [tournament]);
+
+    const {
+        data: matchesData,
+        isLoading: matchesLoading,
+        error: matchesError,
+    } = useMatchesByStage(currentStage?.ID ?? null);
 
     if (isLoading) {
         return (
@@ -34,7 +52,7 @@ function RouteComponent() {
         );
     }
 
-    if (!data) {
+    if (!tournament) {
         return (
             <div className="flex min-h-screen items-center justify-center">
                 <div className="text-textSecondary">Tournament not found</div>
@@ -42,30 +60,34 @@ function RouteComponent() {
         );
     }
 
-    const { tournament, matches, teams } = data;
+    const matches = matchesData?.matches || [];
 
     return (
         <div className="mx-auto min-h-screen max-w-[1400px] p-5">
             <div className="bg-firstBg mb-8 rounded-xl p-8 shadow-md">
                 <h1 className="text-textPrimary mb-4 text-4xl font-bold">
-                    {tournament.t_name}
+                    {tournament.name}
                 </h1>
                 <div className="text-textSecondary flex flex-wrap gap-6">
                     {tournament.start_date && (
                         <div>
                             <span className="font-semibold">Start Date: </span>
-                            {formatDateOnly(tournament.start_date)}
+                            {formatDateOnly(
+                                toUnixTimestamp(tournament.start_date)!,
+                            )}
                         </div>
                     )}
                     {tournament.end_date && (
                         <div>
                             <span className="font-semibold">End Date: </span>
-                            {formatDateOnly(tournament.end_date)}
+                            {formatDateOnly(
+                                toUnixTimestamp(tournament.end_date)!,
+                            )}
                         </div>
                     )}
                     <div>
-                        <span className="font-semibold">Teams Signed Up: </span>
-                        {tournament.teams_signed_up}
+                        <span className="font-semibold">Teams: </span>
+                        {tournament.teams_count}/{tournament.max_teams}
                     </div>
                 </div>
             </div>
@@ -95,18 +117,26 @@ function RouteComponent() {
 
             <div className="bg-firstBg rounded-xl p-8 shadow-md">
                 {viewMode === "bracket" ? (
-                    matches && matches.length > 0 ? (
+                    matchesLoading ? (
+                        <div className="text-textSecondary">
+                            Loading matches...
+                        </div>
+                    ) : matchesError ? (
+                        <div className="text-red-500">
+                            Error loading matches: {matchesError.message}
+                        </div>
+                    ) : matches && matches.length > 0 ? (
                         <RegularSeasonBracket matches={matches} />
                     ) : (
                         <div className="text-textSecondary">
-                            No matches found for this tournament
+                            {currentStage
+                                ? `No matches found for stage: ${currentStage.name}`
+                                : "No current stage found"}
                         </div>
                     )
-                ) : teams && teams.length > 0 ? (
-                    <Standings teams={teams} />
                 ) : (
                     <div className="text-textSecondary">
-                        No teams found for this tournament
+                        Standings feature coming soon
                     </div>
                 )}
             </div>
@@ -123,12 +153,12 @@ function RouteComponent() {
                     <div className="space-y-6">
                         {tournament.stages.map((stage) => (
                             <div
-                                key={stage.sub_t_id}
+                                key={stage.ID}
                                 className="border-border bg-secondBg rounded-lg border p-6"
                             >
                                 <div className="mb-4 flex items-center justify-between">
                                     <h3 className="text-textPrimary text-xl font-semibold">
-                                        {stage.t_name}
+                                        {stage.name}
                                     </h3>
                                     {stage.is_current && (
                                         <span className="rounded-full bg-green-600 px-3 py-1 text-sm text-white">
@@ -142,7 +172,11 @@ function RouteComponent() {
                                             <span className="font-semibold">
                                                 Start:{" "}
                                             </span>
-                                            {formatDateOnly(stage.start_date)}
+                                            {formatDateOnly(
+                                                toUnixTimestamp(
+                                                    stage.start_date,
+                                                )!,
+                                            )}
                                         </div>
                                     )}
                                     {stage.end_date && (
@@ -150,7 +184,11 @@ function RouteComponent() {
                                             <span className="font-semibold">
                                                 End:{" "}
                                             </span>
-                                            {formatDateOnly(stage.end_date)}
+                                            {formatDateOnly(
+                                                toUnixTimestamp(
+                                                    stage.end_date,
+                                                )!,
+                                            )}
                                         </div>
                                     )}
                                     {stage.format && (
@@ -172,7 +210,7 @@ function RouteComponent() {
                                             <div className="flex flex-wrap gap-3">
                                                 {stage.groups.map((group) => (
                                                     <div
-                                                        key={group.group_id}
+                                                        key={group.ID}
                                                         className="bg-thirdBg border-border rounded-md border px-4 py-2"
                                                     >
                                                         <span className="text-textPrimary">

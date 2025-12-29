@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useTournaments } from "./-queries/tournamentQueries";
-import { formatDateOnly } from "@/lib/dateUtils";
+import { formatDateOnly, toUnixTimestamp } from "@/lib/dateUtils";
 
 export const Route = createFileRoute("/tournament/")({
     component: RouteComponent,
@@ -43,10 +43,10 @@ function RouteComponent() {
                 <div className="flex flex-col gap-6 text-gray-200">
                     {tournaments.map((tournament) => (
                         <div
-                            key={tournament.t_id}
+                            key={tournament.ID}
                             onClick={() =>
                                 navigate({
-                                    to: `/tournament/${tournament.t_id}`,
+                                    to: `/tournament/${tournament.ID}`,
                                 })
                             }
                             className="cursor-pointer rounded-xl border border-neutral-700 bg-neutral-900 p-6 shadow-md transition-all hover:bg-neutral-800 hover:shadow-lg"
@@ -54,7 +54,7 @@ function RouteComponent() {
                             <div className="flex items-center justify-between gap-6">
                                 <div className="flex-1">
                                     <h2 className="text-textPrimary mb-3 text-2xl font-bold">
-                                        {tournament.t_name}
+                                        {tournament.name}
                                     </h2>
                                     <div className="text-textSecondary flex flex-wrap gap-4">
                                         {tournament.start_date &&
@@ -62,11 +62,15 @@ function RouteComponent() {
                                                 <div>
                                                     <span className="font-semibold">
                                                         {formatDateOnly(
-                                                            tournament.start_date,
+                                                            toUnixTimestamp(
+                                                                tournament.start_date,
+                                                            )!,
                                                         )}
                                                         -
                                                         {formatDateOnly(
-                                                            tournament.end_date,
+                                                            toUnixTimestamp(
+                                                                tournament.end_date,
+                                                            )!,
                                                         )}
                                                     </span>
                                                 </div>
@@ -78,14 +82,11 @@ function RouteComponent() {
                                                     {tournament.stages.map(
                                                         (stage) => (
                                                             <span
-                                                                key={
-                                                                    stage.sub_t_id
-                                                                }
+                                                                key={stage.ID}
                                                                 className="font-semibold"
                                                             >
-                                                                {
-                                                                    stage.t_name
-                                                                }{" "}
+                                                                {stage.name}
+                                                                {" (0/?) "}
                                                             </span>
                                                         ),
                                                     )}

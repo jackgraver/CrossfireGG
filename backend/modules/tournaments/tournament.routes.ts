@@ -4,7 +4,7 @@ import { tournamentController } from "./tournament.controller";
 const router = Router();
 
 router.get("/all", tournamentController.getAllTournaments);
+router.get("/stage/:stageId/matches", tournamentController.getMatchesByStageId);
 router.get("/:tournamentId", tournamentController.getTournamentById);
 
 export default router;
-

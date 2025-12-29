@@ -1,27 +1,38 @@
 export interface Stage {
-    sub_t_id: string; // primary key (stage.ID)
-    t_id: string; // foreign key tournament.ID
-    t_name: string;
-    format?: string | null;
-    is_current?: boolean;
-    start_date?: number | null;
-    end_date?: number | null;
+    ID: number;
+    faceit_id: string | null;
+    tournament_id: number;
+    name: string;
+    format: string | null;
+    is_current: boolean;
+    start_date: Date | null;
+    end_date: Date | null;
+    created_at: Date;
+    updated_at: Date;
+    deleted_at: Date | null;
     groups?: Group[];
 }
 
 export interface Group {
-    group_id: string; // primary key (group.ID)
+    ID: number;
+    stage_id: number;
     name: string;
+    created_at: Date;
+    updated_at: Date;
+    deleted_at: Date | null;
 }
 
 export interface Tournament {
-    t_id: string; // primary key
-    t_name: string;
-    start_date?: number | null;
-    end_date?: number | null;
-    faceit_id?: string | null;
-    teams_signed_up?: number;
+    ID: number;
+    name: string;
+    start_date: Date | null;
+    end_date: Date | null;
+    max_teams: number;
+    created_at: Date;
+    updated_at: Date;
+    deleted_at: Date | null;
     stages: Stage[];
+    teams_count: number;
 }
 
 export interface TournamentTeam {

@@ -24,6 +24,10 @@ export const userService = {
             team_id: userData.team_id,
         });
 
+        if (!newUser) {
+            throw new Error("Failed to create user");
+        }
+
         const roles = await userRepository.getUserRoles(newUser.ID);
 
         const tokenVersion = 0;
@@ -151,4 +155,3 @@ export const userService = {
         await userRepository.updateRefreshToken(userId, null);
     },
 };
-

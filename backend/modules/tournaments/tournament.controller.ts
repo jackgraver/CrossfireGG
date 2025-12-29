@@ -1,6 +1,10 @@
 import { Request, Response } from "express";
 import { tournamentService } from "./tournament.service";
 import { logger } from "../../core/logger";
+import {
+    TournamentParamsSchema,
+    StageParamsSchema,
+} from "./tournament.validation";
 
 export const tournamentController = {
     getAllTournaments: async (req: Request, res: Response) => {
@@ -9,20 +13,27 @@ export const tournamentController = {
             res.json({ tournaments });
         } catch (error) {
             logger.error("Error fetching tournaments:", error);
-            res.status(500).json({ error: "Failed to fetch tournaments" });
+            res.status(500).json({
+                error: "Failed to fetch tournaments",
+                details: error,
+            });
         }
     },
 
     getTournamentById: async (req: Request, res: Response) => {
         try {
-            const tournamentId = parseInt(req.params.tournamentId);
-
-            if (isNaN(tournamentId)) {
-                return res.status(400).json({ error: "Invalid tournament ID" });
+            const validation = TournamentParamsSchema.safeParse(req.params);
+            if (!validation.success) {
+                return res.status(400).json({
+                    error: "Validation failed",
+                    details: validation.error.issues.map((err) => ({
+                        path: err.path.join("."),
+                        message: err.message,
+                    })),
+                });
             }
-
             const tournament = await tournamentService.getTournamentById(
-                tournamentId
+                validation.data.tournamentId
             );
             res.json(tournament);
         } catch (error: any) {
@@ -30,8 +41,35 @@ export const tournamentController = {
                 return res.status(404).json({ error: error.message });
             }
             logger.error("Error fetching tournament:", error);
-            res.status(500).json({ error: "Failed to fetch tournament" });
+            res.status(500).json({
+                error: "Failed to fetch tournament",
+                details: error,
+            });
+        }
+    },
+
+    getMatchesByStageId: async (req: Request, res: Response) => {
+        try {
+            const validation = StageParamsSchema.safeParse(req.params);
+            if (!validation.success) {
+                return res.status(400).json({
+                    error: "Validation failed",
+                    details: validation.error.issues.map((err) => ({
+                        path: err.path.join("."),
+                        message: err.message,
+                    })),
+                });
+            }
+            const matches = await tournamentService.getMatchesByStageId(
+                validation.data.stageId
+            );
+            res.json({ matches });
+        } catch (error) {
+            logger.error("Error fetching matches by stage:", error);
+            res.status(500).json({
+                error: "Failed to fetch matches",
+                details: error,
+            });
         }
     },
 };
-
