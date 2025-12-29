@@ -1,5 +1,5 @@
 import { Router, Request, Response } from "express";
-import { db } from "../db";
+import { db } from "../config/database";
 import {
     matches,
     matchParticipants,
@@ -8,7 +8,7 @@ import {
     maps,
     groups,
     stages,
-} from "../schemas/schema";
+} from "../schemas";
 import { eq, and, isNull } from "drizzle-orm";
 
 const router = Router();
@@ -24,7 +24,7 @@ router.get("/:matchId", async (req: Request, res: Response) => {
         const matchData = await db
             .select()
             .from(matches)
-            .where(and(eq(matches.ID, matchId), isNull(matches.DeletedAt)))
+            .where(and(eq(matches.ID, matchId), isNull(matches.deleted_at)))
             .limit(1);
 
         if (matchData.length === 0) {
@@ -43,8 +43,8 @@ router.get("/:matchId", async (req: Request, res: Response) => {
             .where(
                 and(
                     eq(matchParticipants.match_id, matchId),
-                    isNull(matchParticipants.DeletedAt),
-                    isNull(teams.DeletedAt)
+                    isNull(matchParticipants.deleted_at),
+                    isNull(teams.deleted_at)
                 )
             );
 
@@ -89,7 +89,7 @@ router.get("/:matchId", async (req: Request, res: Response) => {
             .where(
                 and(
                     eq(players.team_id, team1Data.ID),
-                    isNull(players.DeletedAt)
+                    isNull(players.deleted_at)
                 )
             );
 
@@ -99,14 +99,14 @@ router.get("/:matchId", async (req: Request, res: Response) => {
             .where(
                 and(
                     eq(players.team_id, team2Data.ID),
-                    isNull(players.DeletedAt)
+                    isNull(players.deleted_at)
                 )
             );
 
         const matchMaps = await db
             .select()
             .from(maps)
-            .where(and(eq(maps.match_id, matchId), isNull(maps.DeletedAt)));
+            .where(and(eq(maps.match_id, matchId), isNull(maps.deleted_at)));
 
         const team1 = {
             team_id: team1Data.ID.toString(),

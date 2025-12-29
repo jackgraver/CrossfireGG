@@ -54,19 +54,19 @@ export default function ReRegisterModal({
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-[1px]">
-            <div className="w-[500px] max-w-[90vw] rounded-lg bg-firstBg p-6 shadow-lg">
+            <div className="bg-firstBg w-[500px] max-w-[90vw] rounded-lg p-6 shadow-lg">
                 <div className="flex flex-row items-center justify-between pb-4">
-                    <h1 className="truncate pr-4 text-2xl font-bold text-textPrimary">
+                    <h1 className="text-textPrimary truncate pr-4 text-2xl font-bold">
                         {title === "" ? "Re-Register" : title}
                     </h1>
                     <X
                         onClick={() => setShowModal(false)}
-                        className="flex-shrink-0 rounded-md bg-none p-1 hover:bg-secondBg"
+                        className="hover:bg-secondBg shrink-0 rounded-md bg-none p-1"
                         height={32}
                         width={32}
                     />
                 </div>
-                <h2 className="text-xl font-bold text-textPrimary">
+                <h2 className="text-textPrimary text-xl font-bold">
                     Confirm Team Link
                 </h2>
                 <OSSForm

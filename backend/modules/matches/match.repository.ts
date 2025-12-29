@@ -7,7 +7,7 @@ import {
     maps,
     groups,
     stages,
-} from "../../schemas/schema";
+} from "../../schemas";
 import { eq, and, isNull } from "drizzle-orm";
 
 export const matchRepository = {
@@ -15,7 +15,7 @@ export const matchRepository = {
         const result = await db
             .select()
             .from(matches)
-            .where(and(eq(matches.ID, matchId), isNull(matches.DeletedAt)))
+            .where(and(eq(matches.ID, matchId), isNull(matches.deleted_at)))
             .limit(1);
         return result[0] || null;
     },
@@ -31,8 +31,8 @@ export const matchRepository = {
             .where(
                 and(
                     eq(matchParticipants.match_id, matchId),
-                    isNull(matchParticipants.DeletedAt),
-                    isNull(teams.DeletedAt)
+                    isNull(matchParticipants.deleted_at),
+                    isNull(teams.deleted_at)
                 )
             );
     },
@@ -59,14 +59,15 @@ export const matchRepository = {
         return await db
             .select()
             .from(players)
-            .where(and(eq(players.team_id, teamId), isNull(players.DeletedAt)));
+            .where(
+                and(eq(players.team_id, teamId), isNull(players.deleted_at))
+            );
     },
 
     findMapsByMatchId: async (matchId: number) => {
         return await db
             .select()
             .from(maps)
-            .where(and(eq(maps.match_id, matchId), isNull(maps.DeletedAt)));
+            .where(and(eq(maps.match_id, matchId), isNull(maps.deleted_at)));
     },
 };
-

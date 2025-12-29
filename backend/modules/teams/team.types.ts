@@ -4,7 +4,7 @@ import {
     tournamentTeams,
     matches,
     matchParticipants,
-} from "../../schemas/schema";
+} from "../../schemas";
 
 export type TeamSchema = InferSelectModel<typeof teams>;
 export type TournamentTeamSchema = InferSelectModel<typeof tournamentTeams>;

@@ -1,5 +1,5 @@
 import { Router, Request, Response } from "express";
-import { db } from "../db";
+import { db } from "../config/database";
 import {
     tournaments,
     stages,
@@ -8,7 +8,7 @@ import {
     tournamentTeams,
     teams,
     matchParticipants,
-} from "../schemas/schema";
+} from "../schemas";
 import { eq, and, isNull, inArray } from "drizzle-orm";
 
 const router = Router();
@@ -18,7 +18,7 @@ router.get("/all", async (req: Request, res: Response) => {
         const allTournaments = await db
             .select()
             .from(tournaments)
-            .where(isNull(tournaments.DeletedAt))
+            .where(isNull(tournaments.deleted_at))
             .orderBy(tournaments.start_date);
 
         const tournamentsWithStages = await Promise.all(
@@ -29,7 +29,7 @@ router.get("/all", async (req: Request, res: Response) => {
                     .where(
                         and(
                             eq(stages.tournament_id, tournament.ID),
-                            isNull(stages.DeletedAt)
+                            isNull(stages.deleted_at)
                         )
                     );
 
@@ -79,7 +79,7 @@ router.get("/:tournamentId", async (req: Request, res: Response) => {
             .where(
                 and(
                     eq(tournaments.ID, tournamentId),
-                    isNull(tournaments.DeletedAt)
+                    isNull(tournaments.deleted_at)
                 )
             )
             .limit(1);
@@ -96,7 +96,7 @@ router.get("/:tournamentId", async (req: Request, res: Response) => {
             .where(
                 and(
                     eq(stages.tournament_id, tournamentId),
-                    isNull(stages.DeletedAt)
+                    isNull(stages.deleted_at)
                 )
             );
 
@@ -107,7 +107,7 @@ router.get("/:tournamentId", async (req: Request, res: Response) => {
                 and(
                     eq(tournamentTeams.tournament_id, tournamentId),
                     eq(tournamentTeams.signed_up, true),
-                    isNull(tournamentTeams.DeletedAt)
+                    isNull(tournamentTeams.deleted_at)
                 )
             );
 
@@ -135,7 +135,7 @@ router.get("/:tournamentId", async (req: Request, res: Response) => {
                         .where(
                             and(
                                 eq(groups.stage_id, stage.ID),
-                                isNull(groups.DeletedAt)
+                                isNull(groups.deleted_at)
                             )
                         );
 
@@ -159,7 +159,7 @@ router.get("/:tournamentId", async (req: Request, res: Response) => {
                       .where(
                           and(
                               inArray(matches.group_id, allGroupIds),
-                              isNull(matches.DeletedAt)
+                              isNull(matches.deleted_at)
                           )
                       )
                 : [];
@@ -176,8 +176,8 @@ router.get("/:tournamentId", async (req: Request, res: Response) => {
                     .where(
                         and(
                             eq(matchParticipants.match_id, match.ID),
-                            isNull(matchParticipants.DeletedAt),
-                            isNull(teams.DeletedAt)
+                            isNull(matchParticipants.deleted_at),
+                            isNull(teams.deleted_at)
                         )
                     );
 
@@ -241,8 +241,8 @@ router.get("/:tournamentId", async (req: Request, res: Response) => {
             .where(
                 and(
                     eq(tournamentTeams.tournament_id, tournamentId),
-                    isNull(tournamentTeams.DeletedAt),
-                    isNull(teams.DeletedAt)
+                    isNull(tournamentTeams.deleted_at),
+                    isNull(teams.deleted_at)
                 )
             );
 

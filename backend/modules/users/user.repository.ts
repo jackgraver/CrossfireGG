@@ -1,5 +1,5 @@
 import { db } from "../../config/database";
-import { users, userRoles, roles } from "../../schemas/schema";
+import { users, userRoles, roles } from "../../schemas";
 import { eq, and, isNull } from "drizzle-orm";
 
 export const userRepository = {
@@ -7,7 +7,7 @@ export const userRepository = {
         const result = await db
             .select()
             .from(users)
-            .where(and(eq(users.email, email), isNull(users.DeletedAt)))
+            .where(and(eq(users.email, email), isNull(users.deleted_at)))
             .limit(1);
         return result[0];
     },
@@ -16,7 +16,7 @@ export const userRepository = {
         const result = await db
             .select()
             .from(users)
-            .where(and(eq(users.ID, userId), isNull(users.DeletedAt)))
+            .where(and(eq(users.ID, userId), isNull(users.deleted_at)))
             .limit(1);
         return result[0];
     },
@@ -34,8 +34,8 @@ export const userRepository = {
                 email: userData.email,
                 password: userData.password,
                 team_id: userData.team_id || null,
-                CreatedAt: new Date(),
-                UpdatedAt: new Date(),
+                created_at: new Date(),
+                updated_at: new Date(),
             })
             .returning();
         return Array.isArray(result) ? result[0] : undefined;
@@ -46,17 +46,17 @@ export const userRepository = {
         refreshToken: string | null,
         tokenVersion?: number
     ) => {
-        const updateData: any = {
+        const updated_ata: any = {
             refresh_token: refreshToken,
-            UpdatedAt: new Date(),
+            updated_at: new Date(),
         };
         if (tokenVersion !== undefined) {
-            updateData.token_version = tokenVersion;
+            updated_ata.token_version = tokenVersion;
         }
         const result = await db
             .update(users)
-            .set(updateData)
-            .where(and(eq(users.ID, userId), isNull(users.DeletedAt)))
+            .set(updated_ata)
+            .where(and(eq(users.ID, userId), isNull(users.deleted_at)))
             .returning();
         return Array.isArray(result) ? result[0] : undefined;
     },
@@ -69,8 +69,8 @@ export const userRepository = {
             .where(
                 and(
                     eq(userRoles.user_id, userId),
-                    isNull(userRoles.DeletedAt),
-                    isNull(roles.DeletedAt)
+                    isNull(userRoles.deleted_at),
+                    isNull(roles.deleted_at)
                 )
             );
         return result.map((r) => r.roleName);
@@ -81,9 +81,9 @@ export const userRepository = {
             .update(users)
             .set({
                 team_id: teamId,
-                UpdatedAt: new Date(),
+                updated_at: new Date(),
             })
-            .where(and(eq(users.ID, userId), isNull(users.DeletedAt)))
+            .where(and(eq(users.ID, userId), isNull(users.deleted_at)))
             .returning();
         return Array.isArray(result) ? result[0] : undefined;
     },

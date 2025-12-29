@@ -5,7 +5,7 @@ import {
     matches,
     matchParticipants,
     players,
-} from "../../schemas/schema";
+} from "../../schemas";
 import { eq, and, isNull, inArray, like, or, ne } from "drizzle-orm";
 
 export const teamRepository = {
@@ -13,7 +13,7 @@ export const teamRepository = {
         const result = await db
             .select()
             .from(teams)
-            .where(and(eq(teams.ID, teamId), isNull(teams.DeletedAt)))
+            .where(and(eq(teams.ID, teamId), isNull(teams.deleted_at)))
             .limit(1);
         return result[0];
     },
@@ -28,7 +28,7 @@ export const teamRepository = {
                 and(
                     eq(tournamentTeams.team_id, teamId),
                     eq(tournamentTeams.tournament_id, tournamentId),
-                    isNull(tournamentTeams.DeletedAt)
+                    isNull(tournamentTeams.deleted_at)
                 )
             )
             .limit(1);
@@ -43,7 +43,7 @@ export const teamRepository = {
             .where(
                 and(
                     eq(matchParticipants.team_id, teamId),
-                    isNull(matchParticipants.DeletedAt)
+                    isNull(matchParticipants.deleted_at)
                 )
             );
 
@@ -56,7 +56,7 @@ export const teamRepository = {
             .select()
             .from(matches)
             .where(
-                and(inArray(matches.ID, matchIds), isNull(matches.DeletedAt))
+                and(inArray(matches.ID, matchIds), isNull(matches.deleted_at))
             );
     },
 
@@ -71,8 +71,8 @@ export const teamRepository = {
             .where(
                 and(
                     eq(matchParticipants.match_id, matchId),
-                    isNull(matchParticipants.DeletedAt),
-                    isNull(teams.DeletedAt)
+                    isNull(matchParticipants.deleted_at),
+                    isNull(teams.deleted_at)
                 )
             );
     },
@@ -81,12 +81,14 @@ export const teamRepository = {
         return await db
             .select()
             .from(players)
-            .where(and(eq(players.team_id, teamId), isNull(players.DeletedAt)));
+            .where(
+                and(eq(players.team_id, teamId), isNull(players.deleted_at))
+            );
     },
 
     searchPlayers: async (searchQuery: string, excludeTeamId?: number) => {
         const baseConditions = [
-            isNull(players.DeletedAt),
+            isNull(players.deleted_at),
             like(players.player_name, `%${searchQuery}%`),
         ];
 
@@ -110,9 +112,9 @@ export const teamRepository = {
             .update(players)
             .set({
                 team_id: teamId,
-                UpdatedAt: new Date(),
+                updated_at: new Date(),
             })
-            .where(and(eq(players.ID, playerId), isNull(players.DeletedAt)))
+            .where(and(eq(players.ID, playerId), isNull(players.deleted_at)))
             .returning();
         return result[0];
     },
@@ -122,9 +124,9 @@ export const teamRepository = {
             .update(players)
             .set({
                 team_id: null,
-                UpdatedAt: new Date(),
+                updated_at: new Date(),
             })
-            .where(and(eq(players.ID, playerId), isNull(players.DeletedAt)))
+            .where(and(eq(players.ID, playerId), isNull(players.deleted_at)))
             .returning();
         return result[0];
     },

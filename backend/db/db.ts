@@ -1,6 +1,6 @@
 import Database, { type Database as DatabaseType } from "better-sqlite3";
 import { drizzle } from "drizzle-orm/better-sqlite3";
-import * as schema from "./schemas/schema";
+import * as schema from "../schemas";
 import { migrate } from "drizzle-orm/better-sqlite3/migrator";
 import * as path from "path";
 

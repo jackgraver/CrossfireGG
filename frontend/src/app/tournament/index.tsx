@@ -40,7 +40,7 @@ function RouteComponent() {
                     No tournaments found
                 </div>
             ) : (
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                <div className="flex flex-col gap-6 text-gray-200">
                     {tournaments.map((tournament) => (
                         <div
                             key={tournament.t_id}
@@ -49,44 +49,72 @@ function RouteComponent() {
                                     to: `/tournament/${tournament.t_id}`,
                                 })
                             }
-                            className="bg-firstBg hover:bg-secondBg cursor-pointer rounded-xl p-6 shadow-md transition-all hover:shadow-lg"
+                            className="cursor-pointer rounded-xl border border-neutral-700 bg-neutral-900 p-6 shadow-md transition-all hover:bg-neutral-800 hover:shadow-lg"
                         >
-                            <h2 className="text-textPrimary mb-3 text-2xl font-bold">
-                                {tournament.t_name}
-                            </h2>
-                            <div className="text-textSecondary space-y-2">
-                                {tournament.start_date && (
-                                    <div>
-                                        <span className="font-semibold">
-                                            Start:{" "}
-                                        </span>
-                                        {formatDateOnly(tournament.start_date)}
+                            <div className="flex items-center justify-between gap-6">
+                                <div className="flex-1">
+                                    <h2 className="text-textPrimary mb-3 text-2xl font-bold">
+                                        {tournament.t_name}
+                                    </h2>
+                                    <div className="text-textSecondary flex flex-wrap gap-4">
+                                        {tournament.start_date &&
+                                            tournament.end_date && (
+                                                <div>
+                                                    <span className="font-semibold">
+                                                        {formatDateOnly(
+                                                            tournament.start_date,
+                                                        )}
+                                                        -
+                                                        {formatDateOnly(
+                                                            tournament.end_date,
+                                                        )}
+                                                    </span>
+                                                </div>
+                                            )}
+                                        {tournament.stages &&
+                                            tournament.stages.length > 0 && (
+                                                <div>
+                                                    <span>Stages: </span>
+                                                    {tournament.stages.map(
+                                                        (stage) => (
+                                                            <span
+                                                                key={
+                                                                    stage.sub_t_id
+                                                                }
+                                                                className="font-semibold"
+                                                            >
+                                                                {
+                                                                    stage.t_name
+                                                                }{" "}
+                                                            </span>
+                                                        ),
+                                                    )}
+                                                </div>
+                                            )}
                                     </div>
-                                )}
-                                {tournament.end_date && (
-                                    <div>
-                                        <span className="font-semibold">
-                                            End:{" "}
-                                        </span>
-                                        {formatDateOnly(tournament.end_date)}
-                                    </div>
-                                )}
-                                {tournament.stages &&
-                                    tournament.stages.length > 0 && (
-                                        <div>
-                                            <span className="font-semibold">
-                                                Stages:{" "}
-                                            </span>
-                                            {tournament.stages.length}
-                                        </div>
-                                    )}
-                                {tournament.faceit_id ? (
-                                    <div>
-                                        <button onClick={() => {}}>
+                                </div>
+                                <div className="flex gap-3">
+                                    {true ? ( // TODO: make sure faceit id is not null
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                            }}
+                                            className="rounded-md bg-orange-500 px-4 py-2 font-bold text-gray-100 hover:bg-orange-600"
+                                        >
                                             Open in Faceit
                                         </button>
-                                    </div>
-                                ) : null}
+                                    ) : null}
+                                    {true ? ( // TODO: make sure sign up open and not already signed up
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                            }}
+                                            className="rounded-md bg-blue-500 px-4 py-2 font-bold text-gray-100 hover:bg-blue-600"
+                                        >
+                                            Sign Up
+                                        </button>
+                                    ) : null}
+                                </div>
                             </div>
                         </div>
                     ))}

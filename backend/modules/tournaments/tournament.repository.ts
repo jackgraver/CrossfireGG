@@ -7,7 +7,7 @@ import {
     tournamentTeams,
     teams,
     matchParticipants,
-} from "../../schemas/schema";
+} from "../../schemas";
 import { eq, and, isNull, inArray } from "drizzle-orm";
 
 export const tournamentRepository = {
@@ -15,7 +15,7 @@ export const tournamentRepository = {
         return await db
             .select()
             .from(tournaments)
-            .where(isNull(tournaments.DeletedAt))
+            .where(isNull(tournaments.deleted_at))
             .orderBy(tournaments.start_date);
     },
 
@@ -26,7 +26,7 @@ export const tournamentRepository = {
             .where(
                 and(
                     eq(tournaments.ID, tournamentId),
-                    isNull(tournaments.DeletedAt)
+                    isNull(tournaments.deleted_at)
                 )
             )
             .limit(1);
@@ -40,7 +40,7 @@ export const tournamentRepository = {
             .where(
                 and(
                     eq(stages.tournament_id, tournamentId),
-                    isNull(stages.DeletedAt)
+                    isNull(stages.deleted_at)
                 )
             );
     },
@@ -53,7 +53,7 @@ export const tournamentRepository = {
             .where(
                 and(
                     inArray(groups.stage_id, stageIds),
-                    isNull(groups.DeletedAt)
+                    isNull(groups.deleted_at)
                 )
             );
     },
@@ -66,7 +66,7 @@ export const tournamentRepository = {
             .where(
                 and(
                     inArray(matches.group_id, groupIds),
-                    isNull(matches.DeletedAt)
+                    isNull(matches.deleted_at)
                 )
             );
     },
@@ -82,8 +82,8 @@ export const tournamentRepository = {
             .where(
                 and(
                     eq(matchParticipants.match_id, matchId),
-                    isNull(matchParticipants.DeletedAt),
-                    isNull(teams.DeletedAt)
+                    isNull(matchParticipants.deleted_at),
+                    isNull(teams.deleted_at)
                 )
             );
     },
@@ -96,7 +96,7 @@ export const tournamentRepository = {
                 and(
                     eq(tournamentTeams.tournament_id, tournamentId),
                     eq(tournamentTeams.signed_up, true),
-                    isNull(tournamentTeams.DeletedAt)
+                    isNull(tournamentTeams.deleted_at)
                 )
             );
     },
@@ -114,10 +114,9 @@ export const tournamentRepository = {
                 and(
                     eq(tournamentTeams.tournament_id, tournamentId),
                     inArray(tournamentTeams.group_id, groupIds),
-                    isNull(tournamentTeams.DeletedAt),
-                    isNull(teams.DeletedAt)
+                    isNull(tournamentTeams.deleted_at),
+                    isNull(teams.deleted_at)
                 )
             );
     },
 };
-
