@@ -4,7 +4,7 @@ import { BooleanStatus, type Team } from "@/types/TeamModel";
 import { api } from "@/lib/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import ProtectedRoute from "@/shared/ProtectedRoute";
-import SeedControl from "./SeedControl";
+import SeedControl from "./-components/SeedControl";
 import StageSelector from "@/shared/StageSelector";
 
 export const Route = createFileRoute("/manage-teams/")({

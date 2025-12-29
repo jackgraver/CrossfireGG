@@ -1,4 +1,9 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import {
+    createFileRoute,
+    Link,
+    redirect,
+    useNavigate,
+} from "@tanstack/react-router";
 import type { Match } from "@/types/Types";
 import { BooleanStatus } from "@/types/TeamModel";
 import {
@@ -7,17 +12,13 @@ import {
     useSearchPlayers,
     useAddPlayerToTeam,
     useRemovePlayerFromTeam,
-} from "../queries/teamQueries";
+} from "../-queries/teamQueries";
 import { formatDateOnly } from "@/lib/dateUtils";
 import TeamLogo from "@/shared/bracket/TeamLogo";
 import { openInNewTab } from "@/lib/NewTab";
 import { useState, useRef, useEffect } from "react";
 import type { Player } from "@/types/PlayerModel";
 import { useUser } from "@/context/UserContext";
-
-export const Route = createFileRoute("/team/$team_id/")({
-    component: Team,
-});
 
 function TeamNotFoundFallback({ message }: { message?: string }) {
     return (
@@ -41,79 +42,36 @@ function TeamNotFoundFallback({ message }: { message?: string }) {
     );
 }
 
+export const Route = createFileRoute("/team/$team_id/")({
+    component: Team,
+    // beforeLoad: () => {
+    //     const { user, loading: userLoading } = useUser();
+    //     const { team_id } = Route.useParams();
+
+    //     console.log(user, userLoading);
+    //     if (userLoading) {
+    //         return;
+    //     }
+
+    //     if (!user || !user.team_id || user.team_id !== parseInt(team_id)) {
+    //         throw redirect({
+    //             to: "/",
+    //             search: {
+    //                 error: "You do not have access to this team",
+    //             },
+    //             replace: true,
+    //         });
+    //     }
+    // },
+});
+
 function Team() {
     const { team_id } = Route.useParams();
-    const navigate = useNavigate();
-    const { user, loading: userLoading } = useUser();
-
-    useEffect(() => {
-        if (userLoading) {
-            return;
-        }
-
-        if (!user) {
-            navigate({
-                to: "/sign-in",
-                replace: true,
-            });
-            return;
-        }
-
-        const isAdmin = user.roles?.includes("ADMIN");
-        if (isAdmin) {
-            return;
-        }
-
-        const routeTeamId = parseInt(team_id || "");
-        const userTeamId = user.team_id;
-
-        if (!userTeamId) {
-            navigate({
-                to: "/",
-                search: {
-                    error: "You are not part of a team",
-                },
-                replace: true,
-            });
-            return;
-        }
-
-        if (userTeamId !== routeTeamId) {
-            navigate({
-                to: "/",
-                search: {
-                    error: "You do not have access to this team",
-                },
-                replace: true,
-            });
-            return;
-        }
-    }, [user, userLoading, team_id, navigate]);
 
     if (!team_id) {
         return (
             <TeamNotFoundFallback message="The team ID is missing or invalid. Please check the URL and try again." />
         );
-    }
-
-    if (userLoading) {
-        return (
-            <div className="flex min-h-screen items-center justify-center">
-                <div className="text-textPrimary">Loading...</div>
-            </div>
-        );
-    }
-
-    if (!user) {
-        return null;
-    }
-
-    const isAdmin = user.roles?.includes("ADMIN");
-    const routeTeamId = parseInt(team_id);
-    const userTeamId = user.team_id;
-
-    if (!isAdmin && (!userTeamId || userTeamId !== routeTeamId)) {
-        return null;
     }
 
     const { data, isLoading, error } = useTeam(team_id);
@@ -162,6 +120,15 @@ function Team() {
     };
 
     const handleRemovePlayer = async (playerId: string) => {
+        const player = players?.find((p) => p.player_id === playerId);
+        if (
+            player?.player_id &&
+            team.team_captain_id &&
+            player.player_id === team.team_captain_id
+        ) {
+            alert("Cannot remove the team captain from the team.");
+            return;
+        }
         if (
             confirm(
                 "Are you sure you want to remove this player from the team?",
@@ -383,9 +350,23 @@ function Team() {
                                     }
                                     disabled={
                                         removePlayerMutation.isPending ||
-                                        addPlayerMutation.isPending
+                                        addPlayerMutation.isPending ||
+                                        !!(
+                                            player.player_id &&
+                                            team.team_captain_id &&
+                                            player.player_id ===
+                                                team.team_captain_id
+                                        )
                                     }
                                     className="rounded bg-red-600 px-4 py-2 text-white transition-colors hover:bg-red-700 disabled:bg-gray-500"
+                                    title={
+                                        player.player_id &&
+                                        team.team_captain_id &&
+                                        player.player_id ===
+                                            team.team_captain_id
+                                            ? "Cannot remove the team captain"
+                                            : undefined
+                                    }
                                 >
                                     Remove
                                 </button>

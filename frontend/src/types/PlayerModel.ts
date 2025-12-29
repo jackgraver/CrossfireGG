@@ -3,6 +3,7 @@ export type Player = {
     player_name: string;
     faceit_id?: string | null;
     team_id?: string | null; // foreign key teams.ID
+    user_id?: string | null; // foreign key users.ID
     player_logo?: string | null;
 };
 

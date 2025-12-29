@@ -1,11 +1,13 @@
 import { sqliteTable, integer, text, unique } from "drizzle-orm/sqlite-core";
 import { relations } from "drizzle-orm";
 
+// @ts-expect-error - teams is defined later, but this is a valid circular reference in Drizzle
 export const users = sqliteTable("users", {
     ID: integer("ID").primaryKey({ autoIncrement: true }),
     name: text("name").notNull(),
     email: text("email").notNull().unique(),
     password: text("password").notNull(),
+    // @ts-expect-error - teams is defined later, but this is a valid circular reference in Drizzle
     team_id: integer("team_id").references(() => teams.ID),
     refresh_token: text("refresh_token"),
     token_version: integer("token_version").default(0),
@@ -53,11 +55,16 @@ export const userRoles = sqliteTable(
     })
 );
 
+// @ts-expect-error - users is defined earlier, but this is a valid circular reference in Drizzle
 export const teams = sqliteTable("teams", {
     ID: integer("ID").primaryKey({ autoIncrement: true }),
     name: text("name").notNull(),
     team_logo: text("team_logo"),
     faceit_id: text("faceit_id"),
+    team_captain_id: integer("team_captain_id")
+        .notNull()
+        // @ts-expect-error - users is defined earlier, but this is a valid circular reference in Drizzle
+        .references(() => users.ID),
     CreatedAt: integer("CreatedAt", { mode: "timestamp" })
         .notNull()
         .$defaultFn(() => new Date()),
@@ -196,6 +203,7 @@ export const players = sqliteTable("players", {
     player_name: text("player_name").notNull(),
     faceit_id: text("faceit_id"),
     team_id: integer("team_id").references(() => teams.ID),
+    user_id: integer("user_id").references(() => users.ID),
     player_logo: text("player_logo"),
     CreatedAt: integer("CreatedAt", { mode: "timestamp" })
         .notNull()
@@ -265,6 +273,14 @@ export const usersRelations = relations(users, ({ one, many }) => ({
         fields: [users.team_id],
         references: [teams.ID],
     }),
+    captainOfTeam: one(teams, {
+        fields: [users.ID],
+        references: [teams.team_captain_id],
+    }),
+    player: one(players, {
+        fields: [users.ID],
+        references: [players.user_id],
+    }),
     userRoles: many(userRoles),
     matchCasters: many(matchCasters),
 }));
@@ -284,7 +300,11 @@ export const userRolesRelations = relations(userRoles, ({ one }) => ({
     }),
 }));
 
-export const teamsRelations = relations(teams, ({ many }) => ({
+export const teamsRelations = relations(teams, ({ one, many }) => ({
+    captain: one(users, {
+        fields: [teams.team_captain_id],
+        references: [users.ID],
+    }),
     players: many(players),
     matchParticipants: many(matchParticipants),
     tournamentTeams: many(tournamentTeams),
@@ -365,6 +385,10 @@ export const playersRelations = relations(players, ({ one, many }) => ({
     team: one(teams, {
         fields: [players.team_id],
         references: [teams.ID],
+    }),
+    user: one(users, {
+        fields: [players.user_id],
+        references: [users.ID],
     }),
     stats: many(playerStats),
 }));

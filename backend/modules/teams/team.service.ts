@@ -25,6 +25,7 @@ export const teamService = {
             team_name: team.name,
             team_logo: team.team_logo || null,
             faceit_id: team.faceit_id || null,
+            team_captain_id: team.team_captain_id.toString(),
             win: tournamentTeam?.wins ?? undefined,
             loss: tournamentTeam?.losses ?? undefined,
             seed: tournamentTeam?.seed ?? undefined,
@@ -68,6 +69,7 @@ export const teamService = {
                           team_name: team1Data.name,
                           team_logo: team1Data.team_logo || null,
                           faceit_id: team1Data.faceit_id || null,
+                          team_captain_id: team1Data.team_captain_id.toString(),
                       }
                     : null;
 
@@ -77,6 +79,7 @@ export const teamService = {
                           team_name: team2Data.name,
                           team_logo: team2Data.team_logo || null,
                           faceit_id: team2Data.faceit_id || null,
+                          team_captain_id: team2Data.team_captain_id.toString(),
                       }
                     : null;
 
@@ -112,6 +115,7 @@ export const teamService = {
             player_name: player.player_name,
             faceit_id: player.faceit_id || null,
             team_id: player.team_id?.toString() || null,
+            user_id: player.user_id?.toString() || null,
             player_logo: player.player_logo || null,
         }));
     },
@@ -126,6 +130,7 @@ export const teamService = {
             player_name: player.player_name,
             faceit_id: player.faceit_id || null,
             team_id: player.team_id?.toString() || null,
+            user_id: player.user_id?.toString() || null,
             player_logo: player.player_logo || null,
         }));
     },
@@ -140,6 +145,7 @@ export const teamService = {
             player_name: player.player_name,
             faceit_id: player.faceit_id || null,
             team_id: player.team_id?.toString() || null,
+            user_id: player.user_id?.toString() || null,
             player_logo: player.player_logo || null,
         };
     },
@@ -154,6 +160,7 @@ export const teamService = {
             player_name: player.player_name,
             faceit_id: player.faceit_id || null,
             team_id: player.team_id?.toString() || null,
+            user_id: player.user_id?.toString() || null,
             player_logo: player.player_logo || null,
         };
     },

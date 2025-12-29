@@ -3,6 +3,7 @@ export type Team = {
     team_name: string;
     team_logo?: string | null;
     faceit_id: string;
+    team_captain_id: string;
     win: number;
     loss: number;
     seed: number;

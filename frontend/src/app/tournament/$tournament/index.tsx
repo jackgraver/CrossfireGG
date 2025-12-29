@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { useTournament } from "../queries/tournamentQueries";
+import { useTournament } from "../-queries/tournamentQueries";
 import { formatDateOnly } from "@/lib/dateUtils";
 import RegularSeasonBracket from "@/shared/bracket/RegularSeasonBracket";
 import Standings from "@/shared/Standings";

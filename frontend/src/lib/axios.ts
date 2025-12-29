@@ -42,7 +42,8 @@ axiosInstance.interceptors.response.use(
         const isAuthEndpoint =
             url.includes("/user/refresh") ||
             url.includes("/user/sign-in") ||
-            url.includes("/user/sign-up");
+            url.includes("/user/sign-up") ||
+            url.includes("/user/user-role");
 
         if (
             error.response?.status === 401 &&
@@ -56,8 +57,17 @@ axiosInstance.interceptors.response.use(
                 return axiosInstance(originalRequest);
             } catch (refreshError) {
                 originalRequest._retry = false;
-                window.location.href = "/sign-in";
+
+                if (window.location.pathname !== "/sign-in") {
+                    window.location.href = "/sign-in";
+                }
                 return Promise.reject(refreshError);
+            }
+        }
+
+        if (error.response?.status === 401 && url.includes("/user/refresh")) {
+            if (window.location.pathname !== "/sign-in") {
+                window.location.href = "/sign-in";
             }
         }
 

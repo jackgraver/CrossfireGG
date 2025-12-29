@@ -5,7 +5,7 @@ import FileDropper from "@/shared/OSSForm/FileDropper/FileDropper";
 import OSSForm from "@/shared/OSSForm/OSSForm";
 import UserForm from "@/shared/UserForm";
 import { useState } from "react";
-import ReRegisterModal from "./ReRegisterModal";
+import ReRegisterModal from "./-components/ReRegisterModal";
 import { PromiseReturn } from "@/types/Types";
 import { useNavigate } from "@tanstack/react-router";
 import SpinnerInput from "@/shared/OSSForm/SpinnerInput/SpinnerInput";

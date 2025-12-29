@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useTournaments } from "./queries/tournamentQueries";
+import { useTournaments } from "./-queries/tournamentQueries";
 import { formatDateOnly } from "@/lib/dateUtils";
 
 export const Route = createFileRoute("/tournament/")({

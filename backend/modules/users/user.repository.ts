@@ -38,7 +38,7 @@ export const userRepository = {
                 UpdatedAt: new Date(),
             })
             .returning();
-        return result[0];
+        return Array.isArray(result) ? result[0] : undefined;
     },
 
     updateRefreshToken: async (
@@ -58,7 +58,7 @@ export const userRepository = {
             .set(updateData)
             .where(and(eq(users.ID, userId), isNull(users.DeletedAt)))
             .returning();
-        return result[0];
+        return Array.isArray(result) ? result[0] : undefined;
     },
 
     getUserRoles: async (userId: number): Promise<string[]> => {
@@ -85,7 +85,6 @@ export const userRepository = {
             })
             .where(and(eq(users.ID, userId), isNull(users.DeletedAt)))
             .returning();
-        return result[0];
+        return Array.isArray(result) ? result[0] : undefined;
     },
 };
-

@@ -26,8 +26,12 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
             try {
                 const data = await api.get<User>("/user/user-role");
                 setUser(data);
-            } catch (error) {
-                setUser(null);
+            } catch (error: any) {
+                if (error.response?.status === 401) {
+                    setUser(null);
+                } else {
+                    setUser(null);
+                }
             } finally {
                 setLoading(false);
             }

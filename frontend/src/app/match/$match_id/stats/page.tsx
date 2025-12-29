@@ -10,7 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import { formatMatchDate } from "@/lib/dateUtils";
 import { notFound } from "@tanstack/react-router";
 import { use } from "react";
-import MatchHeader from "../../components/MatchHeader";
+import MatchHeader from "../../-components/MatchHeader";
 
 export const Route = createFileRoute("/match/$match_id/stats/page")({
     component: MatchStats,
