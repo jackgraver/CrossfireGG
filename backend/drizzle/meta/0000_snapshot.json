@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "75bd86b5-ed9d-43c6-8fad-316b17ad66a1",
+  "id": "16558400-9613-49b0-b59d-c07be3d48e12",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "roles": {
@@ -1055,6 +1055,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "stage_id": {
+          "name": "stage_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "round": {
           "name": "round",
           "type": "text",
@@ -1113,6 +1120,19 @@
           "tableTo": "groups",
           "columnsFrom": [
             "group_id"
+          ],
+          "columnsTo": [
+            "ID"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "matches_stage_id_stages_ID_fk": {
+          "name": "matches_stage_id_stages_ID_fk",
+          "tableFrom": "matches",
+          "tableTo": "stages",
+          "columnsFrom": [
+            "stage_id"
           ],
           "columnsTo": [
             "ID"

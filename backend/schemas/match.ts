@@ -6,6 +6,9 @@ export const matches = sqliteTable("matches", {
     group_id: integer("group_id").references(
         (): any => require("./tournament").groups.ID
     ),
+    stage_id: integer("stage_id").references(
+        (): any => require("./tournament").stages.ID
+    ),
     round: text("round"),
     status: text("status"),
     scheduled_at: integer("scheduled_at", { mode: "timestamp" }),
@@ -82,6 +85,7 @@ export const matchCasters = sqliteTable("match_casters", {
  * Defines all relationships for the matches table.
  * A match can:
  * - Belong to one group (optional - matches can exist outside of groups)
+ * - Belong to one stage (optional - matches can be associated directly with stages when groups don't exist)
  * - Have multiple participants (teams playing in the match)
  * - Have multiple casters assigned
  * - Have multiple maps played
@@ -91,6 +95,10 @@ export const matchesRelations = relations(matches, ({ one, many }) => ({
     group: one(require("./tournament").groups, {
         fields: [matches.group_id],
         references: [require("./tournament").groups.ID],
+    }),
+    stage: one(require("./tournament").stages, {
+        fields: [matches.stage_id],
+        references: [require("./tournament").stages.ID],
     }),
     participants: many(matchParticipants),
     casters: many(matchCasters),

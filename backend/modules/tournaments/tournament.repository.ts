@@ -86,20 +86,17 @@ export const tournamentRepository = {
     },
 
     findMatchesByStageId: async (stageId: number) => {
-        return await db
-            .select({
-                match: matches,
-                group: groups,
-            })
-            .from(matches)
-            .innerJoin(groups, eq(matches.group_id, groups.ID))
-            .where(
-                and(
-                    eq(groups.stage_id, stageId),
-                    isNull(matches.deleted_at),
-                    isNull(groups.deleted_at)
-                )
-            );
+        return await db.query.matches.findMany({
+            where: (m, { eq, and, isNull }) =>
+                and(eq(m.stage_id, stageId), isNull(m.deleted_at)),
+            with: {
+                participants: {
+                    with: {
+                        team: true,
+                    },
+                },
+            },
+        });
     },
 
     countTeamsByStageId: async (stageId: number) => {

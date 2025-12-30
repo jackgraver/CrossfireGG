@@ -109,6 +109,7 @@ export const tournamentsRelations = relations(tournaments, ({ one, many }) => ({
  * - Belong to one tournament
  * - Contain multiple groups (for group-based stages)
  * - Have multiple teams registered (via stageTeams)
+ * - Have multiple matches directly associated (when groups don't exist)
  */
 export const stagesRelations = relations(stages, ({ one, many }) => ({
     tournament: one(tournaments, {
@@ -117,6 +118,7 @@ export const stagesRelations = relations(stages, ({ one, many }) => ({
     }),
     groups: many(groups),
     stageTeams: many(stageTeams),
+    matches: many(require("./match").matches),
 }));
 
 /**

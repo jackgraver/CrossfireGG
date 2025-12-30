@@ -59,6 +59,6 @@ export const tournamentService = {
         const matches = await tournamentRepository.findMatchesByStageId(
             stageId
         );
-        return matches.map((m) => m.match);
+        return matches;
     },
 };
