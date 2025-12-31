@@ -67,44 +67,6 @@ export const loginFn = createServerFn({ method: "POST" })
             });
 
             return { success: true, result: response.user };
-
-            // throw redirect({ to: "/" });
-
-            // const request = getRequest();
-            // console.log("request", request);
-            // const cookieHeader = request.headers.get("cookie") || "";
-            // const response = await fetch(`${API_BASE_URL}/user/sign-in`, {
-            //     method: "POST",
-            //     headers: {
-            //         "Content-Type": "application/json",
-            //         Cookie: cookieHeader,
-            //     },
-            //     credentials: "include",
-            //     body: JSON.stringify(data),
-            // });
-            // const {
-            //     data: response,
-            //     isLoading,
-            //     error,
-            // } = useQuery({
-            //     queryKey: ["sign-in"],
-            //     queryFn: async () => {
-            //         axiosInstance.post("/user/sign-in", data);
-            //     },
-            // });
-            // console.log("data", data, isLoading, error);
-            // if (!response.ok) {
-            //     const error = await response.json().catch(() => ({
-            //         error: "Login failed",
-            //     }));
-            //     return { error: error.error || "Login failed" };
-            // }
-            // const result: SignInResponse = await response.json();
-            // if (!result.user) {
-            //     return { error: "Invalid credentials" };
-            // }
-            // console.log("redirecting to /");
-            // throw redirect({ to: "/" });
         } catch (error: any) {
             console.log("error server", error, error.status === 307);
             if (error.status === 307) {

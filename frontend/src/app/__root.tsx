@@ -13,13 +13,11 @@ import {
     Scripts,
     createRootRouteWithContext,
 } from "@tanstack/react-router";
-import { User } from "@/contexts/session";
 import { fetchSession } from "@/lib/server/auth.server";
 
 export const Route = createRootRouteWithContext<{ session: any }>()({
-    beforeLoad: async ({ location }) => {
+    beforeLoad: async () => {
         const session = await fetchSession();
-
         return { session };
     },
     head: () => ({

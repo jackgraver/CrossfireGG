@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { logoutFn } from "@/lib/server/auth.server";
 import { useAuth } from "@/contexts/auth";
 import { matchesRole } from "@/lib/role.util";
-import { useAppSession } from "@/contexts/session";
+import { hasSession } from "@/lib/auth.util";
 
 function toggleDarkMode() {
     const isDark = document.documentElement.classList.toggle("dark");
@@ -44,9 +44,9 @@ export default function NavBar({ session }: { session: any }) {
                                 />
                             </Link>
                         </div>
-                        <div className="mt-4 flex h-min items-center rounded-md bg-red-500 px-1 py-1">
+                        <div className="mt-4 flex h-min items-center rounded-md bg-red-500 px-1 py-1 flex-col gap-1">
                             <p className="pointer-events-none">ALPHA RELEASE</p>
-                            <p>{session?.name + " | " + session?.team_id}</p>
+                            {hasSession(session) ? <p>{session?.name + " | " + session?.team_id}</p> : <p>Not signed in</p>}
                         </div>
 
                         <div className="flex items-center">
@@ -98,7 +98,7 @@ export default function NavBar({ session }: { session: any }) {
                                             setIsMenuOpen(false)
                                         }
                                     >
-                                        {session && (
+                                        {hasSession(session) && (
                                             <div className="border-border border-b px-4 py-3">
                                                 <Link to="/user">
                                                     <div className="flex items-center">
@@ -209,7 +209,7 @@ export default function NavBar({ session }: { session: any }) {
                                                     </Link>
                                                 </div>
                                             )}
-                                            {session ? (
+                                            {hasSession(session) ? (
                                                 <Link
                                                     to="/"
                                                     className="text-textSecondary hover:bg-secondBg block px-4 py-2 text-sm"
