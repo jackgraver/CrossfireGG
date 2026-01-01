@@ -59,12 +59,12 @@ export const teamService = {
                 const team1Participant = team1Entry?.participant;
                 const team2Participant = team2Entry?.participant;
 
-                const winnerId =
-                    team1Participant?.winner === true
-                        ? team1Data?.ID.toString()
-                        : team2Participant?.winner === true
-                        ? team2Data?.ID.toString()
-                        : null;
+                // const winnerId =
+                //     team1Participant?.winner === true
+                //         ? team1Data?.ID.toString()
+                //         : team2Participant?.winner === true
+                //         ? team2Data?.ID.toString()
+                //         : null;
 
                 const team1: FormattedTeam | null = team1Data
                     ? {
@@ -97,7 +97,7 @@ export const teamService = {
                     faceit_url: match.faceit_url || null,
                     team1_id: team1?.team_id || null,
                     team2_id: team2?.team_id || null,
-                    winner: winnerId,
+                    winner: null,
                     team1_score: 0,
                     team2_score: 0,
                     teams: { team1, team2 },

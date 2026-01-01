@@ -47,7 +47,7 @@ export const userService = {
                 id: newUser.ID,
                 name: newUser.name,
                 email: newUser.email,
-                team_id: newUser.team_id || undefined,
+                team_id: -1,
                 roles,
             },
         };
@@ -87,7 +87,7 @@ export const userService = {
                 id: user.ID,
                 name: user.name,
                 email: user.email,
-                team_id: user.team_id || undefined,
+                team_id: -1,
                 roles,
             },
         };
@@ -128,7 +128,7 @@ export const userService = {
                 id: user.ID,
                 name: user.name,
                 email: user.email,
-                team_id: user.team_id || undefined,
+                team_id: -1,
                 roles,
             },
             refreshToken: newRefreshToken,
@@ -147,7 +147,7 @@ export const userService = {
             id: user.ID,
             name: user.name,
             email: user.email,
-            team_id: user.team_id || undefined,
+            team_id: -1,
             roles,
         };
     },

@@ -33,7 +33,6 @@ export const userRepository = {
                 name: userData.name,
                 email: userData.email,
                 password: userData.password,
-                team_id: userData.team_id || null,
                 created_at: new Date(),
                 updated_at: new Date(),
             })
@@ -80,7 +79,6 @@ export const userRepository = {
         const result = await db
             .update(users)
             .set({
-                team_id: teamId,
                 updated_at: new Date(),
             })
             .where(and(eq(users.ID, userId), isNull(users.deleted_at)))
