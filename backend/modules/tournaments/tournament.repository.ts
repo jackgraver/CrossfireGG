@@ -152,4 +152,125 @@ export const tournamentRepository = {
 
         return countsMap;
     },
+
+    findStageByFaceitId: async (faceitId: string) => {
+        const result = await db
+            .select()
+            .from(stages)
+            .where(and(eq(stages.faceit_id, faceitId), isNull(stages.deleted_at)))
+            .limit(1);
+        return result[0];
+    },
+
+    upsertStageByFaceitId: async (stageData: {
+        tournament_id: number;
+        name: string;
+        faceit_id: string;
+        max_teams: number;
+        start_date: Date | null;
+        end_date: Date | null;
+    }) => {
+        const existing = await db
+            .select()
+            .from(stages)
+            .where(and(eq(stages.faceit_id, stageData.faceit_id), isNull(stages.deleted_at)))
+            .limit(1);
+
+        if (existing.length > 0) {
+            const result = await db
+                .update(stages)
+                .set({
+                    name: stageData.name,
+                    max_teams: stageData.max_teams,
+                    start_date: stageData.start_date,
+                    end_date: stageData.end_date,
+                    updated_at: new Date(),
+                })
+                .where(eq(stages.ID, existing[0].ID))
+                .returning();
+            return result[0];
+        } else {
+            const result = await db
+                .insert(stages)
+                .values({
+                    ...stageData,
+                    created_at: new Date(),
+                    updated_at: new Date(),
+                })
+                .returning();
+            return result[0];
+        }
+    },
+
+    upsertGroupByName: async (stageId: number, groupName: string) => {
+        const existing = await db
+            .select()
+            .from(groups)
+            .where(
+                and(
+                    eq(groups.stage_id, stageId),
+                    eq(groups.name, groupName),
+                    isNull(groups.deleted_at)
+                )
+            )
+            .limit(1);
+
+        if (existing.length > 0) {
+            return existing[0];
+        } else {
+            const result = await db
+                .insert(groups)
+                .values({
+                    stage_id: stageId,
+                    name: groupName,
+                    created_at: new Date(),
+                    updated_at: new Date(),
+                })
+                .returning();
+            return result[0];
+        }
+    },
+
+    upsertStageTeam: async (stageTeamData: {
+        stage_id: number;
+        team_id: number;
+        group_id: number | null;
+        seed?: number;
+    }) => {
+        const existing = await db
+            .select()
+            .from(stageTeams)
+            .where(
+                and(
+                    eq(stageTeams.stage_id, stageTeamData.stage_id),
+                    eq(stageTeams.team_id, stageTeamData.team_id),
+                    isNull(stageTeams.deleted_at)
+                )
+            )
+            .limit(1);
+
+        if (existing.length > 0) {
+            const result = await db
+                .update(stageTeams)
+                .set({
+                    group_id: stageTeamData.group_id,
+                    seed: stageTeamData.seed !== undefined ? stageTeamData.seed : existing[0].seed,
+                    updated_at: new Date(),
+                })
+                .where(eq(stageTeams.ID, existing[0].ID))
+                .returning();
+            return result[0];
+        } else {
+            const result = await db
+                .insert(stageTeams)
+                .values({
+                    ...stageTeamData,
+                    seed: stageTeamData.seed || 0,
+                    created_at: new Date(),
+                    updated_at: new Date(),
+                })
+                .returning();
+            return result[0];
+        }
+    },
 };

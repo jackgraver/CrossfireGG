@@ -13,6 +13,7 @@ export const matches = sqliteTable(
             (): any => require("./tournament").stages.ID,
             { onDelete: "cascade" }
         ),
+        faceit_id: text("faceit_id"),
         match_number: integer("match_number"),
         round: text("round"),
         status: text("status").default("scheduled"),

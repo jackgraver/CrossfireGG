@@ -10,5 +10,8 @@ export const config = {
             "http://localhost:3000",
         ],
     },
+    faceit: {
+        apiKey: process.env.FACEIT_API_KEY || "",
+    },
 };
 

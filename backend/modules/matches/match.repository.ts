@@ -71,4 +71,148 @@ export const matchRepository = {
             .from(maps)
             .where(and(eq(maps.match_id, matchId), isNull(maps.deleted_at)));
     },
+
+    findMatchByFaceitId: async (faceitId: string) => {
+        const result = await db
+            .select()
+            .from(matches)
+            .where(and(eq(matches.faceit_id, faceitId), isNull(matches.deleted_at)))
+            .limit(1);
+        return result[0] || null;
+    },
+
+    upsertMatchByFaceitId: async (matchData: {
+        group_id: number | null;
+        stage_id: number;
+        faceit_id: string;
+        match_number: number | null;
+        round: string | null;
+        status: string;
+        best_of: number;
+        stream_url: string | null;
+        scheduled_at: Date | null;
+        faceit_url: string | null;
+    }) => {
+        const existing = await db
+            .select()
+            .from(matches)
+            .where(and(eq(matches.faceit_id, matchData.faceit_id), isNull(matches.deleted_at)))
+            .limit(1);
+
+        if (existing.length > 0) {
+            const result = await db
+                .update(matches)
+                .set({
+                    group_id: matchData.group_id,
+                    stage_id: matchData.stage_id,
+                    match_number: matchData.match_number,
+                    round: matchData.round,
+                    status: matchData.status,
+                    best_of: matchData.best_of,
+                    stream_url: matchData.stream_url,
+                    scheduled_at: matchData.scheduled_at,
+                    faceit_url: matchData.faceit_url,
+                    updated_at: new Date(),
+                })
+                .where(eq(matches.ID, existing[0].ID))
+                .returning();
+            return result[0];
+        } else {
+            const result = await db
+                .insert(matches)
+                .values({
+                    ...matchData,
+                    created_at: new Date(),
+                    updated_at: new Date(),
+                })
+                .returning();
+            return result[0];
+        }
+    },
+
+    upsertMatchParticipant: async (participantData: {
+        match_id: number;
+        team_id: number;
+        position: number;
+        winner: boolean;
+    }) => {
+        const existing = await db
+            .select()
+            .from(matchParticipants)
+            .where(
+                and(
+                    eq(matchParticipants.match_id, participantData.match_id),
+                    eq(matchParticipants.team_id, participantData.team_id),
+                    isNull(matchParticipants.deleted_at)
+                )
+            )
+            .limit(1);
+
+        if (existing.length > 0) {
+            const result = await db
+                .update(matchParticipants)
+                .set({
+                    position: participantData.position,
+                    winner: participantData.winner,
+                    updated_at: new Date(),
+                })
+                .where(eq(matchParticipants.ID, existing[0].ID))
+                .returning();
+            return result[0];
+        } else {
+            const result = await db
+                .insert(matchParticipants)
+                .values({
+                    ...participantData,
+                    created_at: new Date(),
+                    updated_at: new Date(),
+                })
+                .returning();
+            return result[0];
+        }
+    },
+
+    upsertMap: async (mapData: {
+        match_id: number;
+        map_name: string;
+        map_order: number;
+        round: string | null;
+        winner_id: number | null;
+    }) => {
+        const existing = await db
+            .select()
+            .from(maps)
+            .where(
+                and(
+                    eq(maps.match_id, mapData.match_id),
+                    eq(maps.map_order, mapData.map_order),
+                    isNull(maps.deleted_at)
+                )
+            )
+            .limit(1);
+
+        if (existing.length > 0) {
+            const result = await db
+                .update(maps)
+                .set({
+                    map_name: mapData.map_name,
+                    round: mapData.round,
+                    winner_id: mapData.winner_id,
+                    updated_at: new Date(),
+                })
+                .where(eq(maps.ID, existing[0].ID))
+                .returning();
+            return result[0];
+        } else {
+            const result = await db
+                .insert(maps)
+                .values({
+                    ...mapData,
+                    created_at: new Date(),
+                    updated_at: new Date(),
+                })
+                .returning();
+            return result[0];
+        }
+    },
 };

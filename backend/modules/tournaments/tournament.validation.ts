@@ -13,3 +13,14 @@ export const StageParamsSchema = z.object({
         .regex(/^\d+$/, "Stage ID must be a valid number")
         .transform(Number),
 });
+
+export const ImportFaceitDataSchema = z.object({
+    tournamentId: z.number().int().positive(),
+    championshipId: z.string().min(1),
+    queryParams: z.record(z.string(), z.union([z.string(), z.number()])).optional(),
+});
+
+export const ImportFaceitDataFromFileSchema = z.object({
+    tournamentId: z.number().int().positive(),
+    fileName: z.string().min(1),
+});

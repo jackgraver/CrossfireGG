@@ -8,7 +8,7 @@ export const teams = sqliteTable("teams", {
     faceit_id: text("faceit_id"),
     team_captain_id: integer("team_captain_id")
         .notNull()
-        .references((): any => require("./user").users.ID, { onDelete: "restrict" }),
+        .references((): any => require("./player").players.ID, { onDelete: "restrict" }),
     region: text("region"),
     max_roster_size: integer("max_roster_size").default(10),
     founded_date: integer("founded_date", { mode: "timestamp" }),
@@ -27,15 +27,15 @@ export const teams = sqliteTable("teams", {
 /**
  * Defines all relationships for the teams table.
  * A team can:
- * - Have one captain (user who leads the team)
+ * - Have one captain (player who leads the team)
  * - Have multiple players
  * - Participate in multiple matches (via matchParticipants)
  * - Be registered in multiple stages (via stageTeams)
  */
 export const teamsRelations = relations(teams, ({ one, many }) => ({
-    captain: one(require("./user").users, {
+    captain: one(require("./player").players, {
         fields: [teams.team_captain_id],
-        references: [require("./user").users.ID],
+        references: [require("./player").players.ID],
     }),
     players: many(require("./player").players),
     matchParticipants: many(require("./match").matchParticipants),

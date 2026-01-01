@@ -131,4 +131,52 @@ export const teamRepository = {
             .returning();
         return result[0];
     },
+
+    findTeamByFaceitId: async (faceitId: string) => {
+        const result = await db
+            .select()
+            .from(teams)
+            .where(and(eq(teams.faceit_id, faceitId), isNull(teams.deleted_at)))
+            .limit(1);
+        return result[0];
+    },
+
+    upsertTeamByFaceitId: async (teamData: {
+        name: string;
+        team_logo: string | null;
+        faceit_id: string;
+        team_captain_id: number;
+        region: string | null;
+    }) => {
+        const existing = await db
+            .select()
+            .from(teams)
+            .where(and(eq(teams.faceit_id, teamData.faceit_id), isNull(teams.deleted_at)))
+            .limit(1);
+
+        if (existing.length > 0) {
+            const result = await db
+                .update(teams)
+                .set({
+                    name: teamData.name,
+                    team_logo: teamData.team_logo,
+                    team_captain_id: teamData.team_captain_id,
+                    region: teamData.region,
+                    updated_at: new Date(),
+                })
+                .where(eq(teams.ID, existing[0].ID))
+                .returning();
+            return result[0];
+        } else {
+            const result = await db
+                .insert(teams)
+                .values({
+                    ...teamData,
+                    created_at: new Date(),
+                    updated_at: new Date(),
+                })
+                .returning();
+            return result[0];
+        }
+    },
 };
