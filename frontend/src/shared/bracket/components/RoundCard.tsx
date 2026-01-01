@@ -1,4 +1,4 @@
-import type { Match, Round } from "../../types/Types";
+import type { Match, Round } from "../../../types/Types";
 import MatchCard from "./MatchCard";
 
 type RoundCardProps = {

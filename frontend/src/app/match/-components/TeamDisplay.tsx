@@ -1,6 +1,6 @@
 import type { Team } from "@/types/TeamModel";
 import PlayerCard from "./PlayerCard";
-import TeamLogo from "@/shared/bracket/TeamLogo";
+import TeamLogo from "@/shared/bracket/atoms/TeamLogo";
 import { useNavigate } from "@tanstack/react-router";
 
 type Player = {

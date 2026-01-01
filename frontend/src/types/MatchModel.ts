@@ -1,31 +1,29 @@
 export type Match = {
-    match_id: string; // primary key
-    group_id: string; // foreign key groups.ID
+    match_id: string;
+    group_id: string;
     status?: string | null;
     scheduled_at?: number | null;
     round?: string | null;
     faceit_url?: string | null;
-    team1_id?: string | null; // from matchParticipants
-    team2_id?: string | null; // from matchParticipants
-    winner?: string | null; // from matchParticipants where winner = 1
-    team1_score?: number | null; // default 0 on server
-    team2_score?: number | null; // default 0 on server
+    team1_id?: string | null;
+    team2_id?: string | null;
+    winner?: string | null;
+    team1_score?: number | null;
+    team2_score?: number | null;
 };
 
 export type MatchMap = {
-    map_id: string; // primary key
-    match_id: string; // foreign key matches.ID
+    map_id: string;
+    match_id: string;
     map_name: string;
     round?: number | null;
-    winner_id?: string | null; // foreign key matchParticipants.ID
-    team1_score: number; // default 0
-    team2_score: number; // default 0
+    winner_id?: string | null;
 };
 
 export type MatchCaster = {
-    ID: string; // primary key
-    match_id: string; // foreign key matches.ID
-    caster_id: string; // foreign key users.ID
+    ID: string;
+    match_id: string;
+    caster_id: string;
     assigned_at?: number | null;
 };
 

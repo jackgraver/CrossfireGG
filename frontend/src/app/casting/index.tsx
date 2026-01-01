@@ -7,7 +7,7 @@ import { formatMatchDate } from "@/lib/dateUtils";
 import { useNavigate } from "@tanstack/react-router";
 import ProtectedRoute from "@/shared/ProtectedRoute";
 import ProtectedElement from "@/shared/ProtectedButton";
-import TeamLogo from "@/shared/bracket/TeamLogo";
+import TeamLogo from "@/shared/bracket/atoms/TeamLogo";
 
 export const Route = createFileRoute("/casting/")({
     component: Casting,

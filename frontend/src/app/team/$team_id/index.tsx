@@ -14,7 +14,7 @@ import {
     useRemovePlayerFromTeam,
 } from "../-queries/teamQueries";
 import { formatDateOnly } from "@/lib/dateUtils";
-import TeamLogo from "@/shared/bracket/TeamLogo";
+import TeamLogo from "@/shared/bracket/atoms/TeamLogo";
 import { openInNewTab } from "@/lib/NewTab";
 import { useState, useRef, useEffect } from "react";
 import type { Player } from "@/types/PlayerModel";

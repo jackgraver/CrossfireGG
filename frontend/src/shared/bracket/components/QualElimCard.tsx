@@ -1,5 +1,5 @@
 import type { Team } from "@/types/TeamModel";
-import TeamLogo from "../TeamLogo";
+import TeamLogo from "../atoms/TeamLogo";
 
 type QualElimCardProps = {
     team: Team;

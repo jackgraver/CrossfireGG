@@ -1,11 +1,11 @@
-import type { Match } from "../../types/Types";
+import type { Match } from "../../../types/Types";
 import type { Team } from "@/types/TeamModel";
-import RoundSection from "./RoundSection";
-import RoundCard from "./RoundCard";
+import RoundSection from "../components/RoundSection";
+import RoundCard from "../components/RoundCard";
 import {
     filterAndSortMatchesByRound,
     groupMatchesByRoundAndSort,
-} from "./Bracket.util";
+} from "../Bracket.util";
 
 type BracketProps = {
     matches: Match[];

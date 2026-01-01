@@ -1,12 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
     useTournament,
     useMatchesByStage,
 } from "../-queries/tournamentQueries";
 import { formatDateOnly, toUnixTimestamp } from "@/lib/dateUtils";
-import RegularSeasonBracket from "@/shared/bracket/RegularSeasonBracket";
+import RegularSeasonBracket from "@/shared/bracket/bracket_types/RegularSeasonBracket";
 import Standings from "@/shared/Standings";
+import TopLevelBracket from "@/shared/bracket/TopLevelBracket";
 
 export const Route = createFileRoute("/tournament/$tournament/")({
     component: RouteComponent,
@@ -19,7 +20,7 @@ function RouteComponent() {
     );
     const { data: tournament, isLoading, error } = useTournament(tournamentId);
 
-    const currentStage = useMemo(() => {
+    const defaultStage = useMemo(() => {
         if (!tournament?.stages) return null;
         return (
             tournament.stages.find((stage) => stage.is_current) ||
@@ -27,6 +28,12 @@ function RouteComponent() {
             null
         );
     }, [tournament]);
+
+    const [currentStage, setCurrentStage] = useState(defaultStage);
+
+    useEffect(() => {
+        setCurrentStage(defaultStage);
+    }, [defaultStage]);
 
     const {
         data: matchesData,
@@ -129,7 +136,7 @@ function RouteComponent() {
                             Error loading matches: {matchesError.message}
                         </div>
                     ) : matches && matches.length > 0 ? (
-                        <RegularSeasonBracket matches={matches} />
+                        <TopLevelBracket stageFormat={currentStage?.format} matches={matches} />
                     ) : (
                         <div className="text-textSecondary">
                             {currentStage
@@ -139,7 +146,7 @@ function RouteComponent() {
                     )
                 ) : (
                     <div className="text-textSecondary">
-                        Standings feature coming soon
+                       <Standings teams={[]} />
                     </div>
                 )}
             </div>
@@ -157,7 +164,12 @@ function RouteComponent() {
                         {tournament.stages.map((stage) => (
                             <div
                                 key={stage.ID}
-                                className="border-border bg-secondBg rounded-lg border p-6"
+                                onClick={() => setCurrentStage(stage)}
+                                className={`border-border bg-secondBg rounded-lg border p-6 cursor-pointer transition-all ${
+                                    currentStage?.ID === stage.ID
+                                        ? "ring-2 ring-blue-500 bg-thirdBg"
+                                        : "hover:bg-thirdBg"
+                                }`}
                             >
                                 <div className="mb-4 flex items-center justify-between">
                                     <h3 className="text-textPrimary text-xl font-semibold">
@@ -199,11 +211,11 @@ function RouteComponent() {
                                             <span className="font-semibold">
                                                 Format:{" "}
                                             </span>
-                                            {stage.format}
+                                            {stage.format?.name}
                                         </div>
                                     )}
                                 </div>
-                                {stage.format === "groups" &&
+                                {stage.format?.name === "groups" &&
                                     stage.groups &&
                                     stage.groups.length > 0 && (
                                         <div>

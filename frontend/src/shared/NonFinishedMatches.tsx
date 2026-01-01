@@ -1,6 +1,6 @@
 import type { Match } from "../types/Types";
 import { useState, useEffect, useMemo } from "react";
-import ScheduledCard from "./bracket/ScheduledCard";
+import ScheduledCard from "./bracket/components/ScheduledCard";
 
 type NonFinishedMatchesProps = {
     matches: Match[];

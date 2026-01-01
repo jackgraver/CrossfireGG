@@ -1,6 +1,6 @@
-import type { Match } from "../../types/Types";
+import type { Match } from "../../../types/Types";
 import { MatchTeam } from "./MatchTeam";
-import { formatMatchDate } from "../../lib/dateUtils";
+import { formatMatchDate } from "../../../lib/dateUtils";
 import MatchCard from "./MatchCard";
 import { openInNewTab } from "@/lib/NewTab";
 
@@ -34,7 +34,7 @@ export default function ScheduledCard({ match }: ScheduledCardProps) {
                 <div className="flex w-fit max-w-full flex-row items-center overflow-hidden text-ellipsis whitespace-nowrap rounded-t-md bg-firstBg px-1 py-1">
                     <div className="flex items-center gap-1 text-xs text-textPrimary">
                         <p className="">🕒</p>
-                        {formatMatchDate(match.scheduled_at)}
+                        {formatMatchDate(match?.scheduled_at ?? 0)}
                     </div>
                 </div>
             )}

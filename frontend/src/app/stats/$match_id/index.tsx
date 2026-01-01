@@ -9,7 +9,7 @@ import { formatMatchDate } from "@/lib/dateUtils";
 import { notFound } from "@tanstack/react-router";
 import { useNavigate } from "@tanstack/react-router";
 import { use } from "react";
-import TeamLogo from "@/shared/bracket/TeamLogo";
+import TeamLogo from "@/shared/bracket/atoms/TeamLogo";
 import { Match, MatchMap } from "@/types/MatchModel";
 
 export const Route = createFileRoute("/stats/$match_id/")({

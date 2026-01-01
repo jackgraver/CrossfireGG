@@ -1,5 +1,5 @@
 import { useNavigate } from "@tanstack/react-router";
-import type { Match } from "../../types/Types";
+import type { Match } from "../../../types/Types";
 import { MatchTeam } from "./MatchTeam";
 import { openInNewTab } from "@/lib/NewTab";
 
@@ -28,13 +28,13 @@ export default function MatchCard({ match, margin }: MatchCardProps) {
             }`}
         >
             <MatchTeam
-                team={match.teams!.team1!}
-                winner={match.winner === match.teams!.team1!.team_id}
+                team={match.participants![0].team!}
+                winner={match.winner === match.participants![0].team!.team_id}
                 score={match.team1_score!}
             />
             <MatchTeam
-                team={match.teams!.team2!}
-                winner={match.winner === match.teams!.team2!.team_id}
+                team={match.participants![1].team}
+                winner={match.winner === match.participants![1].team!.team_id}
                 score={match.team2_score!}
             />
 
