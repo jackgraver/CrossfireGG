@@ -18,6 +18,7 @@ import {
     FaceitTournament,
     transformFaceitTournament,
 } from "../../utils/transformFaceitData";
+import { mapFaceitFormatType, type StageFormat } from "../../utils/roundFormatter";
 
 interface ImportResult {
     success: boolean;
@@ -29,6 +30,51 @@ interface ImportResult {
         groups: number;
     };
     errors: string[];
+}
+
+/**
+ * Calculate team records (wins/losses) up to a specific round
+ * This is useful for Swiss format where we need to know team records for round labeling
+ */
+function calculateTeamRecordsUpToRound(
+    matches: FaceitMatch[],
+    teamFaceitId: string,
+    currentRound: number
+): { wins: number; losses: number } {
+    let wins = 0;
+    let losses = 0;
+    
+    for (const match of matches) {
+        // Only count matches before the current round
+        if (!match.round || match.round >= currentRound) {
+            continue;
+        }
+        
+        // Skip if match doesn't involve this team
+        const isFaction1 = match.teams.faction1?.faction_id === teamFaceitId;
+        const isFaction2 = match.teams.faction2?.faction_id === teamFaceitId;
+        
+        if (!isFaction1 && !isFaction2) {
+            continue;
+        }
+        
+        // Check if match is finished
+        if (match.status !== 'FINISHED' || !match.results?.winner) {
+            continue;
+        }
+        
+        // Count win or loss
+        const teamWon = (isFaction1 && match.results.winner === 'faction1') || 
+                        (isFaction2 && match.results.winner === 'faction2');
+        
+        if (teamWon) {
+            wins++;
+        } else {
+            losses++;
+        }
+    }
+    
+    return { wins, losses };
 }
 
 export const faceitImportService = {
@@ -187,9 +233,11 @@ export const faceitImportService = {
 
             logger.info(`Processed ${result.counts.groups} groups`);
 
+            const stageFormat = stage.format_type ? mapFaceitFormatType(stage.format_type) : 'unknown';
+
             for (const match of matches) {
                 try {
-                    await faceitImportService.importMatch(match, stage.ID, groupIdMap);
+                    await faceitImportService.importMatch(match, stage.ID, groupIdMap, matches, stageFormat);
                     result.counts.matches++;
                 } catch (error) {
                     logger.error(`Error importing match ${match.match_id}:`, error);
@@ -214,14 +262,34 @@ export const faceitImportService = {
     importMatch: async (
         faceitMatch: FaceitMatch,
         stageId: number,
-        groupIdMap: Map<number, number>
+        groupIdMap: Map<number, number>,
+        allMatches: FaceitMatch[] = [],
+        stageFormat: StageFormat = 'unknown'
     ): Promise<void> => {
         const groupId =
             faceitMatch.group !== undefined && faceitMatch.group !== null
                 ? groupIdMap.get(faceitMatch.group) || null
                 : null;
 
-        const matchData = transformFaceitMatch(faceitMatch, stageId, groupId);
+        // Calculate team records for Swiss format
+        let teamRecords: { faction1?: { wins: number; losses: number }; faction2?: { wins: number; losses: number } } | undefined;
+        
+        if (stageFormat === 'swiss' && faceitMatch.round && allMatches.length > 0) {
+            const faction1Id = faceitMatch.teams.faction1?.faction_id;
+            const faction2Id = faceitMatch.teams.faction2?.faction_id;
+            
+            if (faction1Id) {
+                teamRecords = {
+                    faction1: calculateTeamRecordsUpToRound(allMatches, faction1Id, faceitMatch.round),
+                };
+            }
+            if (faction2Id) {
+                teamRecords = teamRecords || {};
+                teamRecords.faction2 = calculateTeamRecordsUpToRound(allMatches, faction2Id, faceitMatch.round);
+            }
+        }
+
+        const matchData = transformFaceitMatch(faceitMatch, stageId, groupId, stageFormat, teamRecords);
         const dbMatch = await matchRepository.upsertMatchByFaceitId(matchData);
 
         const team1 = await teamRepository.findTeamByFaceitId(
@@ -261,7 +329,7 @@ export const faceitImportService = {
             }
         }
 
-        const mapsData = transformFaceitMaps(faceitMatch, dbMatch.ID, participantMap);
+        const mapsData = transformFaceitMaps(faceitMatch, dbMatch.ID, participantMap, matchData.round || undefined);
 
         for (const mapData of mapsData) {
             await matchRepository.upsertMap(mapData);

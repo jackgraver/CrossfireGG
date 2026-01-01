@@ -37,27 +37,46 @@ export const tournamentRepository = {
         const tournament = await db.query.tournaments.findFirst({
             where: (t, { eq, and, isNull }) =>
                 and(eq(t.ID, tournamentId), isNull(t.deleted_at)),
-            with: {
-                stages: {
-                    with: {
-                        groups: true,
-                    },
-                },
-            },
         });
 
         if (!tournament) return null;
 
+        const stageResults = await db
+            .select({
+                stage: stages,
+                format: stageFormats,
+            })
+            .from(stages)
+            .leftJoin(stageFormats, eq(stages.format_id, stageFormats.ID))
+            .where(
+                and(
+                    eq(stages.tournament_id, tournamentId),
+                    isNull(stages.deleted_at)
+                )
+            );
+
+        const stagesWithFormat = stageResults.map((result) => ({
+            ...result.stage,
+            format: result.format ? { ...result.format } : null,
+        }));
+
+        const stageIds = stagesWithFormat.map((s) => s.ID);
+        const groupsByStage = await tournamentRepository.findGroupsByStageIds(stageIds);
+        const groupsMap = new Map<number, typeof groupsByStage>();
+        
+        for (const group of groupsByStage) {
+            if (!groupsMap.has(group.stage_id)) {
+                groupsMap.set(group.stage_id, []);
+            }
+            groupsMap.get(group.stage_id)!.push(group);
+        }
+
         return {
             ...tournament,
-            stages: tournament.stages
-                .filter((stage) => !stage.deleted_at)
-                .map((stage) => ({
-                    ...stage,
-                    groups: stage.groups
-                        ? stage.groups.filter((group) => !group.deleted_at)
-                        : undefined,
-                })),
+            stages: stagesWithFormat.map((stage) => ({
+                ...stage,
+                groups: groupsMap.get(stage.ID) || [],
+            })),
         };
     },
 

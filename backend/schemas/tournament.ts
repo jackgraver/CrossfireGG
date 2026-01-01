@@ -30,6 +30,7 @@ export const stages = sqliteTable(
             .references(() => tournaments.ID, { onDelete: "cascade" }),
         name: text("name").notNull(),
         faceit_id: text("faceit_id"),
+        format_type: text("format_type"),
         max_teams: integer("max_teams").default(0),
         format_id: integer("format_id").references(() => stageFormats.ID, { onDelete: "restrict" }),
         is_current: integer("is_current", { mode: "boolean" }).default(false),

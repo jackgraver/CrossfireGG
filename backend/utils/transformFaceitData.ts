@@ -2,6 +2,8 @@
  * Utilities to transform FaceIT API data structures into our database schema format
  */
 
+import { formatRound, mapFaceitFormatType, type StageFormat } from './roundFormatter';
+
 // ============================== TYPE DEFINITIONS ============================== //
 
 export interface FaceitTournament {
@@ -97,6 +99,7 @@ export function transformFaceitTournament(
         tournament_id: tournamentId,
         name: faceitTournament.name,
         faceit_id: faceitTournament.championship_id,
+        format_type: faceitTournament.type || null,
         max_teams: faceitTournament.slots || 0,
         start_date: faceitTournament.championship_start
             ? new Date(faceitTournament.championship_start)
@@ -161,14 +164,31 @@ export function mapFaceitMatchStatus(faceitStatus: string): string {
 export function transformFaceitMatch(
     faceitMatch: FaceitMatch,
     stageId: number,
-    groupId: number | null
+    groupId: number | null,
+    stageFormat?: StageFormat,
+    teamRecords?: { faction1?: { wins: number; losses: number }; faction2?: { wins: number; losses: number } }
 ) {
+    let formattedRound = faceitMatch.round?.toString() || null;
+    
+    // If we have format information, format the round nicely
+    if (faceitMatch.round && stageFormat && stageFormat !== 'unknown') {
+        // For Swiss format, try to include team records if available
+        if (stageFormat === 'swiss' && teamRecords?.faction1) {
+            formattedRound = formatRound(stageFormat, faceitMatch.round, {
+                wins: teamRecords.faction1.wins,
+                losses: teamRecords.faction1.losses,
+            });
+        } else {
+            formattedRound = formatRound(stageFormat, faceitMatch.round);
+        }
+    }
+    
     return {
         group_id: groupId,
         stage_id: stageId,
         faceit_id: faceitMatch.match_id,
         match_number: null,
-        round: faceitMatch.round?.toString() || null,
+        round: formattedRound,
         status: mapFaceitMatchStatus(faceitMatch.status),
         best_of: faceitMatch.best_of || 1,
         stream_url: null,
@@ -185,7 +205,8 @@ export function transformFaceitMatch(
 export function transformFaceitMaps(
     faceitMatch: FaceitMatch,
     matchId: number,
-    participantMap: { faction1: number; faction2: number }
+    participantMap: { faction1: number; faction2: number },
+    formattedRound?: string
 ) {
     if (!faceitMatch.detailed_results || faceitMatch.detailed_results.length === 0) {
         return [];
@@ -208,7 +229,7 @@ export function transformFaceitMaps(
             match_id: matchId,
             map_name: mapName,
             map_order: i + 1,
-            round: faceitMatch.round?.toString() || null,
+            round: formattedRound || faceitMatch.round?.toString() || null,
             winner_id: winnerId,
         });
     }
