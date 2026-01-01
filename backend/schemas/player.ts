@@ -16,10 +16,7 @@ export const players = sqliteTable(
             { onDelete: "set null" }
         ),
         player_logo: text("player_logo"),
-        role: text("role"),
         country: text("country"),
-        birth_date: integer("birth_date", { mode: "timestamp" }),
-        active: integer("active", { mode: "boolean" }).default(true),
         created_at: integer("created_at", { mode: "timestamp" })
             .notNull()
             .$defaultFn(() => new Date()),
@@ -28,10 +25,10 @@ export const players = sqliteTable(
             .$defaultFn(() => new Date()),
         deleted_at: integer("deleted_at", { mode: "timestamp" }),
     },
-    (table) => ({
-        teamIdIdx: index("players_team_id_idx").on(table.team_id),
-        userIdIdx: index("players_user_id_idx").on(table.user_id),
-    })
+    (table) => [
+        index("players_team_id_idx").on(table.team_id),
+        index("players_user_id_idx").on(table.user_id),
+    ]
 );
 
 export const playerStats = sqliteTable(
@@ -60,11 +57,11 @@ export const playerStats = sqliteTable(
             .$defaultFn(() => new Date()),
         deleted_at: integer("deleted_at", { mode: "timestamp" }),
     },
-    (table) => ({
-        playerIdIdx: index("player_stats_player_id_idx").on(table.player_id),
-        matchIdIdx: index("player_stats_match_id_idx").on(table.match_id),
-        mapIdIdx: index("player_stats_map_id_idx").on(table.map_id),
-    })
+    (table) => [
+        index("player_stats_player_id_idx").on(table.player_id),
+        index("player_stats_match_id_idx").on(table.match_id),
+        index("player_stats_map_id_idx").on(table.map_id),
+    ]
 );
 
 // ============================== RELATIONS ============================== //

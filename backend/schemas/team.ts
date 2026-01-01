@@ -9,11 +9,9 @@ export const teams = sqliteTable("teams", {
     team_captain_id: integer("team_captain_id")
         .notNull()
         .references((): any => require("./user").users.ID, { onDelete: "restrict" }),
-    status: text("status").default("active"),
     region: text("region"),
     max_roster_size: integer("max_roster_size").default(10),
     founded_date: integer("founded_date", { mode: "timestamp" }),
-    description: text("description"),
     social_links: text("social_links"),
     created_at: integer("created_at", { mode: "timestamp" })
         .notNull()

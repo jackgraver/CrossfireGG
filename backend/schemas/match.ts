@@ -18,8 +18,6 @@ export const matches = sqliteTable(
         status: text("status").default("scheduled"),
         best_of: integer("best_of").default(1),
         stream_url: text("stream_url"),
-        notes: text("notes"),
-        venue: text("venue"),
         scheduled_at: integer("scheduled_at", { mode: "timestamp" }),
         faceit_url: text("faceit_url"),
         created_at: integer("created_at", { mode: "timestamp" })
@@ -30,10 +28,10 @@ export const matches = sqliteTable(
             .$defaultFn(() => new Date()),
         deleted_at: integer("deleted_at", { mode: "timestamp" }),
     },
-    (table) => ({
-        groupIdIdx: index("matches_group_id_idx").on(table.group_id),
-        stageIdIdx: index("matches_stage_id_idx").on(table.stage_id),
-    })
+    (table) => [
+        index("matches_group_id_idx").on(table.group_id),
+        index("matches_stage_id_idx").on(table.stage_id),
+    ]
 );
 
 export const matchParticipants = sqliteTable(
@@ -56,12 +54,12 @@ export const matchParticipants = sqliteTable(
             .$defaultFn(() => new Date()),
         deleted_at: integer("deleted_at", { mode: "timestamp" }),
     },
-    (table) => ({
-        uniqueMatchPosition: unique().on(table.match_id, table.position),
-        uniqueMatchTeam: unique().on(table.match_id, table.team_id),
-        matchIdIdx: index("match_participants_match_id_idx").on(table.match_id),
-        teamIdIdx: index("match_participants_team_id_idx").on(table.team_id),
-    })
+    (table) => [
+        unique().on(table.match_id, table.position),
+        unique().on(table.match_id, table.team_id),
+        index("match_participants_match_id_idx").on(table.match_id),
+        index("match_participants_team_id_idx").on(table.team_id),
+    ]
 );
 
 export const maps = sqliteTable(
@@ -83,10 +81,10 @@ export const maps = sqliteTable(
             .$defaultFn(() => new Date()),
         deleted_at: integer("deleted_at", { mode: "timestamp" }),
     },
-    (table) => ({
-        matchIdIdx: index("maps_match_id_idx").on(table.match_id),
-        winnerIdIdx: index("maps_winner_id_idx").on(table.winner_id),
-    })
+    (table) => [
+        index("maps_match_id_idx").on(table.match_id),
+        index("maps_winner_id_idx").on(table.winner_id),
+    ]
 );
 
 export const matchCasters = sqliteTable(
@@ -110,10 +108,10 @@ export const matchCasters = sqliteTable(
             .$defaultFn(() => new Date()),
         deleted_at: integer("deleted_at", { mode: "timestamp" }),
     },
-    (table) => ({
-        matchIdIdx: index("match_casters_match_id_idx").on(table.match_id),
-        casterIdIdx: index("match_casters_caster_id_idx").on(table.caster_id),
-    })
+    (table) => [
+        index("match_casters_match_id_idx").on(table.match_id),
+        index("match_casters_caster_id_idx").on(table.caster_id),
+    ]
 );
 
 // ============================== RELATIONS ============================== //

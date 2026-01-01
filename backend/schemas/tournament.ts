@@ -6,7 +6,6 @@ export const tournaments = sqliteTable("tournaments", {
     name: text("name").notNull(),
     status: text("status").default("draft"),
     description: text("description"),
-    rules: text("rules"),
     prize_pool: integer("prize_pool"),
     registration_deadline: integer("registration_deadline", { mode: "timestamp" }),
     max_teams: integer("max_teams"),
@@ -20,11 +19,6 @@ export const tournaments = sqliteTable("tournaments", {
         .notNull()
         .$defaultFn(() => new Date()),
     deleted_at: integer("deleted_at", { mode: "timestamp" }),
-});
-
-export const stageFormats = sqliteTable("stage_formats", {
-    ID: integer("ID").primaryKey({ autoIncrement: true }),
-    name: text("name").notNull().unique(),
 });
 
 export const stages = sqliteTable(
@@ -49,11 +43,16 @@ export const stages = sqliteTable(
             .$defaultFn(() => new Date()),
         deleted_at: integer("deleted_at", { mode: "timestamp" }),
     },
-    (table) => ({
-        tournamentIdIdx: index("stages_tournament_id_idx").on(table.tournament_id),
-        formatIdIdx: index("stages_format_id_idx").on(table.format_id),
-    })
+    (table) => [
+        index("stages_tournament_id_idx").on(table.tournament_id),
+        index("stages_format_id_idx").on(table.format_id),
+    ]
 );
+
+export const stageFormats = sqliteTable("stage_formats", {
+    ID: integer("ID").primaryKey({ autoIncrement: true }),
+    name: text("name").notNull().unique(),
+});
 
 export const groups = sqliteTable(
     "groups",
@@ -71,9 +70,9 @@ export const groups = sqliteTable(
             .$defaultFn(() => new Date()),
         deleted_at: integer("deleted_at", { mode: "timestamp" }),
     },
-    (table) => ({
-        stageIdIdx: index("groups_stage_id_idx").on(table.stage_id),
-    })
+    (table) => [
+        index("groups_stage_id_idx").on(table.stage_id),
+    ]
 );
 
 export const stageTeams = sqliteTable(
@@ -100,12 +99,12 @@ export const stageTeams = sqliteTable(
             .$defaultFn(() => new Date()),
         deleted_at: integer("deleted_at", { mode: "timestamp" }),
     },
-    (table) => ({
-        uniqueStageTeam: unique().on(table.stage_id, table.team_id),
-        stageIdIdx: index("stage_teams_stage_id_idx").on(table.stage_id),
-        teamIdIdx: index("stage_teams_team_id_idx").on(table.team_id),
-        groupIdIdx: index("stage_teams_group_id_idx").on(table.group_id),
-    })
+    (table) => [
+        unique().on(table.stage_id, table.team_id),
+        index("stage_teams_stage_id_idx").on(table.stage_id),
+        index("stage_teams_team_id_idx").on(table.team_id),
+        index("stage_teams_group_id_idx").on(table.group_id),
+    ]
 );
 
 // ============================== RELATIONS ============================== //

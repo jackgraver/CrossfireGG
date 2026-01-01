@@ -7,10 +7,8 @@ export const users = sqliteTable("users", {
     email: text("email").notNull().unique(),
     password: text("password").notNull(),
     avatar_url: text("avatar_url"),
-    bio: text("bio"),
     discord_id: text("discord_id"),
     steam_id: text("steam_id"),
-    preferences: text("preferences"),
     last_login_at: integer("last_login_at", { mode: "timestamp" }),
     email_verified: integer("email_verified", { mode: "boolean" }).default(false),
     refresh_token: text("refresh_token"),
@@ -54,11 +52,11 @@ export const userRoles = sqliteTable(
             .$defaultFn(() => new Date()),
         deleted_at: integer("deleted_at", { mode: "timestamp" }),
     },
-    (table) => ({
-        uniqueUserRole: unique().on(table.user_id, table.role_id),
-        userIdIdx: index("user_roles_user_id_idx").on(table.user_id),
-        roleIdIdx: index("user_roles_role_id_idx").on(table.role_id),
-    })
+    (table) => [
+        unique().on(table.user_id, table.role_id),
+        index("user_roles_user_id_idx").on(table.user_id),
+        index("user_roles_role_id_idx").on(table.role_id),
+    ]
 );
 
 // ============================== RELATIONS ============================== //
