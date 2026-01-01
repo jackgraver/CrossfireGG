@@ -1,5 +1,5 @@
 export type User = {
-    user_id: string; // primary key (ID)
+    user_id: string;
     name: string;
     email: string;
 };
@@ -9,16 +9,15 @@ export type UserPublic = {
     user_name: string;
     email: string;
     faceit_id?: string | null;
-    team_id?: string | null;
 };
 
 export type UserRole = {
-    ID: string; // primary key
-    user_id: string; // foreign key users.ID
-    role_id: string; // foreign key roles.ID
+    ID: string;
+    user_id: string;
+    role_id: string;
 };
 
 export type Role = {
-    role_id: string; // primary key (ID)
-    role_name: string; // name
+    role_id: string;
+    role_name: string;
 };

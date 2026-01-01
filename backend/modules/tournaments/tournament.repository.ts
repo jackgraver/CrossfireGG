@@ -5,6 +5,7 @@ import {
     groups,
     matches,
     stageTeams,
+    stageFormats,
 } from "../../schemas";
 import { eq, and, isNull, count, inArray } from "drizzle-orm";
 import { TournamentListItem } from "./tournament.types";
@@ -61,15 +62,24 @@ export const tournamentRepository = {
     },
 
     findStagesByTournamentId: async (tournamentId: number) => {
-        return await db
-            .select()
+        const results = await db
+            .select({
+                stage: stages,
+                format: stageFormats,
+            })
             .from(stages)
+            .leftJoin(stageFormats, eq(stages.format_id, stageFormats.ID))
             .where(
                 and(
                     eq(stages.tournament_id, tournamentId),
                     isNull(stages.deleted_at)
                 )
             );
+        
+        return results.map((result) => ({
+            ...result.stage,
+            format: result.format ? { ...result.format } : null,
+        }));
     },
 
     findGroupsByStageIds: async (stageIds: number[]) => {

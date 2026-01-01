@@ -1,9 +1,16 @@
-import { sqliteTable, integer, text, unique } from "drizzle-orm/sqlite-core";
+import { sqliteTable, integer, text, unique, index } from "drizzle-orm/sqlite-core";
 import { relations } from "drizzle-orm";
 
 export const tournaments = sqliteTable("tournaments", {
     ID: integer("ID").primaryKey({ autoIncrement: true }),
     name: text("name").notNull(),
+    status: text("status").default("draft"),
+    description: text("description"),
+    rules: text("rules"),
+    prize_pool: integer("prize_pool"),
+    registration_deadline: integer("registration_deadline", { mode: "timestamp" }),
+    max_teams: integer("max_teams"),
+    region: text("region"),
     start_date: integer("start_date", { mode: "timestamp" }),
     end_date: integer("end_date", { mode: "timestamp" }),
     created_at: integer("created_at", { mode: "timestamp" })
@@ -17,44 +24,57 @@ export const tournaments = sqliteTable("tournaments", {
 
 export const stageFormats = sqliteTable("stage_formats", {
     ID: integer("ID").primaryKey({ autoIncrement: true }),
-    format: text("format").notNull().unique(),
+    name: text("name").notNull().unique(),
 });
 
-export const stages = sqliteTable("stages", {
-    ID: integer("ID").primaryKey({ autoIncrement: true }),
-    tournament_id: integer("tournament_id")
-        .notNull()
-        .references(() => tournaments.ID),
-    name: text("name").notNull(),
-    faceit_id: text("faceit_id"),
-    max_teams: integer("max_teams").default(0),
-    format_id: integer("format_id").references(() => stageFormats.ID),
-    is_current: integer("is_current", { mode: "boolean" }).default(false),
-    start_date: integer("start_date", { mode: "timestamp" }),
-    end_date: integer("end_date", { mode: "timestamp" }),
-    created_at: integer("created_at", { mode: "timestamp" })
-        .notNull()
-        .$defaultFn(() => new Date()),
-    updated_at: integer("updated_at", { mode: "timestamp" })
-        .notNull()
-        .$defaultFn(() => new Date()),
-    deleted_at: integer("deleted_at", { mode: "timestamp" }),
-});
+export const stages = sqliteTable(
+    "stages",
+    {
+        ID: integer("ID").primaryKey({ autoIncrement: true }),
+        tournament_id: integer("tournament_id")
+            .notNull()
+            .references(() => tournaments.ID, { onDelete: "cascade" }),
+        name: text("name").notNull(),
+        faceit_id: text("faceit_id"),
+        max_teams: integer("max_teams").default(0),
+        format_id: integer("format_id").references(() => stageFormats.ID, { onDelete: "restrict" }),
+        is_current: integer("is_current", { mode: "boolean" }).default(false),
+        start_date: integer("start_date", { mode: "timestamp" }),
+        end_date: integer("end_date", { mode: "timestamp" }),
+        created_at: integer("created_at", { mode: "timestamp" })
+            .notNull()
+            .$defaultFn(() => new Date()),
+        updated_at: integer("updated_at", { mode: "timestamp" })
+            .notNull()
+            .$defaultFn(() => new Date()),
+        deleted_at: integer("deleted_at", { mode: "timestamp" }),
+    },
+    (table) => ({
+        tournamentIdIdx: index("stages_tournament_id_idx").on(table.tournament_id),
+        formatIdIdx: index("stages_format_id_idx").on(table.format_id),
+    })
+);
 
-export const groups = sqliteTable("groups", {
-    ID: integer("ID").primaryKey({ autoIncrement: true }),
-    stage_id: integer("stage_id")
-        .notNull()
-        .references(() => stages.ID),
-    name: text("name").notNull(),
-    created_at: integer("created_at", { mode: "timestamp" })
-        .notNull()
-        .$defaultFn(() => new Date()),
-    updated_at: integer("updated_at", { mode: "timestamp" })
-        .notNull()
-        .$defaultFn(() => new Date()),
-    deleted_at: integer("deleted_at", { mode: "timestamp" }),
-});
+export const groups = sqliteTable(
+    "groups",
+    {
+        ID: integer("ID").primaryKey({ autoIncrement: true }),
+        stage_id: integer("stage_id")
+            .notNull()
+            .references(() => stages.ID, { onDelete: "cascade" }),
+        name: text("name").notNull(),
+        created_at: integer("created_at", { mode: "timestamp" })
+            .notNull()
+            .$defaultFn(() => new Date()),
+        updated_at: integer("updated_at", { mode: "timestamp" })
+            .notNull()
+            .$defaultFn(() => new Date()),
+        deleted_at: integer("deleted_at", { mode: "timestamp" }),
+    },
+    (table) => ({
+        stageIdIdx: index("groups_stage_id_idx").on(table.stage_id),
+    })
+);
 
 export const stageTeams = sqliteTable(
     "stage_teams",
@@ -62,11 +82,11 @@ export const stageTeams = sqliteTable(
         ID: integer("ID").primaryKey({ autoIncrement: true }),
         stage_id: integer("stage_id")
             .notNull()
-            .references(() => stages.ID),
+            .references(() => stages.ID, { onDelete: "cascade" }),
         team_id: integer("team_id")
             .notNull()
-            .references((): any => require("./team").teams.ID),
-        group_id: integer("group_id").references(() => groups.ID),
+            .references((): any => require("./team").teams.ID, { onDelete: "cascade" }),
+        group_id: integer("group_id").references(() => groups.ID, { onDelete: "set null" }),
         seed: integer("seed").default(0),
         wins: integer("wins").default(0),
         losses: integer("losses").default(0),
@@ -80,7 +100,12 @@ export const stageTeams = sqliteTable(
             .$defaultFn(() => new Date()),
         deleted_at: integer("deleted_at", { mode: "timestamp" }),
     },
-    (table) => [unique().on(table.stage_id, table.team_id)]
+    (table) => ({
+        uniqueStageTeam: unique().on(table.stage_id, table.team_id),
+        stageIdIdx: index("stage_teams_stage_id_idx").on(table.stage_id),
+        teamIdIdx: index("stage_teams_team_id_idx").on(table.team_id),
+        groupIdIdx: index("stage_teams_group_id_idx").on(table.group_id),
+    })
 );
 
 // ============================== RELATIONS ============================== //

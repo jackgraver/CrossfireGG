@@ -1,4 +1,4 @@
-import { sqliteTable, integer, text, unique } from "drizzle-orm/sqlite-core";
+import { sqliteTable, integer, text, unique, index } from "drizzle-orm/sqlite-core";
 import { relations } from "drizzle-orm";
 
 export const users = sqliteTable("users", {
@@ -6,9 +6,13 @@ export const users = sqliteTable("users", {
     name: text("name").notNull(),
     email: text("email").notNull().unique(),
     password: text("password").notNull(),
-    team_id: integer("team_id").references(
-        (): any => require("./team").teams.ID
-    ),
+    avatar_url: text("avatar_url"),
+    bio: text("bio"),
+    discord_id: text("discord_id"),
+    steam_id: text("steam_id"),
+    preferences: text("preferences"),
+    last_login_at: integer("last_login_at", { mode: "timestamp" }),
+    email_verified: integer("email_verified", { mode: "boolean" }).default(false),
     refresh_token: text("refresh_token"),
     token_version: integer("token_version").default(0),
     created_at: integer("created_at", { mode: "timestamp" })
@@ -38,10 +42,10 @@ export const userRoles = sqliteTable(
         ID: integer("ID").primaryKey({ autoIncrement: true }),
         user_id: integer("user_id")
             .notNull()
-            .references(() => users.ID),
+            .references(() => users.ID, { onDelete: "cascade" }),
         role_id: integer("role_id")
             .notNull()
-            .references(() => roles.ID),
+            .references(() => roles.ID, { onDelete: "cascade" }),
         created_at: integer("created_at", { mode: "timestamp" })
             .notNull()
             .$defaultFn(() => new Date()),
@@ -50,7 +54,11 @@ export const userRoles = sqliteTable(
             .$defaultFn(() => new Date()),
         deleted_at: integer("deleted_at", { mode: "timestamp" }),
     },
-    (table) => [unique().on(table.user_id, table.role_id)]
+    (table) => ({
+        uniqueUserRole: unique().on(table.user_id, table.role_id),
+        userIdIdx: index("user_roles_user_id_idx").on(table.user_id),
+        roleIdIdx: index("user_roles_role_id_idx").on(table.role_id),
+    })
 );
 
 // ============================== RELATIONS ============================== //
@@ -58,17 +66,14 @@ export const userRoles = sqliteTable(
 /**
  * Defines all relationships for the users table.
  * A user can:
- * - Belong to a team (via team_id)
  * - Be the captain of a team (reverse relationship from teams.team_captain_id)
  * - Have a linked player profile (via players.user_id)
  * - Have multiple role assignments (many-to-many through userRoles)
  * - Cast multiple matches (via matchCasters)
+ * 
+ * Note: Team membership is tracked through the player profile, not directly on the user.
  */
 export const usersRelations = relations(users, ({ one, many }) => ({
-    team: one(require("./team").teams, {
-        fields: [users.team_id],
-        references: [require("./team").teams.ID],
-    }),
     captainOfTeam: one(require("./team").teams, {
         fields: [users.ID],
         references: [require("./team").teams.team_captain_id],

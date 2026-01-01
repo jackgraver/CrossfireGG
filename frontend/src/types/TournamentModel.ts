@@ -4,7 +4,7 @@ export interface Stage {
     tournament_id: number;
     max_teams: number;
     name: string;
-    format: string | null;
+    format_id: number | null;
     is_current: boolean;
     start_date: Date | null;
     end_date: Date | null;
@@ -13,6 +13,12 @@ export interface Stage {
     deleted_at: Date | null;
     groups?: Group[];
     teams_count?: number;
+    format?: StageFormat;
+}
+
+export interface StageFormat {
+    ID: number;
+    name: string;
 }
 
 export interface Group {

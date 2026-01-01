@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "37d323ec-991d-40f9-95cf-17380729044e",
+  "id": "d4c130c0-b6f8-48a4-8dce-147e41e80677",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "roles": {
@@ -104,6 +104,20 @@
         }
       },
       "indexes": {
+        "user_roles_user_id_idx": {
+          "name": "user_roles_user_id_idx",
+          "columns": [
+            "user_id"
+          ],
+          "isUnique": false
+        },
+        "user_roles_role_id_idx": {
+          "name": "user_roles_role_id_idx",
+          "columns": [
+            "role_id"
+          ],
+          "isUnique": false
+        },
         "user_roles_user_id_role_id_unique": {
           "name": "user_roles_user_id_role_id_unique",
           "columns": [
@@ -176,13 +190,6 @@
           "notNull": true,
           "autoincrement": false
         },
-        "team_id": {
-          "name": "team_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
         "refresh_token": {
           "name": "refresh_token",
           "type": "text",
@@ -229,21 +236,7 @@
           "isUnique": true
         }
       },
-      "foreignKeys": {
-        "users_team_id_teams_ID_fk": {
-          "name": "users_team_id_teams_ID_fk",
-          "tableFrom": "users",
-          "tableTo": "teams",
-          "columnsFrom": [
-            "team_id"
-          ],
-          "columnsTo": [
-            "ID"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "checkConstraints": {}
@@ -374,7 +367,15 @@
           "autoincrement": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "groups_stage_id_idx": {
+          "name": "groups_stage_id_idx",
+          "columns": [
+            "stage_id"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {
         "groups_stage_id_stages_ID_fk": {
           "name": "groups_stage_id_stages_ID_fk",
@@ -404,8 +405,8 @@
           "notNull": true,
           "autoincrement": true
         },
-        "format": {
-          "name": "format",
+        "name": {
+          "name": "name",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
@@ -413,10 +414,10 @@
         }
       },
       "indexes": {
-        "stage_formats_format_unique": {
-          "name": "stage_formats_format_unique",
+        "stage_formats_name_unique": {
+          "name": "stage_formats_name_unique",
           "columns": [
-            "format"
+            "name"
           ],
           "isUnique": true
         }
@@ -520,6 +521,27 @@
         }
       },
       "indexes": {
+        "stage_teams_stage_id_idx": {
+          "name": "stage_teams_stage_id_idx",
+          "columns": [
+            "stage_id"
+          ],
+          "isUnique": false
+        },
+        "stage_teams_team_id_idx": {
+          "name": "stage_teams_team_id_idx",
+          "columns": [
+            "team_id"
+          ],
+          "isUnique": false
+        },
+        "stage_teams_group_id_idx": {
+          "name": "stage_teams_group_id_idx",
+          "columns": [
+            "group_id"
+          ],
+          "isUnique": false
+        },
         "stage_teams_stage_id_team_id_unique": {
           "name": "stage_teams_stage_id_team_id_unique",
           "columns": [
@@ -664,7 +686,22 @@
           "autoincrement": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "stages_tournament_id_idx": {
+          "name": "stages_tournament_id_idx",
+          "columns": [
+            "tournament_id"
+          ],
+          "isUnique": false
+        },
+        "stages_format_id_idx": {
+          "name": "stages_format_id_idx",
+          "columns": [
+            "format_id"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {
         "stages_tournament_id_tournaments_ID_fk": {
           "name": "stages_tournament_id_tournaments_ID_fk",
@@ -794,22 +831,6 @@
           "notNull": false,
           "autoincrement": false
         },
-        "team1_score": {
-          "name": "team1_score",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false,
-          "default": 0
-        },
-        "team2_score": {
-          "name": "team2_score",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false,
-          "default": 0
-        },
         "created_at": {
           "name": "created_at",
           "type": "integer",
@@ -832,7 +853,22 @@
           "autoincrement": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "maps_match_id_idx": {
+          "name": "maps_match_id_idx",
+          "columns": [
+            "match_id"
+          ],
+          "isUnique": false
+        },
+        "maps_winner_id_idx": {
+          "name": "maps_winner_id_idx",
+          "columns": [
+            "winner_id"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {
         "maps_match_id_matches_ID_fk": {
           "name": "maps_match_id_matches_ID_fk",
@@ -918,7 +954,22 @@
           "autoincrement": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "match_casters_match_id_idx": {
+          "name": "match_casters_match_id_idx",
+          "columns": [
+            "match_id"
+          ],
+          "isUnique": false
+        },
+        "match_casters_caster_id_idx": {
+          "name": "match_casters_caster_id_idx",
+          "columns": [
+            "caster_id"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {
         "match_casters_match_id_matches_ID_fk": {
           "name": "match_casters_match_id_matches_ID_fk",
@@ -975,13 +1026,20 @@
           "notNull": true,
           "autoincrement": false
         },
+        "position": {
+          "name": "position",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
         "winner": {
           "name": "winner",
           "type": "integer",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false,
-          "default": 0
+          "default": false
         },
         "created_at": {
           "name": "created_at",
@@ -1005,7 +1063,38 @@
           "autoincrement": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "match_participants_match_id_idx": {
+          "name": "match_participants_match_id_idx",
+          "columns": [
+            "match_id"
+          ],
+          "isUnique": false
+        },
+        "match_participants_team_id_idx": {
+          "name": "match_participants_team_id_idx",
+          "columns": [
+            "team_id"
+          ],
+          "isUnique": false
+        },
+        "match_participants_match_id_position_unique": {
+          "name": "match_participants_match_id_position_unique",
+          "columns": [
+            "match_id",
+            "position"
+          ],
+          "isUnique": true
+        },
+        "match_participants_match_id_team_id_unique": {
+          "name": "match_participants_match_id_team_id_unique",
+          "columns": [
+            "match_id",
+            "team_id"
+          ],
+          "isUnique": true
+        }
+      },
       "foreignKeys": {
         "match_participants_match_id_matches_ID_fk": {
           "name": "match_participants_match_id_matches_ID_fk",
@@ -1112,7 +1201,22 @@
           "autoincrement": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "matches_group_id_idx": {
+          "name": "matches_group_id_idx",
+          "columns": [
+            "group_id"
+          ],
+          "isUnique": false
+        },
+        "matches_stage_id_idx": {
+          "name": "matches_stage_id_idx",
+          "columns": [
+            "stage_id"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {
         "matches_group_id_groups_ID_fk": {
           "name": "matches_group_id_groups_ID_fk",
@@ -1238,7 +1342,29 @@
           "autoincrement": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "player_stats_player_id_idx": {
+          "name": "player_stats_player_id_idx",
+          "columns": [
+            "player_id"
+          ],
+          "isUnique": false
+        },
+        "player_stats_match_id_idx": {
+          "name": "player_stats_match_id_idx",
+          "columns": [
+            "match_id"
+          ],
+          "isUnique": false
+        },
+        "player_stats_map_id_idx": {
+          "name": "player_stats_map_id_idx",
+          "columns": [
+            "map_id"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {
         "player_stats_player_id_players_ID_fk": {
           "name": "player_stats_player_id_players_ID_fk",
@@ -1351,7 +1477,22 @@
           "autoincrement": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "players_team_id_idx": {
+          "name": "players_team_id_idx",
+          "columns": [
+            "team_id"
+          ],
+          "isUnique": false
+        },
+        "players_user_id_idx": {
+          "name": "players_user_id_idx",
+          "columns": [
+            "user_id"
+          ],
+          "isUnique": false
+        }
+      },
       "foreignKeys": {
         "players_team_id_teams_ID_fk": {
           "name": "players_team_id_teams_ID_fk",

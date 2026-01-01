@@ -34,7 +34,8 @@ export const matchRepository = {
                     isNull(matchParticipants.deleted_at),
                     isNull(teams.deleted_at)
                 )
-            );
+            )
+            .orderBy(matchParticipants.position);
     },
 
     findGroupById: async (groupId: number) => {

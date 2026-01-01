@@ -74,7 +74,8 @@ export const teamRepository = {
                     isNull(matchParticipants.deleted_at),
                     isNull(teams.deleted_at)
                 )
-            );
+            )
+            .orderBy(matchParticipants.position);
     },
 
     findPlayersByTeamId: async (teamId: number) => {

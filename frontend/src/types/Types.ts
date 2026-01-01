@@ -1,4 +1,5 @@
 import type { Team } from "@/types/TeamModel";
+import { MatchParticipant } from "./MatchParticipantModel";
 
 export type Match = {
     match_id: string;
@@ -10,10 +11,7 @@ export type Match = {
     team1_id?: string | null;
     team2_id?: string | null;
     winner?: string | null;
-    teams?: {
-        team1: Team | null;
-        team2: Team | null;
-    };
+    participants?: MatchParticipant[];
     team1_score?: number | null;
     team2_score?: number | null;
     caster_id?: number;
@@ -40,8 +38,6 @@ export type MatchMap = {
     map_name: string;
     round: number;
     winner_id: string;
-    team1_score: number;
-    team2_score: number;
     teams: {
         team_id: string;
         team_name: string;
@@ -76,7 +72,6 @@ export type MatchesWithCasters = {
         user_name: string;
         email: string;
         faceit_id: string;
-        team_id: string;
     }[];
 };
 

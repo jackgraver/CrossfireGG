@@ -51,15 +51,18 @@ export const teamService = {
                     match.ID
                 );
 
-                const team1Data = participants[0]?.team;
-                const team2Data = participants[1]?.team;
-                const team1Participant = participants[0]?.participant;
-                const team2Participant = participants[1]?.participant;
+                const team1Entry = participants.find(p => p.participant.position === 1);
+                const team2Entry = participants.find(p => p.participant.position === 2);
+
+                const team1Data = team1Entry?.team;
+                const team2Data = team2Entry?.team;
+                const team1Participant = team1Entry?.participant;
+                const team2Participant = team2Entry?.participant;
 
                 const winnerId =
-                    team1Participant?.winner === 1
+                    team1Participant?.winner === true
                         ? team1Data?.ID.toString()
-                        : team2Participant?.winner === 1
+                        : team2Participant?.winner === true
                         ? team2Data?.ID.toString()
                         : null;
 
@@ -95,7 +98,7 @@ export const teamService = {
                     team1_id: team1?.team_id || null,
                     team2_id: team2?.team_id || null,
                     winner: winnerId,
-                    team1_score: 0, //TODO: fix this for actual scores
+                    team1_score: 0,
                     team2_score: 0,
                     teams: { team1, team2 },
                 };

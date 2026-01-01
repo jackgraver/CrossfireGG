@@ -1,83 +1,120 @@
-import { sqliteTable, integer, text } from "drizzle-orm/sqlite-core";
+import { sqliteTable, integer, text, unique, index } from "drizzle-orm/sqlite-core";
 import { relations } from "drizzle-orm";
 
-export const matches = sqliteTable("matches", {
-    ID: integer("ID").primaryKey({ autoIncrement: true }),
-    group_id: integer("group_id").references(
-        (): any => require("./tournament").groups.ID
-    ),
-    stage_id: integer("stage_id").references(
-        (): any => require("./tournament").stages.ID
-    ),
-    round: text("round"),
-    status: text("status"),
-    scheduled_at: integer("scheduled_at", { mode: "timestamp" }),
-    faceit_url: text("faceit_url"),
-    created_at: integer("created_at", { mode: "timestamp" })
-        .notNull()
-        .$defaultFn(() => new Date()),
-    updated_at: integer("updated_at", { mode: "timestamp" })
-        .notNull()
-        .$defaultFn(() => new Date()),
-    deleted_at: integer("deleted_at", { mode: "timestamp" }),
-});
+export const matches = sqliteTable(
+    "matches",
+    {
+        ID: integer("ID").primaryKey({ autoIncrement: true }),
+        group_id: integer("group_id").references(
+            (): any => require("./tournament").groups.ID,
+            { onDelete: "cascade" }
+        ),
+        stage_id: integer("stage_id").references(
+            (): any => require("./tournament").stages.ID,
+            { onDelete: "cascade" }
+        ),
+        match_number: integer("match_number"),
+        round: text("round"),
+        status: text("status").default("scheduled"),
+        best_of: integer("best_of").default(1),
+        stream_url: text("stream_url"),
+        notes: text("notes"),
+        venue: text("venue"),
+        scheduled_at: integer("scheduled_at", { mode: "timestamp" }),
+        faceit_url: text("faceit_url"),
+        created_at: integer("created_at", { mode: "timestamp" })
+            .notNull()
+            .$defaultFn(() => new Date()),
+        updated_at: integer("updated_at", { mode: "timestamp" })
+            .notNull()
+            .$defaultFn(() => new Date()),
+        deleted_at: integer("deleted_at", { mode: "timestamp" }),
+    },
+    (table) => ({
+        groupIdIdx: index("matches_group_id_idx").on(table.group_id),
+        stageIdIdx: index("matches_stage_id_idx").on(table.stage_id),
+    })
+);
 
-export const matchParticipants = sqliteTable("match_participants", {
-    ID: integer("ID").primaryKey({ autoIncrement: true }),
-    match_id: integer("match_id")
-        .notNull()
-        .references(() => matches.ID),
-    team_id: integer("team_id")
-        .notNull()
-        .references((): any => require("./team").teams.ID),
-    winner: integer("winner").default(0),
-    created_at: integer("created_at", { mode: "timestamp" })
-        .notNull()
-        .$defaultFn(() => new Date()),
-    updated_at: integer("updated_at", { mode: "timestamp" })
-        .notNull()
-        .$defaultFn(() => new Date()),
-    deleted_at: integer("deleted_at", { mode: "timestamp" }),
-});
+export const matchParticipants = sqliteTable(
+    "match_participants",
+    {
+        ID: integer("ID").primaryKey({ autoIncrement: true }),
+        match_id: integer("match_id")
+            .notNull()
+            .references(() => matches.ID, { onDelete: "cascade" }),
+        team_id: integer("team_id")
+            .notNull()
+            .references((): any => require("./team").teams.ID, { onDelete: "cascade" }),
+        position: integer("position").notNull(),
+        winner: integer("winner", { mode: "boolean" }).default(false),
+        created_at: integer("created_at", { mode: "timestamp" })
+            .notNull()
+            .$defaultFn(() => new Date()),
+        updated_at: integer("updated_at", { mode: "timestamp" })
+            .notNull()
+            .$defaultFn(() => new Date()),
+        deleted_at: integer("deleted_at", { mode: "timestamp" }),
+    },
+    (table) => ({
+        uniqueMatchPosition: unique().on(table.match_id, table.position),
+        uniqueMatchTeam: unique().on(table.match_id, table.team_id),
+        matchIdIdx: index("match_participants_match_id_idx").on(table.match_id),
+        teamIdIdx: index("match_participants_team_id_idx").on(table.team_id),
+    })
+);
 
-export const maps = sqliteTable("maps", {
-    ID: integer("ID").primaryKey({ autoIncrement: true }),
-    match_id: integer("match_id")
-        .notNull()
-        .references(() => matches.ID),
-    map_name: text("map_name").notNull(),
-    round: text("round"),
-    winner_id: integer("winner_id").references(() => matchParticipants.ID),
-    team1_score: integer("team1_score").default(0),
-    team2_score: integer("team2_score").default(0),
-    created_at: integer("created_at", { mode: "timestamp" })
-        .notNull()
-        .$defaultFn(() => new Date()),
-    updated_at: integer("updated_at", { mode: "timestamp" })
-        .notNull()
-        .$defaultFn(() => new Date()),
-    deleted_at: integer("deleted_at", { mode: "timestamp" }),
-});
+export const maps = sqliteTable(
+    "maps",
+    {
+        ID: integer("ID").primaryKey({ autoIncrement: true }),
+        match_id: integer("match_id")
+            .notNull()
+            .references(() => matches.ID, { onDelete: "cascade" }),
+        map_name: text("map_name").notNull(),
+        map_order: integer("map_order"),
+        round: text("round"),
+        winner_id: integer("winner_id").references(() => matchParticipants.ID, { onDelete: "set null" }),
+        created_at: integer("created_at", { mode: "timestamp" })
+            .notNull()
+            .$defaultFn(() => new Date()),
+        updated_at: integer("updated_at", { mode: "timestamp" })
+            .notNull()
+            .$defaultFn(() => new Date()),
+        deleted_at: integer("deleted_at", { mode: "timestamp" }),
+    },
+    (table) => ({
+        matchIdIdx: index("maps_match_id_idx").on(table.match_id),
+        winnerIdIdx: index("maps_winner_id_idx").on(table.winner_id),
+    })
+);
 
-export const matchCasters = sqliteTable("match_casters", {
-    ID: integer("ID").primaryKey({ autoIncrement: true }),
-    match_id: integer("match_id")
-        .notNull()
-        .references(() => matches.ID),
-    caster_id: integer("caster_id")
-        .notNull()
-        .references((): any => require("./user").users.ID),
-    assigned_at: integer("assigned_at", { mode: "timestamp" }).$defaultFn(
-        () => new Date()
-    ),
-    created_at: integer("created_at", { mode: "timestamp" })
-        .notNull()
-        .$defaultFn(() => new Date()),
-    updated_at: integer("updated_at", { mode: "timestamp" })
-        .notNull()
-        .$defaultFn(() => new Date()),
-    deleted_at: integer("deleted_at", { mode: "timestamp" }),
-});
+export const matchCasters = sqliteTable(
+    "match_casters",
+    {
+        ID: integer("ID").primaryKey({ autoIncrement: true }),
+        match_id: integer("match_id")
+            .notNull()
+            .references(() => matches.ID, { onDelete: "cascade" }),
+        caster_id: integer("caster_id")
+            .notNull()
+            .references((): any => require("./user").users.ID, { onDelete: "cascade" }),
+        assigned_at: integer("assigned_at", { mode: "timestamp" }).$defaultFn(
+            () => new Date()
+        ),
+        created_at: integer("created_at", { mode: "timestamp" })
+            .notNull()
+            .$defaultFn(() => new Date()),
+        updated_at: integer("updated_at", { mode: "timestamp" })
+            .notNull()
+            .$defaultFn(() => new Date()),
+        deleted_at: integer("deleted_at", { mode: "timestamp" }),
+    },
+    (table) => ({
+        matchIdIdx: index("match_casters_match_id_idx").on(table.match_id),
+        casterIdIdx: index("match_casters_caster_id_idx").on(table.caster_id),
+    })
+);
 
 // ============================== RELATIONS ============================== //
 
@@ -111,6 +148,8 @@ export const matchesRelations = relations(matches, ({ one, many }) => ({
  * A match participant represents one team's participation in a match:
  * - Belongs to one match
  * - Represents one team
+ * - Has a position (1 or 2) indicating which side they're on
+ * - Can be the winner of the match
  * - Can be the winner of multiple maps (reverse relationship from maps.winner_id)
  */
 export const matchParticipantsRelations = relations(

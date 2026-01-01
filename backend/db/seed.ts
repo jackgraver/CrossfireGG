@@ -42,7 +42,7 @@ interface SeedData {
         stage_id: number | null;
         status: string | null;
     }>;
-    matchParticipants: Array<{ ID: number; match_id: number; team_id: number }>;
+    matchParticipants: Array<{ ID: number; match_id: number; team_id: number; position: number }>;
     maps: Array<{ ID: number; match_id: number; winner_id: number | null }>;
 }
 
@@ -113,8 +113,8 @@ async function seedStageFormats() {
     for (const format of formatNames) {
         const [formatRecord] = await db
             .insert(stageFormats)
-            .values({ format })
-            .returning({ ID: stageFormats.ID, format: stageFormats.format });
+            .values({ name: format })
+            .returning({ ID: stageFormats.ID, format: stageFormats.name });
         seedData.stageFormats.push(formatRecord);
     }
     console.log(`Created ${seedData.stageFormats.length} stage formats`);
@@ -130,7 +130,6 @@ async function seedUsers() {
                 name: faker.person.fullName(),
                 email: faker.internet.email().toLowerCase(),
                 password: hashPassword("password123"),
-                team_id: null,
                 created_at: new Date(),
                 updated_at: new Date(),
             })
@@ -168,25 +167,8 @@ async function seedTeams() {
 }
 
 async function linkUsersToTeams() {
-    console.log("Linking users to teams...");
-    const teamIds = seedData.teams.map((t) => t.ID);
-    const usersWithoutTeam = seedData.users.filter(
-        (u) => !seedData.teams.some((t) => t.team_captain_id === u.ID)
-    );
-    const usersToLink = faker.helpers.arrayElements(
-        usersWithoutTeam,
-        Math.min(teamIds.length * 3, usersWithoutTeam.length)
-    );
-    let teamIndex = 0;
-    for (const user of usersToLink) {
-        const teamId = teamIds[teamIndex % teamIds.length];
-        await db
-            .update(users)
-            .set({ team_id: teamId })
-            .where(eq(users.ID, user.ID));
-        teamIndex++;
-    }
-    console.log(`Linked ${usersToLink.length} users to teams`);
+    console.log("Note: Users are no longer directly linked to teams via user.team_id");
+    console.log("Team membership is now handled through the players table");
 }
 
 async function seedTournaments() {
@@ -456,7 +438,8 @@ async function seedMatchParticipants() {
                     .values({
                         match_id: match.ID,
                         team_id: selectedTeams[i],
-                        winner: i === 0 && match.status === "FINISHED" ? 1 : 0,
+                        position: i + 1,
+                        winner: i === 0 && match.status === "FINISHED",
                         created_at: new Date(),
                         updated_at: new Date(),
                     })
@@ -464,6 +447,7 @@ async function seedMatchParticipants() {
                         ID: matchParticipants.ID,
                         match_id: matchParticipants.match_id,
                         team_id: matchParticipants.team_id,
+                        position: matchParticipants.position,
                     });
                 seedData.matchParticipants.push(participant);
             }
@@ -503,8 +487,6 @@ async function seedMaps() {
                         map_name: faker.helpers.arrayElement(mapNames),
                         round: `${i + 1}`,
                         winner_id: winner,
-                        team1_score: faker.number.int({ min: 0, max: 16 }),
-                        team2_score: faker.number.int({ min: 0, max: 16 }),
                         created_at: new Date(),
                         updated_at: new Date(),
                     })
