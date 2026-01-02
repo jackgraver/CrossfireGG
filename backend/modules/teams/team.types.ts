@@ -31,18 +31,29 @@ export interface FormattedMatch {
     scheduled_at: number | null;
     round: string | null;
     faceit_url: string | null;
-    team1_id: string | null;
-    team2_id: string | null;
-    winner: string | null;
-    team1_score: number | null;
-    team2_score: number | null;
-    teams: {
+    participants: {
         team1: FormattedTeam | null;
         team2: FormattedTeam | null;
     };
 }
 
+export interface FormattedStage {
+    stage_id: string;
+    stage_name: string;
+    seed?: number;
+    wins?: number;
+    losses?: number;
+    paid?: number;
+    joined_tournament?: number;
+}
+
+export interface FormattedTournament {
+    tournament_id: string;
+    tournament_name: string;
+    stages: FormattedStage[];
+}
+
 export interface TeamDetailResponse {
     team: FormattedTeam;
-    matches: FormattedMatch[];
+    tournaments: FormattedTournament[];
 }

@@ -48,13 +48,13 @@ export default function NavBar({ session }: { session: any }) {
                         </div>
                         <div className="mt-4 flex h-min flex-col items-center gap-1 rounded-md bg-red-500 px-1 py-1">
                             <p className="pointer-events-none">ALPHA RELEASE</p>
-                            {hasSession(session) ? (
+                            {/* {hasSession(session) ? (
                                 <p>
                                     {session?.name + " | " + session?.team_id}
                                 </p>
                             ) : (
                                 <p>Not signed in</p>
-                            )}
+                            )} */}
                         </div>
 
                         <div className="flex items-center">

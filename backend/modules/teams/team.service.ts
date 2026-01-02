@@ -3,12 +3,13 @@ import type {
     TeamDetailResponse,
     FormattedTeam,
     FormattedMatch,
+    FormattedStage,
+    FormattedTournament,
 } from "./team.types";
 
 export const teamService = {
     getTeamById: async (
-        teamId: number,
-        stageId?: number
+        teamId: number
     ): Promise<TeamDetailResponse | null> => {
         const team = await teamRepository.findById(teamId);
 
@@ -16,34 +17,67 @@ export const teamService = {
             return null;
         }
 
-        const stageTeam = stageId
-            ? await teamRepository.findStageTeam(teamId, stageId)
-            : undefined;
-
         const formattedTeam: FormattedTeam = {
             team_id: team.ID.toString(),
             team_name: team.name,
             team_logo: team.team_logo || null,
             faceit_id: team.faceit_id || null,
             team_captain_id: team.team_captain_id.toString(),
-            win: stageTeam?.wins ?? undefined,
-            loss: stageTeam?.losses ?? undefined,
-            seed: stageTeam?.seed ?? undefined,
-            paid:
-                stageTeam?.paid !== undefined
-                    ? stageTeam.paid
-                        ? 1
-                        : 0
-                    : undefined,
-            joined_tournament:
-                stageTeam?.signed_up !== undefined
-                    ? stageTeam.signed_up
-                        ? 1
-                        : 0
-                    : undefined,
         };
 
-        const teamMatches = await teamRepository.findMatchesByTeamId(teamId);
+        const teamStages = await teamRepository.findStagesByTeamId(teamId);
+
+        const tournamentMap = new Map<number, FormattedTournament>();
+
+        teamStages.forEach((item) => {
+            const tournamentId = item.tournament.ID;
+            
+            if (!tournamentMap.has(tournamentId)) {
+                tournamentMap.set(tournamentId, {
+                    tournament_id: tournamentId.toString(),
+                    tournament_name: item.tournament.name,
+                    stages: [],
+                });
+            }
+
+            const tournament = tournamentMap.get(tournamentId)!;
+            tournament.stages.push({
+                stage_id: item.stage.ID.toString(),
+                stage_name: item.stage.name,
+                seed: item.stageTeam.seed ?? undefined,
+                wins: item.stageTeam.wins ?? undefined,
+                losses: item.stageTeam.losses ?? undefined,
+                paid:
+                    item.stageTeam.paid !== undefined
+                        ? item.stageTeam.paid
+                            ? 1
+                            : 0
+                        : undefined,
+                joined_tournament:
+                    item.stageTeam.signed_up !== undefined
+                        ? item.stageTeam.signed_up
+                            ? 1
+                            : 0
+                        : undefined,
+            });
+        });
+
+        const tournaments = Array.from(tournamentMap.values());
+
+        return {
+            team: formattedTeam,
+            tournaments: tournaments,
+        };
+    },
+
+    getTeamMatchesByStage: async (
+        teamId: number,
+        stageId: number
+    ): Promise<FormattedMatch[]> => {
+        const teamMatches = await teamRepository.findMatchesByTeamIdAndStageId(
+            teamId,
+            stageId
+        );
 
         const formattedMatches: FormattedMatch[] = await Promise.all(
             teamMatches.map(async (match) => {
@@ -56,15 +90,6 @@ export const teamService = {
 
                 const team1Data = team1Entry?.team;
                 const team2Data = team2Entry?.team;
-                const team1Participant = team1Entry?.participant;
-                const team2Participant = team2Entry?.participant;
-
-                // const winnerId =
-                //     team1Participant?.winner === true
-                //         ? team1Data?.ID.toString()
-                //         : team2Participant?.winner === true
-                //         ? team2Data?.ID.toString()
-                //         : null;
 
                 const team1: FormattedTeam | null = team1Data
                     ? {
@@ -95,20 +120,15 @@ export const teamService = {
                         : null,
                     round: match.round || null,
                     faceit_url: match.faceit_url || null,
-                    team1_id: team1?.team_id || null,
-                    team2_id: team2?.team_id || null,
-                    winner: null,
-                    team1_score: 0,
-                    team2_score: 0,
-                    teams: { team1, team2 },
+                    participants: {
+                        team1: team1,
+                        team2: team2,
+                    }
                 };
             })
         );
 
-        return {
-            team: formattedTeam,
-            matches: formattedMatches,
-        };
+        return formattedMatches;
     },
 
     getTeamPlayers: async (teamId: number) => {

@@ -1,12 +1,21 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { teamApi, type TeamDetailResponse } from "../-api/teamApi";
+import { teamApi } from "../-api/teamApi";
+import type { TeamDetailResponse, FormattedMatch } from "@/types/TeamModel";
 import type { Player } from "@/types/PlayerModel";
 
-export const useTeam = (teamId: string, tournamentId?: string) => {
+export const useTeam = (teamId: string) => {
     return useQuery<TeamDetailResponse>({
-        queryKey: ["team", teamId, tournamentId],
-        queryFn: () => teamApi.getTeamById(teamId, tournamentId),
+        queryKey: ["team", teamId],
+        queryFn: () => teamApi.getTeamById(teamId),
         enabled: !!teamId,
+    });
+};
+
+export const useTeamMatchesByStage = (teamId: string, stageId: string | null) => {
+    return useQuery<FormattedMatch[]>({
+        queryKey: ["team", teamId, "stage", stageId, "matches"],
+        queryFn: () => teamApi.getTeamMatchesByStage(teamId, stageId!),
+        enabled: !!teamId && !!stageId,
     });
 };
 

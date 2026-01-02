@@ -6,18 +6,12 @@ export const teamController = {
     getTeamById: async (req: Request, res: Response) => {
         try {
             const teamId = parseInt(req.params.teamId);
-            const stageId = req.query.stage_id
-                ? parseInt(req.query.stage_id as string)
-                : undefined;
 
             if (isNaN(teamId)) {
                 return res.status(400).json({ error: "Invalid team ID" });
             }
 
-            const teamDetails = await teamService.getTeamById(
-                teamId,
-                stageId
-            );
+            const teamDetails = await teamService.getTeamById(teamId);
 
             if (!teamDetails) {
                 return res.status(404).json({ error: "Team not found" });
@@ -30,6 +24,30 @@ export const teamController = {
                 error
             );
             res.status(500).json({ error: "Failed to fetch team details" });
+        }
+    },
+
+    getTeamMatchesByStage: async (req: Request, res: Response) => {
+        try {
+            const teamId = parseInt(req.params.teamId);
+            const stageId = parseInt(req.params.stageId);
+
+            if (isNaN(teamId)) {
+                return res.status(400).json({ error: "Invalid team ID" });
+            }
+
+            if (isNaN(stageId)) {
+                return res.status(400).json({ error: "Invalid stage ID" });
+            }
+
+            const matches = await teamService.getTeamMatchesByStage(teamId, stageId);
+            res.json(matches);
+        } catch (error: any) {
+            logger.error(
+                `Error in getTeamMatchesByStage for team ID ${req.params.teamId} and stage ID ${req.params.stageId}:`,
+                error
+            );
+            res.status(500).json({ error: "Failed to fetch team matches" });
         }
     },
 

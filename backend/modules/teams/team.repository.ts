@@ -5,6 +5,8 @@ import {
     matches,
     matchParticipants,
     players,
+    stages,
+    tournaments,
 } from "../../schemas";
 import { eq, and, isNull, inArray, like, or, ne } from "drizzle-orm";
 
@@ -57,6 +59,53 @@ export const teamRepository = {
             .from(matches)
             .where(
                 and(inArray(matches.ID, matchIds), isNull(matches.deleted_at))
+            );
+    },
+
+    findMatchesByTeamIdAndStageId: async (teamId: number, stageId: number) => {
+        const teamMatches = await db
+            .select({ match_id: matchParticipants.match_id })
+            .from(matchParticipants)
+            .where(
+                and(
+                    eq(matchParticipants.team_id, teamId),
+                    isNull(matchParticipants.deleted_at)
+                )
+            );
+
+        const matchIds = teamMatches.map((m) => m.match_id);
+
+        if (matchIds.length === 0) return [];
+
+        return await db
+            .select()
+            .from(matches)
+            .where(
+                and(
+                    inArray(matches.ID, matchIds),
+                    eq(matches.stage_id, stageId),
+                    isNull(matches.deleted_at)
+                )
+            );
+    },
+
+    findStagesByTeamId: async (teamId: number) => {
+        return await db
+            .select({
+                stageTeam: stageTeams,
+                stage: stages,
+                tournament: tournaments,
+            })
+            .from(stageTeams)
+            .innerJoin(stages, eq(stageTeams.stage_id, stages.ID))
+            .innerJoin(tournaments, eq(stages.tournament_id, tournaments.ID))
+            .where(
+                and(
+                    eq(stageTeams.team_id, teamId),
+                    isNull(stageTeams.deleted_at),
+                    isNull(stages.deleted_at),
+                    isNull(tournaments.deleted_at)
+                )
             );
     },
 

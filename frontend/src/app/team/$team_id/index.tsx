@@ -2,8 +2,9 @@ import {
     createFileRoute,
     Link,
 } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
 import { BooleanStatus } from "@/types/TeamModel";
-import { useTeam } from "../-queries/teamQueries";
+import { useTeam, useTeamMatchesByStage } from "../-queries/teamQueries";
 import { formatDateOnly } from "@/lib/dateUtils";
 import TeamLogo from "@/shared/bracket/atoms/TeamLogo";
 import { openInNewTab } from "@/lib/NewTab";
@@ -53,6 +54,7 @@ export const Route = createFileRoute("/team/$team_id/")({
 function Team() {
     const { team_id } = Route.useParams();
     const session = Route.useRouteContext().session;
+    const [selectedStageId, setSelectedStageId] = useState<string | null>(null);
 
     if (!team_id) {
         return (
@@ -61,6 +63,21 @@ function Team() {
     }
 
     const { data, isLoading, error } = useTeam(team_id);
+
+    useEffect(() => {
+        if (data?.tournaments && data.tournaments.length > 0 && !selectedStageId) {
+            // Find the first available stage
+            const firstTournament = data.tournaments[0];
+            if (firstTournament.stages && firstTournament.stages.length > 0) {
+                setSelectedStageId(firstTournament.stages[0].stage_id);
+            }
+        }
+    }, [data, selectedStageId]);
+
+    const { data: matches, isLoading: isLoadingMatches } = useTeamMatchesByStage(
+        team_id,
+        selectedStageId,
+    );
 
     if (isLoading) {
         return (
@@ -80,7 +97,7 @@ function Team() {
         return <TeamNotFoundFallback />;
     }
 
-    const { team, matches } = data;
+    const { team, tournaments } = data;
 
     const canManagePlayers =
         session?.team_id &&
@@ -97,69 +114,97 @@ function Team() {
                     <div className="flex-1">
                         <div className="mb-4 flex flex-row items-center gap-x-2">
                             <h1 className="text-textPrimary text-3xl font-bold">
-                                {team.name}
+                                {team.team_name}
                             </h1>
-                            {team.win !== undefined &&
-                                team.loss !== undefined && (
-                                    <h2 className="text-textSecondary text-2xl font-bold">
-                                        ({team.win}-{team.loss})
-                                    </h2>
-                                )}
-                        </div>
-                        <div className="text-textPrimary flex flex-wrap gap-6">
-                            {team.seed !== undefined && (
-                                <div className="flex flex-col">
-                                    <span className="text-textSecondary text-sm font-semibold">
-                                        Seed:
-                                    </span>
-                                    <span className="text-textSecondary text-lg">
-                                        {team.seed}
-                                    </span>
-                                </div>
-                            )}
-                            {team.paid !== undefined && (
-                                <div className="flex flex-col">
-                                    <span className="text-textSecondary text-sm font-semibold">
-                                        Paid:
-                                    </span>
-                                    <span className="text-textSecondary text-lg">
-                                        {team.paid === BooleanStatus.True
-                                            ? "Yes"
-                                            : team.paid ===
-                                                BooleanStatus.Pending
-                                              ? "Pending"
-                                              : "No"}
-                                    </span>
-                                </div>
-                            )}
-                            {team.joined_tournament !== undefined && (
-                                <div className="flex flex-col">
-                                    <span className="text-textSecondary text-sm font-semibold">
-                                        Joined Tournament:
-                                    </span>
-                                    <span className="text-textSecondary text-lg">
-                                        {team.joined_tournament ===
-                                        BooleanStatus.True
-                                            ? "Yes"
-                                            : team.joined_tournament ===
-                                                BooleanStatus.Pending
-                                              ? "Pending"
-                                              : "No"}
-                                    </span>
-                                </div>
-                            )}
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2">
+                {tournaments.map((tournament) => (
+                    <div
+                        key={tournament.tournament_id}
+                        className="bg-firstBg rounded-xl p-6 shadow-md"
+                    >
+                        <h2 className="text-textPrimary mb-4 text-xl font-bold">
+                            {tournament.tournament_name}
+                        </h2>
+                        <div className="flex flex-col gap-3">
+                            {tournament.stages.map((stage) => (
+                                <button
+                                    key={stage.stage_id}
+                                    onClick={() =>
+                                        setSelectedStageId(stage.stage_id)
+                                    }
+                                    className={`flex flex-col rounded-lg border p-4 text-left transition-all ${
+                                        selectedStageId === stage.stage_id
+                                            ? "border-accent bg-accent/10 shadow-sm"
+                                            : "border-border bg-secondBg hover:bg-thirdBg"
+                                    }`}
+                                >
+                                    <span className="text-textPrimary font-semibold">
+                                        {stage.stage_name}
+                                    </span>
+                                    <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs">
+                                        {stage.wins !== undefined &&
+                                            stage.losses !== undefined && (
+                                                <span className="text-textSecondary">
+                                                    Record: {stage.wins}-
+                                                    {stage.losses}
+                                                </span>
+                                            )}
+                                        {stage.seed !== undefined && (
+                                            <span className="text-textSecondary">
+                                                Seed: {stage.seed}
+                                            </span>
+                                        )}
+                                        {stage.paid !== undefined && (
+                                            <span className="text-textSecondary">
+                                                Paid:{" "}
+                                                {stage.paid ===
+                                                BooleanStatus.True
+                                                    ? "Yes"
+                                                    : "No"}
+                                            </span>
+                                        )}
+                                        {stage.joined_tournament !==
+                                            undefined && (
+                                            <span className="text-textSecondary">
+                                                Signed Up:{" "}
+                                                {stage.joined_tournament ===
+                                                BooleanStatus.True
+                                                    ? "Yes"
+                                                    : "No"}
+                                            </span>
+                                        )}
+                                    </div>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                ))}
             </div>
             {canManagePlayers && (
                 <TeamPlayerManagement team_id={team_id} team={team} />
             )}
             <div className="bg-firstBg rounded-xl p-8 shadow-md">
                 <h2 className="text-textPrimary mb-6 text-2xl font-bold">
-                    Match History
+                    {selectedStageId
+                        ? `Matches - ${
+                              tournaments
+                                  .flatMap((t) => t.stages)
+                                  .find((s) => s.stage_id === selectedStageId)
+                                  ?.stage_name || "Stage"
+                          }`
+                        : "Match History"}
                 </h2>
-                {matches && matches.length > 0 ? (
+
+                {isLoadingMatches ? (
+                    <div className="text-textSecondary py-10 text-center">
+                        Loading matches...
+                    </div>
+                ) : matches && matches.length > 0 ? (
                     <div className="flex flex-col gap-4">
                         {matches
                             .sort(
@@ -168,25 +213,23 @@ function Team() {
                                     (a.scheduled_at ?? 0),
                             )
                             .map((match) => {
-                                const getMatchResult = () => {
+                                const getMatchResult = (): "Scheduled" | "W" | "L" | "-" => {
                                     if (match.status !== "FINISHED")
                                         return "Scheduled";
-                                    if (match.winner === team.team_id)
-                                        return "W";
-                                    return "L";
+                                    return "-"; 
                                 };
 
                                 const getMatchScore = () => {
                                     if (match.status !== "FINISHED")
                                         return "vs";
-                                    return `${match.team1_score ?? 0}-${match.team2_score ?? 0}`;
+                                    return "vs";
                                 };
 
                                 const getOpponent = () => {
-                                    return match?.participants?.[0]?.team_id ===
-                                        team.team_id
-                                        ? match?.participants?.[1]?.team?.name
-                                        : match?.participants?.[0]?.team?.name;
+                                    const isTeam1 = match.participants?.team1?.team_id === team.team_id;
+                                    return isTeam1 
+                                        ? match.participants?.team2?.team_name 
+                                        : match.participants?.team1?.team_name;
                                 };
 
                                 const result = getMatchResult();
@@ -220,7 +263,7 @@ function Team() {
                                         <div className="flex items-center justify-between">
                                             <div className="flex flex-1 items-center gap-4">
                                                 <span className="text-textPrimary font-semibold">
-                                                    {team.name}
+                                                    {team.team_name}
                                                 </span>
                                                 <span className="text-textPrimary min-w-[60px] text-center text-lg font-bold">
                                                     {score}
@@ -230,17 +273,19 @@ function Team() {
                                                 </span>
                                             </div>
                                             <div className="flex flex-col items-end gap-1">
-                                                <span
-                                                    className={`min-w-[30px] rounded-full px-3 py-1 text-center text-sm font-bold ${
-                                                        result === "W"
-                                                            ? "bg-green-100 text-green-700"
-                                                            : result === "L"
-                                                              ? "bg-red-100 text-red-700"
-                                                              : "bg-orange-100 text-orange-600"
-                                                    }`}
-                                                >
-                                                    {result}
-                                                </span>
+                                                {result !== "-" && (
+                                                    <span
+                                                        className={`min-w-[30px] rounded-full px-3 py-1 text-center text-sm font-bold ${
+                                                            result === "W"
+                                                                ? "bg-green-100 text-green-700"
+                                                                : result === "L"
+                                                                  ? "bg-red-100 text-red-700"
+                                                                  : "bg-orange-100 text-orange-600"
+                                                        }`}
+                                                    >
+                                                        {result}
+                                                    </span>
+                                                )}
                                                 {match.status && (
                                                     <span className="text-textSecondary text-xs uppercase">
                                                         {match.status}
@@ -254,7 +299,7 @@ function Team() {
                     </div>
                 ) : (
                     <div className="text-textSecondary py-10 text-center text-base">
-                        No matches found.
+                        No matches found for this stage.
                     </div>
                 )}
             </div>
