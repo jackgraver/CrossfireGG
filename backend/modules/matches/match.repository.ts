@@ -49,7 +49,20 @@ export const matchRepository = {
 
     findStageById: async (stageId: number) => {
         const result = await db
-            .select()
+            .select({
+                ID: stages.ID,
+                tournament_id: stages.tournament_id,
+                name: stages.name,
+                faceit_id: stages.faceit_id,
+                max_teams: stages.max_teams,
+                format_id: stages.format_id,
+                is_current: stages.is_current,
+                start_date: stages.start_date,
+                end_date: stages.end_date,
+                created_at: stages.created_at,
+                updated_at: stages.updated_at,
+                deleted_at: stages.deleted_at,
+            })
             .from(stages)
             .where(eq(stages.ID, stageId))
             .limit(1);

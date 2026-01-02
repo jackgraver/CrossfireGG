@@ -1,6 +1,6 @@
 export type Team = {
     team_id: string; // primary key
-    team_name: string;
+    name: string;
     team_logo?: string | null;
     faceit_id: string;
     team_captain_id: string;

@@ -1,17 +1,23 @@
 import { Request, Response } from "express";
 import { matchService } from "./match.service";
 import { logger } from "../../core/logger";
+import { MatchParamsSchema } from "./match.validation";
 
 export const matchController = {
     getMatchById: async (req: Request, res: Response) => {
         try {
-            const matchId = parseInt(req.params.matchId);
-
-            if (isNaN(matchId)) {
-                return res.status(400).json({ error: "Invalid match ID" });
+            const validation = MatchParamsSchema.safeParse(req.params);
+            if (!validation.success) {
+                return res.status(400).json({
+                    error: "Validation failed",
+                    details: validation.error.issues.map((err) => ({
+                        path: err.path.join("."),
+                        message: err.message,
+                    })),
+                });
             }
 
-            const match = await matchService.getMatchById(matchId);
+            const match = await matchService.getMatchById(validation.data.matchId);
             res.json(match);
         } catch (error: any) {
             if (

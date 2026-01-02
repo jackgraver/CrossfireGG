@@ -25,18 +25,13 @@ export function MatchTeam({
                 <span className="text-sm">{team?.seed}</span>
             </div>
             <div className="min-w-0 text-left">
-                <span
-                    className="block truncate text-sm"
-                    title={team?.team_name}
-                >
-                    {team?.team_name}
+                <span className="block truncate text-sm" title={team?.name}>
+                    {team?.name}
                 </span>
             </div>
-            {score !== undefined && (
-                <div className="w-8 flex-shrink-0 text-right">
-                    <span className="text-sm font-medium">{score}</span>
-                </div>
-            )}
+            <div className="w-8 flex-shrink-0 text-right">
+                <span className="text-sm font-medium">{score ?? "0"}</span>
+            </div>
         </div>
     );
 }

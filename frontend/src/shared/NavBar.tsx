@@ -24,7 +24,9 @@ export default function NavBar({ session }: { session: any }) {
 
     useEffect(() => {
         const darkPref = localStorage.getItem("theme");
-        if (!darkPref || darkPref === "dark") {
+        if (darkPref === "light") {
+            document.documentElement.classList.remove("dark");
+        } else if (!darkPref || darkPref === "dark") {
             document.documentElement.classList.add("dark");
         }
     }, []);

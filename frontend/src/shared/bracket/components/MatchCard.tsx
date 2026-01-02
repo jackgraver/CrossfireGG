@@ -29,12 +29,12 @@ export default function MatchCard({ match, margin }: MatchCardProps) {
         >
             <MatchTeam
                 team={match.participants![0].team!}
-                winner={match.winner === match.participants![0].team!.team_id}
+                winner={match.participants![0].winner}
                 score={match.team1_score!}
             />
             <MatchTeam
                 team={match.participants![1].team}
-                winner={match.winner === match.participants![1].team!.team_id}
+                winner={match.participants![1].winner}
                 score={match.team2_score!}
             />
 

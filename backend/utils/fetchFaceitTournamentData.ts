@@ -48,9 +48,11 @@ export async function fetchFaceitTournamentData(
     const queryString = new URLSearchParams(
         queryParams as Record<string, string>
     ).toString();
-    const url = `https://open.faceit.com/data/v4/championships/${championshipId}/matches${
-        queryString ? `?${queryString}` : ""
-    }`;
+    const url = `https://open.faceit.com/data/v4/championships/${championshipId}/matches?limit=100`;
+    
+    // ${
+    //     queryString ? `?${queryString}` : ""
+    // }`;
 
     console.log(`[Faceit API] Fetching: ${url}`);
 

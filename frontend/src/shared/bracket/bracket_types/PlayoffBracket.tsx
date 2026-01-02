@@ -1,8 +1,7 @@
-import type { Match } from "../../types/Types";
-import type { Team } from "@/types/TeamModel";
-import RoundCard from "./RoundCard";
-import RoundSection from "./RoundSection";
-import { filterAndSortMatchesByRound } from "./Bracket.util";
+import type { Match } from "../../../types/Types";
+import RoundCard from "../components/RoundCard";
+import RoundSection from "../components/RoundSection";
+import { filterAndSortMatchesByRound } from "../Bracket.util";
 
 type PlayoffBracketProps = {
     matches: Match[];

@@ -1,16 +1,17 @@
 import { StageFormat } from "@/types/TournamentModel";
 import { Match } from "@/types/Types";
 import RegularSeasonBracket from "./bracket_types/RegularSeasonBracket";
+import Groups from "./bracket_types/Groups";
 
 export default function TopLevelBracket({ stageFormat, matches }: { stageFormat: StageFormat | undefined, matches: Match[] }) {
+    console.log('format', stageFormat);
     if (!stageFormat) {
         return <></>
     }
-    console.log(matches);
 
     switch (stageFormat.name.toLowerCase()) {
         case "groups":
-            return <RegularSeasonBracket matches={matches} />
+            return <Groups matches={matches} />
         case "single elimination":
             return null;
         case "swiss":
