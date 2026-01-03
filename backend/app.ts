@@ -9,6 +9,7 @@ import tournamentRoutes from "./modules/tournaments/tournament.routes";
 import matchRoutes from "./modules/matches/match.routes";
 import teamRoutes from "./modules/teams/team.routes";
 import userRoutes from "./modules/users/user.routes";
+import faceitRoutes from "./modules/faceit/faceit.routes";
 
 const app = express();
 
@@ -49,6 +50,7 @@ app.use("/user", userRoutes);
 app.use("/tournament", tournamentRoutes);
 app.use("/match", matchRoutes);
 app.use("/team", teamRoutes);
+app.use("/faceit", faceitRoutes);
 
 app.use(errorHandler);
 

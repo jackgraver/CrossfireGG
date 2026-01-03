@@ -2,7 +2,7 @@
  * Utilities for formatting match rounds based on stage format type
  */
 
-export type StageFormat = 'swiss' | 'single-elimination' | 'double-elimination' | 'roundRobin' | 'unknown';
+export type StageFormat = 'swiss' | 'single-elimination' | 'double-elimination' | 'roundRobin' | 'bracket' | 'unknown';
 
 /**
  * Calculate team record from matches in a Swiss system
@@ -24,7 +24,7 @@ export function calculateSwissRecord(wins: number, losses: number): string {
 export function formatSwissRound(round: number, wins?: number, losses?: number): string {
     const baseRound = `Round ${round}`;
     if (wins !== undefined && losses !== undefined) {
-        return `${baseRound} (${calculateSwissRecord(wins, losses)})`;
+        return `${calculateSwissRecord(wins, losses)}`;
     }
     return baseRound;
 }
@@ -119,8 +119,10 @@ export function formatRound(
 ): string {
     switch (format) {
         case 'swiss':
+        case 'roundRobin':
             return formatSwissRound(round, options?.wins, options?.losses);
         case 'single-elimination':
+        case 'bracket':
             return formatSingleEliminationRound(round, options?.totalTeams);
         case 'double-elimination':
             return formatDoubleEliminationRound(round, options?.bracket, options?.totalTeams);
@@ -132,7 +134,7 @@ export function formatRound(
 }
 
 /**
- * Map FaceIT format types to our internal format enum
+ * Map Faceit format types to our internal format enum
  */
 export function mapFaceitFormatType(faceitType: string): StageFormat {
     const formatMap: Record<string, StageFormat> = {
@@ -143,7 +145,7 @@ export function mapFaceitFormatType(faceitType: string): StageFormat {
         'doubleElimination': 'double-elimination',
         'roundRobin': 'roundRobin',
         'round robin': 'roundRobin',
-        'championship': 'swiss', // FaceIT often uses "championship" for swiss
+        'championship': 'swiss', // Faceit often uses "championship" for swiss
     };
     
     return formatMap[faceitType.toLowerCase()] || 'unknown';

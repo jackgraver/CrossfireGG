@@ -95,7 +95,6 @@ stress_test.py
 backend_py/*
 backend/tmp/
 backend/tmp/
-backend/debug-data/
 
 MD/
 

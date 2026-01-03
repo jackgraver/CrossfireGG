@@ -1,12 +1,16 @@
 /**
- * Utilities to transform FaceIT API data structures into our database schema format
+ * Utilities to transform Faceit API data structures into our database schema format
  */
 
-import { formatRound, mapFaceitFormatType, type StageFormat } from './roundFormatter';
+import {
+    formatRound,
+    mapFaceitFormatType,
+    type StageFormat,
+} from "./roundFormatter";
 
 // ============================== TYPE DEFINITIONS ============================== //
 
-export interface FaceitTournament {
+export interface FaceitAPIChampionship {
     id: string;
     championship_id: string;
     name: string;
@@ -17,12 +21,12 @@ export interface FaceitTournament {
     championship_start: number;
     slots: number;
     current_subscriptions: number;
-    total_groups: number;
+    total_groups?: number;
     total_rounds?: number;
     faceit_url: string;
 }
 
-export interface FaceitPlayer {
+export interface FaceitAPIPlayer {
     player_id: string;
     nickname: string;
     avatar: string;
@@ -30,16 +34,16 @@ export interface FaceitPlayer {
     game_player_name: string;
 }
 
-export interface FaceitTeam {
+export interface FaceitAPITeam {
     faction_id: string;
     leader: string;
     avatar: string;
-    roster: FaceitPlayer[];
+    roster: FaceitAPIPlayer[];
     name: string;
     type: string;
 }
 
-export interface FaceitMatch {
+export interface FaceitAPIMatch {
     match_id: string;
     game: string;
     region: string;
@@ -47,8 +51,8 @@ export interface FaceitMatch {
     competition_type: string;
     competition_name: string;
     teams: {
-        faction1: FaceitTeam;
-        faction2: FaceitTeam;
+        faction1: FaceitAPITeam;
+        faction2: FaceitAPITeam;
     };
     voting?: {
         map?: {
@@ -80,19 +84,13 @@ export interface FaceitMatch {
     faceit_url: string;
 }
 
-export interface FaceitMatchesResponse {
-    items: FaceitMatch[];
-    start: number;
-    end: number;
-}
-
 // ============================== TRANSFORMATION FUNCTIONS ============================== //
 
 /**
- * Transform FaceIT tournament/championship data to Stage schema
+ * Transform Faceit tournament/championship data to Stage schema
  */
 export function transformFaceitTournament(
-    faceitTournament: FaceitTournament,
+    faceitTournament: FaceitAPIChampionship,
     tournamentId: number
 ) {
     return {
@@ -109,9 +107,9 @@ export function transformFaceitTournament(
 }
 
 /**
- * Transform FaceIT player data to Player schema
+ * Transform Faceit player data to Player schema
  */
-export function transformFaceitPlayer(faceitPlayer: FaceitPlayer) {
+export function transformFaceitPlayer(faceitPlayer: FaceitAPIPlayer) {
     return {
         player_name: faceitPlayer.nickname,
         faceit_id: faceitPlayer.player_id,
@@ -121,11 +119,11 @@ export function transformFaceitPlayer(faceitPlayer: FaceitPlayer) {
 }
 
 /**
- * Transform FaceIT team/faction data to Team schema
+ * Transform Faceit team/faction data to Team schema
  * Note: team_captain_id needs to be resolved after upserting the captain player
  */
 export function transformFaceitTeam(
-    faceitTeam: FaceitTeam,
+    faceitTeam: FaceitAPITeam,
     captainPlayerId: number,
     region?: string
 ) {
@@ -139,7 +137,7 @@ export function transformFaceitTeam(
 }
 
 /**
- * Map FaceIT match status to our database status
+ * Map Faceit match status to our database status
  */
 export function mapFaceitMatchStatus(faceitStatus: string): string {
     const statusMap: Record<string, string> = {
@@ -158,22 +156,25 @@ export function mapFaceitMatchStatus(faceitStatus: string): string {
 }
 
 /**
- * Transform FaceIT match data to Match schema
+ * Transform Faceit match data to Match schema
  * Note: group_id and stage_id need to be resolved from the database
  */
 export function transformFaceitMatch(
-    faceitMatch: FaceitMatch,
+    faceitMatch: FaceitAPIMatch,
     stageId: number,
     groupId: number | null,
     stageFormat?: StageFormat,
-    teamRecords?: { faction1?: { wins: number; losses: number }; faction2?: { wins: number; losses: number } }
+    teamRecords?: {
+        faction1?: { wins: number; losses: number };
+        faction2?: { wins: number; losses: number };
+    }
 ) {
     let formattedRound = faceitMatch.round?.toString() || null;
-    
+
     // If we have format information, format the round nicely
-    if (faceitMatch.round && stageFormat && stageFormat !== 'unknown') {
+    if (faceitMatch.round && stageFormat && stageFormat !== "unknown") {
         // For Swiss format, try to include team records if available
-        if (stageFormat === 'swiss' && teamRecords?.faction1) {
+        if (stageFormat === "swiss" && teamRecords?.faction1) {
             formattedRound = formatRound(stageFormat, faceitMatch.round, {
                 wins: teamRecords.faction1.wins,
                 losses: teamRecords.faction1.losses,
@@ -182,7 +183,7 @@ export function transformFaceitMatch(
             formattedRound = formatRound(stageFormat, faceitMatch.round);
         }
     }
-    
+
     return {
         group_id: groupId,
         stage_id: stageId,
@@ -200,15 +201,18 @@ export function transformFaceitMatch(
 }
 
 /**
- * Extract map data from FaceIT match detailed results
+ * Extract map data from Faceit match detailed results
  */
 export function transformFaceitMaps(
-    faceitMatch: FaceitMatch,
+    faceitMatch: FaceitAPIMatch,
     matchId: number,
     participantMap: { faction1: number; faction2: number },
     formattedRound?: string
 ) {
-    if (!faceitMatch.detailed_results || faceitMatch.detailed_results.length === 0) {
+    if (
+        !faceitMatch.detailed_results ||
+        faceitMatch.detailed_results.length === 0
+    ) {
         return [];
     }
 
@@ -238,10 +242,10 @@ export function transformFaceitMaps(
 }
 
 /**
- * Transform FaceIT match participants
+ * Transform Faceit match participants
  */
 export function transformFaceitMatchParticipants(
-    faceitMatch: FaceitMatch,
+    faceitMatch: FaceitAPIMatch,
     matchId: number,
     teamMap: { faction1: number; faction2: number }
 ) {
@@ -266,7 +270,7 @@ export function transformFaceitMatchParticipants(
 /**
  * Extract unique group names/numbers from matches
  */
-export function extractGroupsFromMatches(matches: FaceitMatch[]): number[] {
+export function extractGroupsFromMatches(matches: FaceitAPIMatch[]): number[] {
     const groups = new Set<number>();
 
     for (const match of matches) {
@@ -281,8 +285,10 @@ export function extractGroupsFromMatches(matches: FaceitMatch[]): number[] {
 /**
  * Extract all unique players from a match
  */
-export function extractPlayersFromMatch(faceitMatch: FaceitMatch): FaceitPlayer[] {
-    const players: FaceitPlayer[] = [];
+export function extractPlayersFromMatch(
+    faceitMatch: FaceitAPIMatch
+): FaceitAPIPlayer[] {
+    const players: FaceitAPIPlayer[] = [];
 
     if (faceitMatch.teams.faction1?.roster) {
         players.push(...faceitMatch.teams.faction1.roster);
@@ -298,8 +304,10 @@ export function extractPlayersFromMatch(faceitMatch: FaceitMatch): FaceitPlayer[
 /**
  * Extract all unique teams from a match
  */
-export function extractTeamsFromMatch(faceitMatch: FaceitMatch): FaceitTeam[] {
-    const teams: FaceitTeam[] = [];
+export function extractTeamsFromMatch(
+    faceitMatch: FaceitAPIMatch
+): FaceitAPITeam[] {
+    const teams: FaceitAPITeam[] = [];
 
     if (faceitMatch.teams.faction1) {
         teams.push(faceitMatch.teams.faction1);
@@ -315,8 +323,10 @@ export function extractTeamsFromMatch(faceitMatch: FaceitMatch): FaceitTeam[] {
 /**
  * Extract all unique players from multiple matches
  */
-export function extractAllPlayers(matches: FaceitMatch[]): Map<string, FaceitPlayer> {
-    const playersMap = new Map<string, FaceitPlayer>();
+export function extractAllPlayers(
+    matches: FaceitAPIMatch[]
+): Map<string, FaceitAPIPlayer> {
+    const playersMap = new Map<string, FaceitAPIPlayer>();
 
     for (const match of matches) {
         const players = extractPlayersFromMatch(match);
@@ -333,8 +343,10 @@ export function extractAllPlayers(matches: FaceitMatch[]): Map<string, FaceitPla
 /**
  * Extract all unique teams from multiple matches
  */
-export function extractAllTeams(matches: FaceitMatch[]): Map<string, FaceitTeam> {
-    const teamsMap = new Map<string, FaceitTeam>();
+export function extractAllTeams(
+    matches: FaceitAPIMatch[]
+): Map<string, FaceitAPITeam> {
+    const teamsMap = new Map<string, FaceitAPITeam>();
 
     for (const match of matches) {
         const teams = extractTeamsFromMatch(match);
@@ -347,4 +359,3 @@ export function extractAllTeams(matches: FaceitMatch[]): Map<string, FaceitTeam>
 
     return teamsMap;
 }
-

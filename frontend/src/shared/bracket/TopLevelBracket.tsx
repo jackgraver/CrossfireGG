@@ -13,7 +13,7 @@ export default function TopLevelBracket({ stageFormat, matches }: { stageFormat:
         case "groups":
             return <Groups matches={matches} />
         case "single elimination":
-            return null;
+            return <RegularSeasonBracket matches={matches} />
         case "swiss":
             return <RegularSeasonBracket matches={matches} />
         default:

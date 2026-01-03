@@ -1,0 +1,70 @@
+{
+  "id": "f37a1d7f-dd98-4c2b-97de-c5c4a4d541f3",
+  "championship_id": "f37a1d7f-dd98-4c2b-97de-c5c4a4d541f3",
+  "name": "Group Stage - Crossfire Season 3",
+  "cover_image": "",
+  "background_image": "",
+  "avatar": "",
+  "organizer_id": "1b5c9ed3-5233-4c58-8761-78f6ef5a0fd9",
+  "description": "",
+  "type": "roundRobin",
+  "status": "finished",
+  "game_id": "cs2",
+  "region": "NA",
+  "featured": false,
+  "subscription_start": 1764888083369,
+  "checkin_start": 1764884700000,
+  "checkin_clear": 1764886500000,
+  "subscription_end": 1764888227357,
+  "championship_start": 1764982800000,
+  "slots": 32,
+  "current_subscriptions": 32,
+  "join_checks": {
+    "min_skill_level": 1,
+    "max_skill_level": 10,
+    "whitelist_geo_countries": [],
+    "whitelist_geo_countries_min_players": 0,
+    "blacklist_geo_countries": [],
+    "join_policy": "public",
+    "membership_type": "",
+    "allowed_team_types": [
+      "premade",
+      "mix"
+    ]
+  },
+  "anticheat_required": true,
+  "rules_id": "",
+  "substitution_configuration": {
+    "max_substitutes": 2,
+    "max_substitutions": 100
+  },
+  "full": true,
+  "checkin_enabled": false,
+  "total_rounds": 3,
+  "schedule": {
+    "1": {
+      "date": 1764982800000,
+      "status": "created"
+    },
+    "2": {
+      "date": 1765587600000,
+      "status": "created"
+    },
+    "3": {
+      "date": 1766192400000,
+      "status": "created"
+    }
+  },
+  "total_groups": 8,
+  "subscriptions_locked": true,
+  "seeding_strategy": "uniformGroupDistribution",
+  "faceit_url": "https://www.faceit.com/{lang}/championship/f37a1d7f-dd98-4c2b-97de-c5c4a4d541f3/",
+  "prizes": null,
+  "total_prizes": 0,
+  "stream": {
+    "active": false,
+    "platform": "",
+    "source": "",
+    "title": ""
+  }
+}
