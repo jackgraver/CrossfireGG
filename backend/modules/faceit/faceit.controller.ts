@@ -87,7 +87,7 @@ export const faceitController = {
                 }
             );
 
-            const result = await faceitImportService.importMatchesOnly(
+            const result = await faceitImportService.importMatches(
                 matchesData,
                 stageId
             );

@@ -8,10 +8,9 @@ export const teams = sqliteTable("teams", {
     faceit_id: text("faceit_id"),
     team_captain_id: integer("team_captain_id")
         .notNull()
-        .references((): any => require("./player").players.ID, { onDelete: "restrict" }),
-    region: text("region"),
-    max_roster_size: integer("max_roster_size").default(10),
-    founded_date: integer("founded_date", { mode: "timestamp" }),
+        .references((): any => require("./player").players.ID, {
+            onDelete: "restrict",
+        }),
     social_links: text("social_links"),
     created_at: integer("created_at", { mode: "timestamp" })
         .notNull()

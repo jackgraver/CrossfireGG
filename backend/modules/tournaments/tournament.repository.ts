@@ -37,12 +37,7 @@ export const tournamentRepository = {
         const result = await db
             .select()
             .from(stages)
-            .where(
-                and(
-                    eq(stages.ID, stageId),
-                    isNull(stages.deleted_at)
-                )
-            )
+            .where(and(eq(stages.ID, stageId), isNull(stages.deleted_at)))
             .limit(1);
         return result[0] || null;
     },
@@ -75,9 +70,11 @@ export const tournamentRepository = {
         }));
 
         const stageIds = stagesWithFormat.map((s) => s.ID);
-        const groupsByStage = await tournamentRepository.findGroupsByStageIds(stageIds);
+        const groupsByStage = await tournamentRepository.findGroupsByStageIds(
+            stageIds
+        );
         const groupsMap = new Map<number, typeof groupsByStage>();
-        
+
         for (const group of groupsByStage) {
             if (!groupsMap.has(group.stage_id)) {
                 groupsMap.set(group.stage_id, []);
@@ -108,7 +105,7 @@ export const tournamentRepository = {
                     isNull(stages.deleted_at)
                 )
             );
-        
+
         return results.map((result) => ({
             ...result.stage,
             format: result.format ? { ...result.format } : null,
@@ -190,7 +187,9 @@ export const tournamentRepository = {
         const result = await db
             .select()
             .from(stages)
-            .where(and(eq(stages.faceit_id, faceitId), isNull(stages.deleted_at)))
+            .where(
+                and(eq(stages.faceit_id, faceitId), isNull(stages.deleted_at))
+            )
             .limit(1);
         return result[0];
     },
@@ -200,13 +199,20 @@ export const tournamentRepository = {
         name: string;
         faceit_id: string;
         max_teams: number;
+        format_id: number | null;
         start_date: Date | null;
         end_date: Date | null;
+        registration_deadline: Date | null;
     }) => {
         const existing = await db
             .select()
             .from(stages)
-            .where(and(eq(stages.faceit_id, stageData.faceit_id), isNull(stages.deleted_at)))
+            .where(
+                and(
+                    eq(stages.faceit_id, stageData.faceit_id),
+                    isNull(stages.deleted_at)
+                )
+            )
             .limit(1);
 
         if (existing.length > 0) {
@@ -215,8 +221,10 @@ export const tournamentRepository = {
                 .set({
                     name: stageData.name,
                     max_teams: stageData.max_teams,
+                    format_id: stageData.format_id,
                     start_date: stageData.start_date,
                     end_date: stageData.end_date,
+                    registration_deadline: stageData.registration_deadline,
                     updated_at: new Date(),
                 })
                 .where(eq(stages.ID, existing[0].ID))
@@ -289,9 +297,18 @@ export const tournamentRepository = {
                 .update(stageTeams)
                 .set({
                     group_id: stageTeamData.group_id,
-                    seed: stageTeamData.seed !== undefined ? stageTeamData.seed : existing[0].seed,
-                    wins: stageTeamData.wins !== undefined ? stageTeamData.wins : existing[0].wins,
-                    losses: stageTeamData.losses !== undefined ? stageTeamData.losses : existing[0].losses,
+                    seed:
+                        stageTeamData.seed !== undefined
+                            ? stageTeamData.seed
+                            : existing[0].seed,
+                    wins:
+                        stageTeamData.wins !== undefined
+                            ? stageTeamData.wins
+                            : existing[0].wins,
+                    losses:
+                        stageTeamData.losses !== undefined
+                            ? stageTeamData.losses
+                            : existing[0].losses,
                     updated_at: new Date(),
                 })
                 .where(eq(stageTeams.ID, existing[0].ID))
@@ -311,5 +328,13 @@ export const tournamentRepository = {
                 .returning();
             return result[0];
         }
+    },
+
+    findFormatByName: async (formatName: string) => {
+        const result = await db
+            .select()
+            .from(stageFormats)
+            .where(eq(stageFormats.name, formatName));
+        return result[0] || null;
     },
 };

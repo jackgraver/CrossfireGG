@@ -195,12 +195,16 @@ export const teamRepository = {
         team_logo: string | null;
         faceit_id: string;
         team_captain_id: number;
-        region: string | null;
     }) => {
         const existing = await db
             .select()
             .from(teams)
-            .where(and(eq(teams.faceit_id, teamData.faceit_id), isNull(teams.deleted_at)))
+            .where(
+                and(
+                    eq(teams.faceit_id, teamData.faceit_id),
+                    isNull(teams.deleted_at)
+                )
+            )
             .limit(1);
 
         if (existing.length > 0) {
@@ -210,7 +214,6 @@ export const teamRepository = {
                     name: teamData.name,
                     team_logo: teamData.team_logo,
                     team_captain_id: teamData.team_captain_id,
-                    region: teamData.region,
                     updated_at: new Date(),
                 })
                 .where(eq(teams.ID, existing[0].ID))

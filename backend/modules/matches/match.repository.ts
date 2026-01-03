@@ -147,6 +147,7 @@ export const matchRepository = {
         match_id: number;
         team_id: number;
         position: number;
+        score: number;
         winner: boolean;
     }) => {
         const existing = await db
@@ -166,6 +167,7 @@ export const matchRepository = {
                 .update(matchParticipants)
                 .set({
                     position: participantData.position,
+                    score: participantData.score,
                     winner: participantData.winner,
                     updated_at: new Date(),
                 })
@@ -190,6 +192,8 @@ export const matchRepository = {
         map_name: string;
         map_order: number;
         round: string | null;
+        team1_score: number;
+        team2_score: number;
         winner_id: number | null;
     }) => {
         const existing = await db
@@ -210,6 +214,8 @@ export const matchRepository = {
                 .set({
                     map_name: mapData.map_name,
                     round: mapData.round,
+                    team1_score: mapData.team1_score,
+                    team2_score: mapData.team2_score,
                     winner_id: mapData.winner_id,
                     updated_at: new Date(),
                 })

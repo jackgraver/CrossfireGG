@@ -13,7 +13,7 @@ export default function PlayoffBracket({ matches }: PlayoffBracketProps) {
             <RoundSection round_num={1}>
                 <RoundCard
                     round="RO16"
-                    matches={filterAndSortMatchesByRound(matches, "RO16")}
+                    matches={filterAndSortMatchesByRound(matches, "1")}
                 />
             </RoundSection>
             <RoundSection round_num={2}>

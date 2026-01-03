@@ -6,6 +6,6 @@ export interface MatchParticipant {
     team_id: string;
     position: number;
     winner: boolean;
+    score: number;
     team?: Team;
 }
-

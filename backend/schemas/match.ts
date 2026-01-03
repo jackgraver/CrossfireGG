@@ -1,4 +1,10 @@
-import { sqliteTable, integer, text, unique, index } from "drizzle-orm/sqlite-core";
+import {
+    sqliteTable,
+    integer,
+    text,
+    unique,
+    index,
+} from "drizzle-orm/sqlite-core";
 import { relations } from "drizzle-orm";
 
 export const matches = sqliteTable(
@@ -44,8 +50,11 @@ export const matchParticipants = sqliteTable(
             .references(() => matches.ID, { onDelete: "cascade" }),
         team_id: integer("team_id")
             .notNull()
-            .references((): any => require("./team").teams.ID, { onDelete: "cascade" }),
+            .references((): any => require("./team").teams.ID, {
+                onDelete: "cascade",
+            }),
         position: integer("position").notNull(),
+        score: integer("score").default(0),
         winner: integer("winner", { mode: "boolean" }).default(false),
         created_at: integer("created_at", { mode: "timestamp" })
             .notNull()
@@ -73,7 +82,11 @@ export const maps = sqliteTable(
         map_name: text("map_name").notNull(),
         map_order: integer("map_order"),
         round: text("round"),
-        winner_id: integer("winner_id").references(() => matchParticipants.ID, { onDelete: "set null" }),
+        team1_score: integer("team1_score").default(0),
+        team2_score: integer("team2_score").default(0),
+        winner_id: integer("winner_id").references(() => matchParticipants.ID, {
+            onDelete: "set null",
+        }),
         created_at: integer("created_at", { mode: "timestamp" })
             .notNull()
             .$defaultFn(() => new Date()),
@@ -97,7 +110,9 @@ export const matchCasters = sqliteTable(
             .references(() => matches.ID, { onDelete: "cascade" }),
         caster_id: integer("caster_id")
             .notNull()
-            .references((): any => require("./user").users.ID, { onDelete: "cascade" }),
+            .references((): any => require("./user").users.ID, {
+                onDelete: "cascade",
+            }),
         assigned_at: integer("assigned_at", { mode: "timestamp" }).$defaultFn(
             () => new Date()
         ),

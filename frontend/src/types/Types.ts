@@ -2,7 +2,7 @@ import type { Team } from "@/types/TeamModel";
 import { MatchParticipant } from "./MatchParticipantModel";
 
 export type Match = {
-    match_id: string;
+    ID: string;
     group_id?: string; // foreign key groups.ID
     status?: string | null;
     scheduled_at?: number | null;

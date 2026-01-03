@@ -15,8 +15,12 @@ export const matchService = {
             throw new Error("Match participants not found");
         }
 
-        const team1Entry = participants.find(p => p.participant.position === 1);
-        const team2Entry = participants.find(p => p.participant.position === 2);
+        const team1Entry = participants.find(
+            (p) => p.participant.position === 1
+        );
+        const team2Entry = participants.find(
+            (p) => p.participant.position === 2
+        );
 
         if (!team1Entry || !team2Entry) {
             throw new Error("Match participants positions not properly set");
@@ -31,8 +35,8 @@ export const matchService = {
             team1Participant.winner === true
                 ? team1Data.ID.toString()
                 : team2Participant.winner === true
-                  ? team2Data.ID.toString()
-                  : null;
+                ? team2Data.ID.toString()
+                : null;
 
         const group = match.group_id
             ? await matchRepository.findGroupById(match.group_id)
@@ -77,8 +81,8 @@ export const matchService = {
                 team1,
                 team2,
             },
-            team1_score: 0,
-            team2_score: 0,
+            team1_score: team1Participant.score ?? 0,
+            team2_score: team2Participant.score ?? 0,
             caster_id: undefined,
         };
 
@@ -110,8 +114,8 @@ export const matchService = {
                 map_name: map.map_name,
                 round: roundNumber,
                 winner_id: map.winner_id?.toString() || "",
-                team1_score: 0,
-                team2_score: 0,
+                team1_score: map.team1_score ?? 0,
+                team2_score: map.team2_score ?? 0,
                 teams: [],
             };
         });
@@ -126,4 +130,3 @@ export const matchService = {
         };
     },
 };
-

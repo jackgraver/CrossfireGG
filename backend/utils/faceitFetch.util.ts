@@ -69,7 +69,7 @@ export const faceitFetchUtil = {
     fetchMatchesData: async (
         championshipId: string,
         options: faceitFetchOptions = {}
-    ): Promise<FaceitAPIMatch> => {
+    ): Promise<FaceitAPIMatch[]> => {
         const { readFileName, writeFileName } = options;
 
         if (readFileName) {
@@ -80,7 +80,7 @@ export const faceitFetchUtil = {
             console.log(`[DEBUG] Reading matches from file: ${readFilePath}`);
             try {
                 const data = await faceitFetchUtil._readFromFile(readFileName);
-                return data as FaceitAPIMatch;
+                return data.items as FaceitAPIMatch[];
             } catch (error) {
                 console.error(`[DEBUG] Failed to read from file: ${error}`);
                 throw new Error(
@@ -113,7 +113,7 @@ export const faceitFetchUtil = {
                 }
             }
 
-            return data;
+            return data as FaceitAPIMatch[];
         } catch (error) {
             console.error(`[Faceit API] Error fetching matches data:`, error);
             throw error;

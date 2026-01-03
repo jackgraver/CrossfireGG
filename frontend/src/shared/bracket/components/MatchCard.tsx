@@ -15,9 +15,9 @@ export default function MatchCard({ match, margin }: MatchCardProps) {
 
     const navigate = useNavigate();
 
-    if (!match) {
-        return <h1>No Match</h1>;
-    }
+    // if (!match) {
+    //     return <h1>No Match</h1>;
+    // }
 
     return (
         <div
@@ -28,14 +28,14 @@ export default function MatchCard({ match, margin }: MatchCardProps) {
             }`}
         >
             <MatchTeam
-                team={match.participants![0].team!}
-                winner={match.participants![0].winner}
-                score={match.team1_score!}
+                team={match?.participants![0].team!}
+                winner={match?.participants![0].winner}
+                score={match?.participants![0].score}
             />
             <MatchTeam
-                team={match.participants![1].team}
-                winner={match.participants![1].winner}
-                score={match.team2_score!}
+                team={match?.participants![1].team}
+                winner={match?.participants![1].winner}
+                score={match?.participants![1].score}
             />
 
             {match && (
@@ -51,9 +51,7 @@ export default function MatchCard({ match, margin }: MatchCardProps) {
                         <img src="/faceit.png" alt="F" className="h-5 w-5" />
                     </button>
                     <button
-                        onClick={() =>
-                            navigate({ to: `/match/${match?.match_id}` })
-                        }
+                        onClick={() => navigate({ to: `/match/${match?.ID}` })}
                         className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-white transition hover:bg-gray-200"
                     >
                         <img src="/OSSLOGO.png" alt="OSS" className="h-8 w-8" />

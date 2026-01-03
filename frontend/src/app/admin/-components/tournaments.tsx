@@ -157,10 +157,10 @@ function FaceitImportSection() {
 function ImportStageForm() {
     const [tournamentId, setTournamentId] = useState("");
     const [championshipId, setChampionshipId] = useState("");
-    const [fileName, setFileName] = useState("");
+    const [readFileName, setReadFileName] = useState("");
+    const [writeFileName, setWriteFileName] = useState("");
     const [useFile, setUseFile] = useState(false);
     const [saveToFile, setSaveToFile] = useState(false);
-    const [saveFileName, setSaveFileName] = useState("");
     const [loading, setLoading] = useState(false);
     const [response, setResponse] = useState<any>(null);
     const [error, setError] = useState<string | null>(null);
@@ -172,21 +172,21 @@ function ImportStageForm() {
         setError(null);
 
         try {
-            const endpoint = useFile
-                ? "/tournament/faceit/import/stage-file"
-                : "/tournament/faceit/import/stage";
-            const body = useFile
-                ? { tournamentId: Number(tournamentId), fileName }
-                : {
-                      tournamentId: Number(tournamentId),
-                      championshipId,
-                      ...(saveToFile && { saveToFile: true, saveFileName: saveFileName || undefined }),
-                  };
+            const body = {
+                tournamentId: Number(tournamentId),
+                championshipId,
+                ...(useFile && readFileName && { readFileName }),
+                ...(saveToFile && {
+                    writeFileName: writeFileName || undefined,
+                }),
+            };
 
-            const result = await api.post(endpoint, body);
+            const result = await api.post("/faceit/import/stage", body);
             setResponse(result);
         } catch (err: any) {
-            setError(err.response?.data?.error || err.message || "An error occurred");
+            setError(
+                err.response?.data?.error || err.message || "An error occurred",
+            );
         } finally {
             setLoading(false);
         }
@@ -194,7 +194,7 @@ function ImportStageForm() {
 
     return (
         <div className="bg-secondBg rounded-lg p-4">
-            <h3 className="text-lg font-semibold mb-4">Import Stage</h3>
+            <h3 className="mb-4 text-lg font-semibold">Import Stage</h3>
             <form onSubmit={handleSubmit} className="flex flex-col gap-3">
                 <div className="flex items-center gap-2">
                     <input
@@ -214,62 +214,59 @@ function ImportStageForm() {
                     placeholder="Tournament ID"
                     value={tournamentId}
                 />
-                {useFile ? (
+                <BaseInput
+                    onChange={(e) => setChampionshipId(e.target.value)}
+                    type="text"
+                    placeholder="Championship ID"
+                    value={championshipId}
+                />
+                {useFile && (
                     <BaseInput
-                        onChange={(e) => setFileName(e.target.value)}
+                        onChange={(e) => setReadFileName(e.target.value)}
                         type="text"
-                        placeholder="File Name (e.g., faceit_tournament_regseason.json)"
-                        value={fileName}
+                        placeholder="Read File Name (e.g., faceit_tournament_regseason.json)"
+                        value={readFileName}
                     />
-                ) : (
-                    <>
-                        <BaseInput
-                            onChange={(e) => setChampionshipId(e.target.value)}
-                            type="text"
-                            placeholder="Championship ID"
-                            value={championshipId}
-                        />
-                        <div className="flex items-center gap-2">
-                            <input
-                                type="checkbox"
-                                id="save-to-file-stage"
-                                checked={saveToFile}
-                                onChange={(e) => setSaveToFile(e.target.checked)}
-                                className="rounded"
-                            />
-                            <label htmlFor="save-to-file-stage" className="text-sm">
-                                Save to file
-                            </label>
-                        </div>
-                        {saveToFile && (
-                            <BaseInput
-                                onChange={(e) => setSaveFileName(e.target.value)}
-                                type="text"
-                                placeholder="Save File Name (optional, auto-generated if empty)"
-                                value={saveFileName}
-                            />
-                        )}
-                    </>
+                )}
+                <div className="flex items-center gap-2">
+                    <input
+                        type="checkbox"
+                        id="save-to-file-stage"
+                        checked={saveToFile}
+                        onChange={(e) => setSaveToFile(e.target.checked)}
+                        className="rounded"
+                    />
+                    <label htmlFor="save-to-file-stage" className="text-sm">
+                        Save to file
+                    </label>
+                </div>
+                {saveToFile && (
+                    <BaseInput
+                        onChange={(e) => setWriteFileName(e.target.value)}
+                        type="text"
+                        placeholder="Write File Name (optional, auto-generated if empty)"
+                        value={writeFileName}
+                    />
                 )}
                 <button
                     type="submit"
                     disabled={loading}
-                    className="bg-firstBg hover:bg-secondBg disabled:opacity-50 rounded p-2 font-semibold text-white"
+                    className="bg-firstBg hover:bg-secondBg rounded p-2 font-semibold text-white disabled:opacity-50"
                 >
                     {loading ? "Importing..." : "Import Stage"}
                 </button>
             </form>
             {response && (
-                <div className="mt-4 p-3 bg-green-900/20 rounded border border-green-500/30">
-                    <h4 className="font-semibold mb-2">Response:</h4>
-                    <pre className="text-sm overflow-auto">
+                <div className="mt-4 rounded border border-green-500/30 bg-green-900/20 p-3">
+                    <h4 className="mb-2 font-semibold">Response:</h4>
+                    <pre className="overflow-auto text-sm">
                         {JSON.stringify(response, null, 2)}
                     </pre>
                 </div>
             )}
             {error && (
-                <div className="mt-4 p-3 bg-red-900/20 rounded border border-red-500/30">
-                    <h4 className="font-semibold mb-2 text-red-400">Error:</h4>
+                <div className="mt-4 rounded border border-red-500/30 bg-red-900/20 p-3">
+                    <h4 className="mb-2 font-semibold text-red-400">Error:</h4>
                     <p className="text-sm">{error}</p>
                 </div>
             )}
@@ -280,10 +277,10 @@ function ImportStageForm() {
 function ImportMatchesForm() {
     const [stageId, setStageId] = useState("");
     const [championshipId, setChampionshipId] = useState("");
-    const [fileName, setFileName] = useState("");
+    const [readFileName, setReadFileName] = useState("");
+    const [writeFileName, setWriteFileName] = useState("");
     const [useFile, setUseFile] = useState(false);
     const [saveToFile, setSaveToFile] = useState(false);
-    const [saveFileName, setSaveFileName] = useState("");
     const [loading, setLoading] = useState(false);
     const [response, setResponse] = useState<any>(null);
     const [error, setError] = useState<string | null>(null);
@@ -295,21 +292,21 @@ function ImportMatchesForm() {
         setError(null);
 
         try {
-            const endpoint = useFile
-                ? "/tournament/faceit/import/matches-file"
-                : "/tournament/faceit/import/matches";
-            const body = useFile
-                ? { stageId: Number(stageId), fileName }
-                : {
-                      stageId: Number(stageId),
-                      championshipId,
-                      ...(saveToFile && { saveToFile: true, saveFileName: saveFileName || undefined }),
-                  };
+            const body = {
+                stageId: Number(stageId),
+                championshipId,
+                ...(useFile && readFileName && { readFileName }),
+                ...(saveToFile && {
+                    writeFileName: writeFileName || undefined,
+                }),
+            };
 
-            const result = await api.post(endpoint, body);
+            const result = await api.post("/faceit/import/matches", body);
             setResponse(result);
         } catch (err: any) {
-            setError(err.response?.data?.error || err.message || "An error occurred");
+            setError(
+                err.response?.data?.error || err.message || "An error occurred",
+            );
         } finally {
             setLoading(false);
         }
@@ -317,7 +314,7 @@ function ImportMatchesForm() {
 
     return (
         <div className="bg-secondBg rounded-lg p-4">
-            <h3 className="text-lg font-semibold mb-4">Import Matches</h3>
+            <h3 className="mb-4 text-lg font-semibold">Import Matches</h3>
             <form onSubmit={handleSubmit} className="flex flex-col gap-3">
                 <div className="flex items-center gap-2">
                     <input
@@ -337,62 +334,59 @@ function ImportMatchesForm() {
                     placeholder="Stage ID"
                     value={stageId}
                 />
-                {useFile ? (
+                <BaseInput
+                    onChange={(e) => setChampionshipId(e.target.value)}
+                    type="text"
+                    placeholder="Championship ID"
+                    value={championshipId}
+                />
+                {useFile && (
                     <BaseInput
-                        onChange={(e) => setFileName(e.target.value)}
+                        onChange={(e) => setReadFileName(e.target.value)}
                         type="text"
-                        placeholder="File Name (e.g., faceit_matches_regseason.json)"
-                        value={fileName}
+                        placeholder="Read File Name (e.g., faceit_matches_regseason.json)"
+                        value={readFileName}
                     />
-                ) : (
-                    <>
-                        <BaseInput
-                            onChange={(e) => setChampionshipId(e.target.value)}
-                            type="text"
-                            placeholder="Championship ID"
-                            value={championshipId}
-                        />
-                        <div className="flex items-center gap-2">
-                            <input
-                                type="checkbox"
-                                id="save-to-file-matches"
-                                checked={saveToFile}
-                                onChange={(e) => setSaveToFile(e.target.checked)}
-                                className="rounded"
-                            />
-                            <label htmlFor="save-to-file-matches" className="text-sm">
-                                Save to file
-                            </label>
-                        </div>
-                        {saveToFile && (
-                            <BaseInput
-                                onChange={(e) => setSaveFileName(e.target.value)}
-                                type="text"
-                                placeholder="Save File Name (optional, auto-generated if empty)"
-                                value={saveFileName}
-                            />
-                        )}
-                    </>
+                )}
+                <div className="flex items-center gap-2">
+                    <input
+                        type="checkbox"
+                        id="save-to-file-matches"
+                        checked={saveToFile}
+                        onChange={(e) => setSaveToFile(e.target.checked)}
+                        className="rounded"
+                    />
+                    <label htmlFor="save-to-file-matches" className="text-sm">
+                        Save to file
+                    </label>
+                </div>
+                {saveToFile && (
+                    <BaseInput
+                        onChange={(e) => setWriteFileName(e.target.value)}
+                        type="text"
+                        placeholder="Write File Name (optional, auto-generated if empty)"
+                        value={writeFileName}
+                    />
                 )}
                 <button
                     type="submit"
                     disabled={loading}
-                    className="bg-firstBg hover:bg-secondBg disabled:opacity-50 rounded p-2 font-semibold text-white"
+                    className="bg-firstBg hover:bg-secondBg rounded p-2 font-semibold text-white disabled:opacity-50"
                 >
                     {loading ? "Importing..." : "Import Matches"}
                 </button>
             </form>
             {response && (
-                <div className="mt-4 p-3 bg-green-900/20 rounded border border-green-500/30">
-                    <h4 className="font-semibold mb-2">Response:</h4>
-                    <pre className="text-sm overflow-auto">
+                <div className="mt-4 rounded border border-green-500/30 bg-green-900/20 p-3">
+                    <h4 className="mb-2 font-semibold">Response:</h4>
+                    <pre className="overflow-auto text-sm">
                         {JSON.stringify(response, null, 2)}
                     </pre>
                 </div>
             )}
             {error && (
-                <div className="mt-4 p-3 bg-red-900/20 rounded border border-red-500/30">
-                    <h4 className="font-semibold mb-2 text-red-400">Error:</h4>
+                <div className="mt-4 rounded border border-red-500/30 bg-red-900/20 p-3">
+                    <h4 className="mb-2 font-semibold text-red-400">Error:</h4>
                     <p className="text-sm">{error}</p>
                 </div>
             )}
