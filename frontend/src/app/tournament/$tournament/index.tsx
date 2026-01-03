@@ -101,8 +101,62 @@ function RouteComponent() {
                     )}
                 </div>
             </div>
-
-            <div className="mb-6 flex gap-4">
+            <div className="bg-firstBg rounded-xl p-8 shadow-md">
+                <h2 className="text-textPrimary text-2xl font-bold">Stages</h2>
+            </div>
+            {tournament.stages.length === 0 ? (
+                <div className="text-textSecondary">
+                    No stages found for this tournament
+                </div>
+            ) : (
+                <div className="flex flex-row items-start gap-4">
+                    {tournament.stages.map((stage) => (
+                        <div
+                            key={stage.ID}
+                            onClick={() => setCurrentStage(stage)}
+                            className={`border-border bg-secondBg flex-1 cursor-pointer rounded-lg border p-6 transition-all ${
+                                currentStage?.ID === stage.ID
+                                    ? "bg-thirdBg ring-2 ring-blue-500"
+                                    : "hover:bg-thirdBg"
+                            }`}
+                        >
+                            <div className="mb-4 flex items-center justify-between">
+                                <h3 className="text-textPrimary text-xl font-semibold">
+                                    {stage.name}
+                                </h3>
+                                {stage.is_current && (
+                                    <span className="rounded-full bg-green-600 px-3 py-1 text-sm text-white">
+                                        Current
+                                    </span>
+                                )}
+                            </div>
+                            <div className="text-textSecondary mb-4 flex flex-col flex-wrap gap-4 text-sm">
+                                {stage.registration_deadline && (
+                                    <div>
+                                        <span className="font-semibold">
+                                            Registration Deadline:{" "}
+                                        </span>
+                                        {formatDateOnly(
+                                            toUnixTimestamp(
+                                                stage.registration_deadline,
+                                            )!,
+                                        )}
+                                    </div>
+                                )}
+                                {stage.format && (
+                                    <div>
+                                        <span className="font-semibold">
+                                            Format:{" "}
+                                        </span>
+                                        {stage.format?.name}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
+            <div className="mt-6 flex gap-4">
                 <button
                     onClick={() => setViewMode("bracket")}
                     className={`rounded-lg px-6 py-3 font-semibold transition-all ${
@@ -151,97 +205,6 @@ function RouteComponent() {
                 ) : (
                     <div className="text-textSecondary">
                         <Standings teams={[]} />
-                    </div>
-                )}
-            </div>
-
-            <div className="bg-firstBg mt-8 rounded-xl p-8 shadow-md">
-                <h2 className="text-textPrimary mb-6 text-2xl font-bold">
-                    Stages
-                </h2>
-                {tournament.stages.length === 0 ? (
-                    <div className="text-textSecondary">
-                        No stages found for this tournament
-                    </div>
-                ) : (
-                    <div className="space-y-6">
-                        {tournament.stages.map((stage) => (
-                            <div
-                                key={stage.ID}
-                                onClick={() => setCurrentStage(stage)}
-                                className={`border-border bg-secondBg cursor-pointer rounded-lg border p-6 transition-all ${
-                                    currentStage?.ID === stage.ID
-                                        ? "bg-thirdBg ring-2 ring-blue-500"
-                                        : "hover:bg-thirdBg"
-                                }`}
-                            >
-                                <div className="mb-4 flex items-center justify-between">
-                                    <h3 className="text-textPrimary text-xl font-semibold">
-                                        {stage.name}
-                                    </h3>
-                                    {stage.is_current && (
-                                        <span className="rounded-full bg-green-600 px-3 py-1 text-sm text-white">
-                                            Current
-                                        </span>
-                                    )}
-                                </div>
-                                <div className="text-textSecondary mb-4 flex flex-wrap gap-4 text-sm">
-                                    {stage.start_date && (
-                                        <div>
-                                            <span className="font-semibold">
-                                                Start:{" "}
-                                            </span>
-                                            {formatDateOnly(
-                                                toUnixTimestamp(
-                                                    stage.start_date,
-                                                )!,
-                                            )}
-                                        </div>
-                                    )}
-                                    {stage.end_date && (
-                                        <div>
-                                            <span className="font-semibold">
-                                                End:{" "}
-                                            </span>
-                                            {formatDateOnly(
-                                                toUnixTimestamp(
-                                                    stage.end_date,
-                                                )!,
-                                            )}
-                                        </div>
-                                    )}
-                                    {stage.format && (
-                                        <div>
-                                            <span className="font-semibold">
-                                                Format:{" "}
-                                            </span>
-                                            {stage.format?.name}
-                                        </div>
-                                    )}
-                                </div>
-                                {stage.format?.name === "groups" &&
-                                    stage.groups &&
-                                    stage.groups.length > 0 && (
-                                        <div>
-                                            <h4 className="text-textPrimary mb-3 font-semibold">
-                                                Groups:
-                                            </h4>
-                                            <div className="flex flex-wrap gap-3">
-                                                {stage.groups.map((group) => (
-                                                    <div
-                                                        key={group.ID}
-                                                        className="bg-thirdBg border-border rounded-md border px-4 py-2"
-                                                    >
-                                                        <span className="text-textPrimary">
-                                                            {group.name}
-                                                        </span>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    )}
-                            </div>
-                        ))}
                     </div>
                 )}
             </div>

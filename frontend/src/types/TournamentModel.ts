@@ -8,6 +8,7 @@ export interface Stage {
     is_current: boolean;
     start_date: Date | null;
     end_date: Date | null;
+    registration_deadline: Date | null;
     created_at: Date;
     updated_at: Date;
     deleted_at: Date | null;
