@@ -4,6 +4,8 @@ export default {
     theme: {
         extend: {
             colors: {
+                cfRed: "var(--color-cf-red)",
+                cfRedDark: "var(--color-cf-red-dark)",
                 mainBg: "var(--color-main-bg)",
                 mainBgTransparent: "var(--color-main-bg-transparent)",
                 firstBg: "var(--color-first-bg)",

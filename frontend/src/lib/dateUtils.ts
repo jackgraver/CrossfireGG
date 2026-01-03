@@ -87,7 +87,13 @@ export const toUnixTimestamp = (
     date: string | Date | number | null | undefined,
 ): number | null => {
     if (!date) return null;
-    if (typeof date === "number") return date;
+    if (typeof date === "number") {
+        // If it's a timestamp in milliseconds (greater than year 3000 in seconds)
+        if (date > 32503680000) {
+            return Math.floor(date / 1000);
+        }
+        return date;
+    }
     if (typeof date === "string") {
         return Math.floor(new Date(date).getTime() / 1000);
     }
