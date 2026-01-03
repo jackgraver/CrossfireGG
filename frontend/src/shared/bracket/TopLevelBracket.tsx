@@ -6,19 +6,20 @@ import PlayoffBracket from "./bracket_types/PlayoffBracket";
 
 export default function TopLevelBracket({
     stageFormat,
+    stageId,
     matches,
 }: {
     stageFormat: StageFormat | undefined;
+    stageId: number | null;
     matches: Match[];
 }) {
-    console.log("format", stageFormat);
     if (!stageFormat) {
         return <></>;
     }
 
     switch (stageFormat.name.toLowerCase()) {
         case "groups":
-            return <Groups matches={matches} />;
+            return <Groups stageId={stageId} matches={matches} />;
         case "single elimination":
             return <PlayoffBracket matches={matches} />;
         case "swiss":

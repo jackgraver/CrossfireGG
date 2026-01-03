@@ -28,7 +28,7 @@ export default function TeamDisplay({
                     className="truncate text-2xl font-bold hover:cursor-pointer"
                     onClick={() => navigate({ to: `/team/${team.team_id}` })}
                 >
-                    {team.team_name}
+                    {team.name}
                 </h1>
             </div>
             <div className="flex flex-col gap-4">

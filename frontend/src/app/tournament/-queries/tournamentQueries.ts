@@ -4,6 +4,7 @@ import {
     type TournamentListResponse,
     type TournamentDetailResponse,
     type MatchesByStageResponse,
+    type StageTeamsResponse,
 } from "../-api/tournamentApi";
 
 export const useTournaments = () => {
@@ -25,6 +26,14 @@ export const useMatchesByStage = (stageId: number | null) => {
     return useQuery<MatchesByStageResponse>({
         queryKey: ["matches", "stage", stageId],
         queryFn: () => tournamentApi.getMatchesByStageId(stageId!.toString()),
+        enabled: !!stageId,
+    });
+};
+
+export const useStageTeams = (stageId: number | null) => {
+    return useQuery<StageTeamsResponse>({
+        queryKey: ["stageTeams", stageId],
+        queryFn: () => tournamentApi.getStageTeamsByStageId(stageId!.toString()),
         enabled: !!stageId,
     });
 };

@@ -72,4 +72,29 @@ export const tournamentController = {
             });
         }
     },
+
+    getStageTeamsByStageId: async (req: Request, res: Response) => {
+        try {
+            const validation = StageParamsSchema.safeParse(req.params);
+            if (!validation.success) {
+                return res.status(400).json({
+                    error: "Validation failed",
+                    details: validation.error.issues.map((err) => ({
+                        path: err.path.join("."),
+                        message: err.message,
+                    })),
+                });
+            }
+            const groups = await tournamentService.getStageTeamsByStageId(
+                validation.data.stageId
+            );
+            res.json({ groups });
+        } catch (error) {
+            logger.error("Error fetching stage teams:", error);
+            res.status(500).json({
+                error: "Failed to fetch stage teams",
+                details: error,
+            });
+        }
+    },
 };

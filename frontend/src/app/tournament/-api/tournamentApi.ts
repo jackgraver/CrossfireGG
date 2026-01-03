@@ -12,6 +12,26 @@ export type MatchesByStageResponse = {
     matches: Match[];
 };
 
+export type GroupTeam = {
+    team_id: number;
+    team_name: string;
+    team_logo: string | null;
+    faceit_id: string | null;
+    wins: number;
+    losses: number;
+    seed: number;
+};
+
+export type GroupWithTeams = {
+    group_id: number;
+    group_name: string;
+    teams: GroupTeam[];
+};
+
+export type StageTeamsResponse = {
+    groups: GroupWithTeams[];
+};
+
 export const tournamentApi = {
     getAllTournaments: async (): Promise<TournamentListResponse> => {
         return api.get<TournamentListResponse>("/tournament/all");
@@ -26,6 +46,13 @@ export const tournamentApi = {
     ): Promise<MatchesByStageResponse> => {
         return api.get<MatchesByStageResponse>(
             `/tournament/stage/${stageId}/matches`,
+        );
+    },
+    getStageTeamsByStageId: async (
+        stageId: string,
+    ): Promise<StageTeamsResponse> => {
+        return api.get<StageTeamsResponse>(
+            `/tournament/stage/${stageId}/teams`,
         );
     },
 };

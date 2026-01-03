@@ -337,4 +337,26 @@ export const tournamentRepository = {
             .where(eq(stageFormats.name, formatName));
         return result[0] || null;
     },
+
+    findStageTeamsByStageId: async (stageId: number) => {
+        const { teams } = await import("../../schemas/team");
+
+        const results = await db
+            .select({
+                stageTeam: stageTeams,
+                team: teams,
+                group: groups,
+            })
+            .from(stageTeams)
+            .innerJoin(teams, eq(stageTeams.team_id, teams.ID))
+            .leftJoin(groups, eq(stageTeams.group_id, groups.ID))
+            .where(
+                and(
+                    eq(stageTeams.stage_id, stageId),
+                    isNull(stageTeams.deleted_at)
+                )
+            );
+
+        return results;
+    },
 };

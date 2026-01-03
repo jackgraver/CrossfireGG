@@ -136,7 +136,11 @@ function RouteComponent() {
                             Error loading matches: {matchesError.message}
                         </div>
                     ) : matches && matches.length > 0 ? (
-                        <TopLevelBracket stageFormat={currentStage?.format} matches={matches} />
+                        <TopLevelBracket
+                            stageFormat={currentStage?.format}
+                            stageId={currentStage?.ID ?? null}
+                            matches={matches}
+                        />
                     ) : (
                         <div className="text-textSecondary">
                             {currentStage
@@ -146,7 +150,7 @@ function RouteComponent() {
                     )
                 ) : (
                     <div className="text-textSecondary">
-                       <Standings teams={[]} />
+                        <Standings teams={[]} />
                     </div>
                 )}
             </div>
@@ -165,9 +169,9 @@ function RouteComponent() {
                             <div
                                 key={stage.ID}
                                 onClick={() => setCurrentStage(stage)}
-                                className={`border-border bg-secondBg rounded-lg border p-6 cursor-pointer transition-all ${
+                                className={`border-border bg-secondBg cursor-pointer rounded-lg border p-6 transition-all ${
                                     currentStage?.ID === stage.ID
-                                        ? "ring-2 ring-blue-500 bg-thirdBg"
+                                        ? "bg-thirdBg ring-2 ring-blue-500"
                                         : "hover:bg-thirdBg"
                                 }`}
                             >

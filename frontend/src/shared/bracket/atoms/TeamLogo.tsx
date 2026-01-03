@@ -24,7 +24,7 @@ export default function TeamLogo({
                     e.currentTarget.src = placeholder;
                 }
             }}
-            alt={team.team_name || "Team Logo"}
+            alt={team.name || "Team Logo"}
             className={styling}
             loading="lazy"
         />

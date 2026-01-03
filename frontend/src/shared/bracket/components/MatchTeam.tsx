@@ -15,7 +15,7 @@ export function MatchTeam({
     return (
         <div
             className={`${
-                !team ? "min-w-32" : "min-w-64"
+                !team ? "min-w-32" : "min-w-60"
             } grid grid-cols-[auto_1fr_auto] items-center gap-x-3 rounded-md px-2 py-1 ${bg}`}
         >
             <div className="h-6 w-6 flex-shrink-0">
