@@ -1,4 +1,10 @@
-import { sqliteTable, integer, text, unique, index } from "drizzle-orm/sqlite-core";
+import {
+    sqliteTable,
+    integer,
+    text,
+    unique,
+    index,
+} from "drizzle-orm/sqlite-core";
 import { relations } from "drizzle-orm";
 
 export const users = sqliteTable("users", {
@@ -10,7 +16,9 @@ export const users = sqliteTable("users", {
     discord_id: text("discord_id"),
     steam_id: text("steam_id"),
     last_login_at: integer("last_login_at", { mode: "timestamp" }),
-    email_verified: integer("email_verified", { mode: "boolean" }).default(false),
+    email_verified: integer("email_verified", { mode: "boolean" }).default(
+        false
+    ),
     refresh_token: text("refresh_token"),
     token_version: integer("token_version").default(0),
     created_at: integer("created_at", { mode: "timestamp" })
@@ -25,13 +33,6 @@ export const users = sqliteTable("users", {
 export const roles = sqliteTable("roles", {
     ID: integer("ID").primaryKey({ autoIncrement: true }),
     name: text("name").notNull().unique(),
-    created_at: integer("created_at", { mode: "timestamp" })
-        .notNull()
-        .$defaultFn(() => new Date()),
-    updated_at: integer("updated_at", { mode: "timestamp" })
-        .notNull()
-        .$defaultFn(() => new Date()),
-    deleted_at: integer("deleted_at", { mode: "timestamp" }),
 });
 
 export const userRoles = sqliteTable(
@@ -68,7 +69,7 @@ export const userRoles = sqliteTable(
  * - Have a linked player profile (via players.user_id)
  * - Have multiple role assignments (many-to-many through userRoles)
  * - Cast multiple matches (via matchCasters)
- * 
+ *
  * Note: Team membership is tracked through the player profile, not directly on the user.
  */
 export const usersRelations = relations(users, ({ one, many }) => ({

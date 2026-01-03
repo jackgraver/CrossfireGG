@@ -66,11 +66,7 @@ export const userRepository = {
             .from(userRoles)
             .innerJoin(roles, eq(userRoles.role_id, roles.ID))
             .where(
-                and(
-                    eq(userRoles.user_id, userId),
-                    isNull(userRoles.deleted_at),
-                    isNull(roles.deleted_at)
-                )
+                and(eq(userRoles.user_id, userId), isNull(userRoles.deleted_at))
             );
         return result.map((r) => r.roleName);
     },

@@ -16,7 +16,9 @@ export const playerRepository = {
         const result = await db
             .select()
             .from(players)
-            .where(and(eq(players.faceit_id, faceitId), isNull(players.deleted_at)))
+            .where(
+                and(eq(players.faceit_id, faceitId), isNull(players.deleted_at))
+            )
             .limit(1);
         return result[0];
     },
@@ -31,7 +33,12 @@ export const playerRepository = {
         const existing = await db
             .select()
             .from(players)
-            .where(and(eq(players.faceit_id, playerData.faceit_id), isNull(players.deleted_at)))
+            .where(
+                and(
+                    eq(players.faceit_id, playerData.faceit_id),
+                    isNull(players.deleted_at)
+                )
+            )
             .limit(1);
 
         if (existing.length > 0) {
@@ -41,7 +48,10 @@ export const playerRepository = {
                     player_name: playerData.player_name,
                     player_logo: playerData.player_logo,
                     country: playerData.country,
-                    team_id: playerData.team_id !== undefined ? playerData.team_id : existing[0].team_id,
+                    team_id:
+                        playerData.team_id !== undefined
+                            ? playerData.team_id
+                            : existing[0].team_id,
                     updated_at: new Date(),
                 })
                 .where(eq(players.ID, existing[0].ID))
@@ -72,5 +82,13 @@ export const playerRepository = {
             .returning();
         return result[0];
     },
-};
 
+    getPlayerByUserId: async (userId: number) => {
+        const result = await db
+            .select()
+            .from(players)
+            .where(and(eq(players.user_id, userId), isNull(players.deleted_at)))
+            .limit(1);
+        return result[0];
+    },
+};

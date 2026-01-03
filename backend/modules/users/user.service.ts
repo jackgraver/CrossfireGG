@@ -7,6 +7,7 @@ import type {
     AuthResponse,
     UserWithRoles,
 } from "./user.types";
+import { playerRepository } from "../players/player.repository";
 
 export const userService = {
     signUp: async (userData: SignUpRequest): Promise<AuthResponse> => {
@@ -82,12 +83,14 @@ export const userService = {
             tokenVersion
         );
 
+        const team = await playerRepository.getPlayerByUserId(user.ID);
+
         return {
             user: {
                 id: user.ID,
                 name: user.name,
                 email: user.email,
-                team_id: -1,
+                team_id: team?.team_id || undefined,
                 roles,
             },
         };
