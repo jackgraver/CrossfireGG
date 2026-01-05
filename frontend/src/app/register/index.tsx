@@ -4,6 +4,8 @@ import { useState, useEffect, useRef } from "react";
 import RegisterStep2Team from "./steps/step2_team";
 import RegisterStep3Players from "./steps/step3_players";
 import RegisterStep4SubCoach from "./steps/step4_subcoach";
+import RegisterStep5Agreements from "./steps/step5_agreements";
+import { useForm } from "@tanstack/react-form";
 
 export const Route = createFileRoute("/register/")({
     component: RegisterPage,
@@ -16,7 +18,23 @@ function RegisterPage() {
     // TODO: Replace with actual auth check
     const isLoggedIn = true;
 
-    const [stepIndex, setStepIndex] = useState(0);
+    const form = useForm({
+        defaultValues: {
+            teamId: "",
+            playerIds: [],
+            subIds: [],
+            coachId: "",
+            agreements: {
+                rulesAndGuidelines: false,
+                discordConfirmation: false,
+            },
+        },
+        onSubmit: async ({ value }) => {
+            console.log(value);
+        },
+    });
+
+    const [stepIndex, setStepIndex] = useState(3);
     const currentStep = formSteps[stepIndex];
 
     const [selectedTeamId, setSelectedTeamId] = useState<string[]>([]);
@@ -24,6 +42,10 @@ function RegisterPage() {
     const [selectedSubCoachIds, setSelectedSubCoachIds] = useState<string[]>(
         [],
     );
+    const [rulesAndGuidelinesAgreement, setRulesAndGuidelinesAgreement] =
+        useState<boolean>(false);
+    const [discordConfirmation, setDiscordConfirmation] =
+        useState<boolean>(false);
 
     const prevTeamIdRef = useRef<string[]>([]);
     const prevPlayerIdsRef = useRef<string[]>([]);
@@ -72,12 +94,28 @@ function RegisterPage() {
 
     return (
         <UserForm>
+            <form></form>
             <div className="flex w-full flex-col gap-y-4">
                 <div>
                     {currentStep === "team" && (
-                        <RegisterStep2Team
-                            selectedTeamId={selectedTeamId}
-                            onSelectionChange={setSelectedTeamId}
+                        <form.Field
+                            name="teamId"
+                            validators={{
+                                onChange: ({ value }) => {
+                                    console.log("teamId upd", value);
+                                },
+                                onChangeAsync: async ({ value }) => {
+                                    console.log("async teamId upd", value);
+                                },
+                            }}
+                            children={(field) => {
+                                return (
+                                    <RegisterStep2Team
+                                        selectedTeamId={selectedTeamId}
+                                        onSelectionChange={setSelectedTeamId}
+                                    />
+                                );
+                            }}
                         />
                     )}
                     {currentStep === "players" && (
@@ -95,7 +133,37 @@ function RegisterPage() {
                             onSelectionChange={setSelectedSubCoachIds}
                         />
                     )}
-                    {currentStep === "agreements" && <div>Agreements step</div>}
+                    {currentStep === "agreements" && (
+                        <form.Field
+                            name="agreements"
+                            validators={{
+                                onChange: ({ value }) => {
+                                    console.log("teamId upd", value);
+                                },
+                                onChangeAsync: async ({ value }) => {
+                                    console.log("async teamId upd", value);
+                                },
+                            }}
+                            children={(field) => {
+                                return (
+                                    <RegisterStep5Agreements
+                                        rulesAndGuidelines={
+                                            field.state.value.rulesAndGuidelines
+                                        }
+                                        discordConfirmation={
+                                            field.state.value.rulesAndGuidelines
+                                        }
+                                        onRulesAndGuidelinesChange={
+                                            field.handleChange
+                                        }
+                                        onDiscordConfirmationChange={
+                                            field.handleChange
+                                        }
+                                    />
+                                );
+                            }}
+                        />
+                    )}
                 </div>
                 <div className="flex w-full items-center justify-between gap-4">
                     <button
