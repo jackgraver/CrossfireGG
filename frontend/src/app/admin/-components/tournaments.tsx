@@ -1,9 +1,4 @@
 import { api } from "@/lib/api";
-import BaseInput from "@/shared/OSSForm/BaseInput/BaseInput";
-import OSSForm from "@/shared/OSSForm/OSSForm";
-import SelectInput from "@/shared/OSSForm/SelectInput/SelectInput";
-import { toastService } from "@/shared/toast/toastService";
-import TournamentSelector from "@/shared/TournamentSelector";
 import { Tournament } from "@/types/TournamentModel";
 import { PromiseReturn } from "@/types/Types";
 import { useQuery } from "@tanstack/react-query";
@@ -92,58 +87,6 @@ function extractFaceitIdFromLink(link: string): string | null {
     return match ? match[0] : null;
 }
 
-function NewTournamentToast() {
-    const [tournamentLink, setTournamentLink] = useState("");
-    const [tournamentName, setTournamentName] = useState("");
-
-    const handleSubmit = async (e: React.FormEvent): Promise<PromiseReturn> => {
-        e.preventDefault();
-
-        console.log(tournamentLink, tournamentName);
-        try {
-            const response: { team_id: string } = await api.post(
-                "/tournament/create",
-                {
-                    tournament_id: extractFaceitIdFromLink(tournamentLink),
-                    tournament_name: tournamentName,
-                },
-            );
-            localStorage.setItem("team_id", response.team_id);
-            return { success: true, result: response.team_id };
-        } catch (err) {
-            console.error("Submission error:", err);
-            return { success: false, result: null };
-        }
-    };
-
-    return (
-        <div>
-            <h1>New Tournament</h1>
-            <OSSForm onSubmit={handleSubmit} onSuccess={() => {}}>
-                <BaseInput
-                    onChange={(e) => setTournamentLink(e.target.value)}
-                    type="text"
-                    placeholder="Tournament Link"
-                />
-                <BaseInput
-                    onChange={(e) => setTournamentName(e.target.value)}
-                    type="text"
-                    placeholder="Tournament Name"
-                />
-                {/* <SelectInput
-                    placeholder="Current Stage"
-                    options={["REGULAR SEASON", "PLAYOFFS"]}
-                    value="REGULAR SEASON"
-                    onChange={function (value: string): void {
-                        throw new Error("Function not implemented.");
-                    }}
-                /> */}
-                <h1>Stage/End</h1>
-            </OSSForm>
-        </div>
-    );
-}
-
 function FaceitImportSection() {
     return (
         <div className="flex flex-col gap-6">
@@ -208,7 +151,7 @@ function ImportStageForm() {
                         Import from file
                     </label>
                 </div>
-                <BaseInput
+                {/* <BaseInput
                     onChange={(e) => setTournamentId(e.target.value)}
                     type="number"
                     placeholder="Tournament ID"
@@ -227,7 +170,7 @@ function ImportStageForm() {
                         placeholder="Read File Name (e.g., faceit_tournament_regseason.json)"
                         value={readFileName}
                     />
-                )}
+                )} */}
                 <div className="flex items-center gap-2">
                     <input
                         type="checkbox"
@@ -240,14 +183,14 @@ function ImportStageForm() {
                         Save to file
                     </label>
                 </div>
-                {saveToFile && (
+                {/* {saveToFile && (
                     <BaseInput
                         onChange={(e) => setWriteFileName(e.target.value)}
                         type="text"
                         placeholder="Write File Name (optional, auto-generated if empty)"
                         value={writeFileName}
                     />
-                )}
+                )} */}
                 <button
                     type="submit"
                     disabled={loading}
@@ -328,7 +271,7 @@ function ImportMatchesForm() {
                         Import from file
                     </label>
                 </div>
-                <BaseInput
+                {/* <BaseInput
                     onChange={(e) => setStageId(e.target.value)}
                     type="number"
                     placeholder="Stage ID"
@@ -347,7 +290,7 @@ function ImportMatchesForm() {
                         placeholder="Read File Name (e.g., faceit_matches_regseason.json)"
                         value={readFileName}
                     />
-                )}
+                )} */}
                 <div className="flex items-center gap-2">
                     <input
                         type="checkbox"
@@ -360,14 +303,14 @@ function ImportMatchesForm() {
                         Save to file
                     </label>
                 </div>
-                {saveToFile && (
+                {/* {saveToFile && (
                     <BaseInput
                         onChange={(e) => setWriteFileName(e.target.value)}
                         type="text"
                         placeholder="Write File Name (optional, auto-generated if empty)"
                         value={writeFileName}
                     />
-                )}
+                )} */}
                 <button
                     type="submit"
                     disabled={loading}

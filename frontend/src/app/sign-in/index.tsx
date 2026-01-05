@@ -1,106 +1,100 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { validateEmail } from "@/lib/SignInUp.util";
+import { useForm } from "@tanstack/react-form";
 import { useServerFn } from "@tanstack/react-start";
 import { loginFn } from "@/lib/server/auth.server";
-import { useAuth } from "@/contexts/auth";
-import OSSForm from "@/shared/OSSForm/OSSForm";
-import BaseInput from "@/shared/OSSForm/BaseInput/BaseInput";
-import PasswordInput from "@/shared/OSSForm/PasswordInput/PasswordInput";
+import { signInSchema } from "@/schemas/auth";
+import { Input, PasswordInput, SubmitButton } from "@/shared/form";
 import UserForm from "@/shared/UserForm";
-import { PromiseReturn } from "@/types/Types";
-import { useNavigate } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/sign-in/")({
     component: SignIn,
 });
 
 function SignIn() {
-    const [email, setEmail] = useState("");
-    const [emailError, setEmailError] = useState("");
-    const [password, setPassword] = useState("");
-    const [isPending, setIsPending] = useState(false);
     const navigate = useNavigate();
-
     const login = useServerFn(loginFn);
+    const [submitStatus, setSubmitStatus] = useState<
+        "idle" | "submitting" | "success" | "error"
+    >("idle");
 
-    const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (email.length === 0) setEmailError("");
-        setEmail(e.target.value);
-    };
-
-    const handleEmailBlur = () => {
-        if (email === "") {
-            setEmailError("");
-            return;
-        }
-        setTimeout(() => {
-            if (email && !validateEmail(email)) {
-                setEmailError("Please enter a valid email address");
-            } else {
-                setEmailError("");
+    const form = useForm({
+        defaultValues: {
+            email: "",
+            password: "",
+        },
+        validators: {
+            onBlur: signInSchema,
+        },
+        onSubmit: async ({ value }) => {
+            setSubmitStatus("submitting");
+            try {
+                const result = await login({ data: value });
+                if (result?.error) {
+                    form.setFieldMeta("email", (prev) => ({
+                        ...prev,
+                        errors: [result.error],
+                    }));
+                    setSubmitStatus("error");
+                    return;
+                }
+                setSubmitStatus("success");
+                setTimeout(() => navigate({ to: "/" }), 1500);
+            } catch (error: any) {
+                if (error.to) throw error;
+                form.setFieldMeta("email", (prev) => ({
+                    ...prev,
+                    errors: [error.message || "Login failed"],
+                }));
+                setSubmitStatus("error");
             }
-        }, 0);
-    };
+        },
+    });
 
-    const handleSubmit = async (e: React.FormEvent): Promise<PromiseReturn> => {
-        e.preventDefault();
-        setEmailError("");
-
-        if (!validateEmail(email)) {
-            setEmailError("Please enter a valid email address");
-            return { success: false, result: null };
-        }
-
-        setIsPending(true);
-        try {
-            const result = await login({ data: { email, password } });
-            console.log("result", result);
-            if (result?.error) {
-                setEmailError(result.error);
-                return { success: false, result: null };
-            }
-            setTimeout(() => {
-                navigate({ to: "/" });
-            }, 1500);
-            return { success: true, result: null };
-        } catch (error: any) {
-            console.log("error", error);
-            if (error.to) {
-                throw error;
-            }
-            setEmailError(error.message || "Login failed");
-            return { success: false, result: null };
-        } finally {
-            setIsPending(false);
-        }
-    };
+    const isSubmitting = submitStatus === "submitting";
 
     return (
         <UserForm>
             <h1 className="mb-2 text-2xl font-bold text-white">Welcome Back</h1>
-            <OSSForm
-                onSubmit={handleSubmit}
-                submitLabel="Sign In"
-                cancelLabel="Create Account"
-                onCancel={() => {}}
+            <form
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    form.handleSubmit();
+                }}
+                className="w-full"
             >
-                <BaseInput
-                    type="email"
-                    placeholder="Email address"
-                    value={email}
-                    onChange={handleEmailChange}
-                    onBlur={handleEmailBlur}
-                    disabled={isPending}
-                    error={emailError}
-                    success={validateEmail}
-                />
-                <PasswordInput
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    disabled={isPending}
-                />
-            </OSSForm>
+                <form.Field name="email">
+                    {(field) => (
+                        <Input
+                            field={field}
+                            type="email"
+                            placeholder="Email address"
+                            disabled={isSubmitting}
+                        />
+                    )}
+                </form.Field>
+                <form.Field name="password">
+                    {(field) => (
+                        <PasswordInput
+                            field={field}
+                            placeholder="Password"
+                            disabled={isSubmitting}
+                        />
+                    )}
+                </form.Field>
+                <div className="mt-6 flex flex-row gap-4">
+                    <button
+                        type="button"
+                        onClick={() => navigate({ to: "/sign-up" })}
+                        className="bg-border text-textSecondary hover:bg-secondBg flex-1 rounded px-4 py-2"
+                    >
+                        Create Account
+                    </button>
+                    <div className="flex-1">
+                        <SubmitButton status={submitStatus} label="Sign In" />
+                    </div>
+                </div>
+            </form>
         </UserForm>
     );
 }

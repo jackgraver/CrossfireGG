@@ -1,224 +1,88 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { validateEmail } from "@/lib/SignInUp.util";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
+import { useForm } from "@tanstack/react-form";
 import { useServerFn } from "@tanstack/react-start";
 import { signUpFn } from "@/lib/server/auth.server";
 import { useAuth } from "@/contexts/auth";
-import { api } from "../../lib/api";
-
-import { FaSpinner } from "react-icons/fa";
-import OSSForm from "@/shared/OSSForm/OSSForm";
-import BaseInput from "@/shared/OSSForm/BaseInput/BaseInput";
-import PasswordInput from "@/shared/OSSForm/PasswordInput/PasswordInput";
-import SpinnerInput from "@/shared/OSSForm/SpinnerInput/SpinnerInput";
+import { api } from "@/lib/api";
+import {
+    Input,
+    PasswordInput,
+    SpinnerInput,
+    Checkbox,
+    SubmitButton,
+} from "@/shared/form";
 import UserForm from "@/shared/UserForm";
-import { PromiseReturn } from "@/types/Types";
-
-interface SignUpResponse {
-    user: {
-        id: number;
-        name: string;
-        email: string;
-        team_id?: number;
-        roles: string[];
-    };
-}
 
 export const Route = createFileRoute("/sign-up/")({
     component: SignUp,
 });
 
+const validFaceitLinkRegex =
+    /^https:\/\/www\.faceit\.com\/[^\/]+\/players\/([a-zA-Z0-9_]{3,32})$/;
+
+function extractFaceitUsername(link: string): string {
+    const match = link.match(validFaceitLinkRegex);
+    return match ? match[1] : "";
+}
+
 function SignUp() {
-    const [isSigningUp, setIsSigningUp] = useState(false);
+    const navigate = useNavigate();
     const { refetch } = useAuth();
     const signUp = useServerFn(signUpFn);
+    const [submitStatus, setSubmitStatus] = useState<
+        "idle" | "submitting" | "success" | "error"
+    >("idle");
+    const [faceitTeamName, setFaceitTeamName] = useState("");
+    const [faceitTeamId, setFaceitTeamId] = useState("");
 
-    const [showFaceitLinkSpinner, setShowFaceitLinkSpinner] = useState(false);
-    const validFaceitLink =
-        /^https:\/\/www\.faceit\.com\/[^\/]+\/players\/([a-zA-Z0-9_]{3,32})$/;
-
-    const [email, setEmail] = useState("");
-    const [emailError, setEmailError] = useState("");
-
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-
-    const [showPassword, setShowPassword] = useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-    const [faceitLink, setFaceitLink] = useState("");
-    const [faceitLinkError, setFaceitLinkError] = useState("");
-    const [faceitLinkSuccess, setFaceitLinkSuccess] = useState(false);
-    const [faceitID, setFaceitID] = useState("");
-    const [internalID, setInternalID] = useState("");
-
-    const [faceitTeam, setFaceitTeam] = useState<{ id: string; name: string }>({
-        id: "",
-        name: "",
+    const form = useForm({
+        defaultValues: {
+            email: "",
+            faceitLink: "",
+            password: "",
+            confirmPassword: "",
+            privacyAgreed: false,
+        },
+        // validators: {
+        //     onBlur: signUpSchema,
+        // },
+        onSubmit: async ({ value }) => {
+            setSubmitStatus("submitting");
+            try {
+                const result = await signUp({
+                    data: {
+                        email: value.email,
+                        name: value.email.split("@")[0],
+                        password: value.password,
+                        team_id: faceitTeamId
+                            ? parseInt(faceitTeamId)
+                            : undefined,
+                    },
+                });
+                if (result?.error) {
+                    form.setFieldMeta("email", (prev) => ({
+                        ...prev,
+                        errors: [result.error],
+                    }));
+                    setSubmitStatus("error");
+                    return;
+                }
+                setSubmitStatus("success");
+                await refetch();
+                setTimeout(() => navigate({ to: "/" }), 1500);
+            } catch (error: any) {
+                if (error.to) throw error;
+                form.setFieldMeta("email", (prev) => ({
+                    ...prev,
+                    errors: [error.message || "Sign up failed"],
+                }));
+                setSubmitStatus("error");
+            }
+        },
     });
 
-    const [privacyAgreed, setPrivacyAgreed] = useState(false);
-    const [passwordError, setPasswordError] = useState("");
-
-    const extractFaceitLink = (link: string) => {
-        const match = link.match(validFaceitLink);
-        if (match) {
-            return match[1];
-        }
-        return "";
-    };
-
-    const checkLinkBackend = async (link: string) => {
-        try {
-            setShowFaceitLinkSpinner(true);
-
-            const response = await api.get<any>(
-                `/test_faceit_link/${extractFaceitLink(link)}`,
-            );
-            return response;
-        } catch (err) {
-            setFaceitLinkError("Error");
-            return null;
-        } finally {
-            setShowFaceitLinkSpinner(false);
-        }
-    };
-
-    useEffect(() => {
-        const handleLink = async (link: string) => {
-            checkLinkBackend(faceitLink).then((data) => {
-                if (data.player) {
-                    setFaceitID(data.player.id);
-                    setInternalID(data.player.i_id);
-                    setFaceitLinkError("");
-                    setFaceitLinkSuccess(true);
-                } else {
-                    setFaceitLinkError("Invalid Link or Player not found");
-                }
-
-                if (data.team) {
-                    setFaceitTeam(data.team);
-                } else {
-                    setFaceitTeam({
-                        id: "",
-                        name: "No Team Found for Player.",
-                    });
-                }
-            });
-        };
-
-        if (faceitLink === "") {
-            setFaceitLinkError("");
-            return;
-        }
-
-        if (!validFaceitLink.test(faceitLink)) {
-            setFaceitLinkError(
-                "Please match format - https://www.faceit.com/en/players/XXX",
-            );
-            setFaceitLinkSuccess(false);
-            return;
-        }
-
-        handleLink(faceitLink);
-    }, [faceitLink]);
-
-    const handleSignUp = async (userData: {
-        email: string;
-        name: string;
-        password: string;
-        team_id?: number;
-    }) => {
-        setIsSigningUp(true);
-        try {
-            const result = await signUp({ data: userData });
-            if (result?.error) {
-                setEmailError(result.error);
-            } else {
-                await refetch();
-            }
-        } catch (error: any) {
-            if (error.to) {
-                throw error;
-            }
-            setEmailError(error.message || "Sign up failed");
-        } finally {
-            setIsSigningUp(false);
-        }
-    };
-
-    const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (email.length === 0) setEmailError("");
-
-        const newEmail = e.target.value;
-        setEmail(newEmail);
-    };
-
-    const handleEmailBlur = () => {
-        if (email === "") {
-            setEmailError("");
-            return;
-        }
-        setTimeout(() => {
-            if (email && !validateEmail(email)) {
-                setEmailError("Please enter a valid email address");
-            } else {
-                setEmailError("");
-            }
-        }, 0);
-    };
-
-    const handleConfirmPasswordChange = (
-        e: React.ChangeEvent<HTMLInputElement>,
-    ) => {
-        const newConfirmPassword = e.target.value;
-        setConfirmPassword(newConfirmPassword);
-        if (newConfirmPassword && newConfirmPassword !== password) {
-            setPasswordError("Passwords do not match");
-        } else {
-            setPasswordError("");
-        }
-    };
-
-    const handleSubmit = async (e: React.FormEvent): Promise<PromiseReturn> => {
-        e.preventDefault();
-
-        try {
-            if (!validateEmail(email)) {
-                setEmailError("Please enter a valid email address");
-                return { success: false, result: null };
-            }
-            if (password !== confirmPassword) {
-                setPasswordError("Passwords do not match");
-                return { success: false, result: null };
-            }
-            if (!privacyAgreed) {
-                alert("Please agree to the privacy policy");
-                return { success: false, result: null };
-            }
-
-            await handleSignUp({
-                email,
-                name: email.split("@")[0],
-                password,
-                team_id: faceitTeam.id ? parseInt(faceitTeam.id) : undefined,
-            });
-
-            return { success: true, result: null };
-        } catch (err) {
-            console.error("Submission error:", err);
-            // return failure
-            return { success: false, result: null };
-        }
-    };
-
-    const togglePasswordVisibility = () => {
-        setShowPassword(!showPassword);
-    };
-
-    const toggleConfirmPasswordVisibility = () => {
-        setShowConfirmPassword(!showConfirmPassword);
-    };
+    const isSubmitting = submitStatus === "submitting";
 
     return (
         <UserForm>
@@ -234,36 +98,120 @@ function SignUp() {
                     Sign in
                 </a>
             </p>
-            <OSSForm onSubmit={handleSubmit} submitLabel="Sign Up">
-                <BaseInput
-                    type="email"
-                    placeholder="Email address"
-                    value={email}
-                    onChange={handleEmailChange}
-                    onBlur={handleEmailBlur}
-                    error={emailError}
-                    success={validateEmail}
-                />
-                <SpinnerInput
-                    placeholder="Faceit Link"
-                    value={faceitLink}
-                    onChange={(e) => setFaceitLink(e.target.value)}
-                    disabled={isSigningUp}
-                    error={faceitLinkError}
-                />
-                <BaseInput
-                    type="text"
-                    placeholder="Faceit Team"
-                    value={faceitTeam.name}
-                    disabled={false}
-                    onChange={(e) => {}}
-                />
-                <PasswordInput
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    disabled={isSigningUp}
-                />
-            </OSSForm>
+            <form
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    form.handleSubmit();
+                }}
+                className="w-full"
+            >
+                <form.Field name="email">
+                    {(field) => (
+                        <Input
+                            field={field}
+                            type="email"
+                            placeholder="Email address"
+                            disabled={isSubmitting}
+                        />
+                    )}
+                </form.Field>
+                <form.Field
+                    name="faceitLink"
+                    validators={{
+                        onChangeAsync: async ({ value }) => {
+                            if (!value) {
+                                setFaceitTeamName("");
+                                setFaceitTeamId("");
+                                return undefined;
+                            }
+                            if (!validFaceitLinkRegex.test(value)) {
+                                setFaceitTeamName("");
+                                setFaceitTeamId("");
+                                return "Please match format - https://www.faceit.com/en/players/XXX";
+                            }
+                            const username = extractFaceitUsername(value);
+                            try {
+                                const response = await api.get<any>(
+                                    `/test_faceit_link/${username}`,
+                                );
+                                if (response.player) {
+                                    if (response.team) {
+                                        setFaceitTeamName(response.team.name);
+                                        setFaceitTeamId(response.team.id);
+                                    } else {
+                                        setFaceitTeamName("No Team Found");
+                                        setFaceitTeamId("");
+                                    }
+                                    return undefined;
+                                } else {
+                                    setFaceitTeamName("");
+                                    setFaceitTeamId("");
+                                    return "Player not found";
+                                }
+                            } catch {
+                                setFaceitTeamName("");
+                                setFaceitTeamId("");
+                                return "Error validating Faceit link";
+                            }
+                        },
+                        onChangeAsyncDebounceMs: 500,
+                    }}
+                >
+                    {(field) => (
+                        <SpinnerInput
+                            field={field}
+                            type="url"
+                            placeholder="Faceit Link"
+                            disabled={isSubmitting}
+                        />
+                    )}
+                </form.Field>
+                {faceitTeamName && (
+                    <div className="text-textSecondary bg-secondBg mb-2 rounded px-3 py-2 text-sm">
+                        Team: {faceitTeamName}
+                    </div>
+                )}
+                <form.Field name="password">
+                    {(field) => (
+                        <PasswordInput
+                            field={field}
+                            placeholder="Password"
+                            disabled={isSubmitting}
+                        />
+                    )}
+                </form.Field>
+                <form.Field name="confirmPassword">
+                    {(field) => (
+                        <PasswordInput
+                            field={field}
+                            placeholder="Confirm Password"
+                            disabled={isSubmitting}
+                        />
+                    )}
+                </form.Field>
+                <form.Field name="privacyAgreed">
+                    {(field) => (
+                        <Checkbox
+                            field={field}
+                            label={
+                                <>
+                                    I agree to the{" "}
+                                    <a
+                                        href="/privacy"
+                                        className="text-blue-600 hover:text-blue-800"
+                                    >
+                                        Privacy Policy
+                                    </a>
+                                </>
+                            }
+                            disabled={isSubmitting}
+                        />
+                    )}
+                </form.Field>
+                <div className="mt-6">
+                    <SubmitButton status={submitStatus} label="Sign Up" />
+                </div>
+            </form>
         </UserForm>
     );
 }

@@ -1,170 +1,119 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { api } from "@/lib/api";
-import BaseInput from "@/shared/OSSForm/BaseInput/BaseInput";
-import FileDropper from "@/shared/OSSForm/FileDropper/FileDropper";
-import OSSForm from "@/shared/OSSForm/OSSForm";
 import UserForm from "@/shared/UserForm";
-import { useState } from "react";
-import ReRegisterModal from "./-components/ReRegisterModal";
-import { PromiseReturn } from "@/types/Types";
-import { useNavigate } from "@tanstack/react-router";
-import SpinnerInput from "@/shared/OSSForm/SpinnerInput/SpinnerInput";
-import { toastService } from "@/shared/toast/toastService";
+import { useState, useEffect, useRef } from "react";
+import RegisterStep2Team from "./steps/step2_team";
+import RegisterStep3Players from "./steps/step3_players";
+import RegisterStep4SubCoach from "./steps/step4_subcoach";
 
 export const Route = createFileRoute("/register/")({
     component: RegisterPage,
 });
 
-function extractFaceitIdFromLink(link: string): string | null {
-    const match = link.match(
-        /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i,
-    );
-    return match ? match[0] : null;
-}
-
-const faceitUrlRegex =
-    /^https:\/\/www\.faceit\.com\/en\/teams\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(\/.*)?$/i;
+const formSteps = ["team", "players", "sub_coach", "agreements"] as const;
+type FormStep = (typeof formSteps)[number];
 
 function RegisterPage() {
-    const navigate = useNavigate();
+    // TODO: Replace with actual auth check
+    const isLoggedIn = true;
 
-    const [teamName, setTeamName] = useState("");
+    const [stepIndex, setStepIndex] = useState(0);
+    const currentStep = formSteps[stepIndex];
 
-    const [teamLink, setTeamLink] = useState("");
-    const [checkingTeamLink, setCheckingTeamLink] = useState(false);
+    const [selectedTeamId, setSelectedTeamId] = useState<string[]>([]);
+    const [selectedPlayerIds, setSelectedPlayerIds] = useState<string[]>([]);
+    const [selectedSubCoachIds, setSelectedSubCoachIds] = useState<string[]>(
+        [],
+    );
 
-    const [showModal, setShowModal] = useState(false);
-    const [modalTitle, setModalTitle] = useState("");
+    const prevTeamIdRef = useRef<string[]>([]);
+    const prevPlayerIdsRef = useRef<string[]>([]);
 
-    const handleFaceitLinkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setCheckingTeamLink(true);
-        setTeamLink(e.target.value);
-
-        if (!faceitUrlRegex.test(e.target.value)) {
-            setCheckingTeamLink(false);
-            return;
+    useEffect(() => {
+        const teamChanged = prevTeamIdRef.current[0] !== selectedTeamId[0];
+        if (teamChanged && prevTeamIdRef.current.length > 0) {
+            setSelectedPlayerIds([]);
+            setSelectedSubCoachIds([]);
         }
+        prevTeamIdRef.current = selectedTeamId;
+    }, [selectedTeamId]);
 
-        api.get(
-            `/team/test_faceit_link/${extractFaceitIdFromLink(e.target.value)}`,
-        ).then((data: any) => {
-            if (data.status === "error") {
-                setCheckingTeamLink(false);
-                switch (data.code) {
-                    case "-1":
-                        toastService.error(<p>{data.message}</p>, "Error");
-                        break;
-                    case "-2":
-                        toastService.error(<p>{data.message}</p>, "Error");
-                        break;
-                }
-            }
-            if (data.status === "success") {
-                switch (data.code) {
-                    case 0:
-                        setCheckingTeamLink(false);
-                        break;
-                    case 1:
-                        setCheckingTeamLink(false);
-                        setModalTitle("We see you are a returning team");
-                        setShowModal(true);
-                        break;
-                    case 2:
-                        const toastId = toastService.display({
-                            title: "Team already registered",
-                            body: (
-                                <div className="flex items-center justify-center">
-                                    <button
-                                        className="rounded-md bg-blue-500 p-2 hover:bg-blue-600"
-                                        onClick={() => {
-                                            toastService.dismiss(toastId);
-                                            navigate({
-                                                to: `/team/${data.id}`,
-                                            });
-                                        }}
-                                    >
-                                        View Team
-                                    </button>
-                                </div>
-                            ),
-                            durationMs: -1,
-                            variant: "center",
-                        });
-                        break;
-                }
-            }
-        });
-    };
-
-    const handleSubmit = async (e: React.FormEvent): Promise<PromiseReturn> => {
-        e.preventDefault();
-
-        try {
-            const response: { team_id: string } = await api.post(
-                "/team/register",
-                {
-                    team_name: teamName,
-                    faceit_link: teamLink,
-                },
+    useEffect(() => {
+        const playersChanged =
+            JSON.stringify(prevPlayerIdsRef.current.sort()) !==
+            JSON.stringify(selectedPlayerIds.sort());
+        if (playersChanged && prevPlayerIdsRef.current.length > 0) {
+            setSelectedSubCoachIds((prev) =>
+                prev.filter((id) => !selectedPlayerIds.includes(id)),
             );
-            localStorage.setItem("team_id", response.team_id);
-            return { success: true, result: response.team_id };
-        } catch (err) {
-            console.error("Submission error:", err);
-            return { success: false, result: null };
         }
+        prevPlayerIdsRef.current = selectedPlayerIds;
+    }, [selectedPlayerIds]);
+
+    const stepValidation: Record<FormStep, boolean> = {
+        team: selectedTeamId.length === 1,
+        players: selectedPlayerIds.length === 5,
+        sub_coach: selectedSubCoachIds.length <= 3,
+        agreements: true,
     };
+
+    const canContinue = stepValidation[currentStep];
+    const canGoBack = stepIndex > 0;
+    const canGoForward = stepIndex < formSteps.length - 1 && canContinue;
+
+    if (!isLoggedIn) {
+        return (
+            <UserForm>
+                <button className="rounded bg-orange-500 p-2 font-semibold text-white hover:bg-orange-600 disabled:opacity-50">
+                    Sign In With Faceit
+                </button>
+            </UserForm>
+        );
+    }
 
     return (
-        <>
-            {showModal && (
-                <ReRegisterModal
-                    setShowModal={setShowModal}
-                    title={modalTitle}
-                />
-            )}
-            <UserForm>
-                <h1 className="text-textPrimary text-2xl font-bold">
-                    Register for OSS
-                </h1>
-                <p className="text-textSecondary">
-                    Returning teams can sign-up{" "}
-                    <a
-                        onClick={() => setShowModal(true)}
-                        className="cursor-pointer text-blue-600 hover:text-blue-800"
+        <UserForm>
+            <div className="flex w-full flex-col gap-y-4">
+                <div>
+                    {currentStep === "team" && (
+                        <RegisterStep2Team
+                            selectedTeamId={selectedTeamId}
+                            onSelectionChange={setSelectedTeamId}
+                        />
+                    )}
+                    {currentStep === "players" && (
+                        <RegisterStep3Players
+                            teamId={selectedTeamId[0] ?? ""}
+                            selectedPlayerIds={selectedPlayerIds}
+                            onSelectionChange={setSelectedPlayerIds}
+                        />
+                    )}
+                    {currentStep === "sub_coach" && (
+                        <RegisterStep4SubCoach
+                            teamId={selectedTeamId[0] ?? ""}
+                            excludedPlayerIds={selectedPlayerIds}
+                            selectedSubCoachIds={selectedSubCoachIds}
+                            onSelectionChange={setSelectedSubCoachIds}
+                        />
+                    )}
+                    {currentStep === "agreements" && <div>Agreements step</div>}
+                </div>
+                <div className="flex w-full items-center justify-between gap-4">
+                    <button
+                        onClick={() => setStepIndex((i) => i - 1)}
+                        className="flex-1 rounded bg-gray-600 px-6 py-2 font-semibold hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
+                        disabled={!canGoBack}
                     >
-                        here
-                    </a>
-                </p>
-                <OSSForm
-                    onSubmit={handleSubmit}
-                    onSuccess={(team_id: string) => {
-                        navigate({
-                            to: `/team/${team_id}`,
-                            search: { from: `register` },
-                        });
-                    }}
-                    submitLabel="Register"
-                >
-                    <BaseInput
-                        type="text"
-                        placeholder="Team Name"
-                        value={teamName}
-                        onChange={(e) => {
-                            setTeamName(e.target.value);
-                        }}
-                    />
-                    <SpinnerInput
-                        placeholder="Faceit Link"
-                        value={teamLink}
-                        onChange={(e) => {
-                            // setTeamLink(e.target.value);
-                            handleFaceitLinkChange(e);
-                        }}
-                        loading={checkingTeamLink}
-                    />
-                </OSSForm>
-            </UserForm>
-        </>
+                        Back
+                    </button>
+                    <button
+                        onClick={() => setStepIndex((i) => i + 1)}
+                        className="flex-1 rounded bg-green-600 px-6 py-2 font-semibold hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
+                        disabled={!canGoForward}
+                    >
+                        Continue
+                    </button>
+                </div>
+            </div>
+        </UserForm>
     );
 }

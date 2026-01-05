@@ -1,0 +1,65 @@
+.wrapper {
+    width: 100%;
+    margin: 0.5rem 0;
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+}
+
+.switch {
+    width: 2.625rem;
+    height: 1.5rem;
+    background-color: var(--color-third-bg);
+    border-radius: 9999px;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.15s;
+}
+
+.switch:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px #3b82f6;
+}
+
+.switch[data-state="checked"] {
+    background-color: #3b82f6;
+}
+
+.switch:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.thumb {
+    display: block;
+    width: 1.25rem;
+    height: 1.25rem;
+    background-color: white;
+    border-radius: 9999px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    transition: transform 0.15s;
+    transform: translateX(2px);
+}
+
+.thumb[data-state="checked"] {
+    transform: translateX(calc(2.625rem - 1.25rem - 2px));
+}
+
+.label {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    user-select: none;
+}
+
+.errorText {
+    margin-top: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #ef4444;
+    text-align: left;
+}
+
