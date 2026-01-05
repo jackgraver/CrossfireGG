@@ -8,9 +8,13 @@ import type {
 } from "./team.types";
 
 export const teamService = {
-    getTeamById: async (
-        teamId: number
-    ): Promise<TeamDetailResponse | null> => {
+    getAllTeams: async (): Promise<any> => {
+        // TODO: probably need to filter by current stage (maybe tournament based on current = true stage)
+        const teams = await teamRepository.findAll();
+        return teams;
+    },
+
+    getTeamById: async (teamId: number): Promise<TeamDetailResponse | null> => {
         const team = await teamRepository.findById(teamId);
 
         if (!team) {
@@ -31,7 +35,7 @@ export const teamService = {
 
         teamStages.forEach((item) => {
             const tournamentId = item.tournament.ID;
-            
+
             if (!tournamentMap.has(tournamentId)) {
                 tournamentMap.set(tournamentId, {
                     tournament_id: tournamentId.toString(),
@@ -85,8 +89,12 @@ export const teamService = {
                     match.ID
                 );
 
-                const team1Entry = participants.find(p => p.participant.position === 1);
-                const team2Entry = participants.find(p => p.participant.position === 2);
+                const team1Entry = participants.find(
+                    (p) => p.participant.position === 1
+                );
+                const team2Entry = participants.find(
+                    (p) => p.participant.position === 2
+                );
 
                 const team1Data = team1Entry?.team;
                 const team2Data = team2Entry?.team;
@@ -123,7 +131,7 @@ export const teamService = {
                     participants: {
                         team1: team1,
                         team2: team2,
-                    }
+                    },
                 };
             })
         );

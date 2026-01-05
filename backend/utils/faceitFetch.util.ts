@@ -12,10 +12,10 @@ export const faceitFetchUtil = {
     baseUrl: "https://open.faceit.com/data/v4",
     DEBUG_DATA_DIR: path.join(__dirname, "..", "debug-data"),
 
-    _callApi: async (
+    _callApi: async <T = any>(
         endpoint: string,
         queryParams?: Record<string, any>
-    ): Promise<any> => {
+    ): Promise<T> => {
         let url = `${faceitFetchUtil.baseUrl}/${endpoint.replace(/^\//, "")}`;
 
         if (queryParams && Object.keys(queryParams).length > 0) {
@@ -45,7 +45,7 @@ export const faceitFetchUtil = {
                 `Faceit API error: ${response.status} ${response.statusText}`
             );
         }
-        return response.json();
+        return response.json() as Promise<T>;
     },
 
     _writeToFile: async (fileName: string, data: any): Promise<void> => {

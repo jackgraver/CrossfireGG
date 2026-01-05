@@ -26,3 +26,11 @@ export const ImportFaceitMatchesSchema = z.object({
     readFileName: z.string().optional(),
     writeFileName: z.string().optional(),
 });
+
+export const VerifyFaceitPlayerTeamsSchema = z.object({
+    playerId: z.string().min(1),
+});
+
+export const VerifyTeamPlayersSchema = z.object({
+    teamId: z.string().min(1),
+});
