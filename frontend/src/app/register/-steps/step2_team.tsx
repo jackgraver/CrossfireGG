@@ -4,7 +4,7 @@ import { SelectableCardGroup } from "../-components/SelectableCardGroup";
 
 type RegisterStep2TeamProps = {
     selectedTeamId: string[];
-    onSelectionChange: (ids: string[]) => void;
+    onSelectionChange: any;
 };
 
 export default function RegisterStep2Team({
@@ -32,7 +32,7 @@ export default function RegisterStep2Team({
                 min={1}
                 max={1}
                 value={selectedTeamId}
-                onChange={onSelectionChange}
+                onChange={(value) => onSelectionChange(value[0])}
             >
                 <div className="flex max-h-[400px] w-full flex-col gap-2 overflow-x-hidden overflow-y-auto">
                     {playerFaceitTeams?.teams.map((team) => (
