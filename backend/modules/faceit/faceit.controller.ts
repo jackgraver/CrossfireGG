@@ -127,10 +127,13 @@ export const faceitController = {
 
             const { playerId } = validation.data;
 
-            console.log(`Verifying Faceit team ${playerId}`);
             const response =
-                await faceitFetchUtil._callApi<FaceitPlayerTeamsResponse>(
-                    `/players/${playerId}/teams`
+                await faceitFetchUtil.fetchData<FaceitPlayerTeamsResponse>(
+                    `/players/${playerId}/teams`,
+                    {
+                        readFileName: `player_teams_${playerId}.json`,
+                        // writeFileName: `player_teams_${playerId}.json`,
+                    }
                 );
 
             const existingTeams = await teamRepository.findAll();
@@ -188,8 +191,12 @@ export const faceitController = {
             const { teamId } = validation.data;
 
             const players =
-                await faceitFetchUtil._callApi<FaceitTeamPlayersResponse>(
-                    `/teams/${teamId}`
+                await faceitFetchUtil.fetchData<FaceitTeamPlayersResponse>(
+                    `/teams/${teamId}`,
+                    {
+                        readFileName: `team_players_${teamId}.json`,
+                        // writeFileName: `team_players_${teamId}.json`,
+                    }
                 );
             console.log(players);
 

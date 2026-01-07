@@ -1,0 +1,49 @@
+{
+  "items": [
+    {
+      "team_id": "3523360c-7235-452a-b9d9-e587e97ba4b5",
+      "nickname": "regain",
+      "name": "regain",
+      "description": "sasha\ndvrk \nZucar\nmarekiew\nFuzenko\nhttps://twitter.com/regaincs",
+      "avatar": "https://distribution.faceit-cdn.net/images/8a9441cf-41cb-4b51-91ce-54f9ef0a2c63.jpg",
+      "cover_image": "https://distribution.faceit-cdn.net/images/1cc61e60-5dd5-4701-aa50-5e8d05731948.jpg",
+      "game": "cs2",
+      "team_type": "premade",
+      "members": null,
+      "leader": "6d10dac4-b0cf-473d-b5a8-a34c53aefade",
+      "chat_room_id": "team-3523360c-7235-452a-b9d9-e587e97ba4b5",
+      "faceit_url": "https://www.faceit.com/{lang}/teams/3523360c-7235-452a-b9d9-e587e97ba4b5"
+    },
+    {
+      "team_id": "a07cde4c-db12-4313-9dd4-f6110e631be1",
+      "nickname": "DKEORG",
+      "name": "Dark Knight Esports",
+      "description": "Represented by @DKE_Org",
+      "avatar": "https://distribution.faceit-cdn.net/images/4002f35e-4fdc-40fc-9e04-1bb95edc3171.jpg",
+      "cover_image": "https://distribution.faceit-cdn.net/images/25b79f4e-9757-498a-a141-4d13e66562d3.jpg",
+      "game": "cs2",
+      "team_type": "premade",
+      "members": null,
+      "leader": "e1f037df-2817-4864-bdc6-90da1e78b0e4",
+      "website": "https://www.twitch.tv/carbonx_tv",
+      "twitter": "https://twitter.com/CarbonX_GG",
+      "youtube": "https://www.youtube.com/channel/UCzjlYNiChADil0IPfRwaUWA",
+      "chat_room_id": "team-a07cde4c-db12-4313-9dd4-f6110e631be1",
+      "faceit_url": "https://www.faceit.com/{lang}/teams/a07cde4c-db12-4313-9dd4-f6110e631be1"
+    },
+    {
+      "team_id": "90a48809-f891-46a4-b54e-1192728cbc49",
+      "nickname": "GOD-",
+      "name": "Imparavel",
+      "avatar": "https://distribution.faceit-cdn.net/images/218a11ca-5eb6-46e6-951f-35250ca81162.jpeg",
+      "game": "cs2",
+      "team_type": "premade",
+      "members": null,
+      "leader": "01950e33-89f8-40f1-8839-db3771ddd136",
+      "chat_room_id": "team-90a48809-f891-46a4-b54e-1192728cbc49",
+      "faceit_url": "https://www.faceit.com/{lang}/teams/90a48809-f891-46a4-b54e-1192728cbc49"
+    }
+  ],
+  "start": 0,
+  "end": 20
+}

@@ -1,17 +1,23 @@
 import { createFileRoute } from "@tanstack/react-router";
 import UserForm from "@/shared/UserForm";
-import { useState, useEffect, useRef } from "react";
-import RegisterStep2Team from "./steps/step2_team";
-import RegisterStep3Players from "./steps/step3_players";
-import RegisterStep4SubCoach from "./steps/step4_subcoach";
-import RegisterStep5Agreements from "./steps/step5_agreements";
-import { useForm } from "@tanstack/react-form";
+import { useState } from "react";
+import RegisterStep2Team from "./-steps/step2_team";
+import RegisterStep3Players from "./-steps/step3_players";
+import RegisterStep4SubCoach from "./-steps/step4_subcoach";
+import RegisterStep5Agreements from "./-steps/step5_agreements";
+import { useForm, useStore } from "@tanstack/react-form";
 
 export const Route = createFileRoute("/register/")({
     component: RegisterPage,
 });
 
-const formSteps = ["team", "players", "sub_coach", "agreements"] as const;
+const formSteps = [
+    "team",
+    "players",
+    "sub_coach",
+    "agreements",
+    "payment",
+] as const;
 type FormStep = (typeof formSteps)[number];
 
 function RegisterPage() {
@@ -21,8 +27,8 @@ function RegisterPage() {
     const form = useForm({
         defaultValues: {
             teamId: "",
-            playerIds: [],
-            subIds: [],
+            playerIds: [] as string[],
+            subIds: [] as string[],
             coachId: "",
             agreements: {
                 rulesAndGuidelines: false,
@@ -33,54 +39,24 @@ function RegisterPage() {
             console.log(value);
         },
     });
-
-    const [stepIndex, setStepIndex] = useState(3);
+    const [stepIndex, setStepIndex] = useState(0);
     const currentStep = formSteps[stepIndex];
 
-    const [selectedTeamId, setSelectedTeamId] = useState<string[]>([]);
-    const [selectedPlayerIds, setSelectedPlayerIds] = useState<string[]>([]);
-    const [selectedSubCoachIds, setSelectedSubCoachIds] = useState<string[]>(
-        [],
-    );
-    const [rulesAndGuidelinesAgreement, setRulesAndGuidelinesAgreement] =
-        useState<boolean>(false);
-    const [discordConfirmation, setDiscordConfirmation] =
-        useState<boolean>(false);
-
-    const prevTeamIdRef = useRef<string[]>([]);
-    const prevPlayerIdsRef = useRef<string[]>([]);
-
-    useEffect(() => {
-        const teamChanged = prevTeamIdRef.current[0] !== selectedTeamId[0];
-        if (teamChanged && prevTeamIdRef.current.length > 0) {
-            setSelectedPlayerIds([]);
-            setSelectedSubCoachIds([]);
-        }
-        prevTeamIdRef.current = selectedTeamId;
-    }, [selectedTeamId]);
-
-    useEffect(() => {
-        const playersChanged =
-            JSON.stringify(prevPlayerIdsRef.current.sort()) !==
-            JSON.stringify(selectedPlayerIds.sort());
-        if (playersChanged && prevPlayerIdsRef.current.length > 0) {
-            setSelectedSubCoachIds((prev) =>
-                prev.filter((id) => !selectedPlayerIds.includes(id)),
-            );
-        }
-        prevPlayerIdsRef.current = selectedPlayerIds;
-    }, [selectedPlayerIds]);
+    const teamId = useStore(form.store, (state) => state.values.teamId);
+    const playerIds = useStore(form.store, (state) => state.values.playerIds);
+    const subIds = useStore(form.store, (state) => state.values.subIds);
+    const agreements = useStore(form.store, (state) => state.values.agreements);
 
     const stepValidation: Record<FormStep, boolean> = {
-        team: selectedTeamId.length === 1,
-        players: selectedPlayerIds.length === 5,
-        sub_coach: selectedSubCoachIds.length <= 3,
-        agreements: true,
+        team: teamId !== "",
+        players: playerIds.length === 5,
+        sub_coach: subIds.length <= 3,
+        agreements:
+            agreements.rulesAndGuidelines && agreements.discordConfirmation,
+        payment: true,
     };
 
     const canContinue = stepValidation[currentStep];
-    const canGoBack = stepIndex > 0;
-    const canGoForward = stepIndex < formSteps.length - 1 && canContinue;
 
     if (!isLoggedIn) {
         return (
@@ -100,50 +76,49 @@ function RegisterPage() {
                     {currentStep === "team" && (
                         <form.Field
                             name="teamId"
-                            validators={{
-                                onChange: ({ value }) => {
-                                    console.log("teamId upd", value);
-                                },
-                                onChangeAsync: async ({ value }) => {
-                                    console.log("async teamId upd", value);
-                                },
-                            }}
                             children={(field) => {
                                 return (
                                     <RegisterStep2Team
-                                        selectedTeamId={selectedTeamId}
-                                        onSelectionChange={setSelectedTeamId}
+                                        selectedTeamId={[field.state.value]}
+                                        onSelectionChange={field.handleChange}
                                     />
                                 );
                             }}
                         />
                     )}
                     {currentStep === "players" && (
-                        <RegisterStep3Players
-                            teamId={selectedTeamId[0] ?? ""}
-                            selectedPlayerIds={selectedPlayerIds}
-                            onSelectionChange={setSelectedPlayerIds}
+                        <form.Field
+                            name="playerIds"
+                            mode="array"
+                            children={(field) => {
+                                return (
+                                    <RegisterStep3Players
+                                        teamId={teamId}
+                                        selectedPlayerIds={field.state.value}
+                                        onSelectionChange={field.handleChange}
+                                    />
+                                );
+                            }}
                         />
                     )}
                     {currentStep === "sub_coach" && (
-                        <RegisterStep4SubCoach
-                            teamId={selectedTeamId[0] ?? ""}
-                            excludedPlayerIds={selectedPlayerIds}
-                            selectedSubCoachIds={selectedSubCoachIds}
-                            onSelectionChange={setSelectedSubCoachIds}
+                        <form.Field
+                            name="subIds"
+                            children={(field) => {
+                                return (
+                                    <RegisterStep4SubCoach
+                                        teamId={teamId}
+                                        excludedPlayerIds={playerIds}
+                                        selectedSubCoachIds={field.state.value}
+                                        onSelectionChange={field.handleChange}
+                                    />
+                                );
+                            }}
                         />
                     )}
                     {currentStep === "agreements" && (
                         <form.Field
                             name="agreements"
-                            validators={{
-                                onChange: ({ value }) => {
-                                    console.log("teamId upd", value);
-                                },
-                                onChangeAsync: async ({ value }) => {
-                                    console.log("async teamId upd", value);
-                                },
-                            }}
                             children={(field) => {
                                 return (
                                     <RegisterStep5Agreements
@@ -151,7 +126,8 @@ function RegisterPage() {
                                             field.state.value.rulesAndGuidelines
                                         }
                                         discordConfirmation={
-                                            field.state.value.rulesAndGuidelines
+                                            field.state.value
+                                                .discordConfirmation
                                         }
                                         onRulesAndGuidelinesChange={
                                             field.handleChange
@@ -164,19 +140,24 @@ function RegisterPage() {
                             }}
                         />
                     )}
+                    {currentStep === "payment" && (
+                        <h1>Please Complete Payment</h1>
+                    )}
                 </div>
                 <div className="flex w-full items-center justify-between gap-4">
                     <button
                         onClick={() => setStepIndex((i) => i - 1)}
                         className="flex-1 rounded bg-gray-600 px-6 py-2 font-semibold hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
-                        disabled={!canGoBack}
+                        disabled={stepIndex === 0}
                     >
                         Back
                     </button>
                     <button
                         onClick={() => setStepIndex((i) => i + 1)}
                         className="flex-1 rounded bg-green-600 px-6 py-2 font-semibold hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
-                        disabled={!canGoForward}
+                        disabled={
+                            stepIndex >= formSteps.length - 1 || !canContinue
+                        }
                     >
                         Continue
                     </button>

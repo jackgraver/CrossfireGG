@@ -19,7 +19,6 @@ export default function TeamLogo({
 
     const avatarSrc = team ? team.team_logo : avatar;
 
-    console.log("ava", avatarSrc);
     return (
         <img
             src={isValidSrc(avatarSrc) ? avatarSrc : placeholder}
