@@ -1,9 +1,12 @@
 import { faker } from "@faker-js/faker";
 import { db } from "../config/database";
 import {
-    users,
+    user,
     roles,
     userRoles,
+    account,
+    session,
+    verification,
     teams,
     players,
     playerStats,
@@ -20,9 +23,9 @@ import {
 import { eq, and, isNull } from "drizzle-orm";
 
 interface SeedData {
-    roles: Array<{ ID: number }>;
+    roles: Array<{ id: number; name: string }>;
     stageFormats: Array<{ ID: number; format: string }>;
-    users: Array<{ ID: number }>;
+    users: Array<{ id: string }>;
     teams: Array<{ ID: number; team_captain_id: number }>;
     tournaments: Array<{ ID: number }>;
     stages: Array<{
@@ -34,7 +37,7 @@ interface SeedData {
     players: Array<{
         ID: number;
         team_id: number | null;
-        user_id: number | null;
+        user_id: string | null;
     }>;
     matches: Array<{
         ID: number;
@@ -42,7 +45,12 @@ interface SeedData {
         stage_id: number | null;
         status: string | null;
     }>;
-    matchParticipants: Array<{ ID: number; match_id: number; team_id: number; position: number }>;
+    matchParticipants: Array<{
+        ID: number;
+        match_id: number;
+        team_id: number;
+        position: number;
+    }>;
     maps: Array<{ ID: number; match_id: number; winner_id: number | null }>;
 }
 
@@ -74,15 +82,13 @@ async function clearDatabase() {
     await db.delete(players);
     await db.delete(teams);
     await db.delete(userRoles);
-    await db.delete(users);
+    await db.delete(account);
+    await db.delete(session);
+    await db.delete(verification);
+    await db.delete(user);
     await db.delete(roles);
     await db.delete(stageFormats);
     console.log("Database cleared.");
-}
-
-function hashPassword(password: string): string {
-    const bcrypt = require("bcrypt");
-    return bcrypt.hashSync(password, 10);
 }
 
 async function seedRoles() {
@@ -91,12 +97,8 @@ async function seedRoles() {
     for (const name of roleNames) {
         const [role] = await db
             .insert(roles)
-            .values({
-                name,
-                created_at: new Date(),
-                updated_at: new Date(),
-            })
-            .returning({ ID: roles.ID });
+            .values({ name })
+            .returning({ id: roles.id, name: roles.name });
         seedData.roles.push(role);
     }
     console.log(`Created ${seedData.roles.length} roles`);
@@ -124,51 +126,40 @@ async function seedUsers() {
     console.log("Seeding users...");
     const userCount = faker.number.int({ min: 20, max: 30 });
     for (let i = 0; i < userCount; i++) {
-        const [user] = await db
-            .insert(users)
+        const userId = crypto.randomUUID();
+        const [createdUser] = await db
+            .insert(user)
             .values({
+                id: userId,
                 name: faker.person.fullName(),
                 email: faker.internet.email().toLowerCase(),
-                password: hashPassword("password123"),
-                created_at: new Date(),
-                updated_at: new Date(),
+                emailVerified: true,
+                createdAt: new Date(),
+                updatedAt: new Date(),
             })
-            .returning({ ID: users.ID });
-        seedData.users.push(user);
+            .returning({ id: user.id });
+
+        // Create a credential account for the user
+        await db.insert(account).values({
+            id: crypto.randomUUID(),
+            userId: userId,
+            accountId: userId,
+            providerId: "credential",
+            password: "$scrypt$n=16384,r=8,p=1$salt$hash", // Placeholder - not real password
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        });
+
+        seedData.users.push(createdUser);
     }
     console.log(`Created ${seedData.users.length} users`);
 }
 
 async function seedTeams() {
     console.log("Seeding teams...");
-    const teamCount = faker.number.int({ min: 5, max: 10 });
-    const captainIds = faker.helpers.arrayElements(
-        seedData.users.map((u) => u.ID),
-        teamCount
-    );
-    for (let i = 0; i < teamCount; i++) {
-        const [team] = await db
-            .insert(teams)
-            .values({
-                name: faker.company.name() + " Gaming",
-                team_logo: null,
-                faceit_id: faker.string.alphanumeric(10),
-                team_captain_id: captainIds[i],
-                created_at: new Date(),
-                updated_at: new Date(),
-            })
-            .returning({
-                ID: teams.ID,
-                team_captain_id: teams.team_captain_id,
-            });
-        seedData.teams.push(team);
-    }
-    console.log(`Created ${seedData.teams.length} teams`);
-}
-
-async function linkUsersToTeams() {
-    console.log("Note: Users are no longer directly linked to teams via user.team_id");
-    console.log("Team membership is now handled through the players table");
+    // We need players first as captains, so we'll create teams after players
+    // For now, skip this and create teams after players with placeholder captains
+    console.log("Teams will be created after players...");
 }
 
 async function seedTournaments() {
@@ -263,17 +254,15 @@ async function seedGroups() {
     console.log(`Created ${seedData.groups.length} groups`);
 }
 
-async function seedPlayers() {
-    console.log("Seeding players...");
+async function seedPlayersAndTeams() {
+    console.log("Seeding players and teams...");
+
+    // First create players without teams
     const playerCount = faker.number.int({ min: 30, max: 50 });
     for (let i = 0; i < playerCount; i++) {
-        const teamId =
-            Math.random() < 0.7
-                ? faker.helpers.arrayElement(seedData.teams).ID
-                : null;
         const userId =
             Math.random() < 0.5
-                ? faker.helpers.arrayElement(seedData.users).ID
+                ? faker.helpers.arrayElement(seedData.users).id
                 : null;
         const [player] = await db
             .insert(players)
@@ -281,7 +270,7 @@ async function seedPlayers() {
                 player_name:
                     faker.person.firstName() + " " + faker.person.lastName(),
                 faceit_id: faker.string.alphanumeric(10),
-                team_id: teamId,
+                team_id: null,
                 user_id: userId,
                 player_logo: null,
                 created_at: new Date(),
@@ -295,6 +284,44 @@ async function seedPlayers() {
         seedData.players.push(player);
     }
     console.log(`Created ${seedData.players.length} players`);
+
+    // Now create teams with captains from players
+    const teamCount = faker.number.int({ min: 5, max: 10 });
+    const captainPlayerIds = faker.helpers.arrayElements(
+        seedData.players.map((p) => p.ID),
+        teamCount
+    );
+
+    for (let i = 0; i < teamCount; i++) {
+        const [team] = await db
+            .insert(teams)
+            .values({
+                name: faker.company.name() + " Gaming",
+                team_logo: null,
+                faceit_id: faker.string.alphanumeric(10),
+                team_captain_id: captainPlayerIds[i],
+                created_at: new Date(),
+                updated_at: new Date(),
+            })
+            .returning({
+                ID: teams.ID,
+                team_captain_id: teams.team_captain_id,
+            });
+        seedData.teams.push(team);
+    }
+    console.log(`Created ${seedData.teams.length} teams`);
+
+    // Assign some players to teams
+    for (const player of seedData.players) {
+        if (Math.random() < 0.7 && seedData.teams.length > 0) {
+            const teamId = faker.helpers.arrayElement(seedData.teams).ID;
+            await db
+                .update(players)
+                .set({ team_id: teamId, updated_at: new Date() })
+                .where(eq(players.ID, player.ID));
+            player.team_id = teamId;
+        }
+    }
 }
 
 async function seedStageTeams() {
@@ -512,7 +539,7 @@ async function seedMatchCasters() {
         if (Math.random() < 0.6) {
             const casterCount = faker.number.int({ min: 1, max: 2 });
             const selectedCasters = faker.helpers.arrayElements(
-                casterUsers.map((u) => u.ID),
+                casterUsers.map((u) => u.id),
                 casterCount
             );
             for (const casterId of selectedCasters) {
@@ -531,33 +558,33 @@ async function seedMatchCasters() {
 
 async function seedUserRoles() {
     console.log("Seeding user roles...");
-    const rolesByName = await db.select().from(roles);
-    const adminRole = rolesByName.find((r) => r.name === "admin");
-    const userRole = rolesByName.find((r) => r.name === "user");
-    const casterRole = rolesByName.find((r) => r.name === "caster");
-    for (const user of seedData.users) {
+    const adminRole = seedData.roles.find((r) => r.name === "admin");
+    const userRole = seedData.roles.find((r) => r.name === "user");
+    const casterRole = seedData.roles.find((r) => r.name === "caster");
+
+    for (const u of seedData.users) {
         if (adminRole) {
             await db.insert(userRoles).values({
-                user_id: user.ID,
-                role_id: adminRole.ID,
-                created_at: new Date(),
-                updated_at: new Date(),
+                userId: u.id,
+                roleId: adminRole.id,
+                createdAt: new Date(),
+                updatedAt: new Date(),
             });
         }
         if (userRole) {
             await db.insert(userRoles).values({
-                user_id: user.ID,
-                role_id: userRole.ID,
-                created_at: new Date(),
-                updated_at: new Date(),
+                userId: u.id,
+                roleId: userRole.id,
+                createdAt: new Date(),
+                updatedAt: new Date(),
             });
         }
         if (casterRole && Math.random() < 0.3) {
             await db.insert(userRoles).values({
-                user_id: user.ID,
-                role_id: casterRole.ID,
-                created_at: new Date(),
-                updated_at: new Date(),
+                userId: u.id,
+                roleId: casterRole.id,
+                createdAt: new Date(),
+                updatedAt: new Date(),
             });
         }
     }
@@ -601,12 +628,10 @@ async function seed() {
         await seedRoles();
         await seedStageFormats();
         await seedUsers();
-        await seedTeams();
-        await linkUsersToTeams();
         await seedTournaments();
         await seedStages();
         await seedGroups();
-        await seedPlayers();
+        await seedPlayersAndTeams();
         await seedStageTeams();
         await seedMatches();
         await seedMatchParticipants();

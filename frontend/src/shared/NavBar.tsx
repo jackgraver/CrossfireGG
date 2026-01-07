@@ -1,10 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
-import { logoutFn } from "@/lib/server/auth.server";
-import { useAuth } from "@/contexts/auth";
+import { authClient } from "@/lib/auth-client";
 import { matchesRole } from "@/lib/role.util";
-import { hasSession } from "@/lib/auth.util";
 
 function toggleDarkMode() {
     const isDark = document.documentElement.classList.toggle("dark");
@@ -18,9 +15,20 @@ const preloadImage = (url: string) => {
     img.src = url;
 };
 
-export default function NavBar({ session }: { session: any }) {
+export default function NavBar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const logout = useServerFn(logoutFn);
+    const { data: sessionData, isPending } = authClient.useSession();
+    const user = sessionData?.user;
+
+    const handleSignOut = async () => {
+        await authClient.signOut({
+            fetchOptions: {
+                onSuccess: () => {
+                    window.location.href = "/sign-in";
+                },
+            },
+        });
+    };
 
     useEffect(() => {
         const darkPref = localStorage.getItem("theme");
@@ -31,6 +39,8 @@ export default function NavBar({ session }: { session: any }) {
         }
     }, []);
 
+    const isLoggedIn = !!user;
+
     return (
         <>
             <nav className="bg-mainBg bg-mainBgTransparent sticky top-0 z-50 backdrop-blur-md">
@@ -39,7 +49,6 @@ export default function NavBar({ session }: { session: any }) {
                     <div className="flex h-16 justify-between">
                         <div className="flex items-center">
                             <Link to="/" className="flex-shrink-0">
-                                {/* <h1 className="text-2xl font-bold">OSS</h1> */}
                                 <img
                                     src="/crossfire.png"
                                     className="h-16 w-16"
@@ -48,15 +57,7 @@ export default function NavBar({ session }: { session: any }) {
                         </div>
                         <div className="mt-4 flex h-min flex-col items-center gap-1 rounded-md bg-red-500 px-1 py-1">
                             <p className="pointer-events-none">ALPHA RELEASE</p>
-                            {/* {hasSession(session) ? (
-                                <p>
-                                    {session?.name + " | " + session?.team_id}
-                                </p>
-                            ) : (
-                                <p>Not signed in</p>
-                            )} */}
                         </div>
-
                         <div className="flex items-center">
                             <div className="relative">
                                 <button
@@ -106,33 +107,45 @@ export default function NavBar({ session }: { session: any }) {
                                             setIsMenuOpen(false)
                                         }
                                     >
-                                        {hasSession(session) && (
+                                        {isLoggedIn && (
                                             <div className="border-border border-b px-4 py-3">
                                                 <Link to="/user">
                                                     <div className="flex items-center">
                                                         <div className="flex-shrink-0">
-                                                            <div className="bg-secondBg flex h-10 w-10 items-center justify-center rounded-full">
-                                                                <svg
-                                                                    xmlns="http://www.w3.org/2000/svg"
-                                                                    className="text-textSecondary h-6 w-6"
-                                                                    fill="none"
-                                                                    viewBox="0 0 24 24"
-                                                                    stroke="currentColor"
-                                                                >
-                                                                    <path
-                                                                        strokeLinecap="round"
-                                                                        strokeLinejoin="round"
-                                                                        strokeWidth={
-                                                                            2
-                                                                        }
-                                                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                                                                    />
-                                                                </svg>
-                                                            </div>
+                                                            {user.image ? (
+                                                                <img
+                                                                    src={
+                                                                        user.image
+                                                                    }
+                                                                    alt={
+                                                                        user.name
+                                                                    }
+                                                                    className="h-10 w-10 rounded-full"
+                                                                />
+                                                            ) : (
+                                                                <div className="bg-secondBg flex h-10 w-10 items-center justify-center rounded-full">
+                                                                    <svg
+                                                                        xmlns="http://www.w3.org/2000/svg"
+                                                                        className="text-textSecondary h-6 w-6"
+                                                                        fill="none"
+                                                                        viewBox="0 0 24 24"
+                                                                        stroke="currentColor"
+                                                                    >
+                                                                        <path
+                                                                            strokeLinecap="round"
+                                                                            strokeLinejoin="round"
+                                                                            strokeWidth={
+                                                                                2
+                                                                            }
+                                                                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                                                                        />
+                                                                    </svg>
+                                                                </div>
+                                                            )}
                                                         </div>
                                                         <div className="ml-3">
                                                             <p className="text-textPrimary text-lg font-medium">
-                                                                {session.name}
+                                                                {user.name}
                                                             </p>
                                                         </div>
                                                     </div>
@@ -144,53 +157,6 @@ export default function NavBar({ session }: { session: any }) {
                                             role="menu"
                                             aria-orientation="vertical"
                                         >
-                                            {matchesRole(
-                                                session?.roles,
-                                                "ADMIN",
-                                            ) && (
-                                                <Link
-                                                    to="/manage-teams"
-                                                    className="text-textSecondary hover:bg-secondBg block px-4 py-2 text-sm"
-                                                    role="menuitem"
-                                                    onClick={() =>
-                                                        setIsMenuOpen(false)
-                                                    }
-                                                >
-                                                    Manage Teams
-                                                </Link>
-                                            )}
-                                            {matchesRole(
-                                                session?.roles,
-                                                "ADMIN",
-                                                "PRODUCTION_LEAD",
-                                                "PRODUCTION",
-                                            ) && (
-                                                <Link
-                                                    to="/casting"
-                                                    className="text-textSecondary hover:bg-secondBg block px-4 py-2 text-sm"
-                                                    role="menuitem"
-                                                    onClick={() =>
-                                                        setIsMenuOpen(false)
-                                                    }
-                                                >
-                                                    Casting
-                                                </Link>
-                                            )}
-                                            {matchesRole(
-                                                session?.roles,
-                                                "ADMIN",
-                                            ) && (
-                                                <Link
-                                                    to="/admin"
-                                                    className="text-textSecondary hover:bg-secondBg block px-4 py-2 text-sm"
-                                                    role="menuitem"
-                                                    onClick={() =>
-                                                        setIsMenuOpen(false)
-                                                    }
-                                                >
-                                                    Admin
-                                                </Link>
-                                            )}
                                             <div
                                                 className="text-textSecondary hover:bg-secondBg block cursor-pointer px-4 py-2 text-sm"
                                                 role="menuitem"
@@ -198,30 +164,12 @@ export default function NavBar({ session }: { session: any }) {
                                             >
                                                 Toggle Dark Mode
                                             </div>
-                                            {session?.team_id && (
-                                                <Link
-                                                    to={`/team/$team_id`}
-                                                    params={{
-                                                        team_id:
-                                                            session?.team_id,
-                                                    }}
-                                                    className="text-textSecondary hover:bg-secondBg block px-4 py-2 text-sm"
+                                            {isLoggedIn ? (
+                                                <button
+                                                    className="text-textSecondary hover:bg-secondBg block w-full px-4 py-2 text-left text-sm"
                                                     role="menuitem"
-                                                    onClick={() =>
-                                                        setIsMenuOpen(false)
-                                                    }
-                                                >
-                                                    Manage Team
-                                                </Link>
-                                            )}
-                                            {hasSession(session) ? (
-                                                <Link
-                                                    to="/"
-                                                    className="text-textSecondary hover:bg-secondBg block px-4 py-2 text-sm"
-                                                    role="menuitem"
-                                                    onClick={(e) => {
-                                                        e.preventDefault();
-                                                        logout();
+                                                    onClick={() => {
+                                                        handleSignOut();
                                                     }}
                                                     onMouseEnter={() =>
                                                         preloadImage(
@@ -230,7 +178,7 @@ export default function NavBar({ session }: { session: any }) {
                                                     }
                                                 >
                                                     Sign Out
-                                                </Link>
+                                                </button>
                                             ) : (
                                                 <Link
                                                     to="/sign-in"

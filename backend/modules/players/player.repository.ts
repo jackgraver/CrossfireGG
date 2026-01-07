@@ -83,7 +83,7 @@ export const playerRepository = {
         return result[0];
     },
 
-    getPlayerByUserId: async (userId: number) => {
+    getPlayerByUserId: async (userId: string) => {
         const result = await db
             .select()
             .from(players)

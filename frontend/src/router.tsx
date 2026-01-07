@@ -7,6 +7,9 @@ export function getRouter() {
         routeTree,
         scrollRestoration: true,
         defaultNotFoundComponent: NotFound,
+        context: {
+            session: null,
+        },
     });
 
     return router;

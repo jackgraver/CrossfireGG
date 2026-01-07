@@ -11,8 +11,8 @@ export const players = sqliteTable(
             (): any => require("./team").teams.ID,
             { onDelete: "set null" }
         ),
-        user_id: integer("user_id").references(
-            (): any => require("./user").users.ID,
+        user_id: text("user_id").references(
+            (): any => require("./user").user.id,
             { onDelete: "set null" }
         ),
         player_logo: text("player_logo"),
@@ -40,10 +40,14 @@ export const playerStats = sqliteTable(
             .references(() => players.ID, { onDelete: "cascade" }),
         match_id: integer("match_id")
             .notNull()
-            .references((): any => require("./match").matches.ID, { onDelete: "cascade" }),
+            .references((): any => require("./match").matches.ID, {
+                onDelete: "cascade",
+            }),
         map_id: integer("map_id")
             .notNull()
-            .references((): any => require("./match").maps.ID, { onDelete: "cascade" }),
+            .references((): any => require("./match").maps.ID, {
+                onDelete: "cascade",
+            }),
         kills: integer("kills").default(0),
         deaths: integer("deaths").default(0),
         assists: integer("assists").default(0),
@@ -78,9 +82,9 @@ export const playersRelations = relations(players, ({ one, many }) => ({
         fields: [players.team_id],
         references: [require("./team").teams.ID],
     }),
-    user: one(require("./user").users, {
+    user: one(require("./user").user, {
         fields: [players.user_id],
-        references: [require("./user").users.ID],
+        references: [require("./user").user.id],
     }),
     stats: many(playerStats),
 }));

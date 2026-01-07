@@ -7,105 +7,144 @@ import {
 } from "drizzle-orm/sqlite-core";
 import { relations } from "drizzle-orm";
 
-export const users = sqliteTable("users", {
-    ID: integer("ID").primaryKey({ autoIncrement: true }),
+// ============================== BETTER AUTH CORE TABLES ============================== //
+
+export const user = sqliteTable("user", {
+    id: text("id").primaryKey(),
     name: text("name").notNull(),
     email: text("email").notNull().unique(),
-    password: text("password").notNull(),
-    avatar_url: text("avatar_url"),
-    discord_id: text("discord_id"),
-    steam_id: text("steam_id"),
-    last_login_at: integer("last_login_at", { mode: "timestamp" }),
-    email_verified: integer("email_verified", { mode: "boolean" }).default(
-        false
-    ),
-    refresh_token: text("refresh_token"),
-    token_version: integer("token_version").default(0),
-    created_at: integer("created_at", { mode: "timestamp" })
+    emailVerified: integer("email_verified", { mode: "boolean" })
+        .default(false)
+        .notNull(),
+    image: text("image"),
+    createdAt: integer("created_at", { mode: "timestamp" })
         .notNull()
         .$defaultFn(() => new Date()),
-    updated_at: integer("updated_at", { mode: "timestamp" })
+    updatedAt: integer("updated_at", { mode: "timestamp" })
         .notNull()
         .$defaultFn(() => new Date()),
-    deleted_at: integer("deleted_at", { mode: "timestamp" }),
 });
 
+export const session = sqliteTable("session", {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+        .notNull()
+        .references(() => user.id, { onDelete: "cascade" }),
+    token: text("token").notNull().unique(),
+    expiresAt: integer("expires_at", { mode: "timestamp" }).notNull(),
+    ipAddress: text("ip_address"),
+    userAgent: text("user_agent"),
+    createdAt: integer("created_at", { mode: "timestamp" })
+        .notNull()
+        .$defaultFn(() => new Date()),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+        .notNull()
+        .$defaultFn(() => new Date()),
+});
+
+export const account = sqliteTable("account", {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+        .notNull()
+        .references(() => user.id, { onDelete: "cascade" }),
+    accountId: text("account_id").notNull(),
+    providerId: text("provider_id").notNull(),
+    accessToken: text("access_token"),
+    refreshToken: text("refresh_token"),
+    accessTokenExpiresAt: integer("access_token_expires_at", {
+        mode: "timestamp",
+    }),
+    refreshTokenExpiresAt: integer("refresh_token_expires_at", {
+        mode: "timestamp",
+    }),
+    scope: text("scope"),
+    idToken: text("id_token"),
+    password: text("password"),
+    createdAt: integer("created_at", { mode: "timestamp" })
+        .notNull()
+        .$defaultFn(() => new Date()),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+        .notNull()
+        .$defaultFn(() => new Date()),
+});
+
+export const verification = sqliteTable("verification", {
+    id: text("id").primaryKey(),
+    identifier: text("identifier").notNull(),
+    value: text("value").notNull(),
+    expiresAt: integer("expires_at", { mode: "timestamp" }).notNull(),
+    createdAt: integer("created_at", { mode: "timestamp" })
+        .notNull()
+        .$defaultFn(() => new Date()),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+        .notNull()
+        .$defaultFn(() => new Date()),
+});
+
+// ============================== CUSTOM ROLE TABLES ============================== //
+
 export const roles = sqliteTable("roles", {
-    ID: integer("ID").primaryKey({ autoIncrement: true }),
+    id: integer("id").primaryKey({ autoIncrement: true }),
     name: text("name").notNull().unique(),
 });
 
 export const userRoles = sqliteTable(
     "user_roles",
     {
-        ID: integer("ID").primaryKey({ autoIncrement: true }),
-        user_id: integer("user_id")
+        id: integer("id").primaryKey({ autoIncrement: true }),
+        userId: text("user_id")
             .notNull()
-            .references(() => users.ID, { onDelete: "cascade" }),
-        role_id: integer("role_id")
+            .references(() => user.id, { onDelete: "cascade" }),
+        roleId: integer("role_id")
             .notNull()
-            .references(() => roles.ID, { onDelete: "cascade" }),
-        created_at: integer("created_at", { mode: "timestamp" })
-            .notNull()
-            .$defaultFn(() => new Date()),
-        updated_at: integer("updated_at", { mode: "timestamp" })
+            .references(() => roles.id, { onDelete: "cascade" }),
+        createdAt: integer("created_at", { mode: "timestamp" })
             .notNull()
             .$defaultFn(() => new Date()),
-        deleted_at: integer("deleted_at", { mode: "timestamp" }),
+        updatedAt: integer("updated_at", { mode: "timestamp" })
+            .notNull()
+            .$defaultFn(() => new Date()),
     },
     (table) => [
-        unique().on(table.user_id, table.role_id),
-        index("user_roles_user_id_idx").on(table.user_id),
-        index("user_roles_role_id_idx").on(table.role_id),
+        unique().on(table.userId, table.roleId),
+        index("user_roles_user_id_idx").on(table.userId),
+        index("user_roles_role_id_idx").on(table.roleId),
     ]
 );
 
 // ============================== RELATIONS ============================== //
 
-/**
- * Defines all relationships for the users table.
- * A user can:
- * - Be the captain of a team (reverse relationship from teams.team_captain_id)
- * - Have a linked player profile (via players.user_id)
- * - Have multiple role assignments (many-to-many through userRoles)
- * - Cast multiple matches (via matchCasters)
- *
- * Note: Team membership is tracked through the player profile, not directly on the user.
- */
-export const usersRelations = relations(users, ({ one, many }) => ({
-    captainOfTeam: one(require("./team").teams, {
-        fields: [users.ID],
-        references: [require("./team").teams.team_captain_id],
-    }),
-    player: one(require("./player").players, {
-        fields: [users.ID],
-        references: [require("./player").players.user_id],
-    }),
+export const userRelations = relations(user, ({ many }) => ({
+    sessions: many(session),
+    accounts: many(account),
     userRoles: many(userRoles),
-    matchCasters: many(require("./match").matchCasters),
 }));
 
-/**
- * Defines relationships for the roles table.
- * A role can be assigned to multiple users (many-to-many through userRoles).
- */
+export const sessionRelations = relations(session, ({ one }) => ({
+    user: one(user, {
+        fields: [session.userId],
+        references: [user.id],
+    }),
+}));
+
+export const accountRelations = relations(account, ({ one }) => ({
+    user: one(user, {
+        fields: [account.userId],
+        references: [user.id],
+    }),
+}));
+
 export const rolesRelations = relations(roles, ({ many }) => ({
     userRoles: many(userRoles),
 }));
 
-/**
- * Defines relationships for the userRoles junction table.
- * Links users to their assigned roles:
- * - Each record belongs to one user
- * - Each record belongs to one role
- */
 export const userRolesRelations = relations(userRoles, ({ one }) => ({
-    user: one(users, {
-        fields: [userRoles.user_id],
-        references: [users.ID],
+    user: one(user, {
+        fields: [userRoles.userId],
+        references: [user.id],
     }),
     role: one(roles, {
-        fields: [userRoles.role_id],
-        references: [roles.ID],
+        fields: [userRoles.roleId],
+        references: [roles.id],
     }),
 }));

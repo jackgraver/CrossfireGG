@@ -13,13 +13,8 @@ import {
     Scripts,
     createRootRouteWithContext,
 } from "@tanstack/react-router";
-import { fetchSession } from "@/lib/server/auth.server";
 
 export const Route = createRootRouteWithContext<{ session: any }>()({
-    beforeLoad: async () => {
-        const session = await fetchSession();
-        return { session };
-    },
     head: () => ({
         meta: [
             { charSet: "utf-8" },
@@ -58,7 +53,7 @@ function RootLayout() {
             </head>
             <body className="flex min-h-screen flex-col">
                 <Providers>
-                    <NavBar session={Route.useRouteContext().session} />
+                    <NavBar />
                     <main className="flex-1">
                         <Outlet />
                     </main>

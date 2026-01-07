@@ -108,9 +108,9 @@ export const matchCasters = sqliteTable(
         match_id: integer("match_id")
             .notNull()
             .references(() => matches.ID, { onDelete: "cascade" }),
-        caster_id: integer("caster_id")
+        caster_id: text("caster_id")
             .notNull()
-            .references((): any => require("./user").users.ID, {
+            .references((): any => require("./user").user.id, {
                 onDelete: "cascade",
             }),
         assigned_at: integer("assigned_at", { mode: "timestamp" }).$defaultFn(
@@ -211,8 +211,8 @@ export const matchCastersRelations = relations(matchCasters, ({ one }) => ({
         fields: [matchCasters.match_id],
         references: [matches.ID],
     }),
-    caster: one(require("./user").users, {
+    caster: one(require("./user").user, {
         fields: [matchCasters.caster_id],
-        references: [require("./user").users.ID],
+        references: [require("./user").user.id],
     }),
 }));
