@@ -22,7 +22,9 @@ function OAuthCallback() {
             <div className="text-center">
                 <div className="mb-4 text-2xl">✓</div>
                 <p>Authentication successful!</p>
-                <p className="text-sm text-gray-400">This window will close automatically...</p>
+                <p className="text-sm text-gray-400">
+                    This window will close automatically...
+                </p>
             </div>
         </div>
     );
