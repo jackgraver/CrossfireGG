@@ -17,6 +17,7 @@ import { Route as TournamentIndexRouteImport } from './app/tournament/index'
 import { Route as SignUpIndexRouteImport } from './app/sign-up/index'
 import { Route as SignInIndexRouteImport } from './app/sign-in/index'
 import { Route as RegisterIndexRouteImport } from './app/register/index'
+import { Route as OauthCallbackIndexRouteImport } from './app/oauth-callback/index'
 import { Route as ManageTeamsIndexRouteImport } from './app/manage-teams/index'
 import { Route as CreateTeamIndexRouteImport } from './app/create-team/index'
 import { Route as CastingIndexRouteImport } from './app/casting/index'
@@ -65,6 +66,11 @@ const SignInIndexRoute = SignInIndexRouteImport.update({
 const RegisterIndexRoute = RegisterIndexRouteImport.update({
   id: '/register/',
   path: '/register/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OauthCallbackIndexRoute = OauthCallbackIndexRouteImport.update({
+  id: '/oauth-callback/',
+  path: '/oauth-callback/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ManageTeamsIndexRoute = ManageTeamsIndexRouteImport.update({
@@ -122,6 +128,7 @@ export interface FileRoutesByFullPath {
   '/casting': typeof CastingIndexRoute
   '/create-team': typeof CreateTeamIndexRoute
   '/manage-teams': typeof ManageTeamsIndexRoute
+  '/oauth-callback': typeof OauthCallbackIndexRoute
   '/register': typeof RegisterIndexRoute
   '/sign-in': typeof SignInIndexRoute
   '/sign-up': typeof SignUpIndexRoute
@@ -141,6 +148,7 @@ export interface FileRoutesByTo {
   '/casting': typeof CastingIndexRoute
   '/create-team': typeof CreateTeamIndexRoute
   '/manage-teams': typeof ManageTeamsIndexRoute
+  '/oauth-callback': typeof OauthCallbackIndexRoute
   '/register': typeof RegisterIndexRoute
   '/sign-in': typeof SignInIndexRoute
   '/sign-up': typeof SignUpIndexRoute
@@ -161,6 +169,7 @@ export interface FileRoutesById {
   '/casting/': typeof CastingIndexRoute
   '/create-team/': typeof CreateTeamIndexRoute
   '/manage-teams/': typeof ManageTeamsIndexRoute
+  '/oauth-callback/': typeof OauthCallbackIndexRoute
   '/register/': typeof RegisterIndexRoute
   '/sign-in/': typeof SignInIndexRoute
   '/sign-up/': typeof SignUpIndexRoute
@@ -182,6 +191,7 @@ export interface FileRouteTypes {
     | '/casting'
     | '/create-team'
     | '/manage-teams'
+    | '/oauth-callback'
     | '/register'
     | '/sign-in'
     | '/sign-up'
@@ -201,6 +211,7 @@ export interface FileRouteTypes {
     | '/casting'
     | '/create-team'
     | '/manage-teams'
+    | '/oauth-callback'
     | '/register'
     | '/sign-in'
     | '/sign-up'
@@ -220,6 +231,7 @@ export interface FileRouteTypes {
     | '/casting/'
     | '/create-team/'
     | '/manage-teams/'
+    | '/oauth-callback/'
     | '/register/'
     | '/sign-in/'
     | '/sign-up/'
@@ -240,6 +252,7 @@ export interface RootRouteChildren {
   CastingIndexRoute: typeof CastingIndexRoute
   CreateTeamIndexRoute: typeof CreateTeamIndexRoute
   ManageTeamsIndexRoute: typeof ManageTeamsIndexRoute
+  OauthCallbackIndexRoute: typeof OauthCallbackIndexRoute
   RegisterIndexRoute: typeof RegisterIndexRoute
   SignInIndexRoute: typeof SignInIndexRoute
   SignUpIndexRoute: typeof SignUpIndexRoute
@@ -308,6 +321,13 @@ declare module '@tanstack/react-router' {
       path: '/register'
       fullPath: '/register'
       preLoaderRoute: typeof RegisterIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/oauth-callback/': {
+      id: '/oauth-callback/'
+      path: '/oauth-callback'
+      fullPath: '/oauth-callback'
+      preLoaderRoute: typeof OauthCallbackIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/manage-teams/': {
@@ -384,6 +404,7 @@ const rootRouteChildren: RootRouteChildren = {
   CastingIndexRoute: CastingIndexRoute,
   CreateTeamIndexRoute: CreateTeamIndexRoute,
   ManageTeamsIndexRoute: ManageTeamsIndexRoute,
+  OauthCallbackIndexRoute: OauthCallbackIndexRoute,
   RegisterIndexRoute: RegisterIndexRoute,
   SignInIndexRoute: SignInIndexRoute,
   SignUpIndexRoute: SignUpIndexRoute,

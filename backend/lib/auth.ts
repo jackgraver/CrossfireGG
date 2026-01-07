@@ -24,6 +24,8 @@ export const auth = betterAuth({
                     scopes: ["openid", "profile", "email"],
                     authentication: "basic",
                     pkce: true,
+                    redirectURI: `${process.env.BETTER_AUTH_URL}/api/auth/oauth2/callback/faceit`,
+                    responseMode: "query",
                     mapProfileToUser: (profile) => ({
                         id: profile.sub || profile.guid,
                         name: profile.nickname || profile.name,

@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { validateEmail } from "@/lib/SignInUp.util";
 import { authClient, FRONTEND_URL } from "@/lib/auth-client";
 import OSSForm from "@/shared/OSSForm/OSSForm";
@@ -7,6 +7,9 @@ import BaseInput from "@/shared/OSSForm/BaseInput/BaseInput";
 import PasswordInput from "@/shared/OSSForm/PasswordInput/PasswordInput";
 import UserForm from "@/shared/UserForm";
 import { PromiseReturn } from "@/types/Types";
+
+const API_BASE_URL =
+    import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
 
 export const Route = createFileRoute("/sign-in/")({
     component: SignIn,
