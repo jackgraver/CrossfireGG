@@ -48,22 +48,56 @@ export const faceitFetchUtil = {
         return response.json() as Promise<T>;
     },
 
-    _writeToFile: async (fileName: string, data: any): Promise<void> => {
-        if (!fs.existsSync(faceitFetchUtil.DEBUG_DATA_DIR)) {
-            fs.mkdirSync(faceitFetchUtil.DEBUG_DATA_DIR, { recursive: true });
+    _writeToFile: async (fileName?: string, data?: any): Promise<void> => {
+        if (!fileName || data === undefined) return;
+        const filePath = path.join(faceitFetchUtil.DEBUG_DATA_DIR, fileName);
+        try {
+            if (!fs.existsSync(faceitFetchUtil.DEBUG_DATA_DIR)) {
+                fs.mkdirSync(faceitFetchUtil.DEBUG_DATA_DIR, {
+                    recursive: true,
+                });
+            }
+            fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+            console.log(`[DEBUG] Data written to: ${filePath}`);
+        } catch (error) {
+            console.error(`[DEBUG] Failed to write to file: ${error}`);
         }
-        fs.writeFileSync(
-            path.join(faceitFetchUtil.DEBUG_DATA_DIR, fileName),
-            JSON.stringify(data, null, 2)
-        );
     },
 
-    _readFromFile: async (fileName: string): Promise<any> => {
-        const data = fs.readFileSync(
-            path.join(faceitFetchUtil.DEBUG_DATA_DIR, fileName),
-            "utf-8"
-        );
-        return JSON.parse(data);
+    _readFromFile: async <T = any>(
+        fileName?: string
+    ): Promise<T | undefined> => {
+        if (!fileName) return undefined;
+        const filePath = path.join(faceitFetchUtil.DEBUG_DATA_DIR, fileName);
+        if (!fs.existsSync(filePath)) {
+            console.log(`[DEBUG] File not found: ${filePath}`);
+            return undefined;
+        }
+        console.log(`[DEBUG] Reading from file: ${filePath}`);
+        const data = fs.readFileSync(filePath, "utf-8");
+        return JSON.parse(data) as T;
+    },
+
+    fetchData: async <T = any>(
+        endpoint: string,
+        options: faceitFetchOptions = {}
+    ): Promise<T> => {
+        const { readFileName, writeFileName } = options;
+        const cachedData = await faceitFetchUtil._readFromFile<{
+            items: T;
+        }>(readFileName);
+        if (cachedData) {
+            return cachedData as T;
+        }
+        try {
+            console.log(`[Faceit API] Fetching data for endpoint: ${endpoint}`);
+            const data = await faceitFetchUtil._callApi(endpoint);
+            await faceitFetchUtil._writeToFile(writeFileName, data);
+            return data as T;
+        } catch (error) {
+            console.error(`[Faceit API] Error fetching data:`, error);
+            throw error;
+        }
     },
 
     fetchMatchesData: async (
@@ -71,24 +105,12 @@ export const faceitFetchUtil = {
         options: faceitFetchOptions = {}
     ): Promise<FaceitAPIMatch[]> => {
         const { readFileName, writeFileName } = options;
-
-        if (readFileName) {
-            const readFilePath = path.join(
-                faceitFetchUtil.DEBUG_DATA_DIR,
-                readFileName
-            );
-            console.log(`[DEBUG] Reading matches from file: ${readFilePath}`);
-            try {
-                const data = await faceitFetchUtil._readFromFile(readFileName);
-                return data.items as FaceitAPIMatch[];
-            } catch (error) {
-                console.error(`[DEBUG] Failed to read from file: ${error}`);
-                throw new Error(
-                    `Failed to read debug file: ${readFilePath}. Make sure the file exists.`
-                );
-            }
+        const cachedData = await faceitFetchUtil._readFromFile<{
+            items: FaceitAPIMatch[];
+        }>(readFileName);
+        if (cachedData) {
+            return cachedData.items;
         }
-
         try {
             console.log(
                 `[Faceit API] Fetching matches for championship: ${championshipId}`
@@ -97,22 +119,7 @@ export const faceitFetchUtil = {
                 `championships/${championshipId}/matches`,
                 { limit: 100 }
             );
-
-            if (writeFileName) {
-                const writeFilePath = path.join(
-                    faceitFetchUtil.DEBUG_DATA_DIR,
-                    writeFileName
-                );
-                try {
-                    await faceitFetchUtil._writeToFile(writeFileName, data);
-                    console.log(
-                        `[DEBUG] Matches data written to: ${writeFilePath}`
-                    );
-                } catch (error) {
-                    console.error(`[DEBUG] Failed to write to file: ${error}`);
-                }
-            }
-
+            await faceitFetchUtil._writeToFile(writeFileName, data);
             return data as FaceitAPIMatch[];
         } catch (error) {
             console.error(`[Faceit API] Error fetching matches data:`, error);
@@ -124,26 +131,13 @@ export const faceitFetchUtil = {
         options: faceitFetchOptions = {}
     ): Promise<FaceitAPIChampionship> => {
         const { readFileName, writeFileName } = options;
-
-        if (readFileName) {
-            const readFilePath = path.join(
-                faceitFetchUtil.DEBUG_DATA_DIR,
+        const cachedData =
+            await faceitFetchUtil._readFromFile<FaceitAPIChampionship>(
                 readFileName
             );
-            console.log(
-                `[DEBUG] Reading championship from file: ${readFilePath}`
-            );
-            try {
-                const data = await faceitFetchUtil._readFromFile(readFileName);
-                return data as FaceitAPIChampionship;
-            } catch (error) {
-                console.error(`[DEBUG] Failed to read from file: ${error}`);
-                throw new Error(
-                    `Failed to read debug file: ${readFilePath}. Make sure the file exists.`
-                );
-            }
+        if (cachedData) {
+            return cachedData;
         }
-
         try {
             console.log(
                 `[Faceit API] Fetching championship data: ${championshipId}`
@@ -151,22 +145,7 @@ export const faceitFetchUtil = {
             const data = await faceitFetchUtil._callApi(
                 `championships/${championshipId}`
             );
-
-            if (writeFileName) {
-                const writeFilePath = path.join(
-                    faceitFetchUtil.DEBUG_DATA_DIR,
-                    writeFileName
-                );
-                try {
-                    await faceitFetchUtil._writeToFile(writeFileName, data);
-                    console.log(
-                        `[DEBUG] Championship data written to: ${writeFilePath}`
-                    );
-                } catch (error) {
-                    console.error(`[DEBUG] Failed to write to file: ${error}`);
-                }
-            }
-
+            await faceitFetchUtil._writeToFile(writeFileName, data);
             return data;
         } catch (error) {
             console.error(
