@@ -7,7 +7,7 @@ import {
     stageTeams,
     stageFormats,
 } from "../../schemas";
-import { eq, and, isNull, count, inArray } from "drizzle-orm";
+import { eq, and, isNull, count, inArray, desc } from "drizzle-orm";
 import { TournamentListItem } from "./tournament.types";
 
 export const tournamentRepository = {
@@ -358,5 +358,34 @@ export const tournamentRepository = {
             );
 
         return results;
+    },
+
+    findUpcomingTournament: async () => {
+        const result = await db
+            .select()
+            .from(tournaments)
+            .where(
+                and(
+                    eq(tournaments.status, "upcoming"),
+                    isNull(tournaments.deleted_at)
+                )
+            )
+            .orderBy(tournaments.start_date)
+            .limit(1);
+        return result[0];
+    },
+
+    findEntryStage: async (tournamentId: number) => {
+        const result = await db
+            .select()
+            .from(stages)
+            .where(
+                and(
+                    eq(stages.tournament_id, tournamentId),
+                    eq(stages.is_current, true)
+                )
+            )
+            .limit(1);
+        return result[0];
     },
 };

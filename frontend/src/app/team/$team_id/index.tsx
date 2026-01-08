@@ -1,7 +1,4 @@
-import {
-    createFileRoute,
-    Link,
-} from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { BooleanStatus } from "@/types/TeamModel";
 import { useTeam, useTeamMatchesByStage } from "../-queries/teamQueries";
@@ -65,7 +62,11 @@ function Team() {
     const { data, isLoading, error } = useTeam(team_id);
 
     useEffect(() => {
-        if (data?.tournaments && data.tournaments.length > 0 && !selectedStageId) {
+        if (
+            data?.tournaments &&
+            data.tournaments.length > 0 &&
+            !selectedStageId
+        ) {
             // Find the first available stage
             const firstTournament = data.tournaments[0];
             if (firstTournament.stages && firstTournament.stages.length > 0) {
@@ -74,10 +75,8 @@ function Team() {
         }
     }, [data, selectedStageId]);
 
-    const { data: matches, isLoading: isLoadingMatches } = useTeamMatchesByStage(
-        team_id,
-        selectedStageId,
-    );
+    const { data: matches, isLoading: isLoadingMatches } =
+        useTeamMatchesByStage(team_id, selectedStageId);
 
     if (isLoading) {
         return (
@@ -100,8 +99,7 @@ function Team() {
     const { team, tournaments } = data;
 
     const canManagePlayers =
-        session?.team_id &&
-        parseInt(team_id) === session.team_id;
+        session?.team_id && parseInt(team_id) === session.team_id;
 
     return (
         <div className="mx-auto min-h-screen max-w-[1200px] p-5">
@@ -114,7 +112,7 @@ function Team() {
                     <div className="flex-1">
                         <div className="mb-4 flex flex-row items-center gap-x-2">
                             <h1 className="text-textPrimary text-3xl font-bold">
-                                {team.team_name}
+                                {team.name}
                             </h1>
                         </div>
                     </div>
@@ -185,9 +183,7 @@ function Team() {
                     </div>
                 ))}
             </div>
-            {canManagePlayers && (
-                <TeamPlayerManagement team_id={team_id} team={team} />
-            )}
+            {true && <TeamPlayerManagement team_id={team_id} team={team} />}
             <div className="bg-firstBg rounded-xl p-8 shadow-md">
                 <h2 className="text-textPrimary mb-6 text-2xl font-bold">
                     {selectedStageId
@@ -213,10 +209,14 @@ function Team() {
                                     (a.scheduled_at ?? 0),
                             )
                             .map((match) => {
-                                const getMatchResult = (): "Scheduled" | "W" | "L" | "-" => {
+                                const getMatchResult = ():
+                                    | "Scheduled"
+                                    | "W"
+                                    | "L"
+                                    | "-" => {
                                     if (match.status !== "FINISHED")
                                         return "Scheduled";
-                                    return "-"; 
+                                    return "-";
                                 };
 
                                 const getMatchScore = () => {
@@ -226,9 +226,11 @@ function Team() {
                                 };
 
                                 const getOpponent = () => {
-                                    const isTeam1 = match.participants?.team1?.team_id === team.team_id;
-                                    return isTeam1 
-                                        ? match.participants?.team2?.team_name 
+                                    const isTeam1 =
+                                        match.participants?.team1?.team_id ===
+                                        team.team_id;
+                                    return isTeam1
+                                        ? match.participants?.team2?.team_name
                                         : match.participants?.team1?.team_name;
                                 };
 
@@ -263,7 +265,7 @@ function Team() {
                                         <div className="flex items-center justify-between">
                                             <div className="flex flex-1 items-center gap-4">
                                                 <span className="text-textPrimary font-semibold">
-                                                    {team.team_name}
+                                                    {team.name}
                                                 </span>
                                                 <span className="text-textPrimary min-w-[60px] text-center text-lg font-bold">
                                                     {score}

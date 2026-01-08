@@ -1,10 +1,5 @@
 import { InferSelectModel } from "drizzle-orm";
-import {
-    teams,
-    stageTeams,
-    matches,
-    matchParticipants,
-} from "../../schemas";
+import { teams, stageTeams, matches, matchParticipants } from "../../schemas";
 
 export type TeamSchema = InferSelectModel<typeof teams>;
 export type StageTeamSchema = InferSelectModel<typeof stageTeams>;
@@ -13,7 +8,7 @@ export type MatchParticipantSchema = InferSelectModel<typeof matchParticipants>;
 
 export interface FormattedTeam {
     team_id: string;
-    team_name: string;
+    name: string;
     team_logo: string | null;
     faceit_id: string | null;
     team_captain_id: string;

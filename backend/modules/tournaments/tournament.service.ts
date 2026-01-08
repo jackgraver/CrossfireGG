@@ -118,4 +118,24 @@ export const tournamentService = {
 
         return Object.values(groupedTeams);
     },
+
+    getUpcomingTournament: async () => {
+        const upcomingTournament =
+            await tournamentRepository.findUpcomingTournament();
+        if (!upcomingTournament) {
+            throw new Error("No upcoming tournament found");
+        }
+
+        return upcomingTournament;
+    },
+
+    getEntryStage: async (tournamentId: number) => {
+        const entryStage = await tournamentRepository.findEntryStage(
+            tournamentId
+        );
+        if (!entryStage) {
+            throw new Error("No entry stage found");
+        }
+        return entryStage;
+    },
 };

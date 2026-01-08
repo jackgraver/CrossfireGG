@@ -23,7 +23,7 @@ export const teamService = {
 
         const formattedTeam: FormattedTeam = {
             team_id: team.ID.toString(),
-            team_name: team.name,
+            name: team.name,
             team_logo: team.team_logo || null,
             faceit_id: team.faceit_id || null,
             team_captain_id: team.team_captain_id.toString(),
@@ -102,7 +102,7 @@ export const teamService = {
                 const team1: FormattedTeam | null = team1Data
                     ? {
                           team_id: team1Data.ID.toString(),
-                          team_name: team1Data.name,
+                          name: team1Data.name,
                           team_logo: team1Data.team_logo || null,
                           faceit_id: team1Data.faceit_id || null,
                           team_captain_id: team1Data.team_captain_id.toString(),
@@ -112,7 +112,7 @@ export const teamService = {
                 const team2: FormattedTeam | null = team2Data
                     ? {
                           team_id: team2Data.ID.toString(),
-                          team_name: team2Data.name,
+                          name: team2Data.name,
                           team_logo: team2Data.team_logo || null,
                           faceit_id: team2Data.faceit_id || null,
                           team_captain_id: team2Data.team_captain_id.toString(),

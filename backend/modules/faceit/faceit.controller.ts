@@ -3,12 +3,19 @@ import { logger } from "../../core/logger";
 import {
     ImportFaceitMatchesSchema,
     ImportFaceitStageSchema,
+    RegisterForTournamentSchema,
     VerifyFaceitPlayerTeamsSchema,
     VerifyTeamPlayersSchema,
 } from "./faceit.validation";
 import { faceitImportService } from "./faceit.service";
 import { faceitFetchUtil } from "../../utils/faceitFetch.util";
 import { teamRepository } from "../teams/team.repository";
+import { tournamentRepository } from "../tournaments/tournament.repository";
+import { playerRepository } from "../players/player.repository";
+import {
+    FaceitPlayerTeamsResponse,
+    FaceitTeamPlayersResponse,
+} from "./faceit.types";
 
 export const faceitController = {
     importFaceitStage: async (req: Request, res: Response) => {
@@ -159,7 +166,10 @@ export const faceitController = {
                               name: team.name,
                               avatar: team.avatar,
                               leader: team.leader,
-                              exists: existingTeamIds.has(team.team_id),
+                              exists:
+                                  existingTeamIds.has(team.team_id) ||
+                                  team.name === "regain",
+                              isRegistered: false,
                           }))
                           .sort((a, b) =>
                               a.exists === b.exists ? 0 : a.exists ? 1 : -1
@@ -198,7 +208,6 @@ export const faceitController = {
                         // writeFileName: `team_players_${teamId}.json`,
                     }
                 );
-            console.log(players);
 
             res.json({
                 success: true,
@@ -217,23 +226,4 @@ export const faceitController = {
             });
         }
     },
-};
-
-type FaceitPlayerTeamsResponse = {
-    items: {
-        team_id: string;
-        name: string;
-        avatar: string;
-        leader: string;
-    };
-};
-
-type FaceitTeamPlayersResponse = {
-    name: string;
-    team_id: string;
-    members: {
-        user_id: string;
-        nickname: string;
-        avatar: string;
-    }[];
 };

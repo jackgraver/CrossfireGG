@@ -6,12 +6,14 @@ export type PlayerFaceitTeam = {
     avatar: string;
     leader: string;
     exists: boolean;
+    isRegistered: boolean;
 };
 
 export type TeamPlayer = {
     user_id: string;
     nickname: string;
     avatar: string;
+    country: string;
 };
 
 export const registerApi = {
@@ -28,6 +30,28 @@ export const registerApi = {
     ): Promise<{ success: boolean; players: TeamPlayer[] }> => {
         return api.get<{ success: boolean; players: TeamPlayer[] }>(
             `/faceit/team/${teamId}/players`,
+        );
+    },
+
+    registerForTournament: async (
+        teamId: string,
+        playerIds: string[],
+        subIds: string[],
+        coachId: string,
+        agreements: {
+            rulesAndGuidelines: boolean;
+            discordConfirmation: boolean;
+        },
+    ): Promise<{ success: boolean; registration: any }> => {
+        return api.post<{ success: boolean; registration: any }>(
+            `/tournament/register`,
+            {
+                teamId,
+                playerIds,
+                subIds,
+                coachId,
+                agreements,
+            },
         );
     },
 };

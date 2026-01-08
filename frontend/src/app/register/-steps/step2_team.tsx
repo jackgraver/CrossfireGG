@@ -1,6 +1,7 @@
 import { usePlayerFaceitTeams } from "../-queries/registerQueries";
 import SelectableCard from "../-components/SelectableCard";
 import { SelectableCardGroup } from "../-components/SelectableCardGroup";
+import { useNavigate } from "@tanstack/react-router";
 
 type RegisterStep2TeamProps = {
     selectedTeamId: string[];
@@ -11,8 +12,10 @@ export default function RegisterStep2Team({
     selectedTeamId,
     onSelectionChange,
 }: RegisterStep2TeamProps) {
+    const navigate = useNavigate();
+
     const { data: playerFaceitTeams } = usePlayerFaceitTeams(
-        "c7b709f5-281b-4133-859e-0d545c4c58d0",
+        "2abbf5d5-ae35-40a1-bf6c-cf19c844168d",
     );
 
     if (playerFaceitTeams?.teams.length === 0) {
@@ -41,7 +44,16 @@ export default function RegisterStep2Team({
                             id={team.team_id}
                             avatar={team.avatar}
                             name={team.name}
-                            disabled={team.exists} //TODO: Sign up flow for existing team here too
+                            disabled={team.isRegistered} //TODO: Sign up flow for existing team here too
+                            disabledAction={{
+                                label: "Team Already Registered",
+                                onClick: () => {
+                                    navigate({
+                                        to: `/team/$team_id`,
+                                        params: { team_id: team.team_id },
+                                    });
+                                },
+                            }}
                         />
                     ))}
                 </div>

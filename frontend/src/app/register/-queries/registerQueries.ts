@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import {
     type PlayerFaceitTeam,
     registerApi,
@@ -18,5 +18,29 @@ export const useTeamPlayers = (teamId: string) => {
         queryKey: ["team-players", teamId],
         queryFn: () => registerApi.getTeamPlayers(teamId),
         enabled: !!teamId,
+    });
+};
+
+type RegisterParams = {
+    teamId: string;
+    playerIds: string[];
+    subIds: string[];
+    coachId: string;
+    agreements: {
+        rulesAndGuidelines: boolean;
+        discordConfirmation: boolean;
+    };
+};
+
+export const useRegisterForTournament = () => {
+    return useMutation({
+        mutationFn: (params: RegisterParams) =>
+            registerApi.registerForTournament(
+                params.teamId,
+                params.playerIds,
+                params.subIds,
+                params.coachId,
+                params.agreements,
+            ),
     });
 };

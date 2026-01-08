@@ -1,11 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import UserForm from "@/shared/UserForm";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import RegisterStep2Team from "./-steps/step2_team";
 import RegisterStep3Players from "./-steps/step3_players";
 import RegisterStep4SubCoach from "./-steps/step4_subcoach";
 import RegisterStep5Agreements from "./-steps/step5_agreements";
 import { useForm, useStore } from "@tanstack/react-form";
+import { openInNewTab } from "@/lib/NewTab";
+import { useNavigate } from "@tanstack/react-router";
+import { useRegisterForTournament } from "./-queries/registerQueries";
 
 export const Route = createFileRoute("/register/")({
     component: RegisterPage,
@@ -14,22 +17,26 @@ export const Route = createFileRoute("/register/")({
 const formSteps = [
     "team",
     "players",
-    "sub_coach",
+    "subs",
+    "coach",
     "agreements",
     "payment",
 ] as const;
 type FormStep = (typeof formSteps)[number];
 
 function RegisterPage() {
+    const navigate = useNavigate();
+    const registerMutation = useRegisterForTournament();
+
     // TODO: Replace with actual auth check
     const isLoggedIn = true;
 
     const form = useForm({
         defaultValues: {
-            teamId: "",
+            teamId: "" as string,
             playerIds: [] as string[],
             subIds: [] as string[],
-            coachId: "",
+            coachId: "" as string,
             agreements: {
                 rulesAndGuidelines: false,
                 discordConfirmation: false,
@@ -45,12 +52,25 @@ function RegisterPage() {
     const teamId = useStore(form.store, (state) => state.values.teamId);
     const playerIds = useStore(form.store, (state) => state.values.playerIds);
     const subIds = useStore(form.store, (state) => state.values.subIds);
+    const coachId = useStore(form.store, (state) => state.values.coachId);
     const agreements = useStore(form.store, (state) => state.values.agreements);
 
+    const previousTeamIdRef = useRef(teamId);
+
+    useEffect(() => {
+        if (previousTeamIdRef.current && previousTeamIdRef.current !== teamId) {
+            form.setFieldValue("playerIds", []);
+            form.setFieldValue("subIds", []);
+            form.setFieldValue("coachId", "");
+        }
+        previousTeamIdRef.current = teamId;
+    }, [teamId, form]);
+
     const stepValidation: Record<FormStep, boolean> = {
-        team: teamId !== "",
+        team: teamId !== "" && teamId !== undefined,
         players: playerIds.length === 5,
-        sub_coach: subIds.length <= 3,
+        subs: subIds.length <= 3,
+        coach: true, // Coach is optional
         agreements:
             agreements.rulesAndGuidelines && agreements.discordConfirmation,
         payment: true,
@@ -101,19 +121,35 @@ function RegisterPage() {
                             }}
                         />
                     )}
-                    {currentStep === "sub_coach" && (
+                    {currentStep === "subs" && (
                         <form.Field
                             name="subIds"
-                            children={(field) => {
-                                return (
-                                    <RegisterStep4SubCoach
-                                        teamId={teamId}
-                                        excludedPlayerIds={playerIds}
-                                        selectedSubCoachIds={field.state.value}
-                                        onSelectionChange={field.handleChange}
-                                    />
-                                );
-                            }}
+                            children={(field) => (
+                                <RegisterStep4SubCoach
+                                    mode="subs"
+                                    teamId={teamId}
+                                    excludedPlayerIds={playerIds}
+                                    selectedIds={field.state.value}
+                                    onSelectionChange={field.handleChange}
+                                />
+                            )}
+                        />
+                    )}
+                    {currentStep === "coach" && (
+                        <form.Field
+                            name="coachId"
+                            children={(field) => (
+                                <RegisterStep4SubCoach
+                                    mode="coach"
+                                    teamId={teamId}
+                                    excludedPlayerIds={[
+                                        ...playerIds,
+                                        ...subIds,
+                                    ]}
+                                    selectedId={field.state.value}
+                                    onSelectionChange={field.handleChange}
+                                />
+                            )}
                         />
                     )}
                     {currentStep === "agreements" && (
@@ -129,11 +165,21 @@ function RegisterPage() {
                                             field.state.value
                                                 .discordConfirmation
                                         }
-                                        onRulesAndGuidelinesChange={
-                                            field.handleChange
+                                        onRulesAndGuidelinesChange={(
+                                            checked: boolean,
+                                        ) =>
+                                            field.handleChange({
+                                                ...field.state.value,
+                                                rulesAndGuidelines: checked,
+                                            })
                                         }
-                                        onDiscordConfirmationChange={
-                                            field.handleChange
+                                        onDiscordConfirmationChange={(
+                                            checked: boolean,
+                                        ) =>
+                                            field.handleChange({
+                                                ...field.state.value,
+                                                discordConfirmation: checked,
+                                            })
                                         }
                                     />
                                 );
@@ -141,7 +187,42 @@ function RegisterPage() {
                         />
                     )}
                     {currentStep === "payment" && (
-                        <h1>Please Complete Payment</h1>
+                        <div className="flex flex-col items-center gap-6 py-8">
+                            <h1 className="mb-4 text-2xl font-bold">
+                                You have been registered successfully!
+                            </h1>
+                            <button
+                                className="w-full max-w-xs rounded bg-blue-500 px-6 py-3 text-lg font-semibold text-white shadow transition-colors hover:bg-blue-600"
+                                onClick={() =>
+                                    openInNewTab(
+                                        "https://www.paypal.com/paypalme/OSSCSL/75?currencyCode=USD",
+                                    )
+                                }
+                            >
+                                Pay Registration Fee
+                            </button>
+                            <button
+                                className="w-full max-w-xs rounded bg-orange-500 px-6 py-3 text-lg font-semibold text-white shadow transition-colors hover:bg-orange-600"
+                                onClick={() =>
+                                    openInNewTab(
+                                        `https://www.faceit.com/en/championship${"TODO"}`,
+                                    )
+                                }
+                            >
+                                Join Faceit Tournament
+                            </button>
+                            <button
+                                className="w-full max-w-xs rounded bg-red-600 px-6 py-3 text-lg font-semibold text-white shadow transition-colors hover:bg-red-800"
+                                onClick={() =>
+                                    navigate({
+                                        to: `/team/$team_id`,
+                                        params: { team_id: teamId },
+                                    })
+                                }
+                            >
+                                View Team Page
+                            </button>
+                        </div>
                     )}
                 </div>
                 <div className="flex w-full items-center justify-between gap-4">
@@ -152,15 +233,51 @@ function RegisterPage() {
                     >
                         Back
                     </button>
-                    <button
-                        onClick={() => setStepIndex((i) => i + 1)}
-                        className="flex-1 rounded bg-green-600 px-6 py-2 font-semibold hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
-                        disabled={
-                            stepIndex >= formSteps.length - 1 || !canContinue
-                        }
-                    >
-                        Continue
-                    </button>
+                    {currentStep === "agreements" ? (
+                        <button
+                            onClick={() => {
+                                registerMutation.mutate(
+                                    {
+                                        teamId,
+                                        playerIds,
+                                        subIds,
+                                        coachId,
+                                        agreements,
+                                    },
+                                    {
+                                        onSuccess: (res) => {
+                                            console.log(res);
+                                        },
+                                        onError: (error) => {
+                                            console.error(
+                                                "Registration failed:",
+                                                error.message,
+                                            );
+                                        },
+                                    },
+                                );
+                            }}
+                            className="flex-1 rounded bg-green-600 px-6 py-2 font-semibold hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
+                            disabled={
+                                !canContinue || registerMutation.isPending
+                            }
+                        >
+                            {registerMutation.isPending
+                                ? "Submitting..."
+                                : "Finish"}
+                        </button>
+                    ) : (
+                        <button
+                            onClick={() => setStepIndex((i) => i + 1)}
+                            className="flex-1 rounded bg-green-600 px-6 py-2 font-semibold hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
+                            disabled={
+                                stepIndex >= formSteps.length - 1 ||
+                                !canContinue
+                            }
+                        >
+                            Continue
+                        </button>
+                    )}
                 </div>
             </div>
         </UserForm>

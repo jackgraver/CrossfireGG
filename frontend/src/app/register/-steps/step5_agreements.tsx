@@ -1,8 +1,8 @@
 type RegisterStep5AgreementsProps = {
     rulesAndGuidelines: boolean;
     discordConfirmation: boolean;
-    onRulesAndGuidelinesChange: any;
-    onDiscordConfirmationChange: any;
+    onRulesAndGuidelinesChange: (checked: boolean) => void;
+    onDiscordConfirmationChange: (checked: boolean) => void;
 };
 
 export default function RegisterStep5Agreements({
@@ -23,7 +23,10 @@ export default function RegisterStep5Agreements({
                 </p>
                 <input
                     type="checkbox"
-                    onChange={(e) => onRulesAndGuidelinesChange(false)}
+                    checked={rulesAndGuidelines}
+                    onChange={(e) =>
+                        onRulesAndGuidelinesChange(e.target.checked)
+                    }
                 />
             </div>
             <div className="flex text-start">
@@ -33,7 +36,10 @@ export default function RegisterStep5Agreements({
                 </p>
                 <input
                     type="checkbox"
-                    onChange={(e) => onRulesAndGuidelinesChange(false)}
+                    checked={discordConfirmation}
+                    onChange={(e) =>
+                        onDiscordConfirmationChange(e.target.checked)
+                    }
                 />
             </div>
         </>
