@@ -388,4 +388,65 @@ export const tournamentRepository = {
             .limit(1);
         return result[0];
     },
+
+    upsertStageRoster: async (rosterData: {
+        stage_id: number;
+        player_id: number;
+        role: "starter" | "sub" | "coach";
+    }) => {
+        const { stageRosters } = await import("../../schemas");
+
+        const existing = await db
+            .select()
+            .from(stageRosters)
+            .where(
+                and(
+                    eq(stageRosters.stage_id, rosterData.stage_id),
+                    eq(stageRosters.player_id, rosterData.player_id),
+                    isNull(stageRosters.deleted_at)
+                )
+            )
+            .limit(1);
+
+        if (existing.length > 0) {
+            const result = await db
+                .update(stageRosters)
+                .set({
+                    role: rosterData.role,
+                    updated_at: new Date(),
+                })
+                .where(eq(stageRosters.ID, existing[0].ID))
+                .returning();
+            return result[0];
+        } else {
+            const result = await db
+                .insert(stageRosters)
+                .values({
+                    ...rosterData,
+                    created_at: new Date(),
+                    updated_at: new Date(),
+                })
+                .returning();
+            return result[0];
+        }
+    },
+
+    findStageRostersByStageId: async (stageId: number) => {
+        const { stageRosters } = await import("../../schemas");
+        const { players } = await import("../../schemas/player");
+
+        return await db
+            .select({
+                roster: stageRosters,
+                player: players,
+            })
+            .from(stageRosters)
+            .innerJoin(players, eq(stageRosters.player_id, players.ID))
+            .where(
+                and(
+                    eq(stageRosters.stage_id, stageId),
+                    isNull(stageRosters.deleted_at)
+                )
+            );
+    },
 };

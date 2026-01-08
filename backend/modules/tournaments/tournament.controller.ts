@@ -234,6 +234,41 @@ export const tournamentController = {
                 group_id: null,
             });
 
+            // Create stage roster entries with roles
+            const rosterEntries = [
+                ...playerIds.map((id) => ({
+                    playerId: id,
+                    role: "starter" as const,
+                })),
+                ...subIds.map((id) => ({
+                    playerId: id,
+                    role: "sub" as const,
+                })),
+                ...(coachId
+                    ? [
+                          {
+                              playerId: coachId,
+                              role: "coach" as const,
+                          },
+                      ]
+                    : []),
+            ];
+
+            await Promise.all(
+                rosterEntries.map((entry) => {
+                    const player = createdPlayers.find(
+                        (p) => p.faceit_id === entry.playerId
+                    );
+                    if (!player) return Promise.resolve();
+
+                    return tournamentRepository.upsertStageRoster({
+                        stage_id: entryStage.ID,
+                        player_id: player.ID,
+                        role: entry.role,
+                    });
+                })
+            );
+
             res.json({
                 success: true,
                 message: "Tournament registered successfully",

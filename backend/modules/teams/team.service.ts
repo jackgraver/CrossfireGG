@@ -139,6 +139,7 @@ export const teamService = {
         return formattedMatches;
     },
 
+    //TODO: get role for stage
     getTeamPlayers: async (teamId: number) => {
         const teamPlayers = await teamRepository.findPlayersByTeamId(teamId);
         return teamPlayers.map((player) => ({
