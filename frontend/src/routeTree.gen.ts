@@ -97,9 +97,9 @@ const TeamTeam_idRouteRoute = TeamTeam_idRouteRouteImport.update({
 } as any)
 const TournamentTournamentIndexRoute =
   TournamentTournamentIndexRouteImport.update({
-    id: '/tournament/$tournament/',
-    path: '/tournament/$tournament/',
-    getParentRoute: () => rootRouteImport,
+    id: '/',
+    path: '/',
+    getParentRoute: () => TournamentTournamentRouteRoute,
   } as any)
 const TeamTeam_idIndexRoute = TeamTeam_idIndexRouteImport.update({
   id: '/',
@@ -383,8 +383,15 @@ declare module '@tanstack/react-router' {
       id: '/tournament/$tournament/'
       path: '/tournament/$tournament'
       fullPath: '/tournament/$tournament'
-      preLoaderRoute: typeof TournamentTournamentIndexRouteImport
+      preLoaderRoute: typeof TournamentTournamentRouteRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/tournament/$tournament/': {
+      id: '/tournament/$tournament/'
+      path: '/'
+      fullPath: '/tournament/$tournament/'
+      preLoaderRoute: typeof TournamentTournamentIndexRouteImport
+      parentRoute: typeof TournamentTournamentRouteRoute
     }
     '/team/$team_id/': {
       id: '/team/$team_id/'
