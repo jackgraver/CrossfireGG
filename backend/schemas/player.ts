@@ -40,10 +40,14 @@ export const playerStats = sqliteTable(
             .references(() => players.ID, { onDelete: "cascade" }),
         match_id: integer("match_id")
             .notNull()
-            .references((): any => require("./match").matches.ID, { onDelete: "cascade" }),
+            .references((): any => require("./match").matches.ID, {
+                onDelete: "cascade",
+            }),
         map_id: integer("map_id")
             .notNull()
-            .references((): any => require("./match").maps.ID, { onDelete: "cascade" }),
+            .references((): any => require("./match").maps.ID, {
+                onDelete: "cascade",
+            }),
         kills: integer("kills").default(0),
         deaths: integer("deaths").default(0),
         assists: integer("assists").default(0),
