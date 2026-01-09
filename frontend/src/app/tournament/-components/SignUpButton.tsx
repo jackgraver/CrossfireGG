@@ -2,13 +2,24 @@ import { Link } from "@tanstack/react-router";
 import { hasSession } from "@/lib/auth.util";
 
 export default function SignUpButton({ session }: { session: any }) {
-    const className="rounded-md bg-blue-500 px-4 py-2 font-bold text-gray-100 hover:bg-blue-600"
-    if (!hasSession(session)) {
-        return <Link className={className} to="/sign-up">Create Account</Link>;
-    }
-    if (hasSession(session) && !session?.team_id) {
-        return <Link className={className} to="/">Create Team</Link>;
-    }
+    const activeClass =
+        "flex w-full items-center justify-center rounded-xl bg-cfRed py-3 text-xs font-black tracking-widest text-white uppercase shadow-sm transition-all hover:bg-cfRedDark";
 
-    return <Link className={className} to="/tournament">Join Tournament</Link>;
+    const getButtonContent = () => {
+        if (!hasSession(session)) {
+            return { to: "/sign-up", text: "Create Account" };
+        }
+        if (!session?.team_id) {
+            return { to: "/", text: "Create Team" };
+        }
+        return { to: "/tournament", text: "Join Tournament" };
+    };
+
+    const { to, text } = getButtonContent();
+
+    return (
+        <Link className={activeClass} to={to as any}>
+            {text}
+        </Link>
+    );
 }
