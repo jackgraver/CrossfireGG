@@ -1,210 +1,105 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useMemo, useEffect } from "react";
-import {
-    useTournament,
-    useMatchesByStage,
-} from "../-queries/tournamentQueries";
+import { useTournament } from "../-queries/tournamentQueries";
 import { formatDateOnly, toUnixTimestamp } from "@/lib/dateUtils";
-import RegularSeasonBracket from "@/shared/bracket/bracket_types/RegularSeasonBracket";
-import Standings from "@/shared/Standings";
-import TopLevelBracket from "@/shared/bracket/TopLevelBracket";
+import type { Stage } from "@/types/TournamentModel";
 
 export const Route = createFileRoute("/tournament/$tournament/")({
-    component: RouteComponent,
+    component: TournamentOverview,
 });
 
-function RouteComponent() {
+function TournamentOverview() {
     const { tournament: tournamentId } = Route.useParams();
-    const [viewMode, setViewMode] = useState<"bracket" | "standings">(
-        "bracket",
-    );
     const { data: tournament, isLoading, error } = useTournament(tournamentId);
-
-    const defaultStage = useMemo(() => {
-        if (!tournament?.stages) return null;
-        return (
-            tournament.stages.find((stage) => stage.is_current) ||
-            tournament.stages[0] ||
-            null
-        );
-    }, [tournament]);
-
-    const [currentStage, setCurrentStage] = useState(defaultStage);
-
-    useEffect(() => {
-        setCurrentStage(defaultStage);
-    }, [defaultStage]);
-
-    const {
-        data: matchesData,
-        isLoading: matchesLoading,
-        error: matchesError,
-    } = useMatchesByStage(currentStage?.ID ?? null);
 
     if (isLoading) {
         return (
-            <div className="flex min-h-screen items-center justify-center">
-                <div className="text-textPrimary">Loading tournament...</div>
+            <div className="text-textSecondary py-8 text-center">
+                Loading overview...
             </div>
         );
     }
 
-    if (error) {
+    if (error || !tournament) {
         return (
-            <div className="flex min-h-screen items-center justify-center">
-                <div className="text-red-500">
-                    Error loading tournament: {error.message}
-                </div>
+            <div className="text-textSecondary py-8 text-center">
+                Failed to load tournament data
             </div>
         );
     }
 
-    if (!tournament) {
+    if (tournament.stages.length === 0) {
         return (
-            <div className="flex min-h-screen items-center justify-center">
-                <div className="text-textSecondary">Tournament not found</div>
+            <div className="bg-firstBg rounded-xl p-8 text-center shadow-md">
+                <p className="text-textSecondary">
+                    No stages have been created for this tournament yet.
+                </p>
             </div>
         );
     }
-
-    const matches = matchesData?.matches || [];
 
     return (
-        <div className="mx-auto min-h-screen max-w-[1400px] p-5">
-            <div className="bg-firstBg mb-8 rounded-xl p-8 shadow-md">
-                <h1 className="text-textPrimary mb-4 text-4xl font-bold">
-                    {tournament.name}
-                </h1>
-                <div className="text-textSecondary flex flex-wrap gap-6">
-                    {tournament.start_date && (
-                        <div>
-                            <span className="font-semibold">Start Date: </span>
-                            {formatDateOnly(
-                                toUnixTimestamp(tournament.start_date)!,
-                            )}
-                        </div>
-                    )}
-                    {tournament.end_date && (
-                        <div>
-                            <span className="font-semibold">End Date: </span>
-                            {formatDateOnly(
-                                toUnixTimestamp(tournament.end_date)!,
-                            )}
-                        </div>
-                    )}
-                    {currentStage && (
-                        <div>
-                            <span className="font-semibold">Teams: </span>
-                            {currentStage.teams_count ?? 0}/
-                            {currentStage.max_teams}
-                        </div>
-                    )}
+        <div className="flex flex-col gap-6">
+            <div className="bg-firstBg rounded-xl shadow-md">
+                <div className="border-border border-b p-4">
+                    <h2 className="text-textPrimary text-lg font-semibold">
+                        Tournament Stages
+                    </h2>
                 </div>
-            </div>
-            <div className="bg-firstBg rounded-xl p-8 shadow-md">
-                <h2 className="text-textPrimary text-2xl font-bold">Stages</h2>
-            </div>
-            {tournament.stages.length === 0 ? (
-                <div className="text-textSecondary">
-                    No stages found for this tournament
-                </div>
-            ) : (
-                <div className="flex flex-row items-start gap-4">
+                <div className="grid gap-4 p-4 sm:grid-cols-2 lg:grid-cols-3">
                     {tournament.stages.map((stage) => (
-                        <div
-                            key={stage.ID}
-                            onClick={() => setCurrentStage(stage)}
-                            className={`border-border bg-secondBg flex-1 cursor-pointer rounded-lg border p-6 transition-all ${
-                                currentStage?.ID === stage.ID
-                                    ? "bg-thirdBg ring-2 ring-blue-500"
-                                    : "hover:bg-thirdBg"
-                            }`}
-                        >
-                            <div className="mb-4 flex items-center justify-between">
-                                <h3 className="text-textPrimary text-xl font-semibold">
-                                    {stage.name}
-                                </h3>
-                                {stage.is_current && (
-                                    <span className="rounded-full bg-green-600 px-3 py-1 text-sm text-white">
-                                        Current
-                                    </span>
-                                )}
-                            </div>
-                            <div className="text-textSecondary mb-4 flex flex-col flex-wrap gap-4 text-sm">
-                                {stage.registration_deadline && (
-                                    <div>
-                                        <span className="font-semibold">
-                                            Registration Deadline:{" "}
-                                        </span>
-                                        {formatDateOnly(
-                                            toUnixTimestamp(
-                                                stage.registration_deadline,
-                                            )!,
-                                        )}
-                                    </div>
-                                )}
-                                {stage.format && (
-                                    <div>
-                                        <span className="font-semibold">
-                                            Format:{" "}
-                                        </span>
-                                        {stage.format?.name}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
+                        <StageCard key={stage.ID} stage={stage} />
                     ))}
                 </div>
-            )}
-            <div className="mt-6 flex gap-4">
-                <button
-                    onClick={() => setViewMode("bracket")}
-                    className={`rounded-lg px-6 py-3 font-semibold transition-all ${
-                        viewMode === "bracket"
-                            ? "bg-blue-600 text-white"
-                            : "bg-secondBg text-textSecondary hover:bg-thirdBg"
-                    }`}
-                >
-                    Bracket
-                </button>
-                <button
-                    onClick={() => setViewMode("standings")}
-                    className={`rounded-lg px-6 py-3 font-semibold transition-all ${
-                        viewMode === "standings"
-                            ? "bg-blue-600 text-white"
-                            : "bg-secondBg text-textSecondary hover:bg-thirdBg"
-                    }`}
-                >
-                    Standings
-                </button>
             </div>
+        </div>
+    );
+}
 
-            <div className="bg-firstBg rounded-xl p-8 shadow-md">
-                {viewMode === "bracket" ? (
-                    matchesLoading ? (
-                        <div className="text-textSecondary">
-                            Loading matches...
-                        </div>
-                    ) : matchesError ? (
-                        <div className="text-red-500">
-                            Error loading matches: {matchesError.message}
-                        </div>
-                    ) : matches && matches.length > 0 ? (
-                        <TopLevelBracket
-                            stageFormat={currentStage?.format}
-                            stageId={currentStage?.ID ?? null}
-                            matches={matches}
-                        />
-                    ) : (
-                        <div className="text-textSecondary">
-                            {currentStage
-                                ? `No matches found for stage: ${currentStage.name}`
-                                : "No current stage found"}
-                        </div>
-                    )
-                ) : (
-                    <div className="text-textSecondary">
-                        <Standings teams={[]} />
+function StageCard({ stage }: { stage: Stage }) {
+    return (
+        <div className="border-border bg-secondBg relative rounded-lg border p-4">
+            <div className="mb-3 flex items-start justify-between">
+                <h3 className="text-textPrimary font-medium">{stage.name}</h3>
+                {stage.is_current && (
+                    <span className="rounded bg-green-500/20 px-2 py-0.5 text-xs font-medium text-green-400">
+                        Current
+                    </span>
+                )}
+            </div>
+            <div className="flex flex-col gap-2 text-sm">
+                {stage.format && (
+                    <div className="flex items-center gap-1.5">
+                        <span className="text-textSecondary">Format:</span>
+                        <span className="text-textPrimary">
+                            {stage.format.name}
+                        </span>
+                    </div>
+                )}
+                <div className="flex items-center gap-1.5">
+                    <span className="text-textSecondary">Teams:</span>
+                    <span className="text-textPrimary">
+                        {stage.teams_count ?? 0}/{stage.max_teams}
+                    </span>
+                </div>
+                {stage.start_date && (
+                    <div className="flex items-center gap-1.5">
+                        <span className="text-textSecondary">Start:</span>
+                        <span className="text-textPrimary">
+                            {formatDateOnly(toUnixTimestamp(stage.start_date)!)}
+                        </span>
+                    </div>
+                )}
+                {stage.registration_deadline && (
+                    <div className="flex items-center gap-1.5">
+                        <span className="text-textSecondary">
+                            Reg. Deadline:
+                        </span>
+                        <span className="text-textPrimary">
+                            {formatDateOnly(
+                                toUnixTimestamp(stage.registration_deadline)!,
+                            )}
+                        </span>
                     </div>
                 )}
             </div>
