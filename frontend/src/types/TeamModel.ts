@@ -42,7 +42,7 @@ export interface TeamDetailResponse {
 
 export type FormattedTeam = {
     team_id: string;
-    team_name: string;
+    name: string;
     team_logo: string | null;
     faceit_id: string | null;
     team_captain_id: string;
