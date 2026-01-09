@@ -33,7 +33,7 @@ export default function SelectableCard({
     };
 
     return (
-        <div className="flex w-full flex-col items-center">
+        <div className="flex w-full flex-col items-center pr-2">
             <div
                 onClick={handleClick}
                 className={`group grid w-full grid-cols-[48px_1fr_32px] items-center rounded-lg border p-2 transition-colors duration-150 ${

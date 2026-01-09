@@ -19,6 +19,7 @@ function Home() {
                     </p>
                 </div>
             </div>
+            <div className="text-6xl">WORK IN PROGRESS :)</div>
             <div className="flex flex-row gap-32 pt-64">
                 <button
                     onClick={() => navigate({ to: "/tournament" })}

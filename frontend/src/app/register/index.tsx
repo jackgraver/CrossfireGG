@@ -247,12 +247,14 @@ function RegisterPage() {
                                     {
                                         onSuccess: (res) => {
                                             console.log(res);
+                                            setStepIndex((i) => i + 1);
                                         },
                                         onError: (error) => {
                                             console.error(
                                                 "Registration failed:",
                                                 error.message,
                                             );
+                                            setStepIndex((i) => i + 1);
                                         },
                                     },
                                 );

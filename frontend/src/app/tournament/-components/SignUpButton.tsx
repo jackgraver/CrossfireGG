@@ -6,11 +6,12 @@ export default function SignUpButton({ session }: { session: any }) {
         "flex w-full items-center justify-center rounded-xl bg-cfRed py-3 text-xs font-black tracking-widest text-white uppercase shadow-sm transition-all hover:bg-cfRedDark";
 
     const getButtonContent = () => {
-        if (!hasSession(session)) {
-            return { to: "/sign-up", text: "Create Account" };
-        }
+        //TODO: revert this
+        // if (!hasSession(session)) {
+        //     return { to: "/sign-up", text: "Create Account" };
+        // }
         if (!session?.team_id) {
-            return { to: "/", text: "Create Team" };
+            return { to: "/register", text: "Create Team" };
         }
         return { to: "/tournament", text: "Join Tournament" };
     };
