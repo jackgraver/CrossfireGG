@@ -8,9 +8,7 @@ import type {
 } from "./team.types";
 
 export const teamService = {
-    getTeamById: async (
-        teamId: number
-    ): Promise<TeamDetailResponse | null> => {
+    getTeamById: async (teamId: number): Promise<TeamDetailResponse | null> => {
         const team = await teamRepository.findById(teamId);
 
         if (!team) {
@@ -19,7 +17,7 @@ export const teamService = {
 
         const formattedTeam: FormattedTeam = {
             team_id: team.ID.toString(),
-            team_name: team.name,
+            name: team.name,
             team_logo: team.team_logo || null,
             faceit_id: team.faceit_id || null,
             team_captain_id: team.team_captain_id.toString(),
@@ -31,7 +29,7 @@ export const teamService = {
 
         teamStages.forEach((item) => {
             const tournamentId = item.tournament.ID;
-            
+
             if (!tournamentMap.has(tournamentId)) {
                 tournamentMap.set(tournamentId, {
                     tournament_id: tournamentId.toString(),
@@ -85,8 +83,12 @@ export const teamService = {
                     match.ID
                 );
 
-                const team1Entry = participants.find(p => p.participant.position === 1);
-                const team2Entry = participants.find(p => p.participant.position === 2);
+                const team1Entry = participants.find(
+                    (p) => p.participant.position === 1
+                );
+                const team2Entry = participants.find(
+                    (p) => p.participant.position === 2
+                );
 
                 const team1Data = team1Entry?.team;
                 const team2Data = team2Entry?.team;
@@ -94,7 +96,7 @@ export const teamService = {
                 const team1: FormattedTeam | null = team1Data
                     ? {
                           team_id: team1Data.ID.toString(),
-                          team_name: team1Data.name,
+                          name: team1Data.name,
                           team_logo: team1Data.team_logo || null,
                           faceit_id: team1Data.faceit_id || null,
                           team_captain_id: team1Data.team_captain_id.toString(),
@@ -104,7 +106,7 @@ export const teamService = {
                 const team2: FormattedTeam | null = team2Data
                     ? {
                           team_id: team2Data.ID.toString(),
-                          team_name: team2Data.name,
+                          name: team2Data.name,
                           team_logo: team2Data.team_logo || null,
                           faceit_id: team2Data.faceit_id || null,
                           team_captain_id: team2Data.team_captain_id.toString(),
@@ -123,7 +125,7 @@ export const teamService = {
                     participants: {
                         team1: team1,
                         team2: team2,
-                    }
+                    },
                 };
             })
         );
