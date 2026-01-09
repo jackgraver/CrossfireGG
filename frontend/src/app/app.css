@@ -1,37 +1,42 @@
 @import "tailwindcss";
 
+@theme {
+    --color-cfRed: hsl(0, 100%, 49%);
+    --color-cfRedDark: hsl(0, 100%, 42%);
+    --color-mainBg: var(--color-main-bg);
+    --color-mainBgTransparent: var(--color-main-bg-transparent);
+    --color-firstBg: var(--color-first-bg);
+    --color-secondBg: var(--color-second-bg);
+    --color-thirdBg: var(--color-third-bg);
+    --color-textPrimary: var(--color-text-primary);
+    --color-textSecondary: var(--color-text-secondary);
+    --color-border: var(--color-border);
+}
+
 :root {
+    --color-cf-red: hsl(0, 100%, 49%);
+    --color-cf-red-dark: hsl(0, 100%, 42%);
     --color-main-bg: hsl(0, 0%, 100%);
     --color-first-bg: hsl(0, 0%, 95%);
     --color-main-bg-transparent: hsla(0, 0%, 100%, 0.6);
     --color-second-bg: hsl(0, 0%, 90%);
     --color-third-bg: hsl(0, 0%, 85%);
-
     --color-text-primary: hsl(0, 0%, 0%);
     --color-text-secondary: hsl(0, 0%, 50%);
     --color-border: hsl(0, 0%, 80%);
-    --color-gradient: linear-gradient(
-        0deg,
-        var(--color-bg),
-        var(--color-bg-light)
-    );
 }
 
 .dark {
+    --color-cf-red: hsl(0, 100%, 49%);
+    --color-cf-red-dark: hsl(0, 100%, 42%);
     --color-main-bg: hsl(0, 0%, 0%);
     --color-main-bg-transparent: hsla(0, 0%, 0%, 0.6);
     --color-first-bg: hsl(0, 0%, 10%);
     --color-second-bg: hsl(0, 0%, 20%);
     --color-third-bg: hsl(0, 0%, 30%);
-
     --color-text-primary: hsl(0, 0%, 95%);
     --color-text-secondary: hsl(0, 0%, 70%);
     --color-border: hsl(0, 0%, 30%);
-    --color-gradient: linear-gradient(
-        0deg,
-        var(--color-bg),
-        var(--color-bg-dark)
-    );
 }
 
 html,

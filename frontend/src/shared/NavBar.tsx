@@ -1,10 +1,19 @@
-import { useEffect, useState } from "react";
-import { Link, useLocation } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { logoutFn } from "@/lib/server/auth.server";
-import { useAuth } from "@/contexts/auth";
 import { matchesRole } from "@/lib/role.util";
 import { hasSession } from "@/lib/auth.util";
+import {
+    Trophy,
+    Users,
+    Video,
+    Settings,
+    User,
+    LogIn,
+    LogOut,
+    Moon,
+} from "lucide-react";
 
 function toggleDarkMode() {
     const isDark = document.documentElement.classList.toggle("dark");
@@ -18,8 +27,54 @@ const preloadImage = (url: string) => {
     img.src = url;
 };
 
+interface NavItemProps {
+    to?: string;
+    params?: Record<string, string>;
+    icon: React.ReactNode;
+    label: string;
+    onClick?: (e: React.MouseEvent) => void;
+    onMouseEnter?: () => void;
+}
+
+const NavItem = ({
+    to,
+    params,
+    icon,
+    label,
+    onClick,
+    onMouseEnter,
+}: NavItemProps) => {
+    const baseClasses =
+        "flex items-center gap-2 px-3 py-2 rounded-lg text-textSecondary hover:text-textPrimary hover:bg-white/5 transition-all duration-200 text-sm font-medium";
+
+    if (to) {
+        return (
+            <Link
+                to={to}
+                params={params}
+                className={baseClasses}
+                onClick={onClick}
+                onMouseEnter={onMouseEnter}
+            >
+                {icon}
+                <span className="hidden sm:inline">{label}</span>
+            </Link>
+        );
+    }
+
+    return (
+        <button
+            className={baseClasses}
+            onClick={onClick}
+            onMouseEnter={onMouseEnter}
+        >
+            {icon}
+            <span className="hidden sm:inline">{label}</span>
+        </button>
+    );
+};
+
 export default function NavBar({ session }: { session: any }) {
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const logout = useServerFn(logoutFn);
 
     useEffect(() => {
@@ -32,230 +87,94 @@ export default function NavBar({ session }: { session: any }) {
     }, []);
 
     return (
-        <>
-            <nav className="bg-mainBg bg-mainBgTransparent sticky top-0 z-50 backdrop-blur-md">
-                {true && <div></div>}
-                <div className="w-full pr-4">
-                    <div className="flex h-16 justify-between">
-                        <div className="flex items-center">
-                            <Link to="/" className="flex-shrink-0">
-                                {/* <h1 className="text-2xl font-bold">OSS</h1> */}
-                                <img
-                                    src="/crossfire.png"
-                                    className="h-16 w-16"
+        <nav className="bg-mainBg/80 sticky top-0 z-50 backdrop-blur-md">
+            <div className="w-full px-4 pl-0">
+                <div className="flex h-14 items-center justify-between">
+                    <Link to="/" className="shrink-0">
+                        <img
+                            src="/crossfire.png"
+                            className="h-14 w-14"
+                            alt="Crossfire"
+                        />
+                    </Link>
+                    <div className="flex items-center gap-1">
+                        <NavItem
+                            to="/tournament"
+                            icon={<Trophy size={18} />}
+                            label="Tournaments"
+                        />
+                        {session?.team_id && (
+                            <NavItem
+                                to="/team/$team_id"
+                                params={{ team_id: session.team_id }}
+                                icon={<Users size={18} />}
+                                label="My Team"
+                            />
+                        )}
+                        {matchesRole(session?.roles, "ADMIN") && (
+                            <NavItem
+                                to="/manage-teams"
+                                icon={<Users size={18} />}
+                                label="Manage Teams"
+                            />
+                        )}
+                        {matchesRole(
+                            session?.roles,
+                            "ADMIN",
+                            "PRODUCTION_LEAD",
+                            "PRODUCTION",
+                        ) && (
+                            <NavItem
+                                to="/casting"
+                                icon={<Video size={18} />}
+                                label="Casting"
+                            />
+                        )}
+                        {matchesRole(session?.roles, "ADMIN") && (
+                            <NavItem
+                                to="/admin"
+                                icon={<Settings size={18} />}
+                                label="Admin"
+                            />
+                        )}
+                        <NavItem
+                            icon={<Moon size={18} />}
+                            label="Theme"
+                            onClick={() => toggleDarkMode()}
+                        />
+                        {hasSession(session) ? (
+                            <>
+                                <NavItem
+                                    to="/user"
+                                    icon={<User size={18} />}
+                                    label={session.name}
                                 />
-                            </Link>
-                        </div>
-                        <div className="mt-4 flex h-min flex-col items-center gap-1 rounded-md bg-red-500 px-1 py-1">
-                            <p className="pointer-events-none">ALPHA RELEASE</p>
-                            {/* {hasSession(session) ? (
-                                <p>
-                                    {session?.name + " | " + session?.team_id}
-                                </p>
-                            ) : (
-                                <p>Not signed in</p>
-                            )} */}
-                        </div>
-
-                        <div className="flex items-center">
-                            <div className="relative">
-                                <button
-                                    onClick={() => setIsMenuOpen(!isMenuOpen)}
-                                    className="text-textSecondary hover:bg-secondBg hover:text-textPrimary inline-flex items-center justify-center rounded-md p-2 focus:outline-none"
-                                >
-                                    <span className="sr-only">
-                                        Open main menu
-                                    </span>
-                                    <svg
-                                        className={`${
-                                            isMenuOpen ? "hidden" : "block"
-                                        } h-6 w-6`}
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={2}
-                                            d="M4 6h16M4 12h16M4 18h16"
-                                        />
-                                    </svg>
-                                    <svg
-                                        className={`${
-                                            isMenuOpen ? "block" : "hidden"
-                                        } h-6 w-6`}
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        stroke="currentColor"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth={2}
-                                            d="M6 18L18 6M6 6l12 12"
-                                        />
-                                    </svg>
-                                </button>
-                                {isMenuOpen && (
-                                    <div
-                                        className="from-secondBg to-firstBg ring-opacity-5 absolute right-0 mt-2 w-64 origin-top-right rounded-md bg-gradient-to-b shadow-lg ring-1 ring-black"
-                                        onMouseLeave={() =>
-                                            setIsMenuOpen(false)
-                                        }
-                                    >
-                                        {hasSession(session) && (
-                                            <div className="border-border border-b px-4 py-3">
-                                                <Link to="/user">
-                                                    <div className="flex items-center">
-                                                        <div className="flex-shrink-0">
-                                                            <div className="bg-secondBg flex h-10 w-10 items-center justify-center rounded-full">
-                                                                <svg
-                                                                    xmlns="http://www.w3.org/2000/svg"
-                                                                    className="text-textSecondary h-6 w-6"
-                                                                    fill="none"
-                                                                    viewBox="0 0 24 24"
-                                                                    stroke="currentColor"
-                                                                >
-                                                                    <path
-                                                                        strokeLinecap="round"
-                                                                        strokeLinejoin="round"
-                                                                        strokeWidth={
-                                                                            2
-                                                                        }
-                                                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                                                                    />
-                                                                </svg>
-                                                            </div>
-                                                        </div>
-                                                        <div className="ml-3">
-                                                            <p className="text-textPrimary text-lg font-medium">
-                                                                {session.name}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                </Link>
-                                            </div>
-                                        )}
-                                        <div
-                                            className="py-1"
-                                            role="menu"
-                                            aria-orientation="vertical"
-                                        >
-                                            {matchesRole(
-                                                session?.roles,
-                                                "ADMIN",
-                                            ) && (
-                                                <Link
-                                                    to="/manage-teams"
-                                                    className="text-textSecondary hover:bg-secondBg block px-4 py-2 text-sm"
-                                                    role="menuitem"
-                                                    onClick={() =>
-                                                        setIsMenuOpen(false)
-                                                    }
-                                                >
-                                                    Manage Teams
-                                                </Link>
-                                            )}
-                                            {matchesRole(
-                                                session?.roles,
-                                                "ADMIN",
-                                                "PRODUCTION_LEAD",
-                                                "PRODUCTION",
-                                            ) && (
-                                                <Link
-                                                    to="/casting"
-                                                    className="text-textSecondary hover:bg-secondBg block px-4 py-2 text-sm"
-                                                    role="menuitem"
-                                                    onClick={() =>
-                                                        setIsMenuOpen(false)
-                                                    }
-                                                >
-                                                    Casting
-                                                </Link>
-                                            )}
-                                            {matchesRole(
-                                                session?.roles,
-                                                "ADMIN",
-                                            ) && (
-                                                <Link
-                                                    to="/admin"
-                                                    className="text-textSecondary hover:bg-secondBg block px-4 py-2 text-sm"
-                                                    role="menuitem"
-                                                    onClick={() =>
-                                                        setIsMenuOpen(false)
-                                                    }
-                                                >
-                                                    Admin
-                                                </Link>
-                                            )}
-                                            <div
-                                                className="text-textSecondary hover:bg-secondBg block cursor-pointer px-4 py-2 text-sm"
-                                                role="menuitem"
-                                                onClick={() => toggleDarkMode()}
-                                            >
-                                                Toggle Dark Mode
-                                            </div>
-                                            {session?.team_id && (
-                                                <Link
-                                                    to={`/team/$team_id`}
-                                                    params={{
-                                                        team_id:
-                                                            session?.team_id,
-                                                    }}
-                                                    className="text-textSecondary hover:bg-secondBg block px-4 py-2 text-sm"
-                                                    role="menuitem"
-                                                    onClick={() =>
-                                                        setIsMenuOpen(false)
-                                                    }
-                                                >
-                                                    Manage Team
-                                                </Link>
-                                            )}
-                                            {hasSession(session) ? (
-                                                <Link
-                                                    to="/"
-                                                    className="text-textSecondary hover:bg-secondBg block px-4 py-2 text-sm"
-                                                    role="menuitem"
-                                                    onClick={(e) => {
-                                                        e.preventDefault();
-                                                        logout();
-                                                    }}
-                                                    onMouseEnter={() =>
-                                                        preloadImage(
-                                                            "/bg-city.png",
-                                                        )
-                                                    }
-                                                >
-                                                    Sign Out
-                                                </Link>
-                                            ) : (
-                                                <Link
-                                                    to="/sign-in"
-                                                    className="text-textSecondary hover:bg-secondBg block px-4 py-2 text-sm"
-                                                    role="menuitem"
-                                                    onClick={() =>
-                                                        setIsMenuOpen(false)
-                                                    }
-                                                    onMouseEnter={() =>
-                                                        preloadImage(
-                                                            "/bg-city.png",
-                                                        )
-                                                    }
-                                                >
-                                                    Sign In
-                                                </Link>
-                                            )}
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
+                                <NavItem
+                                    to="/"
+                                    icon={<LogOut size={18} />}
+                                    label="Sign Out"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        logout();
+                                    }}
+                                    onMouseEnter={() =>
+                                        preloadImage("/bg-city.png")
+                                    }
+                                />
+                            </>
+                        ) : (
+                            <NavItem
+                                to="/sign-in"
+                                icon={<LogIn size={18} />}
+                                label="Sign In"
+                                onMouseEnter={() =>
+                                    preloadImage("/bg-city.png")
+                                }
+                            />
+                        )}
                     </div>
                 </div>
-            </nav>
-        </>
+            </div>
+        </nav>
     );
 }
