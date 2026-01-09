@@ -26,3 +26,26 @@ export const ImportFaceitMatchesSchema = z.object({
     readFileName: z.string().optional(),
     writeFileName: z.string().optional(),
 });
+
+export const VerifyFaceitPlayerTeamsSchema = z.object({
+    playerId: z.string().min(1),
+});
+
+export const VerifyTeamPlayersSchema = z.object({
+    teamId: z.string().min(1),
+});
+
+export const RegisterForTournamentSchema = z.object({
+    teamId: z.string().min(1),
+    playerIds: z.array(z.string()).min(5).max(5),
+    subIds: z.array(z.string()).max(3),
+    coachId: z.string().optional(),
+    agreements: z.object({
+        rulesAndGuidelines: z.boolean().refine((val) => val === true, {
+            message: "You must agree to the rules and guidelines",
+        }),
+        discordConfirmation: z.boolean().refine((val) => val === true, {
+            message: "You must agree to the discord confirmation",
+        }),
+    }),
+});

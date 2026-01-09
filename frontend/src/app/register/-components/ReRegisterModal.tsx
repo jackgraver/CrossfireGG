@@ -1,6 +1,4 @@
 import { api } from "@/lib/api";
-import BaseInput from "@/shared/OSSForm/BaseInput/BaseInput";
-import OSSForm from "@/shared/OSSForm/OSSForm";
 import { PromiseReturn } from "@/types/Types";
 import { X } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
@@ -69,7 +67,7 @@ export default function ReRegisterModal({
                 <h2 className="text-textPrimary text-xl font-bold">
                     Confirm Team Link
                 </h2>
-                <OSSForm
+                {/* <OSSForm
                     onSubmit={handleSubmit}
                     onSuccess={(id) => {
                         if (id) navigate({ to: `/team/${id}` });
@@ -86,7 +84,7 @@ export default function ReRegisterModal({
                         }}
                         autoFocus={true}
                     />
-                </OSSForm>
+                </OSSForm> */}
             </div>
         </div>
     );

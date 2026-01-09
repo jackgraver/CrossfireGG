@@ -3,9 +3,19 @@ import { logger } from "../../core/logger";
 import {
     ImportFaceitMatchesSchema,
     ImportFaceitStageSchema,
+    RegisterForTournamentSchema,
+    VerifyFaceitPlayerTeamsSchema,
+    VerifyTeamPlayersSchema,
 } from "./faceit.validation";
 import { faceitImportService } from "./faceit.service";
 import { faceitFetchUtil } from "../../utils/faceitFetch.util";
+import { teamRepository } from "../teams/team.repository";
+import { tournamentRepository } from "../tournaments/tournament.repository";
+import { playerRepository } from "../players/player.repository";
+import {
+    FaceitPlayerTeamsResponse,
+    FaceitTeamPlayersResponse,
+} from "./faceit.types";
 
 export const faceitController = {
     importFaceitStage: async (req: Request, res: Response) => {
@@ -102,6 +112,116 @@ export const faceitController = {
             logger.error("Error importing Faceit matches:", error);
             res.status(500).json({
                 error: "Failed to import Faceit matches",
+                details: error.message,
+            });
+        }
+    },
+
+    getFaceitPlayerTeams: async (req: Request, res: Response) => {
+        try {
+            const validation = VerifyFaceitPlayerTeamsSchema.safeParse(
+                req.params
+            );
+            if (!validation.success) {
+                return res.status(400).json({
+                    error: "Validation failed",
+                    details: validation.error.issues.map((err) => ({
+                        path: err.path.join("."),
+                        message: err.message,
+                    })),
+                });
+            }
+
+            const { playerId } = validation.data;
+
+            const response =
+                await faceitFetchUtil.fetchData<FaceitPlayerTeamsResponse>(
+                    `/players/${playerId}/teams`,
+                    {
+                        readFileName: `player_teams_${playerId}.json`,
+                        // writeFileName: `player_teams_${playerId}.json`,
+                    }
+                );
+
+            const existingTeams = await teamRepository.findAll();
+
+            const existingTeamIds = new Set(
+                existingTeams.map(
+                    (t) => t.faceit_id || t.faceit_id || t.ID?.toString()
+                )
+            );
+            const inputTeams = Array.isArray(response.items)
+                ? response.items
+                : response.items
+                ? [response.items]
+                : [];
+
+            res.json({
+                success: true,
+                message: "Faceit player teams verified successfully",
+                teams: Array.isArray(inputTeams)
+                    ? inputTeams
+                          .map((team) => ({
+                              team_id: team.team_id,
+                              name: team.name,
+                              avatar: team.avatar,
+                              leader: team.leader,
+                              exists:
+                                  existingTeamIds.has(team.team_id) ||
+                                  team.name === "regain",
+                              isRegistered: false,
+                          }))
+                          .sort((a, b) =>
+                              a.exists === b.exists ? 0 : a.exists ? 1 : -1
+                          )
+                    : [],
+            });
+        } catch (error: any) {
+            logger.error("Error verifying Faceit team:", error);
+            res.status(500).json({
+                error: "Failed to verify Faceit team",
+                details: error.message,
+            });
+        }
+    },
+
+    getTeamPlayers: async (req: Request, res: Response) => {
+        try {
+            const validation = VerifyTeamPlayersSchema.safeParse(req.params);
+            if (!validation.success) {
+                return res.status(400).json({
+                    error: "Validation failed",
+                    details: validation.error.issues.map((err) => ({
+                        path: err.path.join("."),
+                        message: err.message,
+                    })),
+                });
+            }
+
+            const { teamId } = validation.data;
+
+            const players =
+                await faceitFetchUtil.fetchData<FaceitTeamPlayersResponse>(
+                    `/teams/${teamId}`,
+                    {
+                        readFileName: `team_players_${teamId}.json`,
+                        // writeFileName: `team_players_${teamId}.json`,
+                    }
+                );
+
+            res.json({
+                success: true,
+                message: "Faceit team players fetched successfully",
+                players: players.members.map((member) => ({
+                    user_id: member.user_id,
+                    nickname: member.nickname,
+                    avatar: member.avatar,
+                })),
+            });
+        } catch (error: any) {
+            logger.error("Error fetching Faceit team players:", error);
+            res.status(500).json({
+                error: "Failed to fetch Faceit team players",
                 details: error.message,
             });
         }

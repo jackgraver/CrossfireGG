@@ -8,6 +8,12 @@ import type {
 } from "./team.types";
 
 export const teamService = {
+    getAllTeams: async (): Promise<any> => {
+        // TODO: probably need to filter by current stage (maybe tournament based on current = true stage)
+        const teams = await teamRepository.findAll();
+        return teams;
+    },
+
     getTeamById: async (teamId: number): Promise<TeamDetailResponse | null> => {
         const team = await teamRepository.findById(teamId);
 
@@ -133,6 +139,7 @@ export const teamService = {
         return formattedMatches;
     },
 
+    //TODO: get role for stage
     getTeamPlayers: async (teamId: number) => {
         const teamPlayers = await teamRepository.findPlayersByTeamId(teamId);
         return teamPlayers.map((player) => ({

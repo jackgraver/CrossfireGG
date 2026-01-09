@@ -1,170 +1,285 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { api } from "@/lib/api";
-import BaseInput from "@/shared/OSSForm/BaseInput/BaseInput";
-import FileDropper from "@/shared/OSSForm/FileDropper/FileDropper";
-import OSSForm from "@/shared/OSSForm/OSSForm";
 import UserForm from "@/shared/UserForm";
-import { useState } from "react";
-import ReRegisterModal from "./-components/ReRegisterModal";
-import { PromiseReturn } from "@/types/Types";
+import { useState, useEffect, useRef } from "react";
+import RegisterStep2Team from "./-steps/step2_team";
+import RegisterStep3Players from "./-steps/step3_players";
+import RegisterStep4SubCoach from "./-steps/step4_subcoach";
+import RegisterStep5Agreements from "./-steps/step5_agreements";
+import { useForm, useStore } from "@tanstack/react-form";
+import { openInNewTab } from "@/lib/NewTab";
 import { useNavigate } from "@tanstack/react-router";
-import SpinnerInput from "@/shared/OSSForm/SpinnerInput/SpinnerInput";
-import { toastService } from "@/shared/toast/toastService";
+import { useRegisterForTournament } from "./-queries/registerQueries";
 
 export const Route = createFileRoute("/register/")({
     component: RegisterPage,
 });
 
-function extractFaceitIdFromLink(link: string): string | null {
-    const match = link.match(
-        /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i,
-    );
-    return match ? match[0] : null;
-}
-
-const faceitUrlRegex =
-    /^https:\/\/www\.faceit\.com\/en\/teams\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(\/.*)?$/i;
+const formSteps = [
+    "team",
+    "players",
+    "subs",
+    "coach",
+    "agreements",
+    "payment",
+] as const;
+type FormStep = (typeof formSteps)[number];
 
 function RegisterPage() {
     const navigate = useNavigate();
+    const registerMutation = useRegisterForTournament();
 
-    const [teamName, setTeamName] = useState("");
+    // TODO: Replace with actual auth check
+    const isLoggedIn = true;
 
-    const [teamLink, setTeamLink] = useState("");
-    const [checkingTeamLink, setCheckingTeamLink] = useState(false);
+    const form = useForm({
+        defaultValues: {
+            teamId: "" as string,
+            playerIds: [] as string[],
+            subIds: [] as string[],
+            coachId: "" as string,
+            agreements: {
+                rulesAndGuidelines: false,
+                discordConfirmation: false,
+            },
+        },
+        onSubmit: async ({ value }) => {
+            console.log(value);
+        },
+    });
+    const [stepIndex, setStepIndex] = useState(0);
+    const currentStep = formSteps[stepIndex];
 
-    const [showModal, setShowModal] = useState(false);
-    const [modalTitle, setModalTitle] = useState("");
+    const teamId = useStore(form.store, (state) => state.values.teamId);
+    const playerIds = useStore(form.store, (state) => state.values.playerIds);
+    const subIds = useStore(form.store, (state) => state.values.subIds);
+    const coachId = useStore(form.store, (state) => state.values.coachId);
+    const agreements = useStore(form.store, (state) => state.values.agreements);
 
-    const handleFaceitLinkChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setCheckingTeamLink(true);
-        setTeamLink(e.target.value);
+    const previousTeamIdRef = useRef(teamId);
 
-        if (!faceitUrlRegex.test(e.target.value)) {
-            setCheckingTeamLink(false);
-            return;
+    useEffect(() => {
+        if (previousTeamIdRef.current && previousTeamIdRef.current !== teamId) {
+            form.setFieldValue("playerIds", []);
+            form.setFieldValue("subIds", []);
+            form.setFieldValue("coachId", "");
         }
+        previousTeamIdRef.current = teamId;
+    }, [teamId, form]);
 
-        api.get(
-            `/team/test_faceit_link/${extractFaceitIdFromLink(e.target.value)}`,
-        ).then((data: any) => {
-            if (data.status === "error") {
-                setCheckingTeamLink(false);
-                switch (data.code) {
-                    case "-1":
-                        toastService.error(<p>{data.message}</p>, "Error");
-                        break;
-                    case "-2":
-                        toastService.error(<p>{data.message}</p>, "Error");
-                        break;
-                }
-            }
-            if (data.status === "success") {
-                switch (data.code) {
-                    case 0:
-                        setCheckingTeamLink(false);
-                        break;
-                    case 1:
-                        setCheckingTeamLink(false);
-                        setModalTitle("We see you are a returning team");
-                        setShowModal(true);
-                        break;
-                    case 2:
-                        const toastId = toastService.display({
-                            title: "Team already registered",
-                            body: (
-                                <div className="flex items-center justify-center">
-                                    <button
-                                        className="rounded-md bg-blue-500 p-2 hover:bg-blue-600"
-                                        onClick={() => {
-                                            toastService.dismiss(toastId);
-                                            navigate({
-                                                to: `/team/${data.id}`,
-                                            });
-                                        }}
-                                    >
-                                        View Team
-                                    </button>
-                                </div>
-                            ),
-                            durationMs: -1,
-                            variant: "center",
-                        });
-                        break;
-                }
-            }
-        });
+    const stepValidation: Record<FormStep, boolean> = {
+        team: teamId !== "" && teamId !== undefined,
+        players: playerIds.length === 5,
+        subs: subIds.length <= 3,
+        coach: true, // Coach is optional
+        agreements:
+            agreements.rulesAndGuidelines && agreements.discordConfirmation,
+        payment: true,
     };
 
-    const handleSubmit = async (e: React.FormEvent): Promise<PromiseReturn> => {
-        e.preventDefault();
+    const canContinue = stepValidation[currentStep];
 
-        try {
-            const response: { team_id: string } = await api.post(
-                "/team/register",
-                {
-                    team_name: teamName,
-                    faceit_link: teamLink,
-                },
-            );
-            localStorage.setItem("team_id", response.team_id);
-            return { success: true, result: response.team_id };
-        } catch (err) {
-            console.error("Submission error:", err);
-            return { success: false, result: null };
-        }
-    };
+    if (!isLoggedIn) {
+        return (
+            <UserForm>
+                <button className="rounded bg-orange-500 p-2 font-semibold text-white hover:bg-orange-600 disabled:opacity-50">
+                    Sign In With Faceit
+                </button>
+            </UserForm>
+        );
+    }
 
     return (
-        <>
-            {showModal && (
-                <ReRegisterModal
-                    setShowModal={setShowModal}
-                    title={modalTitle}
-                />
-            )}
-            <UserForm>
-                <h1 className="text-textPrimary text-2xl font-bold">
-                    Register for OSS
-                </h1>
-                <p className="text-textSecondary">
-                    Returning teams can sign-up{" "}
-                    <a
-                        onClick={() => setShowModal(true)}
-                        className="cursor-pointer text-blue-600 hover:text-blue-800"
+        <UserForm>
+            <form></form>
+            <div className="flex w-full flex-col gap-y-4">
+                <div>
+                    {currentStep === "team" && (
+                        <form.Field
+                            name="teamId"
+                            children={(field) => {
+                                return (
+                                    <RegisterStep2Team
+                                        selectedTeamId={[field.state.value]}
+                                        onSelectionChange={field.handleChange}
+                                    />
+                                );
+                            }}
+                        />
+                    )}
+                    {currentStep === "players" && (
+                        <form.Field
+                            name="playerIds"
+                            mode="array"
+                            children={(field) => {
+                                return (
+                                    <RegisterStep3Players
+                                        teamId={teamId}
+                                        selectedPlayerIds={field.state.value}
+                                        onSelectionChange={field.handleChange}
+                                    />
+                                );
+                            }}
+                        />
+                    )}
+                    {currentStep === "subs" && (
+                        <form.Field
+                            name="subIds"
+                            children={(field) => (
+                                <RegisterStep4SubCoach
+                                    mode="subs"
+                                    teamId={teamId}
+                                    excludedPlayerIds={playerIds}
+                                    selectedIds={field.state.value}
+                                    onSelectionChange={field.handleChange}
+                                />
+                            )}
+                        />
+                    )}
+                    {currentStep === "coach" && (
+                        <form.Field
+                            name="coachId"
+                            children={(field) => (
+                                <RegisterStep4SubCoach
+                                    mode="coach"
+                                    teamId={teamId}
+                                    excludedPlayerIds={[
+                                        ...playerIds,
+                                        ...subIds,
+                                    ]}
+                                    selectedId={field.state.value}
+                                    onSelectionChange={field.handleChange}
+                                />
+                            )}
+                        />
+                    )}
+                    {currentStep === "agreements" && (
+                        <form.Field
+                            name="agreements"
+                            children={(field) => {
+                                return (
+                                    <RegisterStep5Agreements
+                                        rulesAndGuidelines={
+                                            field.state.value.rulesAndGuidelines
+                                        }
+                                        discordConfirmation={
+                                            field.state.value
+                                                .discordConfirmation
+                                        }
+                                        onRulesAndGuidelinesChange={(
+                                            checked: boolean,
+                                        ) =>
+                                            field.handleChange({
+                                                ...field.state.value,
+                                                rulesAndGuidelines: checked,
+                                            })
+                                        }
+                                        onDiscordConfirmationChange={(
+                                            checked: boolean,
+                                        ) =>
+                                            field.handleChange({
+                                                ...field.state.value,
+                                                discordConfirmation: checked,
+                                            })
+                                        }
+                                    />
+                                );
+                            }}
+                        />
+                    )}
+                    {currentStep === "payment" && (
+                        <div className="flex flex-col items-center gap-6 py-8">
+                            <h1 className="mb-4 text-2xl font-bold">
+                                You have been registered successfully!
+                            </h1>
+                            <button
+                                className="w-full max-w-xs rounded bg-blue-500 px-6 py-3 text-lg font-semibold text-white shadow transition-colors hover:bg-blue-600"
+                                onClick={() =>
+                                    openInNewTab(
+                                        "https://www.paypal.com/paypalme/OSSCSL/75?currencyCode=USD",
+                                    )
+                                }
+                            >
+                                Pay Registration Fee
+                            </button>
+                            <button
+                                className="w-full max-w-xs rounded bg-orange-500 px-6 py-3 text-lg font-semibold text-white shadow transition-colors hover:bg-orange-600"
+                                onClick={() =>
+                                    openInNewTab(
+                                        `https://www.faceit.com/en/championship${"TODO"}`,
+                                    )
+                                }
+                            >
+                                Join Faceit Tournament
+                            </button>
+                            <button
+                                className="w-full max-w-xs rounded bg-red-600 px-6 py-3 text-lg font-semibold text-white shadow transition-colors hover:bg-red-800"
+                                onClick={() =>
+                                    navigate({
+                                        to: `/team/$team_id`,
+                                        params: { team_id: teamId },
+                                    })
+                                }
+                            >
+                                View Team Page
+                            </button>
+                        </div>
+                    )}
+                </div>
+                <div className="flex w-full items-center justify-between gap-4">
+                    <button
+                        onClick={() => setStepIndex((i) => i - 1)}
+                        className="flex-1 rounded bg-gray-600 px-6 py-2 font-semibold hover:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
+                        disabled={stepIndex === 0}
                     >
-                        here
-                    </a>
-                </p>
-                <OSSForm
-                    onSubmit={handleSubmit}
-                    onSuccess={(team_id: string) => {
-                        navigate({
-                            to: `/team/${team_id}`,
-                            search: { from: `register` },
-                        });
-                    }}
-                    submitLabel="Register"
-                >
-                    <BaseInput
-                        type="text"
-                        placeholder="Team Name"
-                        value={teamName}
-                        onChange={(e) => {
-                            setTeamName(e.target.value);
-                        }}
-                    />
-                    <SpinnerInput
-                        placeholder="Faceit Link"
-                        value={teamLink}
-                        onChange={(e) => {
-                            // setTeamLink(e.target.value);
-                            handleFaceitLinkChange(e);
-                        }}
-                        loading={checkingTeamLink}
-                    />
-                </OSSForm>
-            </UserForm>
-        </>
+                        Back
+                    </button>
+                    {currentStep === "agreements" ? (
+                        <button
+                            onClick={() => {
+                                registerMutation.mutate(
+                                    {
+                                        teamId,
+                                        playerIds,
+                                        subIds,
+                                        coachId,
+                                        agreements,
+                                    },
+                                    {
+                                        onSuccess: (res) => {
+                                            console.log(res);
+                                        },
+                                        onError: (error) => {
+                                            console.error(
+                                                "Registration failed:",
+                                                error.message,
+                                            );
+                                        },
+                                    },
+                                );
+                            }}
+                            className="flex-1 rounded bg-green-600 px-6 py-2 font-semibold hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
+                            disabled={
+                                !canContinue || registerMutation.isPending
+                            }
+                        >
+                            {registerMutation.isPending
+                                ? "Submitting..."
+                                : "Finish"}
+                        </button>
+                    ) : (
+                        <button
+                            onClick={() => setStepIndex((i) => i + 1)}
+                            className="flex-1 rounded bg-green-600 px-6 py-2 font-semibold hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
+                            disabled={
+                                stepIndex >= formSteps.length - 1 ||
+                                !canContinue
+                            }
+                        >
+                            Continue
+                        </button>
+                    )}
+                </div>
+            </div>
+        </UserForm>
     );
 }

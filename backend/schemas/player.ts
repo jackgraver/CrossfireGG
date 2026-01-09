@@ -1,6 +1,7 @@
 import { sqliteTable, integer, text, index } from "drizzle-orm/sqlite-core";
 import { relations } from "drizzle-orm";
 
+//TODO: have way to differentiate between players and subs and coach
 export const players = sqliteTable(
     "players",
     {

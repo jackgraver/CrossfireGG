@@ -11,6 +11,14 @@ import {
 import { eq, and, isNull, inArray, like, or, ne } from "drizzle-orm";
 
 export const teamRepository = {
+    findAll: async () => {
+        return await db
+            .select()
+            .from(teams)
+            .where(isNull(teams.deleted_at))
+            .orderBy(teams.name);
+    },
+
     findById: async (teamId: number) => {
         const result = await db
             .select()

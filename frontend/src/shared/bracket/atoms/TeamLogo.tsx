@@ -2,29 +2,33 @@ import { Team } from "@/types/TeamModel";
 
 export default function TeamLogo({
     team,
+    avatar,
     styling,
 }: {
-    team: Team | undefined;
+    team?: Team | undefined;
+    avatar?: string | undefined;
     styling: string | undefined;
 }) {
-    if (!team) return null;
-    if (!team.team_logo) return null;
+    if (!team && !avatar) return null;
+    if (team && !team.team_logo && !avatar) return null;
 
     const placeholder = "/oss-logo-placeholder.png";
 
     const isValidSrc = (src: string | undefined | null): src is string =>
         !!src && typeof src === "string" && src.trim() !== "";
 
+    const avatarSrc = team ? team.team_logo : avatar;
+
     return (
         <img
-            src={isValidSrc(team.team_logo) ? team.team_logo : placeholder}
+            src={isValidSrc(avatarSrc) ? avatarSrc : placeholder}
             onError={(e) => {
                 if (!e.currentTarget.src.includes(placeholder)) {
                     e.currentTarget.onerror = null;
                     e.currentTarget.src = placeholder;
                 }
             }}
-            alt={team.name || "Team Logo"}
+            alt={team?.name || "Team Logo"}
             className={styling}
             loading="lazy"
         />

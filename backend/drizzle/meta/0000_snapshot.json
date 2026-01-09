@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "4a9d67a8-cca3-4ff0-a461-e02524ac483e",
+  "id": "4752dd6d-8a29-4228-9b8f-f737c038bac5",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "roles": {
@@ -313,28 +313,6 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false
-        },
-        "region": {
-          "name": "region",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "max_roster_size": {
-          "name": "max_roster_size",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false,
-          "default": 10
-        },
-        "founded_date": {
-          "name": "founded_date",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
           "autoincrement": false
         },
         "social_links": {
@@ -729,6 +707,13 @@
           "notNull": false,
           "autoincrement": false
         },
+        "registration_deadline": {
+          "name": "registration_deadline",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "integer",
@@ -834,27 +819,6 @@
         "prize_pool": {
           "name": "prize_pool",
           "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "registration_deadline": {
-          "name": "registration_deadline",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "max_teams": {
-          "name": "max_teams",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "region": {
-          "name": "region",
-          "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
