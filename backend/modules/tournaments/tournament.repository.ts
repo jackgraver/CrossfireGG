@@ -6,7 +6,7 @@ import {
     matches,
     stageTeams,
     stageFormats,
-} from "../../schemas";
+} from "@repo/schemas";
 import { eq, and, isNull, count, inArray, desc } from "drizzle-orm";
 import { TournamentListItem } from "./tournament.types";
 
@@ -339,7 +339,7 @@ export const tournamentRepository = {
     },
 
     findStageTeamsByStageId: async (stageId: number) => {
-        const { teams } = await import("../../schemas/team");
+        const { teams } = await import("@repo/schemas/team");
 
         const results = await db
             .select({
@@ -394,7 +394,7 @@ export const tournamentRepository = {
         player_id: number;
         role: "starter" | "sub" | "coach";
     }) => {
-        const { stageRosters } = await import("../../schemas");
+        const { stageRosters } = await import("@repo/schemas");
 
         const existing = await db
             .select()
@@ -432,8 +432,8 @@ export const tournamentRepository = {
     },
 
     findStageRostersByStageId: async (stageId: number) => {
-        const { stageRosters } = await import("../../schemas");
-        const { players } = await import("../../schemas/player");
+        const { stageRosters } = await import("@repo/schemas");
+        const { players } = await import("@repo/schemas/player");
 
         return await db
             .select({

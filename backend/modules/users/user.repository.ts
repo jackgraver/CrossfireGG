@@ -1,5 +1,5 @@
 import { db } from "../../config/database";
-import { users, userRoles, roles } from "../../schemas";
+import { users, userRoles, roles } from "@repo/schemas";
 import { eq, and, isNull } from "drizzle-orm";
 
 export const userRepository = {

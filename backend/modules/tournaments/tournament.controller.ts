@@ -257,7 +257,7 @@ export const tournamentController = {
             await Promise.all(
                 rosterEntries.map((entry) => {
                     const player = createdPlayers.find(
-                        (p) => p.faceit_id === entry.playerId
+                        (p: any) => p.faceit_id === entry.playerId
                     );
                     if (!player) return Promise.resolve();
 
