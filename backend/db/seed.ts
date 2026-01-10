@@ -16,7 +16,7 @@ import {
     matchParticipants,
     maps,
     matchCasters,
-} from "../schemas";
+} from "../../packages/schemas";
 import { eq, and, isNull } from "drizzle-orm";
 
 interface SeedData {
@@ -42,7 +42,12 @@ interface SeedData {
         stage_id: number | null;
         status: string | null;
     }>;
-    matchParticipants: Array<{ ID: number; match_id: number; team_id: number; position: number }>;
+    matchParticipants: Array<{
+        ID: number;
+        match_id: number;
+        team_id: number;
+        position: number;
+    }>;
     maps: Array<{ ID: number; match_id: number; winner_id: number | null }>;
 }
 
@@ -167,7 +172,9 @@ async function seedTeams() {
 }
 
 async function linkUsersToTeams() {
-    console.log("Note: Users are no longer directly linked to teams via user.team_id");
+    console.log(
+        "Note: Users are no longer directly linked to teams via user.team_id"
+    );
     console.log("Team membership is now handled through the players table");
 }
 

@@ -7,7 +7,7 @@ import {
     players,
     stages,
     tournaments,
-} from "../../schemas";
+} from "@repo/schemas";
 import { eq, and, isNull, inArray, like, or, ne } from "drizzle-orm";
 
 export const teamRepository = {

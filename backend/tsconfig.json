@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "composite": true,
         "target": "ES2020",
         "module": "commonjs",
         "lib": ["ES2020"],
@@ -13,8 +14,18 @@
         "moduleResolution": "node",
         "declaration": true,
         "declarationMap": true,
-        "sourceMap": true
+        "sourceMap": true,
+        "paths": {
+            "@repo/schemas": ["../shared/schemas"],
+            "@repo/contracts": ["../shared/contracts"],
+            "@shared/schemas": ["../shared/schemas"],
+            "@shared/contracts": ["../shared/contracts"]
+        }
     },
     "include": ["**/*.ts"],
-    "exclude": ["node_modules", "dist"]
+    "exclude": ["node_modules", "dist"],
+    "references": [
+        { "path": "../shared/schemas" },
+        { "path": "../shared/contracts" }
+    ]
 }

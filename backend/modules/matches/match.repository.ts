@@ -7,7 +7,7 @@ import {
     maps,
     groups,
     stages,
-} from "../../schemas";
+} from "@repo/schemas";
 import { eq, and, isNull } from "drizzle-orm";
 
 export const matchRepository = {
@@ -89,7 +89,9 @@ export const matchRepository = {
         const result = await db
             .select()
             .from(matches)
-            .where(and(eq(matches.faceit_id, faceitId), isNull(matches.deleted_at)))
+            .where(
+                and(eq(matches.faceit_id, faceitId), isNull(matches.deleted_at))
+            )
             .limit(1);
         return result[0] || null;
     },
@@ -109,7 +111,12 @@ export const matchRepository = {
         const existing = await db
             .select()
             .from(matches)
-            .where(and(eq(matches.faceit_id, matchData.faceit_id), isNull(matches.deleted_at)))
+            .where(
+                and(
+                    eq(matches.faceit_id, matchData.faceit_id),
+                    isNull(matches.deleted_at)
+                )
+            )
             .limit(1);
 
         if (existing.length > 0) {

@@ -1,5 +1,5 @@
 import { db } from "../../config/database";
-import { players } from "../../schemas";
+import { players } from "@repo/schemas";
 import { eq, and, isNull } from "drizzle-orm";
 
 export const playerRepository = {

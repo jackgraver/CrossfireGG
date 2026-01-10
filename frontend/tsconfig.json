@@ -1,5 +1,6 @@
 {
     "compilerOptions": {
+        "composite": true,
         "target": "ES2017",
         "lib": ["dom", "dom.iterable", "esnext"],
         "allowJs": true,
@@ -19,9 +20,17 @@
             }
         ],
         "paths": {
-            "@/*": ["./src/*"]
+            "@/*": ["./src/*"],
+            "@repo/schemas": ["../shared/schemas"],
+            "@repo/contracts": ["../shared/contracts"],
+            "@shared/schemas": ["../shared/schemas"],
+            "@shared/contracts": ["../shared/contracts"]
         }
     },
     "include": ["**/*.ts", "**/*.tsx"],
-    "exclude": ["node_modules"]
+    "exclude": ["node_modules"],
+    "references": [
+        { "path": "../shared/schemas" },
+        { "path": "../shared/contracts" }
+    ]
 }
