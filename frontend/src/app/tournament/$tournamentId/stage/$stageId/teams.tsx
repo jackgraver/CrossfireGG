@@ -27,8 +27,8 @@ function TeamsPage() {
     );
 
     return (
-        <div className="bg-firstBg rounded-xl shadow-md">
-            <div className="p-4">
+        <div className="rounded-xl shadow-md">
+            <div className="py-4">
                 {isLoading ? (
                     <div className="text-textSecondary py-8 text-center">
                         Loading teams...
@@ -58,11 +58,20 @@ function TeamCard({ team }: { team: GroupTeam }) {
             params={{ team_id: team.team_id.toString() }}
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => setIsHovering(false)}
-            className="border-border bg-secondBg hover:bg-thirdBg flex items-center gap-4 rounded-lg border p-4 transition-colors"
+            style={
+                team.team_logo
+                    ? {
+                          backgroundImage: `url("/test_header.jpg")`,
+                          backgroundSize: "cover",
+                          backgroundPosition: "center",
+                      }
+                    : undefined
+            }
+            className="border-border bg-firstBg hover:bg-secondBg flex items-center gap-4 rounded-lg border p-4 transition-colors"
         >
             <TeamLogo
                 avatar={team.team_logo || undefined}
-                styling="h-12 w-12 rounded object-cover"
+                styling="h-12 w-12 rounded-full object-cover"
             />
             <div className="min-w-0 flex-1">
                 <div className="text-textPrimary truncate font-semibold">

@@ -6,6 +6,7 @@ import { getMatchesByGroup } from "../Bracket.util";
 import MatchCard from "../components/MatchCard";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import TeamLogo from "../atoms/TeamLogo";
+import { Link } from "@tanstack/react-router";
 
 function TeamStandingsRow({
     team,
@@ -15,7 +16,11 @@ function TeamStandingsRow({
     rank: number;
 }) {
     return (
-        <div className="border-border flex items-center gap-3 border-b py-2 last:border-b-0">
+        <Link
+            to="/team/$team_id"
+            params={{ team_id: team.team_id.toString() }}
+            className="border-border hover:bg-thirdBg flex items-center gap-3 border-b py-2 transition-all duration-300 ease-out last:border-b-0"
+        >
             <span className="text-textSecondary w-6 text-center text-sm font-medium">
                 {rank}
             </span>
@@ -27,15 +32,15 @@ function TeamStandingsRow({
                     faceit_id: team.faceit_id || "",
                     team_captain_id: "",
                 }}
-                styling="h-6 w-6 rounded object-cover"
+                styling="h-6 w-6 rounded-full object-cover"
             />
             <span className="text-textPrimary flex-1 truncate text-sm font-medium">
                 {team.team_name}
             </span>
-            <span className="text-textSecondary text-sm">
+            <span className="text-textSecondary pr-2 text-sm">
                 {team.wins}-{team.losses}
             </span>
-        </div>
+        </Link>
     );
 }
 

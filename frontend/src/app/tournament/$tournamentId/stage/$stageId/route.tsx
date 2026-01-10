@@ -106,7 +106,7 @@ function RouteComponent() {
 
     return (
         <div className="mx-auto min-h-screen max-w-[1400px] p-6">
-            <div className="border-border/20 relative overflow-hidden border-b pt-8 pb-8 md:pt-12 md:pb-8">
+            <div className="relative overflow-hidden pt-8 pb-8 md:pt-12 md:pb-8">
                 <div className="relative z-10 flex flex-col justify-between gap-8 md:flex-row md:items-end">
                     <div className="space-y-6">
                         <div className="flex items-center gap-3">
@@ -156,7 +156,7 @@ function RouteComponent() {
                     </div>
                 </div>
                 <div className="mt-8 space-y-8">
-                    <div className="border-border/20 flex flex-col justify-between gap-6 border-b sm:flex-row sm:items-center">
+                    <div className="flex flex-col justify-between gap-6 border-b border-white sm:flex-row sm:items-center">
                         <div className="flex gap-10">
                             {tabs.map((tab) => (
                                 <Link
@@ -175,7 +175,7 @@ function RouteComponent() {
                             ))}
                         </div>
                         {tournament.stages.length > 1 && (
-                            <div className="bg-secondBg/50 flex items-center gap-1.5 rounded-xl p-1.5">
+                            <div className="flex gap-10">
                                 {tournament.stages.map((stage) => (
                                     <Link
                                         key={stage.ID}
@@ -184,7 +184,11 @@ function RouteComponent() {
                                             ...prev,
                                             stageId: stage.ID,
                                         })}
-                                        className={`rounded-lg px-4 py-2 text-[11px] font-black tracking-wider uppercase transition-all ${stageId === stage.ID.toString() ? "bg-cfRed text-white" : "text-textSecondary hover:bg-thirdBg"}`}
+                                        className={`relative flex items-center gap-2.5 pb-4 text-sm font-black transition-all ${
+                                            stageId === stage.ID.toString()
+                                                ? "text-textPrimary"
+                                                : "text-textSecondary hover:text-textPrimary"
+                                        }`}
                                     >
                                         {stage.name}
                                     </Link>
@@ -198,25 +202,3 @@ function RouteComponent() {
         </div>
     );
 }
-// {
-//     tabs.map(({ to, label, exact }) => {
-//         const active = isActiveTab(to, exact);
-//         return (
-//             <Link
-//                 key={to}
-//                 to={to}
-//                 params={{ tournament: tournamentId }}
-//                 className={`relative px-6 py-3 text-sm font-medium transition-colors ${
-//                     active
-//                         ? "text-textPrimary"
-//                         : "text-textSecondary hover:text-textPrimary"
-//                 }`}
-//             >
-//                 {label}
-//                 {active && (
-//                     <span className="absolute bottom-0 left-0 h-0.5 w-full bg-blue-500" />
-//                 )}
-//             </Link>
-//         );
-//     });
-// }
