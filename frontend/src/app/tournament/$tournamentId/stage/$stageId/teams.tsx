@@ -58,15 +58,6 @@ function TeamCard({ team }: { team: GroupTeam }) {
             params={{ team_id: team.team_id.toString() }}
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => setIsHovering(false)}
-            style={
-                team.team_logo
-                    ? {
-                          backgroundImage: `url("/test_header.jpg")`,
-                          backgroundSize: "cover",
-                          backgroundPosition: "center",
-                      }
-                    : undefined
-            }
             className="border-border bg-firstBg hover:bg-secondBg flex items-center gap-4 rounded-lg border p-4 transition-colors"
         >
             <TeamLogo
