@@ -1,19 +1,7 @@
 import { formatMatchDate } from "@/lib/dateUtils";
-import { Round } from "@/types/Types";
+import { Match, Round } from "@/types/Types";
 import type { Team } from "@/types/TeamModel";
-
-type Match = {
-    match_id: string;
-    status: string;
-    scheduled_at: number;
-    round: Round;
-    faceit_url: string;
-    winner: string;
-    teams: { team1: Team; team2: Team };
-    team1_score: number;
-    team2_score: number;
-    caster_id?: number;
-};
+import { MatchParticipant } from "@/types/MatchParticipantModel";
 
 const formatScore = (score: number, winner: boolean) => {
     if (winner) {
@@ -48,30 +36,29 @@ const roundString = (round: Round) => {
 };
 
 type MatchHeaderProps = {
-    team1: Team | undefined;
-    team2: Team | undefined;
-    match: Match | undefined;
+    team1: MatchParticipant;
+    team2: MatchParticipant;
+    match: Match;
 };
 
 export default function MatchHeader({ team1, team2, match }: MatchHeaderProps) {
-    if (!team1 || !team2 || !match) return null;
-
-
     return (
         <div className="flex max-w-5xl items-center justify-between gap-x-16 px-4">
             {match.status !== "SCHEDULED" && (
                 <span className="text-4xl font-extrabold text-green-400">
-                    {match.team1_score}
+                    {team1.score}
                 </span>
             )}
             <div className="flex flex-col items-center text-center text-gray-400">
-                <p className="font-bold text-white">{match.status}</p>
-                <p>{formatMatchDate(match.scheduled_at)}</p>
-                <p>{roundString(match.round)}</p>
+                <p className="font-bold text-white">
+                    {match.status?.toUpperCase()}
+                </p>
+                <p>{formatMatchDate(match.scheduled_at!)}</p>
+                <p>{roundString(match.round!)}</p>
             </div>
             {match.status !== "SCHEDULED" && (
                 <span className="text-4xl font-extrabold text-white">
-                    {match.team2_score}
+                    {team2.score}
                 </span>
             )}
         </div>

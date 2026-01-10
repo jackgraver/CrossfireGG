@@ -7,10 +7,10 @@ const formatScore = (score: number, winner: boolean) => {
     return <p className="text-red-500">{score}</p>;
 };
 
-export default function MapResults({ maps }: { maps: MatchMap[] }) {
+export default function MapResults({ maps }: { maps: any[] }) {
     return (
         <div className="flex w-full flex-col gap-2">
-            {maps.map((map: MatchMap, i: number) => (
+            {maps.map((map: any, i: number) => (
                 <div
                     key={i}
                     className={`flex items-center justify-between rounded bg-zinc-800 px-4 py-2 ${
@@ -23,7 +23,8 @@ export default function MapResults({ maps }: { maps: MatchMap[] }) {
                             alt={map.map_name}
                             className="h-8 w-8 flex-shrink-0 rounded object-cover"
                             onError={(e) => {
-                                e.currentTarget.src = "/map_icons/default.png";
+                                e.currentTarget.src =
+                                    "/map_icons/de_anubis.png";
                             }}
                         />
                         <span className="font-semibold">{map.map_name}</span>

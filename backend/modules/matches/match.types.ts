@@ -1,6 +1,6 @@
 export type Team = {
     team_id: string;
-    team_name: string;
+    name: string;
     team_logo: string | null;
 };
 
@@ -48,4 +48,3 @@ export type MatchDetailResponse = {
     players2: MatchDetailPlayer[];
     maps: MatchMap[];
 };
-

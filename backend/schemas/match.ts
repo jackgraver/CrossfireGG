@@ -53,7 +53,7 @@ export const matchParticipants = sqliteTable(
             .references((): any => require("./team").teams.ID, {
                 onDelete: "cascade",
             }),
-        position: integer("position").notNull(),
+        position: integer("position").notNull(), // 1 or 2 (identify team)
         score: integer("score").default(0),
         winner: integer("winner", { mode: "boolean" }).default(false),
         created_at: integer("created_at", { mode: "timestamp" })

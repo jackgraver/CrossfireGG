@@ -3,11 +3,11 @@ import { MatchParticipant } from "./MatchParticipantModel";
 
 export type Match = {
     ID: string;
-    group_id?: string; // foreign key groups.ID
-    status?: string | null;
-    scheduled_at?: number | null;
-    round?: Round | null;
-    faceit_url?: string | null;
+    group_id: string; // foreign key groups.ID
+    status: string | null;
+    scheduled_at: number | null;
+    round: Round | null;
+    faceit_url: string | null;
     team1_id?: string | null;
     team2_id?: string | null;
     winner?: string | null;
@@ -15,6 +15,7 @@ export type Match = {
     team1_score?: number | null;
     team2_score?: number | null;
     caster_id?: number;
+    maps?: any[];
 };
 
 export type Round =
