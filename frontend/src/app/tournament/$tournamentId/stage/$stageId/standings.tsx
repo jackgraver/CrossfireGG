@@ -1,10 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
-import { useTournament, useStageTeams } from "../-queries/tournamentQueries";
-import type { GroupTeam } from "../-api/tournamentApi";
+import {
+    useTournament,
+    useStageTeams,
+} from "../../../-queries/tournamentQueries";
+import type { GroupTeam } from "../../../-api/tournamentApi";
 import OSSTable from "@/shared/OSSTable";
 
-export const Route = createFileRoute("/tournament/$tournament/standings")({
+export const Route = createFileRoute(
+    "/tournament/$tournamentId/stage/$stageId/standings",
+)({
     component: StandingsPage,
 });
 

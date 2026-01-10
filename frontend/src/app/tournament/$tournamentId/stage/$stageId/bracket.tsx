@@ -3,11 +3,13 @@ import { useState, useMemo, useEffect } from "react";
 import {
     useTournament,
     useMatchesByStage,
-} from "../-queries/tournamentQueries";
+} from "../../../-queries/tournamentQueries";
 import TopLevelBracket from "@/shared/bracket/TopLevelBracket";
 import type { Stage } from "@/types/TournamentModel";
 
-export const Route = createFileRoute("/tournament/$tournament/bracket")({
+export const Route = createFileRoute(
+    "/tournament/$tournamentId/stage/$stageId/bracket",
+)({
     component: BracketPage,
 });
 

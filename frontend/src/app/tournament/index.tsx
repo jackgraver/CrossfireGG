@@ -68,7 +68,7 @@ function RouteComponent() {
                             <div
                                 onClick={() =>
                                     navigate({
-                                        to: `/tournament/${tournament.ID}`,
+                                        to: `/tournament/${tournament.ID}/stage/${tournament.stages[0]?.ID}`,
                                     })
                                 }
                                 className="border-border/20 flex cursor-pointer flex-col justify-between gap-6 border-b pb-8 transition-all md:flex-row md:items-end"

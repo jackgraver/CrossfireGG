@@ -4,9 +4,10 @@ import {
     Outlet,
     useMatchRoute,
 } from "@tanstack/react-router";
-import { useTournament } from "../-queries/tournamentQueries";
+import { useTournament } from "../../../-queries/tournamentQueries";
 import { formatDateOnly, toUnixTimestamp } from "@/lib/dateUtils";
 import { Calendar, Clock, LayoutDashboard, Trophy, Users } from "lucide-react";
+import { useState } from "react";
 
 const InfoTile = ({
     icon: Icon,
@@ -30,12 +31,14 @@ const InfoTile = ({
     </div>
 );
 
-export const Route = createFileRoute("/tournament/$tournament")({
+export const Route = createFileRoute(
+    "/tournament/$tournamentId/stage/$stageId",
+)({
     component: RouteComponent,
 });
 
 function RouteComponent() {
-    const { tournament: tournamentId } = Route.useParams();
+    const { tournamentId, stageId } = Route.useParams();
     const { data: tournament, isLoading, error } = useTournament(tournamentId);
     const matchRoute = useMatchRoute();
 
@@ -64,19 +67,19 @@ function RouteComponent() {
 
     const tabs = [
         {
-            to: "/tournament/$tournament/bracket",
+            to: "/tournament/$tournamentId/stage/$stageId/bracket",
             label: "Bracket",
             icon: LayoutDashboard,
             exact: false,
         },
         {
-            to: "/tournament/$tournament/standings",
+            to: "/tournament/$tournamentId/stage/$stageId/standings",
             label: "Standings",
             icon: Trophy,
             exact: false,
         },
         {
-            to: "/tournament/$tournament/teams",
+            to: "/tournament/$tournamentId/stage/$stageId/teams",
             label: "Teams",
             icon: Users,
             exact: false,
@@ -86,14 +89,13 @@ function RouteComponent() {
     const isActiveTab = (to: string, exact: boolean) => {
         if (exact) {
             return (
-                matchRoute({ to, params: { tournament: tournamentId } }) !==
-                false
+                matchRoute({ to, params: { tournamentId, stageId } }) !== false
             );
         }
         return (
             matchRoute({
                 to,
-                params: { tournament: tournamentId },
+                params: { tournamentId, stageId },
                 fuzzy: true,
             }) !== false
         );
@@ -104,7 +106,7 @@ function RouteComponent() {
 
     return (
         <div className="mx-auto min-h-screen max-w-[1400px] p-6">
-            <div className="border-border/40 relative overflow-hidden border-b pt-8 pb-12 md:pt-12 md:pb-16">
+            <div className="border-border/20 relative overflow-hidden border-b pt-8 pb-8 md:pt-12 md:pb-8">
                 <div className="relative z-10 flex flex-col justify-between gap-8 md:flex-row md:items-end">
                     <div className="space-y-6">
                         <div className="flex items-center gap-3">
@@ -160,7 +162,7 @@ function RouteComponent() {
                                 <Link
                                     key={tab.to}
                                     to={tab.to}
-                                    params={{ tournament: tournamentId }}
+                                    params={{ tournamentId, stageId }}
                                     className={`relative flex items-center gap-2.5 pb-4 text-sm font-black transition-all ${
                                         isActiveTab(tab.to, tab.exact)
                                             ? "text-textPrimary"
@@ -175,17 +177,17 @@ function RouteComponent() {
                         {tournament.stages.length > 1 && (
                             <div className="bg-secondBg/50 flex items-center gap-1.5 rounded-xl p-1.5">
                                 {tournament.stages.map((stage) => (
-                                    <button
+                                    <Link
                                         key={stage.ID}
-                                        onClick={() => {}}
-                                        className={`rounded-lg px-4 py-2 text-[11px] font-black tracking-wider uppercase transition-all ${
-                                            currentStage?.ID === stage.ID
-                                                ? "bg-cfRed text-white"
-                                                : "text-textSecondary hover:bg-thirdBg"
-                                        }`}
+                                        to="."
+                                        params={(prev: any) => ({
+                                            ...prev,
+                                            stageId: stage.ID,
+                                        })}
+                                        className={`rounded-lg px-4 py-2 text-[11px] font-black tracking-wider uppercase transition-all ${stageId === stage.ID.toString() ? "bg-cfRed text-white" : "text-textSecondary hover:bg-thirdBg"}`}
                                     >
                                         {stage.name}
-                                    </button>
+                                    </Link>
                                 ))}
                             </div>
                         )}
