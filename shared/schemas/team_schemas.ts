@@ -1,5 +1,6 @@
 import { sqliteTable, integer, text } from "drizzle-orm/sqlite-core";
 import { relations } from "drizzle-orm";
+import { players, matchParticipants, stageTeams } from "@repo/schemas";
 
 export const teams = sqliteTable("teams", {
     ID: integer("ID").primaryKey({ autoIncrement: true }),
@@ -8,7 +9,7 @@ export const teams = sqliteTable("teams", {
     faceit_id: text("faceit_id"),
     team_captain_id: integer("team_captain_id")
         .notNull()
-        .references((): any => require("./player").players.ID, {
+        .references((): any => players.ID, {
             onDelete: "restrict",
         }),
     social_links: text("social_links"),
@@ -32,11 +33,11 @@ export const teams = sqliteTable("teams", {
  * - Be registered in multiple stages (via stageTeams)
  */
 export const teamsRelations = relations(teams, ({ one, many }) => ({
-    captain: one(require("./player").players, {
+    captain: one(players, {
         fields: [teams.team_captain_id],
-        references: [require("./player").players.ID],
+        references: [players.ID],
     }),
-    players: many(require("./player").players),
-    matchParticipants: many(require("./match").matchParticipants),
-    stageTeams: many(require("./tournament").stageTeams),
+    players: many(players),
+    matchParticipants: many(matchParticipants),
+    stageTeams: many(stageTeams),
 }));

@@ -1,12 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
-import {
-    useTournament,
-    useStageTeams,
-} from "../../../-queries/tournamentQueries";
-import type { GroupTeam } from "../../../-api/tournamentApi";
+import { useState } from "react";
+import { useStageTeams } from "./-queries/tournamentQueries";
 import TeamLogo from "@/shared/bracket/atoms/TeamLogo";
-import { ArrowUpRight, MoveUpRight } from "lucide-react";
+import { MoveUpRight } from "lucide-react";
+import { StageTeamWithTeam } from "@repo/types";
 
 export const Route = createFileRoute(
     "/tournament/$tournamentId/stage/$stageId/teams",
@@ -17,14 +14,7 @@ export const Route = createFileRoute(
 function TeamsPage() {
     const { tournamentId, stageId } = Route.useParams();
 
-    const { data: stageTeamsData, isLoading } = useStageTeams(Number(stageId));
-
-    const groups = stageTeamsData?.groups || [];
-    const allTeams = groups.flatMap((g) => g.teams);
-
-    const sortedTeams = allTeams.sort(
-        (a, b) => a.seed - b.seed || b.wins - a.wins || b.losses - a.losses,
-    );
+    const { data: stageTeams, isLoading } = useStageTeams(Number(stageId));
 
     return (
         <div className="rounded-xl shadow-md">
@@ -33,13 +23,13 @@ function TeamsPage() {
                     <div className="text-textSecondary py-8 text-center">
                         Loading teams...
                     </div>
-                ) : allTeams.length === 0 ? (
+                ) : stageTeams?.teams.length === 0 ? (
                     <div className="text-textSecondary py-8 text-center">
                         No teams registered for this stage
                     </div>
                 ) : (
                     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                        {sortedTeams.map((team) => (
+                        {stageTeams?.teams.map((team) => (
                             <TeamCard key={team.team_id} team={team} />
                         ))}
                     </div>
@@ -49,7 +39,7 @@ function TeamsPage() {
     );
 }
 
-function TeamCard({ team }: { team: GroupTeam }) {
+function TeamCard({ team }: { team: StageTeamWithTeam }) {
     const [isHovering, setIsHovering] = useState(false);
 
     return (
@@ -61,12 +51,12 @@ function TeamCard({ team }: { team: GroupTeam }) {
             className="border-border bg-firstBg hover:bg-secondBg flex items-center gap-4 rounded-lg border p-4 transition-colors"
         >
             <TeamLogo
-                avatar={team.team_logo || undefined}
+                avatar={team.team.team_logo || undefined}
                 styling="h-12 w-12 rounded-full object-cover"
             />
             <div className="min-w-0 flex-1">
                 <div className="text-textPrimary truncate font-semibold">
-                    {team.team_name}
+                    {team.team.name}
                 </div>
                 <div className="text-textSecondary mt-0.5 flex gap-3 text-sm">
                     <span>

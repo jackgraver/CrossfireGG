@@ -6,6 +6,7 @@ import {
     index,
 } from "drizzle-orm/sqlite-core";
 import { relations } from "drizzle-orm";
+import { teams, players, matches } from "@repo/schemas";
 
 export const tournaments = sqliteTable("tournaments", {
     ID: integer("ID").primaryKey({ autoIncrement: true }),
@@ -90,7 +91,7 @@ export const stageTeams = sqliteTable(
             .references(() => stages.ID, { onDelete: "cascade" }),
         team_id: integer("team_id")
             .notNull()
-            .references((): any => require("./team").teams.ID, {
+            .references((): any => teams.ID, {
                 onDelete: "cascade",
             }),
         group_id: integer("group_id").references(() => groups.ID, {
@@ -126,7 +127,7 @@ export const stageRosters = sqliteTable(
             .references(() => stages.ID, { onDelete: "cascade" }),
         player_id: integer("player_id")
             .notNull()
-            .references((): any => require("./player").players.ID, {
+            .references((): any => players.ID, {
                 onDelete: "cascade",
             }),
         role: text("role", { enum: ["starter", "sub", "coach"] }).notNull(),
@@ -181,7 +182,7 @@ export const stagesRelations = relations(stages, ({ one, many }) => ({
     groups: many(groups),
     stageTeams: many(stageTeams),
     stageRosters: many(stageRosters),
-    matches: many(require("./match").matches),
+    matches: many(matches),
 }));
 
 /**
@@ -196,7 +197,7 @@ export const groupsRelations = relations(groups, ({ one, many }) => ({
         fields: [groups.stage_id],
         references: [stages.ID],
     }),
-    matches: many(require("./match").matches),
+    matches: many(matches),
     stageTeams: many(stageTeams),
 }));
 
@@ -213,9 +214,9 @@ export const stageTeamsRelations = relations(stageTeams, ({ one }) => ({
         fields: [stageTeams.stage_id],
         references: [stages.ID],
     }),
-    team: one(require("./team").teams, {
+    team: one(teams, {
         fields: [stageTeams.team_id],
-        references: [require("./team").teams.ID],
+        references: [teams.ID],
     }),
     group: one(groups, {
         fields: [stageTeams.group_id],
@@ -235,8 +236,8 @@ export const stageRostersRelations = relations(stageRosters, ({ one }) => ({
         fields: [stageRosters.stage_id],
         references: [stages.ID],
     }),
-    player: one(require("./player").players, {
+    player: one(players, {
         fields: [stageRosters.player_id],
-        references: [require("./player").players.ID],
+        references: [players.ID],
     }),
 }));

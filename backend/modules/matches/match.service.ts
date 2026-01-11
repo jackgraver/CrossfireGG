@@ -1,8 +1,7 @@
 import { matchRepository } from "./match.repository";
-import type { MatchDetailResponse } from "./match.types";
 
 export const matchService = {
-    getMatchById: async (matchId: number): Promise<MatchDetailResponse> => {
+    getMatchById: async (matchId: number): Promise<any> => {
         const match = await matchRepository.findById(matchId);
 
         if (!match) {
