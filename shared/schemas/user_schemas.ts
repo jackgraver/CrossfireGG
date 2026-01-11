@@ -6,6 +6,7 @@ import {
     index,
 } from "drizzle-orm/sqlite-core";
 import { relations } from "drizzle-orm";
+import { players, teams, matchCasters } from "@repo/schemas";
 
 export const users = sqliteTable("users", {
     ID: integer("ID").primaryKey({ autoIncrement: true }),
@@ -73,16 +74,16 @@ export const userRoles = sqliteTable(
  * Note: Team membership is tracked through the player profile, not directly on the user.
  */
 export const usersRelations = relations(users, ({ one, many }) => ({
-    captainOfTeam: one(require("./team").teams, {
+    captainOfTeam: one(teams, {
         fields: [users.ID],
-        references: [require("./team").teams.team_captain_id],
+        references: [teams.team_captain_id],
     }),
-    player: one(require("./player").players, {
+    player: one(players, {
         fields: [users.ID],
-        references: [require("./player").players.user_id],
+        references: [players.user_id],
     }),
     userRoles: many(userRoles),
-    matchCasters: many(require("./match").matchCasters),
+    matchCasters: many(matchCasters),
 }));
 
 /**

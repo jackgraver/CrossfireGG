@@ -1,5 +1,5 @@
-import { StageFormat } from "@/types/TournamentModel";
-import { Match } from "@/types/Types";
+import { StageFormat } from "@repo/contracts";
+import { Match } from "@repo/contracts";
 import RegularSeasonBracket from "./bracket_types/RegularSeasonBracket";
 import Groups from "./bracket_types/Groups";
 import PlayoffBracket from "./bracket_types/PlayoffBracket";

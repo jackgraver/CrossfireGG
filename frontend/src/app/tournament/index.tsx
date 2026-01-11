@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useTournaments } from "./-queries/tournamentQueries";
+import { useTournaments } from "./-queries/tournamentsQueries";
 import { formatDateOnly, toUnixTimestamp } from "@/lib/dateUtils";
 import SignUpButton from "./-components/SignUpButton";
 import { openInNewTab } from "@/lib/NewTab";
@@ -106,7 +106,7 @@ function RouteComponent() {
                             {tournament.stages &&
                                 tournament.stages.length > 0 && (
                                     <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                        {tournament.stages.map((stage) => (
+                                        {tournament.stages.map((stage: any) => (
                                             <div
                                                 key={stage.ID}
                                                 className="bg-secondBg/30 hover:bg-secondBg/60 relative flex flex-col justify-between gap-6 rounded-2xl p-6 transition-all"

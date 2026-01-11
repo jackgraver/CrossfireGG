@@ -79,7 +79,7 @@ export const tournamentController = {
         }
     },
 
-    getStageTeamsByStageId: async (req: Request, res: Response) => {
+    getStageStandings: async (req: Request, res: Response) => {
         try {
             const validation = StageParamsSchema.safeParse(req.params);
             if (!validation.success) {
@@ -95,6 +95,27 @@ export const tournamentController = {
                 validation.data.stageId
             );
             res.json({ groups });
+        } catch (error) {
+            logger.error("Error fetching stage teams:", error);
+            res.status(500).json({
+                error: "Failed to fetch stage teams",
+                details: error,
+            });
+        }
+    },
+
+    getStageTeams: async (req: Request, res: Response) => {
+        try {
+            const validation = StageParamsSchema.safeParse(req.params);
+            if (!validation.success) {
+                return res.status(400).json({
+                    error: "Validation failed",
+                });
+            }
+            const teams = await tournamentService.getStageTeams(
+                validation.data.stageId
+            );
+            res.json({ teams });
         } catch (error) {
             logger.error("Error fetching stage teams:", error);
             res.status(500).json({

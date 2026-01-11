@@ -4,10 +4,9 @@ import {
     Outlet,
     useMatchRoute,
 } from "@tanstack/react-router";
-import { useTournament } from "../../../-queries/tournamentQueries";
+import { useTournament } from "./-queries/tournamentQueries";
 import { formatDateOnly, toUnixTimestamp } from "@/lib/dateUtils";
 import { Calendar, Clock, LayoutDashboard, Trophy, Users } from "lucide-react";
-import { useState } from "react";
 
 const InfoTile = ({
     icon: Icon,

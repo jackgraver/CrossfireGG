@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Match } from "@/types/Types";
-import { useStageTeams } from "@/app/tournament/-queries/tournamentQueries";
-import type { GroupWithTeams } from "@/app/tournament/-api/tournamentApi";
+import { Match } from "@repo/contracts";
+import { useStageTeams } from "@/app/tournament/$tournamentId/stage/$stageId/-queries/tournamentQueries";
+import type { GroupWithTeams, StageTeamWithTeam } from "@repo/types";
 import { getMatchesByGroup } from "../Bracket.util";
 import MatchCard from "../components/MatchCard";
 import { ChevronDown, ChevronUp } from "lucide-react";
@@ -12,7 +12,7 @@ function TeamStandingsRow({
     team,
     rank,
 }: {
-    team: GroupWithTeams["teams"][0];
+    team: StageTeamWithTeam;
     rank: number;
 }) {
     return (
@@ -27,15 +27,15 @@ function TeamStandingsRow({
             <TeamLogo
                 team={{
                     team_id: team.team_id.toString(),
-                    name: team.team_name,
-                    team_logo: team.team_logo,
-                    faceit_id: team.faceit_id || "",
-                    team_captain_id: "",
+                    name: team.team.name,
+                    team_logo: team.team.team_logo,
+                    faceit_id: team.team.faceit_id || "",
+                    team_captain_id: team.team.team_captain_id,
                 }}
                 styling="h-6 w-6 rounded-full object-cover"
             />
             <span className="text-textPrimary flex-1 truncate text-sm font-medium">
-                {team.team_name}
+                {team.team.name}
             </span>
             <span className="text-textSecondary pr-2 text-sm">
                 {team.wins}-{team.losses}
@@ -104,13 +104,13 @@ function GroupCard({
     return (
         <div className="border-border bg-firstBg flex min-w-[300px] flex-col rounded-lg border p-4">
             <h2 className="text-textPrimary mb-3 text-lg font-semibold">
-                {group.group_name}
+                {group.name}
             </h2>
             <div className="flex flex-col">
                 {group.teams.map((team, index) => (
                     <TeamStandingsRow
-                        key={team.team_id}
-                        team={team}
+                        key={team.ID}
+                        team={undefined as unknown as StageTeamWithTeam}
                         rank={index + 1}
                     />
                 ))}
@@ -127,26 +127,29 @@ export default function Groups({
     stageId: number | null;
     matches: Match[];
 }) {
-    const { data: stageTeamsData, isLoading } = useStageTeams(stageId);
+    const { data, isLoading } = useStageTeams(stageId);
     const matchesByGroup = getMatchesByGroup(matches);
 
     if (isLoading) {
         return <div className="text-textSecondary p-4">Loading groups...</div>;
     }
 
-    if (!stageTeamsData?.groups || stageTeamsData.groups.length === 0) {
+    if (!data || data.teams.length === 0) {
         return <div className="text-textSecondary p-4">No groups found</div>;
     }
 
+    const stageTeamsData = data.teams;
+
     return (
         <div className="flex flex-wrap items-start gap-4 overflow-x-auto p-4">
-            {stageTeamsData.groups.map((group) => (
+            {/* {stageTeamsData.map((group) => (
                 <GroupCard
-                    key={group.group_id}
-                    group={group}
-                    matches={matchesByGroup[String(group.group_id)] || []}
+                    key={group.ID}
+                    group={null as unknown as GroupWithTeams}
+                    matches={matchesByGroup[String(group.ID)] || []}
                 />
-            ))}
+            ))} */}
+            <h1>wip</h1>
         </div>
     );
 }

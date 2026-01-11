@@ -6,19 +6,18 @@ import {
     index,
 } from "drizzle-orm/sqlite-core";
 import { relations } from "drizzle-orm";
+import { users, groups, stages, teams, playerStats } from "@repo/schemas";
 
 export const matches = sqliteTable(
     "matches",
     {
         ID: integer("ID").primaryKey({ autoIncrement: true }),
-        group_id: integer("group_id").references(
-            (): any => require("./tournament").groups.ID,
-            { onDelete: "cascade" }
-        ),
-        stage_id: integer("stage_id").references(
-            (): any => require("./tournament").stages.ID,
-            { onDelete: "cascade" }
-        ),
+        group_id: integer("group_id").references((): any => groups.ID, {
+            onDelete: "cascade",
+        }),
+        stage_id: integer("stage_id").references((): any => stages.ID, {
+            onDelete: "cascade",
+        }),
         faceit_id: text("faceit_id"),
         match_number: integer("match_number"),
         round: text("round"),
@@ -50,7 +49,7 @@ export const matchParticipants = sqliteTable(
             .references(() => matches.ID, { onDelete: "cascade" }),
         team_id: integer("team_id")
             .notNull()
-            .references((): any => require("./team").teams.ID, {
+            .references((): any => teams.ID, {
                 onDelete: "cascade",
             }),
         position: integer("position").notNull(),
@@ -110,7 +109,7 @@ export const matchCasters = sqliteTable(
             .references(() => matches.ID, { onDelete: "cascade" }),
         caster_id: integer("caster_id")
             .notNull()
-            .references((): any => require("./user").users.ID, {
+            .references((): any => users.ID, {
                 onDelete: "cascade",
             }),
         assigned_at: integer("assigned_at", { mode: "timestamp" }).$defaultFn(
@@ -143,18 +142,18 @@ export const matchCasters = sqliteTable(
  * - Have multiple player statistics recorded
  */
 export const matchesRelations = relations(matches, ({ one, many }) => ({
-    group: one(require("./tournament").groups, {
+    group: one(groups, {
         fields: [matches.group_id],
-        references: [require("./tournament").groups.ID],
+        references: [groups.ID],
     }),
-    stage: one(require("./tournament").stages, {
+    stage: one(stages, {
         fields: [matches.stage_id],
-        references: [require("./tournament").stages.ID],
+        references: [stages.ID],
     }),
     participants: many(matchParticipants),
     casters: many(matchCasters),
     maps: many(maps),
-    playerStats: many(require("./player").playerStats),
+    playerStats: many(playerStats),
 }));
 
 /**
@@ -173,9 +172,9 @@ export const matchParticipantsRelations = relations(
             fields: [matchParticipants.match_id],
             references: [matches.ID],
         }),
-        team: one(require("./team").teams, {
+        team: one(teams, {
             fields: [matchParticipants.team_id],
-            references: [require("./team").teams.ID],
+            references: [teams.ID],
         }),
         maps: many(maps),
     })
@@ -197,7 +196,7 @@ export const mapsRelations = relations(maps, ({ one, many }) => ({
         fields: [maps.winner_id],
         references: [matchParticipants.ID],
     }),
-    playerStats: many(require("./player").playerStats),
+    playerStats: many(playerStats),
 }));
 
 /**
@@ -211,8 +210,8 @@ export const matchCastersRelations = relations(matchCasters, ({ one }) => ({
         fields: [matchCasters.match_id],
         references: [matches.ID],
     }),
-    caster: one(require("./user").users, {
+    caster: one(users, {
         fields: [matchCasters.caster_id],
-        references: [require("./user").users.ID],
+        references: [users.ID],
     }),
 }));

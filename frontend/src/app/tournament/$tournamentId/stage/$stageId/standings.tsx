@@ -3,9 +3,11 @@ import { useState, useEffect } from "react";
 import {
     useTournament,
     useStageTeams,
-} from "../../../-queries/tournamentQueries";
-import type { GroupTeam } from "../../../-api/tournamentApi";
+    useStageStandings,
+} from "./-queries/tournamentQueries";
 import OSSTable from "@/shared/OSSTable";
+import { StageTeam, Team } from "@repo/contracts";
+import { StageTeamWithTeam } from "@repo/types";
 
 export const Route = createFileRoute(
     "/tournament/$tournamentId/stage/$stageId/standings",
@@ -14,22 +16,22 @@ export const Route = createFileRoute(
 });
 
 function StandingsPage() {
-    const { tournament: tournamentId } = Route.useParams();
-    const { data: tournament } = useTournament(tournamentId);
-    const [selectedStageId, setSelectedStageId] = useState<number | null>(null);
+    const { tournamentId, stageId } = Route.useParams();
+    const {
+        data: stageTeams,
+        isLoading,
+        error,
+    } = useStageStandings(Number(stageId));
 
-    const stages = tournament?.stages || [];
+    if (error) {
+        return <div>Error loading standings</div>;
+    }
 
-    useEffect(() => {
-        if (stages.length > 0 && selectedStageId === null) {
-            const currentStage = stages.find((s) => s.is_current) || stages[0];
-            setSelectedStageId(currentStage.ID);
-        }
-    }, [stages, selectedStageId]);
+    if (isLoading) {
+        return <div>Loading standings...</div>;
+    }
 
-    const { data: stageTeamsData, isLoading } = useStageTeams(selectedStageId);
-
-    const groups = stageTeamsData?.groups || [];
+    const groups = stageTeams || [];
 
     return (
         <div className="bg-firstBg rounded-xl shadow-md">
@@ -37,21 +39,6 @@ function StandingsPage() {
                 <h2 className="text-textPrimary text-lg font-semibold">
                     Standings
                 </h2>
-                {stages.length > 0 && (
-                    <select
-                        value={selectedStageId ?? ""}
-                        onChange={(e) =>
-                            setSelectedStageId(Number(e.target.value))
-                        }
-                        className="border-border bg-secondBg text-textPrimary rounded-lg border px-3 py-2 text-sm focus:ring-1 focus:ring-blue-500 focus:outline-none"
-                    >
-                        {stages.map((stage) => (
-                            <option key={stage.ID} value={stage.ID}>
-                                {stage.name}
-                            </option>
-                        ))}
-                    </select>
-                )}
             </div>
             <div className="p-4">
                 {isLoading ? (
@@ -66,8 +53,8 @@ function StandingsPage() {
                     <div className="flex flex-col gap-6">
                         {groups.map((group) => (
                             <GroupStandings
-                                key={group.group_id}
-                                groupName={group.group_name}
+                                key={group.ID}
+                                groupName={group.name}
                                 teams={group.teams}
                             />
                         ))}
@@ -83,7 +70,7 @@ function GroupStandings({
     teams,
 }: {
     groupName: string;
-    teams: GroupTeam[];
+    teams: StageTeamWithTeam[];
 }) {
     const sortedTeams = [...teams].sort((a, b) => {
         if (b.wins !== a.wins) return b.wins - a.wins;
@@ -92,7 +79,7 @@ function GroupStandings({
 
     const tableData = sortedTeams.map((t, index) => ({
         rank: index + 1,
-        team_name: t.team_name,
+        team_name: t.team.name,
         wins: t.wins,
         losses: t.losses,
         record: `${t.wins}-${t.losses}`,

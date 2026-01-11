@@ -1,5 +1,6 @@
 import { sqliteTable, integer, text, index } from "drizzle-orm/sqlite-core";
 import { relations } from "drizzle-orm";
+import { teams, users, matches, maps } from "@repo/schemas";
 
 //TODO: have way to differentiate between players and subs and coach
 export const players = sqliteTable(
@@ -8,14 +9,12 @@ export const players = sqliteTable(
         ID: integer("ID").primaryKey({ autoIncrement: true }),
         player_name: text("player_name").notNull(),
         faceit_id: text("faceit_id"),
-        team_id: integer("team_id").references(
-            (): any => require("./team").teams.ID,
-            { onDelete: "set null" }
-        ),
-        user_id: integer("user_id").references(
-            (): any => require("./user").users.ID,
-            { onDelete: "set null" }
-        ),
+        team_id: integer("team_id").references((): any => teams.ID, {
+            onDelete: "set null",
+        }),
+        user_id: integer("user_id").references((): any => users.ID, {
+            onDelete: "set null",
+        }),
         player_logo: text("player_logo"),
         country: text("country"),
         created_at: integer("created_at", { mode: "timestamp" })
@@ -41,12 +40,12 @@ export const playerStats = sqliteTable(
             .references(() => players.ID, { onDelete: "cascade" }),
         match_id: integer("match_id")
             .notNull()
-            .references((): any => require("./match").matches.ID, {
+            .references((): any => matches.ID, {
                 onDelete: "cascade",
             }),
         map_id: integer("map_id")
             .notNull()
-            .references((): any => require("./match").maps.ID, {
+            .references((): any => maps.ID, {
                 onDelete: "cascade",
             }),
         kills: integer("kills").default(0),
@@ -79,13 +78,13 @@ export const playerStats = sqliteTable(
  * - Have multiple statistics records across different matches and maps
  */
 export const playersRelations = relations(players, ({ one, many }) => ({
-    team: one(require("./team").teams, {
+    team: one(teams, {
         fields: [players.team_id],
-        references: [require("./team").teams.ID],
+        references: [teams.ID],
     }),
-    user: one(require("./user").users, {
+    user: one(users, {
         fields: [players.user_id],
-        references: [require("./user").users.ID],
+        references: [users.ID],
     }),
     stats: many(playerStats),
 }));
@@ -103,12 +102,12 @@ export const playerStatsRelations = relations(playerStats, ({ one }) => ({
         fields: [playerStats.player_id],
         references: [players.ID],
     }),
-    match: one(require("./match").matches, {
+    match: one(matches, {
         fields: [playerStats.match_id],
-        references: [require("./match").matches.ID],
+        references: [matches.ID],
     }),
-    map: one(require("./match").maps, {
+    map: one(maps, {
         fields: [playerStats.map_id],
-        references: [require("./match").maps.ID],
+        references: [maps.ID],
     }),
 }));

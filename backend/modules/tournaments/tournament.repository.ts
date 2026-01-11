@@ -339,7 +339,7 @@ export const tournamentRepository = {
     },
 
     findStageTeamsByStageId: async (stageId: number) => {
-        const { teams } = await import("@repo/schemas/team");
+        const { teams } = await import("@repo/schemas");
 
         const results = await db
             .select({
@@ -358,6 +358,15 @@ export const tournamentRepository = {
             );
 
         return results;
+    },
+
+    findAllStageTeams: async () => {
+        return await db.query.stageTeams.findMany({
+            where: (st, { isNull }) => isNull(st.deleted_at),
+            with: {
+                team: true,
+            },
+        });
     },
 
     findUpcomingTournament: async () => {
@@ -433,7 +442,7 @@ export const tournamentRepository = {
 
     findStageRostersByStageId: async (stageId: number) => {
         const { stageRosters } = await import("@repo/schemas");
-        const { players } = await import("@repo/schemas/player");
+        const { players } = await import("@repo/schemas");
 
         return await db
             .select({
