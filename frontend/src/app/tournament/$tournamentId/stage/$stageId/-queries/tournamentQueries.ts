@@ -2,9 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import { tournamentApi } from "../-api/tournamentApi";
 import { Tournament } from "@repo/contracts";
 import type {
-    GroupWithStageTeams,
-    GroupWithTeams,
     StageTeamWithTeam,
+    StageWithGroupStageTeamsAndMatches,
     StageWithMatches,
     TournamentWithStages,
 } from "@repo/types";
@@ -42,7 +41,7 @@ export const useStageTeams = (stageId: number | null) => {
 };
 
 export const useStageStandings = (stageId: number | null) => {
-    return useQuery<GroupWithStageTeams[]>({
+    return useQuery<StageWithGroupStageTeamsAndMatches>({
         queryKey: ["stageStandings", stageId],
         queryFn: () =>
             tournamentApi.getStageStandingsByStageId(stageId!.toString()),

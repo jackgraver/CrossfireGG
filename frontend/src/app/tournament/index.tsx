@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useTournaments } from "./-queries/tournamentsQueries";
+import { useAllTournaments } from "./-queries/tournamentsQueries";
 import { formatDateOnly, toUnixTimestamp } from "@/lib/dateUtils";
 import SignUpButton from "./-components/SignUpButton";
 import { openInNewTab } from "@/lib/NewTab";
@@ -12,7 +12,7 @@ export const Route = createFileRoute("/tournament/")({
 function RouteComponent() {
     const navigate = useNavigate();
     const session = Route.useRouteContext().session;
-    const { data, isLoading, error } = useTournaments();
+    const { data, isLoading, error } = useAllTournaments();
 
     if (isLoading) {
         return (
@@ -42,7 +42,7 @@ function RouteComponent() {
         );
     }
 
-    const tournaments = data?.tournaments || [];
+    const tournaments = data || [];
 
     return (
         <div className="mx-auto min-h-screen max-w-[1200px] p-6">

@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { redirect } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import axiosInstance from "../axios";
+import { api } from "@/api/client";
 import { useAppSession } from "@/contexts/session";
 
 const API_BASE_URL = process.env.VITE_API_BASE_URL || "http://localhost:3000";
@@ -36,7 +36,7 @@ interface SignUpResponse {
 }
 
 async function authenticateUser(data: SignInCredentials) {
-    const response = await axiosInstance.post("/user/sign-in", data);
+    const response = await api.post("/user/sign-in", data);
     return response.data;
 }
 

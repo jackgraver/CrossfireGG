@@ -39,7 +39,7 @@ export const GroupContract = z.object({
     stage_id: z.number(),
     created_at: z.date(),
     updated_at: z.date(),
-    deleted_at: z.date(),
+    deleted_at: z.date().nullable(),
 });
 
 export type Group = z.infer<typeof GroupContract>;

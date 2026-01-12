@@ -1,10 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
-import { tournamentsApi } from "../-api/tournamentsApi";
-import { Tournament } from "@repo/contracts";
+import { tournamentApi } from "@/api/tournament.api";
 
-export const useTournaments = () => {
-    return useQuery<Tournament[]>({
+export const useAllTournaments = () => {
+    return useQuery({
         queryKey: ["tournaments"],
-        queryFn: () => tournamentsApi.getAllTournaments(),
+        queryFn: () => tournamentApi.allTournaments(),
     });
 };

@@ -1,8 +1,15 @@
 import { tournamentRepository } from "./tournament.repository";
-import { GroupWithStageTeams, StageTeamWithTeam } from "@repo/types";
+import {
+    GroupWithMatches,
+    GroupWithStageTeams,
+    StageStandings,
+    StageTeamWithTeam,
+    StageWithGroupStageTeamsAndMatches,
+    TournamentWithStages,
+} from "@repo/types";
 
 export const tournamentService = {
-    getAllTournaments: async () => {
+    getAllTournaments: async (): Promise<TournamentWithStages[]> => {
         const allTournaments = await tournamentRepository.findAll();
 
         const tournamentsWithStages = await Promise.all(
@@ -24,7 +31,7 @@ export const tournamentService = {
                 return {
                     ...tournament,
                     stages: stagesWithCounts,
-                };
+                } as TournamentWithStages;
             })
         );
 
@@ -63,32 +70,48 @@ export const tournamentService = {
         return matches;
     },
 
-    getStageTeamsByStageId: async (stageId: number) => {
-        const stageTeamsData =
-            await tournamentRepository.findStageTeamsByStageId(stageId);
+    getStageStandings: async (
+        stageId: number
+    ): Promise<StageWithGroupStageTeamsAndMatches> => {
+        const test = await tournamentRepository.test(stageId);
 
-        const groups = new Map<number, GroupWithStageTeams>();
-
-        for (const { group, stageTeam, team } of stageTeamsData) {
-            if (!group) continue;
-
-            let g = groups.get(group.ID);
-
-            if (!g) {
-                g = {
-                    ...group,
-                    teams: [],
-                } as GroupWithStageTeams;
-                groups.set(group.ID, g);
-            }
-
-            g.teams.push({
-                ...stageTeam,
-                team,
-            } as StageTeamWithTeam);
+        if (!test) {
+            throw new Error("Stage not found");
         }
 
-        return [...groups.values()];
+        return test as StageWithGroupStageTeamsAndMatches;
+
+        // const stageStandings = await tournamentRepository.findStageStandings(
+        //     stageId
+        // );
+
+        // const groups = new Map<number, GroupWithStageTeams>();
+
+        // for (const { group, stageTeam, team } of stageStandings) {
+        //     if (!group) continue;
+
+        //     let g = groups.get(group.ID);
+
+        //     if (!g) {
+        //         g = {
+        //             ...group,
+        //             teams: [],
+        //         } as GroupWithStageTeams;
+        //         groups.set(group.ID, g);
+        //     }
+
+        //     g.teams.push({
+        //         ...stageTeam,
+        //         team,
+        //     } as StageTeamWithTeam);
+        // }
+
+        // const stageData = await tournamentRepository.findStageById(stageId);
+
+        // return {
+        //     ...stageData,
+        //     groups: [...groups.values()],
+        // } as StageStandings;
 
         // Group teams by group_id
         // const groupedTeams: Record<

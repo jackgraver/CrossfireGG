@@ -33,17 +33,21 @@ export const stages = sqliteTable(
             .notNull()
             .references(() => tournaments.ID, { onDelete: "cascade" }),
         name: text("name").notNull(),
-        faceit_id: text("faceit_id"),
-        max_teams: integer("max_teams").default(0),
-        format_id: integer("format_id").references(() => stageFormats.ID, {
-            onDelete: "restrict",
-        }),
-        is_current: integer("is_current", { mode: "boolean" }).default(false),
-        start_date: integer("start_date", { mode: "timestamp" }),
-        end_date: integer("end_date", { mode: "timestamp" }),
+        faceit_id: text("faceit_id").notNull().unique(),
+        max_teams: integer("max_teams").notNull().default(0),
+        format_id: integer("format_id")
+            .notNull()
+            .references(() => stageFormats.ID, {
+                onDelete: "restrict",
+            }),
+        is_current: integer("is_current", { mode: "boolean" })
+            .notNull()
+            .default(false),
+        start_date: integer("start_date", { mode: "timestamp" }).notNull(),
+        end_date: integer("end_date", { mode: "timestamp" }).notNull(),
         registration_deadline: integer("registration_deadline", {
             mode: "timestamp",
-        }),
+        }).notNull(),
         created_at: integer("created_at", { mode: "timestamp" })
             .notNull()
             .$defaultFn(() => new Date()),
@@ -183,6 +187,10 @@ export const stagesRelations = relations(stages, ({ one, many }) => ({
     stageTeams: many(stageTeams),
     stageRosters: many(stageRosters),
     matches: many(matches),
+    stageFormat: one(stageFormats, {
+        fields: [stages.format_id],
+        references: [stageFormats.ID],
+    }),
 }));
 
 /**
