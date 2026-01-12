@@ -7,13 +7,14 @@ import type {
     StageTeam,
     Group,
 } from "@repo/contracts";
+import { MatchWithStageTeams } from "./match_types";
 
 export type TournamentWithStages = Tournament & {
     stages: (StageWithDetailedFormat & StageWithTeamCount)[];
 };
 
 export type StageWithDetailedFormat = Stage & {
-    format: StageFormat;
+    stageFormat: StageFormat;
 };
 
 export type StageWithTeamCount = Stage & {
@@ -30,4 +31,16 @@ export type StageTeamWithTeam = StageTeam & {
 
 export type GroupWithStageTeams = Group & {
     teams: StageTeamWithTeam[];
+};
+
+export type StageStandings = StageWithDetailedFormat & {
+    groups: GroupWithStageTeams[];
+};
+
+export type GroupWithMatches = Group & {
+    matches: MatchWithStageTeams[];
+};
+
+export type StageWithGroupStageTeamsAndMatches = StageWithDetailedFormat & {
+    groups: GroupWithMatches[];
 };

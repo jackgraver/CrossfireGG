@@ -1,14 +1,11 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import {
-    type PlayerFaceitTeam,
-    registerApi,
-    TeamPlayer,
-} from "../-api/registerApi";
+import { faceitApi } from "@/api/faceit.api";
+import { tournamentApi } from "@/api/tournament.api";
 
 export const usePlayerFaceitTeams = (playerId: string) => {
     return useQuery<{ success: boolean; teams: PlayerFaceitTeam[] }>({
         queryKey: ["player-faceit-teams", playerId],
-        queryFn: () => registerApi.getPlayerFaceitTeams(playerId),
+        queryFn: () => faceitApi.playerFaceitTeams(playerId),
         enabled: !!playerId,
     });
 };
@@ -16,7 +13,7 @@ export const usePlayerFaceitTeams = (playerId: string) => {
 export const useTeamPlayers = (teamId: string) => {
     return useQuery<{ success: boolean; players: TeamPlayer[] }>({
         queryKey: ["team-players", teamId],
-        queryFn: () => registerApi.getTeamPlayers(teamId),
+        queryFn: () => faceitApi.teamFaceitPlayers(teamId),
         enabled: !!teamId,
     });
 };
@@ -34,13 +31,13 @@ type RegisterParams = {
 
 export const useRegisterForTournament = () => {
     return useMutation({
-        mutationFn: (params: RegisterParams) =>
-            registerApi.registerForTournament(
-                params.teamId,
-                params.playerIds,
-                params.subIds,
-                params.coachId,
-                params.agreements,
-            ),
+        mutationFn: (tournamentId: string, params: RegisterParams) =>
+            tournamentApi.registerForTournament(tournamentId, {
+                teamId: params.teamId,
+                playerIds: params.playerIds,
+                subIds: params.subIds,
+                coachId: params.coachId,
+                agreements: params.agreements,
+            }),
     });
 };

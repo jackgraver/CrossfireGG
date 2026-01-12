@@ -142,13 +142,13 @@ export default function Groups({
 
     return (
         <div className="flex flex-wrap items-start gap-4 overflow-x-auto p-4">
-            {/* {stageTeamsData.map((group) => (
+            {stageTeamsData.map((group) => (
                 <GroupCard
                     key={group.ID}
                     group={null as unknown as GroupWithTeams}
                     matches={matchesByGroup[String(group.ID)] || []}
                 />
-            ))} */}
+            ))}
             <h1>wip</h1>
         </div>
     );

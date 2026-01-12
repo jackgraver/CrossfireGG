@@ -16,7 +16,7 @@ export const tournamentController = {
     getAllTournaments: async (_: Request, res: Response) => {
         try {
             const tournaments = await tournamentService.getAllTournaments();
-            res.json({ tournaments });
+            res.json(tournaments);
         } catch (error) {
             logger.error("Error fetching tournaments:", error);
             res.status(500).json({
@@ -91,14 +91,14 @@ export const tournamentController = {
                     })),
                 });
             }
-            const groups = await tournamentService.getStageTeamsByStageId(
+            const groups = await tournamentService.getStageStandings(
                 validation.data.stageId
             );
-            res.json({ groups });
+            res.json(groups);
         } catch (error) {
-            logger.error("Error fetching stage teams:", error);
+            logger.error("Error fetching stage standings:", error);
             res.status(500).json({
-                error: "Failed to fetch stage teams",
+                error: "Failed to fetch stage standings",
                 details: error,
             });
         }
