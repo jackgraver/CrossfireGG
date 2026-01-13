@@ -1,9 +1,5 @@
 import { tournamentRepository } from "./tournament.repository";
 import {
-    GroupWithMatches,
-    GroupWithStageTeams,
-    StageStandings,
-    StageTeamWithTeam,
     StageWithGroupStageTeamsAndMatches,
     TournamentWithStages,
 } from "@repo/types";
@@ -70,16 +66,8 @@ export const tournamentService = {
         return matches;
     },
 
-    getStageStandings: async (
-        stageId: number
-    ): Promise<StageWithGroupStageTeamsAndMatches> => {
-        const test = await tournamentRepository.test(stageId);
-
-        if (!test) {
-            throw new Error("Stage not found");
-        }
-
-        return test as StageWithGroupStageTeamsAndMatches;
+    getStageStandings: async (stageId: number) => {
+        return await tournamentRepository.findStageStandings(stageId);
 
         // const stageStandings = await tournamentRepository.findStageStandings(
         //     stageId
@@ -166,9 +154,8 @@ export const tournamentService = {
         // return Object.values(groupedTeams);
     },
 
-    getStageTeams: async (stageId: number) => {
-        const stageTeams = await tournamentRepository.findAllStageTeams();
-        return stageTeams;
+    getStageTeamsByGroups: async (stageId: number) => {
+        return await tournamentRepository.findAllStageTeamsByGroups(stageId);
     },
 
     getUpcomingTournament: async () => {

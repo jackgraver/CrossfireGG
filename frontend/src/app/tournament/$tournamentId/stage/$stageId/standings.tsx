@@ -6,7 +6,7 @@ import {
     useStageStandings,
 } from "./-queries/tournamentQueries";
 import OSSTable from "@/shared/OSSTable";
-import { StageTeam, Team } from "@repo/contracts";
+import { StageTeamDTO, Team } from "@repo/contracts";
 import { StageTeamWithTeam } from "@repo/types";
 
 export const Route = createFileRoute(

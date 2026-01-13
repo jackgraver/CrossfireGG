@@ -5,13 +5,9 @@ export const config = {
         path: process.env.DATABASE_PATH || "./cf.db",
     },
     cors: {
-        allowedOrigins: [
-            "http://localhost:5173",
-            "http://localhost:3000",
-        ],
+        allowedOrigins: ["http://localhost:5173"],
     },
     faceit: {
         apiKey: process.env.FACEIT_API_KEY || "",
     },
 };
-

@@ -1,4 +1,4 @@
-import { StageFormat } from "@repo/contracts";
+import { StageFormatDTO } from "@repo/contracts";
 import { Match } from "@repo/contracts";
 import RegularSeasonBracket from "./bracket_types/RegularSeasonBracket";
 import Groups from "./bracket_types/Groups";
@@ -9,7 +9,7 @@ export default function TopLevelBracket({
     stageId,
     matches,
 }: {
-    stageFormat: StageFormat | undefined;
+    stageFormat: StageFormatDTO | undefined;
     stageId: number | null;
     matches: Match[];
 }) {

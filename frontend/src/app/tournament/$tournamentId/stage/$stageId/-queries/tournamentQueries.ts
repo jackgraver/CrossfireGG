@@ -1,24 +1,24 @@
 import { useQuery } from "@tanstack/react-query";
-import { tournamentApi } from "../-api/tournamentApi";
-import { Tournament } from "@repo/contracts";
+import { TournamentDTO } from "@repo/contracts";
 import type {
     StageTeamWithTeam,
     StageWithGroupStageTeamsAndMatches,
     StageWithMatches,
     TournamentWithStages,
 } from "@repo/types";
+import { tournamentApi } from "@/api/tournament.api";
 
 export const useTournaments = () => {
-    return useQuery<Tournament[]>({
+    return useQuery<TournamentDTO[]>({
         queryKey: ["tournaments"],
-        queryFn: () => tournamentApi.getAllTournaments(),
+        queryFn: () => tournamentApi.allTournaments(),
     });
 };
 
 export const useTournament = (tournamentId: string) => {
     return useQuery<TournamentWithStages>({
         queryKey: ["tournament", tournamentId],
-        queryFn: () => tournamentApi.getTournamentById(tournamentId),
+        queryFn: () => tournamentApi.tournamentById(tournamentId),
         enabled: !!tournamentId,
     });
 };
@@ -26,16 +26,15 @@ export const useTournament = (tournamentId: string) => {
 export const useMatchesByStage = (stageId: number | null) => {
     return useQuery<StageWithMatches>({
         queryKey: ["matches", "stage", stageId],
-        queryFn: () => tournamentApi.getMatchesByStageId(stageId!.toString()),
+        queryFn: () => tournamentApi.matchesByStageId(stageId!.toString()),
         enabled: !!stageId,
     });
 };
 
 export const useStageTeams = (stageId: number | null) => {
-    return useQuery<{ teams: StageTeamWithTeam[] }>({
+    return useQuery({
         queryKey: ["stageTeams", stageId],
-        queryFn: () =>
-            tournamentApi.getStageTeamsByStageId(stageId!.toString()),
+        queryFn: () => tournamentApi.stageTeamsByStageId(stageId!.toString()),
         enabled: !!stageId,
     });
 };
@@ -44,7 +43,7 @@ export const useStageStandings = (stageId: number | null) => {
     return useQuery<StageWithGroupStageTeamsAndMatches>({
         queryKey: ["stageStandings", stageId],
         queryFn: () =>
-            tournamentApi.getStageStandingsByStageId(stageId!.toString()),
+            tournamentApi.stageStandingsByStageId(stageId!.toString()),
         enabled: !!stageId,
     });
 };

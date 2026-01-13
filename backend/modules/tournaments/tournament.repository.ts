@@ -376,7 +376,7 @@ export const tournamentRepository = {
         return result[0] || null;
     },
 
-    test: async (stageId: number) => {
+    findStageStandings: async (stageId: number) => {
         return await db.query.stages.findFirst({
             where: (s, { eq, and, isNull }) =>
                 and(eq(s.ID, stageId), isNull(s.deleted_at)),
@@ -404,33 +404,16 @@ export const tournamentRepository = {
         });
     },
 
-    findStageStandings: async (stageId: number) => {
-        const { teams } = await import("@repo/schemas");
-
-        const results = await db
-            .select({
-                group: groups,
-                stageTeam: stageTeams,
-                team: teams,
-            })
-            .from(stageTeams)
-            .innerJoin(teams, eq(stageTeams.team_id, teams.ID))
-            .leftJoin(groups, eq(stageTeams.group_id, groups.ID))
-            .where(
-                and(
-                    eq(stageTeams.stage_id, stageId),
-                    isNull(stageTeams.deleted_at)
-                )
-            );
-
-        return results;
-    },
-
-    findAllStageTeams: async () => {
-        return await db.query.stageTeams.findMany({
-            where: (st, { isNull }) => isNull(st.deleted_at),
+    findAllStageTeamsByGroups: async (stageId: number) => {
+        return await db.query.groups.findMany({
+            where: (g, { eq, and, isNull }) =>
+                and(eq(g.stage_id, stageId), isNull(g.deleted_at)),
             with: {
-                team: true,
+                stageTeams: {
+                    with: {
+                        team: true,
+                    },
+                },
             },
         });
     },
