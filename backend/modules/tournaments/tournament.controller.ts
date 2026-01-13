@@ -11,6 +11,7 @@ import { FaceitTeamPlayersResponse } from "../faceit/faceit.types";
 import { teamRepository } from "../teams/team.repository";
 import { playerRepository } from "../players/player.repository";
 import { tournamentRepository } from "./tournament.repository";
+import { StageGroupsWithTeams } from "@repo/contracts";
 
 export const tournamentController = {
     getAllTournaments: async (_: Request, res: Response) => {
@@ -94,6 +95,10 @@ export const tournamentController = {
             const groups = await tournamentService.getStageStandings(
                 validation.data.stageId
             );
+            console.log(groups);
+
+            // const payload = StageWithGroupsContract.parse(groups);
+
             res.json(groups);
         } catch (error) {
             logger.error("Error fetching stage standings:", error);
@@ -112,10 +117,13 @@ export const tournamentController = {
                     error: "Validation failed",
                 });
             }
-            const teams = await tournamentService.getStageTeams(
+            const teams = await tournamentService.getStageTeamsByGroups(
                 validation.data.stageId
             );
-            res.json({ teams });
+
+            const payload = StageGroupsWithTeams.parse(teams);
+
+            res.json(payload);
         } catch (error) {
             logger.error("Error fetching stage teams:", error);
             res.status(500).json({

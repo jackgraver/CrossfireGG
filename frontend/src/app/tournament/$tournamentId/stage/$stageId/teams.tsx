@@ -14,11 +14,13 @@ export const Route = createFileRoute(
 function TeamsPage() {
     const { tournamentId, stageId } = Route.useParams();
 
-    const { data: stageTeams, isLoading } = useStageTeams(Number(stageId));
+    const { data, isLoading } = useStageTeams(Number(stageId));
+
+    console.log(data);
 
     return (
         <div className="rounded-xl shadow-md">
-            <div className="py-4">
+            {/* <div className="py-4">
                 {isLoading ? (
                     <div className="text-textSecondary py-8 text-center">
                         Loading teams...
@@ -34,7 +36,7 @@ function TeamsPage() {
                         ))}
                     </div>
                 )}
-            </div>
+            </div> */}
         </div>
     );
 }

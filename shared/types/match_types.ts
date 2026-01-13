@@ -1,6 +1,6 @@
-import type { Group, Match, MatchParticipant, Team } from "@repo/contracts";
+import type { GroupDTO, Match, MatchParticipant, Team } from "@repo/contracts";
 
-export type GroupWithTeams = Group & {
+export type GroupWithTeams = GroupDTO & {
     teams: Team[];
 };
 

@@ -1,46 +1,37 @@
 import type {
-    Tournament,
-    Stage,
+    TournamentDTO,
+    StageDTO,
     Match,
-    StageFormat,
+    StageFormatDTO,
     Team,
-    StageTeam,
-    Group,
+    StageTeamDTO,
+    GroupDTO,
 } from "@repo/contracts";
 import { MatchWithStageTeams } from "./match_types";
 
-export type TournamentWithStages = Tournament & {
-    stages: (StageWithDetailedFormat & StageWithTeamCount)[];
+export type TournamentWithStages = TournamentDTO & {
+    stages: (StageWithDetailedFormat &
+        StageDTO & {
+            teams_count: number;
+        })[];
 };
 
-export type StageWithDetailedFormat = Stage & {
-    stageFormat: StageFormat;
+export type StageWithDetailedFormat = StageDTO & {
+    stageFormat: StageFormatDTO;
 };
 
-export type StageWithTeamCount = Stage & {
-    teams_count: number;
-};
-
-export type StageWithMatches = Stage & {
+export type StageWithMatches = StageDTO & {
     matches: Match[];
 };
 
-export type StageTeamWithTeam = StageTeam & {
+export type StageTeamWithTeam = StageTeamDTO & {
     team: Team;
 };
 
-export type GroupWithStageTeams = Group & {
-    teams: StageTeamWithTeam[];
-};
-
-export type StageStandings = StageWithDetailedFormat & {
-    groups: GroupWithStageTeams[];
-};
-
-export type GroupWithMatches = Group & {
-    matches: MatchWithStageTeams[];
-};
-
 export type StageWithGroupStageTeamsAndMatches = StageWithDetailedFormat & {
-    groups: GroupWithMatches[];
+    groups: GroupDTO &
+        {
+            stageTeams: StageTeamWithTeam[];
+            matches: MatchWithStageTeams[];
+        }[];
 };
