@@ -1,6 +1,5 @@
 import express, { Request, Response, NextFunction } from "express";
 import cookieParser from "cookie-parser";
-import { initializeDatabase } from "./config/database";
 import { config } from "./config/env";
 import { errorHandler } from "./core/middleware/errorHandler";
 import { authMiddleware } from "./core/middleware/auth";
@@ -12,8 +11,6 @@ import userRoutes from "./modules/users/user.routes";
 import faceitRoutes from "./modules/faceit/faceit.routes";
 
 const app = express();
-
-initializeDatabase();
 
 app.use(requestLogger);
 
@@ -41,10 +38,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(authMiddleware);
-
-app.get("/", (req: Request, res: Response) => {
-    res.send({ message: "API Running" });
-});
 
 app.use("/user", userRoutes);
 app.use("/tournament", tournamentRoutes);
