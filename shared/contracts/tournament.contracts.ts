@@ -10,7 +10,7 @@ export const TournamentContract = z.object({
     end_date: z.date(),
 });
 
-export type Tournament = z.infer<typeof TournamentContract>;
+export type TournamentDTO = z.infer<typeof TournamentContract>;
 
 export const StageContract = z.object({
     ID: z.number(),
@@ -24,14 +24,14 @@ export const StageContract = z.object({
     registration_deadline: z.date(),
 });
 
-export type Stage = z.infer<typeof StageContract>;
+export type StageDTO = z.infer<typeof StageContract>;
 
 export const StageFormatContract = z.object({
     ID: z.number(),
     name: z.string(),
 });
 
-export type StageFormat = z.infer<typeof StageFormatContract>;
+export type StageFormatDTO = z.infer<typeof StageFormatContract>;
 
 export const GroupContract = z.object({
     ID: z.number(),
@@ -42,7 +42,7 @@ export const GroupContract = z.object({
     deleted_at: z.date().nullable(),
 });
 
-export type Group = z.infer<typeof GroupContract>;
+export type GroupDTO = z.infer<typeof GroupContract>;
 
 export const StageTeamContract = z.object({
     ID: z.number(),
@@ -56,7 +56,7 @@ export const StageTeamContract = z.object({
     signed_up: z.boolean(),
 });
 
-export type StageTeam = z.infer<typeof StageTeamContract>;
+export type StageTeamDTO = z.infer<typeof StageTeamContract>;
 
 export const StageRosterContract = z.object({
     ID: z.number(),
@@ -65,4 +65,4 @@ export const StageRosterContract = z.object({
     role: z.enum(["starter", "sub", "coach"]),
 });
 
-export type StageRoster = z.infer<typeof StageRosterContract>;
+export type StageRosterDTO = z.infer<typeof StageRosterContract>;
