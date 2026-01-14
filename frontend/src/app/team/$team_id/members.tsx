@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { useTeam, useTeamPlayers } from "../-queries/teamQueries";
+import { useTeam, useTeamPlayers } from "../-queries/team.queries";
 import type { Player } from "@/types/PlayerModel";
 
 export const Route = createFileRoute("/team/$team_id/members")({

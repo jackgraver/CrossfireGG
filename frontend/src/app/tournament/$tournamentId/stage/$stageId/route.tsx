@@ -4,7 +4,7 @@ import {
     Outlet,
     useMatchRoute,
 } from "@tanstack/react-router";
-import { useTournament } from "./-queries/tournamentQueries";
+import { useTournament } from "./-queries/tournament.queries";
 import { formatDateOnly, toUnixTimestamp } from "@/lib/dateUtils";
 import { Calendar, Clock, LayoutDashboard, Trophy, Users } from "lucide-react";
 
@@ -64,6 +64,8 @@ function RouteComponent() {
         );
     }
 
+    console.log(tournament);
+
     const tabs = [
         {
             to: "/tournament/$tournamentId/stage/$stageId/bracket",
@@ -122,6 +124,12 @@ function RouteComponent() {
                                           )!,
                                       )
                                     : "TBD"}
+                                {" - "}
+                                {tournament.end_date
+                                    ? formatDateOnly(
+                                          toUnixTimestamp(tournament.end_date)!,
+                                      )
+                                    : "TBD"}
                             </span>
                         </div>
                         <h1 className="text-textPrimary text-5xl font-black tracking-tight md:text-6xl">
@@ -131,7 +139,7 @@ function RouteComponent() {
                         <div className="flex flex-wrap items-center gap-x-12 gap-y-6 pt-4">
                             <InfoTile
                                 icon={Calendar}
-                                label="Start Date"
+                                label="Registration Deadline" //TODO: Change to Registration Deadline
                                 value={
                                     tournament.start_date
                                         ? formatDateOnly(

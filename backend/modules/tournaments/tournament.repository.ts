@@ -44,53 +44,31 @@ export const tournamentRepository = {
         });
     },
 
-    findByIdWithStages: async (tournamentId: number) => {
-        const tournament = await db.query.tournaments.findFirst({
+    findTournamentById: async (tournamentId: number) => {
+        return await db.query.tournaments.findFirst({
             where: (t, { eq, and, isNull }) =>
                 and(eq(t.ID, tournamentId), isNull(t.deleted_at)),
+            with: {
+                stages: true,
+            },
         });
+    },
 
-        if (!tournament) return null;
-
-        const stageResults = await db
+    findStageMatchCountsByTournamentId: async (tournamentId: number) => {
+        return await db
             .select({
-                stage: stages,
-                format: stageFormats,
+                stageId: stages.ID,
+                teamsCount: count(stageTeams.ID),
             })
             .from(stages)
-            .leftJoin(stageFormats, eq(stages.format_id, stageFormats.ID))
+            .leftJoin(stageTeams, eq(stages.ID, stageTeams.stage_id))
             .where(
                 and(
                     eq(stages.tournament_id, tournamentId),
                     isNull(stages.deleted_at)
                 )
-            );
-
-        const stagesWithFormat = stageResults.map((result) => ({
-            ...result.stage,
-            format: result.format ? { ...result.format } : null,
-        }));
-
-        const stageIds = stagesWithFormat.map((s) => s.ID);
-        const groupsByStage = await tournamentRepository.findGroupsByStageIds(
-            stageIds
-        );
-        const groupsMap = new Map<number, typeof groupsByStage>();
-
-        for (const group of groupsByStage) {
-            if (!groupsMap.has(group.stage_id)) {
-                groupsMap.set(group.stage_id, []);
-            }
-            groupsMap.get(group.stage_id)!.push(group);
-        }
-
-        return {
-            ...tournament,
-            stages: stagesWithFormat.map((stage) => ({
-                ...stage,
-                groups: groupsMap.get(stage.ID) || [],
-            })),
-        };
+            )
+            .groupBy(stages.ID);
     },
 
     findStagesByTournamentId: async (
@@ -103,25 +81,6 @@ export const tournamentRepository = {
                 stageFormat: true,
             },
         });
-
-        // const results = await db
-        //     .select({
-        //         stage: stages,
-        //         format: stageFormats,
-        //     })
-        //     .from(stages)
-        //     .leftJoin(stageFormats, eq(stages.format_id, stageFormats.ID))
-        //     .where(
-        //         and(
-        //             eq(stages.tournament_id, tournamentId),
-        //             isNull(stages.deleted_at)
-        //         )
-        //     );
-
-        // return results.map((result) => ({
-        //     ...result.stage,
-        //     stageFormat: result.format ? { ...result.format } : undefined,
-        // })) as StageWithDetailedFormat[];
     },
 
     findGroupsByStageIds: async (stageIds: number[]) => {

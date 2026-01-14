@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { useStageTeams } from "./-queries/tournamentQueries";
+import { useStageTeams } from "./-queries/tournament.queries";
 import TeamLogo from "@/shared/bracket/atoms/TeamLogo";
 import { MoveUpRight } from "lucide-react";
 import { StageTeamWithTeam } from "@repo/types";

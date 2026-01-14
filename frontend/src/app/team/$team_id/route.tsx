@@ -5,7 +5,7 @@ import {
     Outlet,
     useMatchRoute,
 } from "@tanstack/react-router";
-import { useTeam } from "../-queries/teamQueries";
+import { useTeam } from "../-queries/team.queries";
 
 export const Route = createFileRoute("/team/$team_id")({
     component: RouteComponent,

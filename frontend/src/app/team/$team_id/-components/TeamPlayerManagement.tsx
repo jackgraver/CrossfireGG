@@ -6,7 +6,7 @@ import {
     useSearchPlayers,
     useAddPlayerToTeam,
     useRemovePlayerFromTeam,
-} from "../../-queries/teamQueries";
+} from "../../-queries/team.queries";
 
 interface TeamPlayerManagementProps {
     team_id: string;
@@ -87,9 +87,7 @@ export default function TeamPlayerManagement({
     return (
         <div className="bg-firstBg mb-8 rounded-xl p-8 shadow-md">
             <div className="mb-6 flex items-center justify-between">
-                <h2 className="text-textPrimary text-2xl font-bold">
-                    Players
-                </h2>
+                <h2 className="text-textPrimary text-2xl font-bold">Players</h2>
                 <div className="relative ml-4 max-w-md flex-1">
                     <input
                         ref={inputRef}
@@ -118,9 +116,7 @@ export default function TeamPlayerManagement({
                                 {searchResults.map((player) => (
                                     <div
                                         key={player.player_id}
-                                        onClick={() =>
-                                            handleAddPlayer(player)
-                                        }
+                                        onClick={() => handleAddPlayer(player)}
                                         className="text-textPrimary hover:bg-thirdBg cursor-pointer px-4 py-2 transition-colors"
                                     >
                                         <div className="font-semibold">
@@ -198,8 +194,7 @@ export default function TeamPlayerManagement({
                                 title={
                                     player.player_id &&
                                     team.team_captain_id &&
-                                    player.player_id ===
-                                        team.team_captain_id
+                                    player.player_id === team.team_captain_id
                                         ? "Cannot remove the team captain"
                                         : undefined
                                 }
@@ -217,4 +212,3 @@ export default function TeamPlayerManagement({
         </div>
     );
 }
-

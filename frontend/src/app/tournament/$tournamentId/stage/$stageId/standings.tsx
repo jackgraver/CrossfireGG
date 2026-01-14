@@ -4,7 +4,7 @@ import {
     useTournament,
     useStageTeams,
     useStageStandings,
-} from "./-queries/tournamentQueries";
+} from "./-queries/tournament.queries";
 import OSSTable from "@/shared/OSSTable";
 import { StageTeamDTO, Team } from "@repo/contracts";
 import { StageTeamWithTeam } from "@repo/types";

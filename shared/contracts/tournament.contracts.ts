@@ -58,6 +58,12 @@ export const StageTeamContract = z.object({
 
 export type StageTeamDTO = z.infer<typeof StageTeamContract>;
 
+export const StageWithFormatContract = StageContract.extend({
+    format: StageFormatContract,
+});
+
+export type StageWithFormatDTO = z.infer<typeof StageWithFormatContract>;
+
 export const StageRosterContract = z.object({
     ID: z.number(),
     stage_id: z.number(),
@@ -66,3 +72,15 @@ export const StageRosterContract = z.object({
 });
 
 export type StageRosterDTO = z.infer<typeof StageRosterContract>;
+
+export const TournamentWithStagesContract = TournamentContract.extend({
+    stages: z.array(
+        StageContract.extend({
+            teams_count: z.number(),
+        })
+    ),
+});
+
+export type TournamentWithStagesDTO = z.infer<
+    typeof TournamentWithStagesContract
+>;
