@@ -1,41 +1,30 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { teamApi } from "../-api/teamApi";
-import type { TeamDetailResponse, FormattedMatch } from "@/types/TeamModel";
-import type { Player } from "@/types/PlayerModel";
+import { teamApi } from "@/api/team.api";
 
 export const useTeam = (teamId: string) => {
-    return useQuery<TeamDetailResponse>({
+    return useQuery<unknown>({
         queryKey: ["team", teamId],
-        queryFn: () => teamApi.getTeamById(teamId),
+        queryFn: () => teamApi.teamById(teamId),
         enabled: !!teamId,
     });
 };
 
-export const useTeamMatchesByStage = (teamId: string, stageId: string | null) => {
-    return useQuery<FormattedMatch[]>({
+export const useTeamMatchesByStage = (
+    teamId: string,
+    stageId: string | null,
+) => {
+    return useQuery<unknown[]>({
         queryKey: ["team", teamId, "stage", stageId, "matches"],
-        queryFn: () => teamApi.getTeamMatchesByStage(teamId, stageId!),
+        queryFn: () => teamApi.teamMatchesByStage(teamId, stageId!),
         enabled: !!teamId && !!stageId,
     });
 };
 
 export const useTeamPlayers = (teamId: string) => {
-    return useQuery<Player[]>({
+    return useQuery<unknown[]>({
         queryKey: ["team", teamId, "players"],
-        queryFn: () => teamApi.getTeamPlayers(teamId),
+        queryFn: () => teamApi.teamPlayers(teamId),
         enabled: !!teamId,
-    });
-};
-
-export const useSearchPlayers = (
-    searchQuery: string,
-    excludeTeamId?: string,
-    enabled: boolean = true,
-) => {
-    return useQuery<Player[]>({
-        queryKey: ["players", "search", searchQuery, excludeTeamId],
-        queryFn: () => teamApi.searchPlayers(searchQuery, excludeTeamId),
-        enabled: enabled && searchQuery.trim().length > 0,
     });
 };
 

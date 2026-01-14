@@ -1,20 +1,30 @@
-import { TeamDetailResponse } from "@/app/team/-api/teamApi";
 import { api } from "./client";
-import { Player } from "@repo/contracts";
 
 export const teamApi = {
     teamById: async (teamId: string) => {
-        return api.get<TeamDetailResponse>(`/team/${teamId}`);
+        const response = await api.get<unknown>(`/team/${teamId}`);
+        return response.data;
     },
     teamPlayers: async (teamId: string) => {
-        return api.get<Player[]>(`/team/${teamId}/players`);
+        const response = await api.get<unknown[]>(`/team/${teamId}/players`);
+        return response.data;
+    },
+    teamMatchesByStage: async (teamId: string, stageId: string) => {
+        const response = await api.get<unknown[]>(
+            `/team/${teamId}/stages/${stageId}/matches`,
+        );
+        return response.data;
     },
     addPlayerToTeam: async (teamId: string, playerId: string) => {
-        return api.post<Player>(`/team/${teamId}/players`, {
+        const response = await api.post<unknown>(`/team/${teamId}/players`, {
             player_id: playerId,
         });
+        return response.data;
     },
     removePlayerFromTeam: async (teamId: string, playerId: string) => {
-        return api.delete<Player>(`/team/${teamId}/players/${playerId}`);
+        const response = await api.delete<unknown>(
+            `/team/${teamId}/players/${playerId}`,
+        );
+        return response.data;
     },
 };
