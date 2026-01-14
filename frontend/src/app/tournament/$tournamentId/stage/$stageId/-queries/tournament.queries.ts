@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { TournamentDTO } from "@repo/contracts";
+import { TournamentDTO, TournamentWithStagesDTO } from "@repo/contracts";
 import type {
-    StageTeamWithTeam,
     StageWithGroupStageTeamsAndMatches,
     StageWithMatches,
     TournamentWithStages,
@@ -16,7 +15,7 @@ export const useTournaments = () => {
 };
 
 export const useTournament = (tournamentId: string) => {
-    return useQuery<TournamentWithStages>({
+    return useQuery<TournamentWithStagesDTO>({
         queryKey: ["tournament", tournamentId],
         queryFn: () => tournamentApi.tournamentById(tournamentId),
         enabled: !!tournamentId,
