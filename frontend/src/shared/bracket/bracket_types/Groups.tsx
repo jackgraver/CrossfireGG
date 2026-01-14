@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Match } from "@repo/contracts";
-import { useStageTeams } from "@/app/tournament/$tournamentId/stage/$stageId/-queries/tournamentQueries";
+import { useStageTeams } from "@/app/tournament/$tournamentId/stage/$stageId/-queries/tournament.queries";
 import type { GroupWithTeams, StageTeamWithTeam } from "@repo/types";
 import { getMatchesByGroup } from "../Bracket.util";
 import MatchCard from "../components/MatchCard";

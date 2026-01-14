@@ -4,7 +4,7 @@ import {
     useTournament,
     useMatchesByStage,
     useStageStandings,
-} from "./-queries/tournamentQueries";
+} from "./-queries/tournament.queries";
 import TopLevelBracket from "@/shared/bracket/TopLevelBracket";
 
 export const Route = createFileRoute(

@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
-import { useTeam, useTeamMatchesByStage } from "../-queries/teamQueries";
+import { useTeam, useTeamMatchesByStage } from "../-queries/team.queries";
 import { formatMatchDate } from "@/lib/dateUtils";
 import { openInNewTab } from "@/lib/NewTab";
 import TeamLogo from "@/shared/bracket/atoms/TeamLogo";

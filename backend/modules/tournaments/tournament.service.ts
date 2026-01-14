@@ -35,27 +35,24 @@ export const tournamentService = {
     },
 
     getTournamentById: async (tournamentId: number) => {
-        const tournamentData = await tournamentRepository.findByIdWithStages(
+        const tournament = await tournamentRepository.findTournamentById(
             tournamentId
         );
 
-        if (!tournamentData) {
-            throw new Error("Tournament not found");
-        }
-
-        const stageIds = tournamentData.stages.map((s) => s.ID);
-        const teamsCountsMap = await tournamentRepository.countTeamsByStageIds(
-            stageIds
-        );
-
-        const stagesWithCounts = tournamentData.stages.map((stage) => ({
-            ...stage,
-            teams_count: teamsCountsMap.get(stage.ID) || 0,
-        }));
+        const stagesWithCounts =
+            await tournamentRepository.findStageMatchCountsByTournamentId(
+                tournamentId
+            );
+        console.log("stagesWithCounts:", stagesWithCounts.length);
 
         return {
-            ...tournamentData,
-            stages: stagesWithCounts,
+            ...tournament,
+            stages: tournament?.stages.map((s) => ({
+                ...s,
+                teams_count:
+                    stagesWithCounts.find((sc) => sc.stageId === s.ID)
+                        ?.teamsCount || 0,
+            })),
         };
     },
 

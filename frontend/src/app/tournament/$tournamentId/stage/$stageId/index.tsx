@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMatchesByStage } from "./-queries/tournamentQueries";
+import { useMatchesByStage } from "./-queries/tournament.queries";
 import TopLevelBracket from "@/shared/bracket/TopLevelBracket";
 
 export const Route = createFileRoute(
@@ -19,7 +19,7 @@ function StagePage() {
 
     return (
         <div className="rounded-xl shadow-md">
-            <div className="p-4">
+            {/* <div className="p-4">
                 {matchesLoading ? (
                     <div className="text-textSecondary py-8 text-center">
                         Loading bracket...
@@ -35,7 +35,7 @@ function StagePage() {
                         matches={matches}
                     />
                 )}
-            </div>
+            </div> */}
         </div>
     );
 }

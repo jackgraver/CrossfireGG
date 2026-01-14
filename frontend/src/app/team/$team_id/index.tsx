@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useTeam } from "../-queries/teamQueries";
-import { BooleanStatus } from "@/types/TeamModel";
+import { useTeam } from "../-queries/team.queries";
+//TODO: Boolean Status?
 
 export const Route = createFileRoute("/team/$team_id/")({
     component: TeamOverview,
@@ -91,14 +91,12 @@ function TeamOverview() {
                                             undefined && (
                                             <span
                                                 className={`rounded px-2 py-0.5 text-xs font-medium ${
-                                                    stage.joined_tournament ===
-                                                    BooleanStatus.True
+                                                    stage.joined_tournament
                                                         ? "bg-green-500/20 text-green-400"
                                                         : "bg-yellow-500/20 text-yellow-400"
                                                 }`}
                                             >
-                                                {stage.joined_tournament ===
-                                                BooleanStatus.True
+                                                {stage.joined_tournament
                                                     ? "Signed Up"
                                                     : "Not Signed Up"}
                                             </span>
@@ -106,16 +104,12 @@ function TeamOverview() {
                                         {stage.paid !== undefined && (
                                             <span
                                                 className={`rounded px-2 py-0.5 text-xs font-medium ${
-                                                    stage.paid ===
-                                                    BooleanStatus.True
+                                                    stage.paid
                                                         ? "bg-green-500/20 text-green-400"
                                                         : "bg-red-500/20 text-red-400"
                                                 }`}
                                             >
-                                                {stage.paid ===
-                                                BooleanStatus.True
-                                                    ? "Paid"
-                                                    : "Unpaid"}
+                                                {stage.paid ? "Paid" : "Unpaid"}
                                             </span>
                                         )}
                                     </div>

@@ -5,7 +5,10 @@ import type {
     TournamentWithStages,
 } from "@repo/types";
 import { api } from "./client";
-import { StageGroupsWithTeamsDTO } from "@repo/contracts";
+import {
+    StageGroupsWithTeamsDTO,
+    TournamentWithStagesDTO,
+} from "@repo/contracts";
 
 export const tournamentApi = {
     allTournaments: async () => {
@@ -14,7 +17,7 @@ export const tournamentApi = {
         return response.data;
     },
     tournamentById: async (tournamentId: string) => {
-        const response = await api.get<TournamentWithStages>(
+        const response = await api.get<TournamentWithStagesDTO>(
             `/tournament/${tournamentId}`,
         );
         return response.data;

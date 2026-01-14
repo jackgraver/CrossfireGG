@@ -11,7 +11,10 @@ import { FaceitTeamPlayersResponse } from "../faceit/faceit.types";
 import { teamRepository } from "../teams/team.repository";
 import { playerRepository } from "../players/player.repository";
 import { tournamentRepository } from "./tournament.repository";
-import { StageGroupsWithTeams } from "@repo/contracts";
+import {
+    StageGroupsWithTeams,
+    TournamentWithStagesContract,
+} from "@repo/contracts";
 
 export const tournamentController = {
     getAllTournaments: async (_: Request, res: Response) => {
@@ -42,7 +45,12 @@ export const tournamentController = {
             const tournament = await tournamentService.getTournamentById(
                 validation.data.tournamentId
             );
+
             res.json(tournament);
+
+            const payload = TournamentWithStagesContract.parse(tournament);
+
+            res.json(payload);
         } catch (error: any) {
             if (error.message === "Tournament not found") {
                 return res.status(404).json({ error: error.message });
