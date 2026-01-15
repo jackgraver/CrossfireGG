@@ -1,11 +1,11 @@
 import { tournamentRepository } from "./tournament.repository";
 import {
     StageWithGroupStageTeamsAndMatches,
-    TournamentWithStages,
+    TournamentWithStagesDTO,
 } from "@repo/types";
 
 export const tournamentService = {
-    getAllTournaments: async (): Promise<TournamentWithStages[]> => {
+    getAllTournaments: async (): Promise<TournamentWithStagesDTO[]> => {
         const allTournaments = await tournamentRepository.findAll();
 
         const tournamentsWithStages = await Promise.all(
@@ -27,7 +27,7 @@ export const tournamentService = {
                 return {
                     ...tournament,
                     stages: stagesWithCounts,
-                } as TournamentWithStages;
+                } as TournamentWithStagesDTO;
             })
         );
 

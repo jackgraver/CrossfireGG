@@ -7,3 +7,10 @@ export const useAllTournaments = () => {
         queryFn: () => tournamentApi.allTournaments(),
     });
 };
+
+// export const useAllTournaments = () => {
+//     return useQuery<TournamentDTO[]>({
+//         queryKey: ["tournaments"],
+//         queryFn: () => tournamentApi.allTournaments(),
+//     });
+// };

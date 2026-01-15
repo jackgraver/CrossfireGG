@@ -1,6 +1,5 @@
 import { z } from "zod";
-import { StageFormatContract } from "./stage.contracts";
-import { StageContract } from "./stage_roster.contracts";
+import { StageContract } from "./stage.contracts";
 
 export const TournamentContract = z.object({
     ID: z.number(),
@@ -13,12 +12,6 @@ export const TournamentContract = z.object({
 });
 
 export type TournamentDTO = z.infer<typeof TournamentContract>;
-
-export const StageWithFormatContract = StageContract.extend({
-    format: StageFormatContract,
-});
-
-export type StageWithFormatDTO = z.infer<typeof StageWithFormatContract>;
 
 export const TournamentWithStagesContract = TournamentContract.extend({
     stages: z.array(

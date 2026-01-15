@@ -2,7 +2,7 @@ import type {
     StageTeamWithTeam,
     StageWithGroupStageTeamsAndMatches,
     StageWithMatches,
-    TournamentWithStages,
+    TournamentWithStagesDTO,
 } from "@repo/types";
 import { api } from "./client";
 import {
@@ -13,7 +13,7 @@ import {
 export const tournamentApi = {
     allTournaments: async () => {
         const response =
-            await api.get<TournamentWithStages[]>("/tournament/all");
+            await api.get<TournamentWithStagesDTO[]>("/tournament/all");
         return response.data;
     },
     tournamentById: async (tournamentId: string) => {
