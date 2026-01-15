@@ -1,77 +1,27 @@
 import { z } from "zod";
+import { StageFormatContract } from "./stage.contracts";
+import { StageContract } from "./stage_roster.contracts";
 
 export const TournamentContract = z.object({
     ID: z.number(),
     name: z.string(),
-    status: z.string(),
-    description: z.string(),
-    prize_pool: z.number(),
-    start_date: z.date(),
-    end_date: z.date(),
+    status: z.string().default("draft"),
+    description: z.string().nullable().optional(),
+    prize_pool: z.number().nullable().optional(),
+    start_date: z.date().nullable().optional(),
+    end_date: z.date().nullable().optional(),
+    created_at: z.date(),
+    updated_at: z.date(),
+    deleted_at: z.date().nullable().optional(),
 });
 
 export type TournamentDTO = z.infer<typeof TournamentContract>;
-
-export const StageContract = z.object({
-    ID: z.number(),
-    name: z.string(),
-    faceit_id: z.string(),
-    max_teams: z.number(),
-    format_id: z.number(),
-    is_current: z.boolean(),
-    start_date: z.date(),
-    end_date: z.date(),
-    registration_deadline: z.date(),
-});
-
-export type StageDTO = z.infer<typeof StageContract>;
-
-export const StageFormatContract = z.object({
-    ID: z.number(),
-    name: z.string(),
-});
-
-export type StageFormatDTO = z.infer<typeof StageFormatContract>;
-
-export const GroupContract = z.object({
-    ID: z.number(),
-    name: z.string(),
-    stage_id: z.number(),
-    created_at: z.date(),
-    updated_at: z.date(),
-    deleted_at: z.date().nullable(),
-});
-
-export type GroupDTO = z.infer<typeof GroupContract>;
-
-export const StageTeamContract = z.object({
-    ID: z.number(),
-    stage_id: z.number(),
-    team_id: z.number(),
-    group_id: z.number(),
-    seed: z.number(),
-    wins: z.number(),
-    losses: z.number(),
-    paid: z.boolean(),
-    signed_up: z.boolean(),
-});
-
-export type StageTeamDTO = z.infer<typeof StageTeamContract>;
 
 export const StageWithFormatContract = StageContract.extend({
     format: StageFormatContract,
 });
 
 export type StageWithFormatDTO = z.infer<typeof StageWithFormatContract>;
-
-export const StageRosterContract = z.object({
-    ID: z.number(),
-    stage_id: z.number(),
-    player_id: z.number(),
-    role: z.enum(["starter", "sub", "coach"]),
-});
-
-export type StageRosterDTO = z.infer<typeof StageRosterContract>;
 
 export const TournamentWithStagesContract = TournamentContract.extend({
     stages: z.array(

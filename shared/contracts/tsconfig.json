@@ -14,6 +14,13 @@
         "forceConsistentCasingInFileNames": true,
         "resolveJsonModule": true
     },
-    "include": ["*.ts"],
+    "include": [
+        "*.ts",
+        "match.contracts.ts",
+        "player.contracts.ts",
+        "team.contracts.ts",
+        "tournament.contracts.ts",
+        "index.ts"
+    ],
     "exclude": ["node_modules", "dist"]
 }

@@ -1,0 +1,38 @@
+import { z } from "zod";
+
+export const UserContract = z.object({
+    ID: z.number(),
+    name: z.string(),
+    email: z.string(),
+    password: z.string(),
+    avatar_url: z.string().nullable().optional(),
+    discord_id: z.string().nullable().optional(),
+    steam_id: z.string().nullable().optional(),
+    last_login_at: z.date().nullable().optional(),
+    email_verified: z.boolean().default(false),
+    refresh_token: z.string().nullable().optional(),
+    token_version: z.number().default(0),
+    created_at: z.date(),
+    updated_at: z.date(),
+    deleted_at: z.date().nullable().optional(),
+});
+
+export type UserDTO = z.infer<typeof UserContract>;
+
+export const RoleContract = z.object({
+    ID: z.number(),
+    name: z.string(),
+});
+
+export type RoleDTO = z.infer<typeof RoleContract>;
+
+export const UserRoleContract = z.object({
+    ID: z.number(),
+    user_id: z.number(),
+    role_id: z.number(),
+    created_at: z.date(),
+    updated_at: z.date(),
+    deleted_at: z.date().nullable().optional(),
+});
+
+export type UserRoleDTO = z.infer<typeof UserRoleContract>;
