@@ -10,9 +10,6 @@ export const TournamentContract = z.object({
     prize_pool: z.number().nullable().optional(),
     start_date: z.date().nullable().optional(),
     end_date: z.date().nullable().optional(),
-    created_at: z.date(),
-    updated_at: z.date(),
-    deleted_at: z.date().nullable().optional(),
 });
 
 export type TournamentDTO = z.infer<typeof TournamentContract>;

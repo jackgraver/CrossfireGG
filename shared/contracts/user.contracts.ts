@@ -12,9 +12,6 @@ export const UserContract = z.object({
     email_verified: z.boolean().default(false),
     refresh_token: z.string().nullable().optional(),
     token_version: z.number().default(0),
-    created_at: z.date(),
-    updated_at: z.date(),
-    deleted_at: z.date().nullable().optional(),
 });
 
 export type UserDTO = z.infer<typeof UserContract>;
@@ -30,9 +27,6 @@ export const UserRoleContract = z.object({
     ID: z.number(),
     user_id: z.number(),
     role_id: z.number(),
-    created_at: z.date(),
-    updated_at: z.date(),
-    deleted_at: z.date().nullable().optional(),
 });
 
 export type UserRoleDTO = z.infer<typeof UserRoleContract>;
