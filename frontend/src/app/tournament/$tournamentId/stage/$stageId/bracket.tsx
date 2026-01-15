@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import {
-    useTournament,
+    useTournamentById,
     useMatchesByStage,
     useStageStandings,
 } from "./-queries/tournament.queries";

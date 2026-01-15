@@ -4,7 +4,7 @@ import {
     Outlet,
     useMatchRoute,
 } from "@tanstack/react-router";
-import { useTournament } from "./-queries/tournament.queries";
+import { useTournamentById } from "./-queries/tournament.queries";
 import { formatDateOnly, toUnixTimestamp } from "@/lib/dateUtils";
 import { Calendar, Clock, LayoutDashboard, Trophy, Users } from "lucide-react";
 
@@ -38,7 +38,11 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
     const { tournamentId, stageId } = Route.useParams();
-    const { data: tournament, isLoading, error } = useTournament(tournamentId);
+    const {
+        data: tournament,
+        isLoading,
+        error,
+    } = useTournamentById(tournamentId);
     const matchRoute = useMatchRoute();
 
     if (isLoading) {

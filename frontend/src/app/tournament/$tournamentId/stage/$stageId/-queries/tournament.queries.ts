@@ -3,18 +3,11 @@ import { TournamentDTO, TournamentWithStagesDTO } from "@repo/contracts";
 import type {
     StageWithGroupStageTeamsAndMatches,
     StageWithMatches,
-    TournamentWithStages,
+    TournamentWithStagesDTO,
 } from "@repo/types";
 import { tournamentApi } from "@/api/tournament.api";
 
-export const useTournaments = () => {
-    return useQuery<TournamentDTO[]>({
-        queryKey: ["tournaments"],
-        queryFn: () => tournamentApi.allTournaments(),
-    });
-};
-
-export const useTournament = (tournamentId: string) => {
+export const useTournamentById = (tournamentId: string) => {
     return useQuery<TournamentWithStagesDTO>({
         queryKey: ["tournament", tournamentId],
         queryFn: () => tournamentApi.tournamentById(tournamentId),
