@@ -1,13 +1,13 @@
-import { sqliteTable, integer, unique, index } from "drizzle-orm/sqlite-core";
+import { pgTable, serial, integer, timestamp, boolean, unique, index } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { teams } from "@repo/schemas";
 import { groups } from "./group.schema";
 import { stages } from "./stage.schema";
 
-export const stageTeams = sqliteTable(
+export const stageTeams = pgTable(
     "stage_teams",
     {
-        ID: integer("ID").primaryKey({ autoIncrement: true }),
+        ID: serial("ID").primaryKey(),
         stage_id: integer("stage_id")
             .notNull()
             .references(() => stages.ID, { onDelete: "cascade" }),
@@ -22,15 +22,15 @@ export const stageTeams = sqliteTable(
         seed: integer("seed").default(0),
         wins: integer("wins").default(0),
         losses: integer("losses").default(0),
-        paid: integer("paid", { mode: "boolean" }).default(false),
-        signed_up: integer("signed_up", { mode: "boolean" }).default(false),
-        created_at: integer("created_at", { mode: "timestamp" })
+        paid: boolean("paid").default(false),
+        signed_up: boolean("signed_up").default(false),
+        created_at: timestamp("created_at")
             .notNull()
-            .$defaultFn(() => new Date()),
-        updated_at: integer("updated_at", { mode: "timestamp" })
+            .defaultNow(),
+        updated_at: timestamp("updated_at")
             .notNull()
-            .$defaultFn(() => new Date()),
-        deleted_at: integer("deleted_at", { mode: "timestamp" }),
+            .defaultNow(),
+        deleted_at: timestamp("deleted_at"),
     },
     (table) => [
         unique().on(table.stage_id, table.team_id),

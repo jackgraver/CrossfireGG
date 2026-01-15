@@ -4,5 +4,8 @@
         "frontend",
         "backend",
         "shared/*"
-    ]
+    ],
+    "dependencies": {
+        "drizzle-kit": "^0.31.8"
+    }
 }

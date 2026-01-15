@@ -1,11 +1,11 @@
-import { sqliteTable, integer, text } from "drizzle-orm/sqlite-core";
+import { pgTable, serial, integer, text, timestamp } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { players } from "@repo/schemas";
 import { matchParticipants } from "./match_participant.schema";
 import { stageTeams } from "./stage_team.schema";
 
-export const teams = sqliteTable("teams", {
-    ID: integer("ID").primaryKey({ autoIncrement: true }),
+export const teams = pgTable("teams", {
+    ID: serial("ID").primaryKey(),
     name: text("name").notNull(),
     team_logo: text("team_logo"),
     faceit_id: text("faceit_id"),
@@ -15,13 +15,13 @@ export const teams = sqliteTable("teams", {
             onDelete: "restrict",
         }),
     social_links: text("social_links"),
-    created_at: integer("created_at", { mode: "timestamp" })
+    created_at: timestamp("created_at")
         .notNull()
-        .$defaultFn(() => new Date()),
-    updated_at: integer("updated_at", { mode: "timestamp" })
+        .defaultNow(),
+    updated_at: timestamp("updated_at")
         .notNull()
-        .$defaultFn(() => new Date()),
-    deleted_at: integer("deleted_at", { mode: "timestamp" }),
+        .defaultNow(),
+    deleted_at: timestamp("deleted_at"),
 });
 
 // ============================== RELATIONS ============================== //

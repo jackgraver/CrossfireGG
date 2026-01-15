@@ -1,14 +1,14 @@
-import { sqliteTable, integer, text, index } from "drizzle-orm/sqlite-core";
+import { pgTable, serial, integer, text, timestamp, boolean, index } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { matches, tournaments } from "@repo/schemas";
 import { groups } from "./group.schema";
 import { stageTeams } from "./stage_team.schema";
 import { stageRosters } from "./stage_roster.schema";
 
-export const stages = sqliteTable(
+export const stages = pgTable(
     "stages",
     {
-        ID: integer("ID").primaryKey({ autoIncrement: true }),
+        ID: serial("ID").primaryKey(),
         tournament_id: integer("tournament_id")
             .notNull()
             .references(() => tournaments.ID, { onDelete: "cascade" }),
@@ -20,21 +20,19 @@ export const stages = sqliteTable(
             .references(() => stageFormats.ID, {
                 onDelete: "restrict",
             }),
-        is_current: integer("is_current", { mode: "boolean" })
+        is_current: boolean("is_current")
             .notNull()
             .default(false),
-        start_date: integer("start_date", { mode: "timestamp" }).notNull(),
-        end_date: integer("end_date", { mode: "timestamp" }).notNull(),
-        registration_deadline: integer("registration_deadline", {
-            mode: "timestamp",
-        }).notNull(),
-        created_at: integer("created_at", { mode: "timestamp" })
+        start_date: timestamp("start_date").notNull(),
+        end_date: timestamp("end_date").notNull(),
+        registration_deadline: timestamp("registration_deadline").notNull(),
+        created_at: timestamp("created_at")
             .notNull()
-            .$defaultFn(() => new Date()),
-        updated_at: integer("updated_at", { mode: "timestamp" })
+            .defaultNow(),
+        updated_at: timestamp("updated_at")
             .notNull()
-            .$defaultFn(() => new Date()),
-        deleted_at: integer("deleted_at", { mode: "timestamp" }),
+            .defaultNow(),
+        deleted_at: timestamp("deleted_at"),
     },
     (table) => [
         index("stages_tournament_id_idx").on(table.tournament_id),
@@ -65,8 +63,8 @@ export const stagesRelations = relations(stages, ({ one, many }) => ({
     }),
 }));
 
-export const stageFormats = sqliteTable("stage_formats", {
-    ID: integer("ID").primaryKey({ autoIncrement: true }),
+export const stageFormats = pgTable("stage_formats", {
+    ID: serial("ID").primaryKey(),
     name: text("name").notNull().unique(),
 });
 
