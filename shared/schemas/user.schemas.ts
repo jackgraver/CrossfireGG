@@ -6,7 +6,8 @@ import {
     index,
 } from "drizzle-orm/sqlite-core";
 import { relations } from "drizzle-orm";
-import { players, teams, matchCasters } from "@repo/schemas";
+import { players, teams } from "@repo/schemas";
+import { matchCasters } from "./match_caster.schema";
 
 export const users = sqliteTable("users", {
     ID: integer("ID").primaryKey({ autoIncrement: true }),
