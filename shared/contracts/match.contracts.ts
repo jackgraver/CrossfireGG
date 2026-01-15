@@ -12,9 +12,6 @@ export const MatchContract = z.object({
     stream_url: z.string().nullable().optional(),
     scheduled_at: z.date().nullable().optional(),
     faceit_url: z.string().nullable().optional(),
-    created_at: z.date(),
-    updated_at: z.date(),
-    deleted_at: z.date().nullable().optional(),
 });
 
 export type MatchDTO = z.infer<typeof MatchContract>;

@@ -9,9 +9,6 @@ export const MapContract = z.object({
     team1_score: z.number().default(0),
     team2_score: z.number().default(0),
     winner_id: z.number().nullable().optional(),
-    created_at: z.date(),
-    updated_at: z.date(),
-    deleted_at: z.date().nullable().optional(),
 });
 
 export type MapDTO = z.infer<typeof MapContract>;

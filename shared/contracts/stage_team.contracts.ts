@@ -10,9 +10,6 @@ export const StageTeamContract = z.object({
     losses: z.number().default(0),
     paid: z.boolean().default(false),
     signed_up: z.boolean().default(false),
-    created_at: z.date(),
-    updated_at: z.date(),
-    deleted_at: z.date().nullable().optional(),
 });
 
 export type StageTeamDTO = z.infer<typeof StageTeamContract>;
