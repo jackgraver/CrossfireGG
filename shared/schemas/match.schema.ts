@@ -1,10 +1,11 @@
 import {
-    sqliteTable,
+    pgTable,
+    serial,
     integer,
     text,
-    unique,
+    timestamp,
     index,
-} from "drizzle-orm/sqlite-core";
+} from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { users, teams, playerStats } from "@repo/schemas";
 import { groups } from "./group.schema";
@@ -13,10 +14,10 @@ import { matchParticipants } from "./match_participant.schema";
 import { matchCasters } from "./match_caster.schema";
 import { maps } from "./map.schema";
 
-export const matches = sqliteTable(
+export const matches = pgTable(
     "matches",
     {
-        ID: integer("ID").primaryKey({ autoIncrement: true }),
+        ID: serial("ID").primaryKey(),
         group_id: integer("group_id").references((): any => groups.ID, {
             onDelete: "cascade",
         }),
@@ -29,15 +30,15 @@ export const matches = sqliteTable(
         status: text("status").default("scheduled"),
         best_of: integer("best_of").default(1),
         stream_url: text("stream_url"),
-        scheduled_at: integer("scheduled_at", { mode: "timestamp" }),
+        scheduled_at: timestamp("scheduled_at"),
         faceit_url: text("faceit_url"),
-        created_at: integer("created_at", { mode: "timestamp" })
+        created_at: timestamp("created_at")
             .notNull()
-            .$defaultFn(() => new Date()),
-        updated_at: integer("updated_at", { mode: "timestamp" })
+            .defaultNow(),
+        updated_at: timestamp("updated_at")
             .notNull()
-            .$defaultFn(() => new Date()),
-        deleted_at: integer("deleted_at", { mode: "timestamp" }),
+            .defaultNow(),
+        deleted_at: timestamp("deleted_at"),
     },
     (table) => [
         index("matches_group_id_idx").on(table.group_id),

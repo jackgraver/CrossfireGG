@@ -1,18 +1,20 @@
 import {
-    sqliteTable,
+    pgTable,
+    serial,
     integer,
     text,
+    timestamp,
     unique,
     index,
-} from "drizzle-orm/sqlite-core";
+} from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { players } from "@repo/schemas";
 import { stages } from "./stage.schema";
 
-export const stageRosters = sqliteTable(
+export const stageRosters = pgTable(
     "stage_rosters",
     {
-        ID: integer("ID").primaryKey({ autoIncrement: true }),
+        ID: serial("ID").primaryKey(),
         stage_id: integer("stage_id")
             .notNull()
             .references(() => stages.ID, { onDelete: "cascade" }),
@@ -22,13 +24,13 @@ export const stageRosters = sqliteTable(
                 onDelete: "cascade",
             }),
         role: text("role", { enum: ["starter", "sub", "coach"] }).notNull(),
-        created_at: integer("created_at", { mode: "timestamp" })
+        created_at: timestamp("created_at")
             .notNull()
-            .$defaultFn(() => new Date()),
-        updated_at: integer("updated_at", { mode: "timestamp" })
+            .defaultNow(),
+        updated_at: timestamp("updated_at")
             .notNull()
-            .$defaultFn(() => new Date()),
-        deleted_at: integer("deleted_at", { mode: "timestamp" }),
+            .defaultNow(),
+        deleted_at: timestamp("deleted_at"),
     },
     (table) => [
         unique().on(table.stage_id, table.player_id),

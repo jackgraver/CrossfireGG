@@ -1,17 +1,17 @@
 import {
-    sqliteTable,
+    pgTable,
+    serial,
     integer,
-    text,
-    unique,
+    timestamp,
     index,
-} from "drizzle-orm/sqlite-core";
+} from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { users, matches } from "@repo/schemas";
 
-export const matchCasters = sqliteTable(
+export const matchCasters = pgTable(
     "match_casters",
     {
-        ID: integer("ID").primaryKey({ autoIncrement: true }),
+        ID: serial("ID").primaryKey(),
         match_id: integer("match_id")
             .notNull()
             .references(() => matches.ID, { onDelete: "cascade" }),
@@ -20,16 +20,14 @@ export const matchCasters = sqliteTable(
             .references((): any => users.ID, {
                 onDelete: "cascade",
             }),
-        assigned_at: integer("assigned_at", { mode: "timestamp" }).$defaultFn(
-            () => new Date()
-        ),
-        created_at: integer("created_at", { mode: "timestamp" })
+        assigned_at: timestamp("assigned_at").defaultNow(),
+        created_at: timestamp("created_at")
             .notNull()
-            .$defaultFn(() => new Date()),
-        updated_at: integer("updated_at", { mode: "timestamp" })
+            .defaultNow(),
+        updated_at: timestamp("updated_at")
             .notNull()
-            .$defaultFn(() => new Date()),
-        deleted_at: integer("deleted_at", { mode: "timestamp" }),
+            .defaultNow(),
+        deleted_at: timestamp("deleted_at"),
     },
     (table) => [
         index("match_casters_match_id_idx").on(table.match_id),

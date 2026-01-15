@@ -1,18 +1,21 @@
 import {
-    sqliteTable,
+    pgTable,
+    serial,
     integer,
     text,
+    timestamp,
+    boolean,
     unique,
     index,
-} from "drizzle-orm/sqlite-core";
+} from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { teams, matches } from "@repo/schemas";
 import { maps } from "./map.schema";
 
-export const matchParticipants = sqliteTable(
+export const matchParticipants = pgTable(
     "match_participants",
     {
-        ID: integer("ID").primaryKey({ autoIncrement: true }),
+        ID: serial("ID").primaryKey(),
         match_id: integer("match_id")
             .notNull()
             .references(() => matches.ID, { onDelete: "cascade" }),
@@ -23,14 +26,14 @@ export const matchParticipants = sqliteTable(
             }),
         position: integer("position").notNull(),
         score: integer("score").default(0),
-        winner: integer("winner", { mode: "boolean" }).default(false),
-        created_at: integer("created_at", { mode: "timestamp" })
+        winner: boolean("winner").default(false),
+        created_at: timestamp("created_at")
             .notNull()
-            .$defaultFn(() => new Date()),
-        updated_at: integer("updated_at", { mode: "timestamp" })
+            .defaultNow(),
+        updated_at: timestamp("updated_at")
             .notNull()
-            .$defaultFn(() => new Date()),
-        deleted_at: integer("deleted_at", { mode: "timestamp" }),
+            .defaultNow(),
+        deleted_at: timestamp("deleted_at"),
     },
     (table) => [
         unique().on(table.match_id, table.position),

@@ -1,24 +1,27 @@
-import { sqliteTable, integer, text, index } from "drizzle-orm/sqlite-core";
+import {
+    pgTable,
+    serial,
+    integer,
+    text,
+    timestamp,
+    index,
+} from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { stages } from "./stage.schema";
 import { matches } from "./match.schema";
 import { stageTeams } from "./stage_team.schema";
 
-export const groups = sqliteTable(
+export const groups = pgTable(
     "groups",
     {
-        ID: integer("ID").primaryKey({ autoIncrement: true }),
+        ID: serial("ID").primaryKey(),
         stage_id: integer("stage_id")
             .notNull()
             .references(() => stages.ID, { onDelete: "cascade" }),
         name: text("name").notNull(),
-        created_at: integer("created_at", { mode: "timestamp" })
-            .notNull()
-            .$defaultFn(() => new Date()),
-        updated_at: integer("updated_at", { mode: "timestamp" })
-            .notNull()
-            .$defaultFn(() => new Date()),
-        deleted_at: integer("deleted_at", { mode: "timestamp" }),
+        created_at: timestamp("created_at").notNull().defaultNow(),
+        updated_at: timestamp("updated_at").notNull().defaultNow(),
+        deleted_at: timestamp("deleted_at"),
     },
     (table) => [index("groups_stage_id_idx").on(table.stage_id)]
 );

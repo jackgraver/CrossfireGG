@@ -1,59 +1,52 @@
 import {
-    sqliteTable,
+    pgTable,
+    serial,
     integer,
     text,
+    timestamp,
+    boolean,
     unique,
     index,
-} from "drizzle-orm/sqlite-core";
+} from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { players, teams } from "@repo/schemas";
 import { matchCasters } from "./match_caster.schema";
 
-export const users = sqliteTable("users", {
-    ID: integer("ID").primaryKey({ autoIncrement: true }),
+export const users = pgTable("users", {
+    ID: serial("ID").primaryKey(),
     name: text("name").notNull(),
     email: text("email").notNull().unique(),
     password: text("password").notNull(),
     avatar_url: text("avatar_url"),
     discord_id: text("discord_id"),
     steam_id: text("steam_id"),
-    last_login_at: integer("last_login_at", { mode: "timestamp" }),
-    email_verified: integer("email_verified", { mode: "boolean" }).default(
-        false
-    ),
+    last_login_at: timestamp("last_login_at"),
+    email_verified: boolean("email_verified").default(false),
     refresh_token: text("refresh_token"),
     token_version: integer("token_version").default(0),
-    created_at: integer("created_at", { mode: "timestamp" })
-        .notNull()
-        .$defaultFn(() => new Date()),
-    updated_at: integer("updated_at", { mode: "timestamp" })
-        .notNull()
-        .$defaultFn(() => new Date()),
-    deleted_at: integer("deleted_at", { mode: "timestamp" }),
+    created_at: timestamp("created_at").notNull().defaultNow(),
+    updated_at: timestamp("updated_at").notNull().defaultNow(),
+    deleted_at: timestamp("deleted_at"),
 });
 
-export const roles = sqliteTable("roles", {
-    ID: integer("ID").primaryKey({ autoIncrement: true }),
+export const roles = pgTable("roles", {
+    ID: serial("ID").primaryKey(),
     name: text("name").notNull().unique(),
 });
 
-export const userRoles = sqliteTable(
+export const userRoles = pgTable(
     "user_roles",
     {
-        ID: integer("ID").primaryKey({ autoIncrement: true }),
+        ID: serial("ID").primaryKey(),
         user_id: integer("user_id")
             .notNull()
             .references(() => users.ID, { onDelete: "cascade" }),
         role_id: integer("role_id")
             .notNull()
             .references(() => roles.ID, { onDelete: "cascade" }),
-        created_at: integer("created_at", { mode: "timestamp" })
-            .notNull()
-            .$defaultFn(() => new Date()),
-        updated_at: integer("updated_at", { mode: "timestamp" })
-            .notNull()
-            .$defaultFn(() => new Date()),
-        deleted_at: integer("deleted_at", { mode: "timestamp" }),
+        created_at: timestamp("created_at").notNull().defaultNow(),
+        updated_at: timestamp("updated_at").notNull().defaultNow(),
+        deleted_at: timestamp("deleted_at"),
     },
     (table) => [
         unique().on(table.user_id, table.role_id),

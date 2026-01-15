@@ -1,18 +1,19 @@
 import {
-    sqliteTable,
+    pgTable,
+    serial,
     integer,
     text,
-    unique,
+    timestamp,
     index,
-} from "drizzle-orm/sqlite-core";
+} from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { matches, playerStats } from "@repo/schemas";
 import { matchParticipants } from "./match_participant.schema";
 
-export const maps = sqliteTable(
+export const maps = pgTable(
     "maps",
     {
-        ID: integer("ID").primaryKey({ autoIncrement: true }),
+        ID: serial("ID").primaryKey(),
         match_id: integer("match_id")
             .notNull()
             .references(() => matches.ID, { onDelete: "cascade" }),
@@ -24,13 +25,13 @@ export const maps = sqliteTable(
         winner_id: integer("winner_id").references(() => matchParticipants.ID, {
             onDelete: "set null",
         }),
-        created_at: integer("created_at", { mode: "timestamp" })
+        created_at: timestamp("created_at")
             .notNull()
-            .$defaultFn(() => new Date()),
-        updated_at: integer("updated_at", { mode: "timestamp" })
+            .defaultNow(),
+        updated_at: timestamp("updated_at")
             .notNull()
-            .$defaultFn(() => new Date()),
-        deleted_at: integer("deleted_at", { mode: "timestamp" }),
+            .defaultNow(),
+        deleted_at: timestamp("deleted_at"),
     },
     (table) => [
         index("maps_match_id_idx").on(table.match_id),
