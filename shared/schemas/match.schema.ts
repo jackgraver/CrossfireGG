@@ -1,0 +1,71 @@
+import {
+    sqliteTable,
+    integer,
+    text,
+    unique,
+    index,
+} from "drizzle-orm/sqlite-core";
+import { relations } from "drizzle-orm";
+import { users, teams, playerStats } from "@repo/schemas";
+import { groups } from "./group.schema";
+import { stages } from "./stage.schema";
+import { matchParticipants } from "./match_participant.schema";
+import { matchCasters } from "./match_caster.schema";
+import { maps } from "./map.schema";
+
+export const matches = sqliteTable(
+    "matches",
+    {
+        ID: integer("ID").primaryKey({ autoIncrement: true }),
+        group_id: integer("group_id").references((): any => groups.ID, {
+            onDelete: "cascade",
+        }),
+        stage_id: integer("stage_id").references((): any => stages.ID, {
+            onDelete: "cascade",
+        }),
+        faceit_id: text("faceit_id"),
+        match_number: integer("match_number"),
+        round: text("round"),
+        status: text("status").default("scheduled"),
+        best_of: integer("best_of").default(1),
+        stream_url: text("stream_url"),
+        scheduled_at: integer("scheduled_at", { mode: "timestamp" }),
+        faceit_url: text("faceit_url"),
+        created_at: integer("created_at", { mode: "timestamp" })
+            .notNull()
+            .$defaultFn(() => new Date()),
+        updated_at: integer("updated_at", { mode: "timestamp" })
+            .notNull()
+            .$defaultFn(() => new Date()),
+        deleted_at: integer("deleted_at", { mode: "timestamp" }),
+    },
+    (table) => [
+        index("matches_group_id_idx").on(table.group_id),
+        index("matches_stage_id_idx").on(table.stage_id),
+    ]
+);
+
+/**
+ * Defines all relationships for the matches table.
+ * A match can:
+ * - Belong to one group (optional - matches can exist outside of groups)
+ * - Belong to one stage (optional - matches can be associated directly with stages when groups don't exist)
+ * - Have multiple participants (teams playing in the match)
+ * - Have multiple casters assigned
+ * - Have multiple maps played
+ * - Have multiple player statistics recorded
+ */
+export const matchesRelations = relations(matches, ({ one, many }) => ({
+    group: one(groups, {
+        fields: [matches.group_id],
+        references: [groups.ID],
+    }),
+    stage: one(stages, {
+        fields: [matches.stage_id],
+        references: [stages.ID],
+    }),
+    participants: many(matchParticipants),
+    casters: many(matchCasters),
+    maps: many(maps),
+    playerStats: many(playerStats),
+}));
