@@ -23,7 +23,7 @@ export const tournamentController = {
                 tournamentService.getAllTournaments().then((tournaments) => {
                     res.json(tournaments);
                 });
-            }, 5000);
+            }, 0);
         } catch (error) {
             logger.error("Error fetching tournaments:", error);
             res.status(500).json({

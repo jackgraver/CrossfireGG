@@ -1,11 +1,7 @@
 import { tournamentRepository } from "./tournament.repository";
-import {
-    StageWithGroupStageTeamsAndMatches,
-    TournamentWithStagesDTO,
-} from "@repo/types";
 
 export const tournamentService = {
-    getAllTournaments: async (): Promise<TournamentWithStagesDTO[]> => {
+    getAllTournaments: async (): Promise<any> => {
         const allTournaments = await tournamentRepository.findAll();
 
         const tournamentsWithStages = await Promise.all(
@@ -15,11 +11,11 @@ export const tournamentService = {
                         tournament.ID
                     );
 
-                const stageIds = tournamentStages.map((s) => s.ID);
+                const stageIds = tournamentStages.map((s: any) => s.ID);
                 const teamsCountsMap =
                     await tournamentRepository.countTeamsByStageIds(stageIds);
 
-                const stagesWithCounts = tournamentStages.map((stage) => ({
+                const stagesWithCounts = tournamentStages.map((stage: any) => ({
                     ...stage,
                     teams_count: teamsCountsMap.get(stage.ID) || 0,
                 }));
@@ -27,7 +23,7 @@ export const tournamentService = {
                 return {
                     ...tournament,
                     stages: stagesWithCounts,
-                } as TournamentWithStagesDTO;
+                };
             })
         );
 
