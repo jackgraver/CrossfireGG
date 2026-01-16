@@ -1,6 +1,7 @@
 import z from "zod";
-import { GroupContract, StageTeamContract } from ".";
-import { TeamContract } from ".";
+import { StageTeamContract } from "./stage_team.contracts";
+import { GroupContract } from "./group.contracts";
+import { TeamContract } from "./team.contracts";
 
 export const StageTeamWithTeamContract = StageTeamContract.extend({
     team: TeamContract,

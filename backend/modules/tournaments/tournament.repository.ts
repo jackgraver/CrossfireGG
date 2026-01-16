@@ -9,7 +9,6 @@ import {
 } from "@repo/schemas";
 import { eq, and, isNull, count, inArray, desc } from "drizzle-orm";
 import { TournamentListItem } from "./tournament.types";
-import { StageWithDetailedFormat } from "@repo/types";
 
 export const tournamentRepository = {
     findAll: async () => {
@@ -71,9 +70,7 @@ export const tournamentRepository = {
             .groupBy(stages.ID);
     },
 
-    findStagesByTournamentId: async (
-        tournamentId: number
-    ): Promise<StageWithDetailedFormat[]> => {
+    findStagesByTournamentId: async (tournamentId: number): Promise<any> => {
         return await db.query.stages.findMany({
             where: (s, { eq, and, isNull }) =>
                 and(eq(s.tournament_id, tournamentId), isNull(s.deleted_at)),
