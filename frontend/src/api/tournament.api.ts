@@ -1,7 +1,7 @@
 import { api } from "./client";
 import {
     StageGroupsWithTeamsDTO,
-    TournamentWithStagesDTO,
+    TournamentWithMinimalStagesDTO,
 } from "@repo/contracts";
 
 export const tournamentApi = {
@@ -10,7 +10,7 @@ export const tournamentApi = {
         return response.data;
     },
     tournamentById: async (tournamentId: string) => {
-        const response = await api.get<TournamentWithStagesDTO[]>(
+        const response = await api.get<TournamentWithMinimalStagesDTO>(
             `/tournament/${tournamentId}`,
         );
         return response.data;

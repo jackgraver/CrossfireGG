@@ -7,6 +7,7 @@ import {
 import { useTournamentById } from "./-queries/tournament.queries";
 import { formatDateOnly, toUnixTimestamp } from "@/lib/dateUtils";
 import { Calendar, Clock, LayoutDashboard, Trophy, Users } from "lucide-react";
+import { cn } from "@/utils/cn";
 
 const InfoTile = ({
     icon: Icon,
@@ -68,8 +69,6 @@ function RouteComponent() {
         );
     }
 
-    console.log(tournament);
-
     const tabs = [
         {
             to: "/tournament/$tournamentId/stage/$stageId/bracket",
@@ -106,41 +105,34 @@ function RouteComponent() {
         );
     };
 
-    const currentStage =
-        tournament.stages.find((s) => s.is_current) || tournament.stages[0];
+    const currentStage = tournament.stages[0];
 
     return (
         <div className="mx-auto min-h-screen max-w-[1400px] p-6">
             <div className="relative overflow-hidden pt-8 pb-8 md:pt-12 md:pb-8">
                 <div className="relative z-10 flex flex-col justify-between gap-8 md:flex-row md:items-end">
                     <div className="space-y-6">
-                        <div className="flex items-center gap-3">
-                            <span className="bg-cfRed rounded-full px-3 py-1 text-[10px] font-black tracking-widest text-white uppercase">
-                                {tournament.stages.find((s) => s.is_current)
-                                    ?.name || "Ongoing"}
-                            </span>
-                            <span className="text-textSecondary flex items-center gap-1.5 text-xs font-medium">
-                                <Clock size={14} className="opacity-50" />
-                                {tournament.start_date
-                                    ? formatDateOnly(
-                                          toUnixTimestamp(
-                                              tournament.start_date,
-                                          )!,
-                                      )
-                                    : "TBD"}
-                                {" - "}
-                                {tournament.end_date
-                                    ? formatDateOnly(
-                                          toUnixTimestamp(tournament.end_date)!,
-                                      )
-                                    : "TBD"}
-                            </span>
-                        </div>
-                        <h1 className="text-textPrimary text-5xl font-black tracking-tight md:text-6xl">
+                        <span className="rounded-full bg-green-500 px-3 py-1 text-[10px] font-black tracking-widest text-white uppercase">
+                            Ongoing
+                        </span>
+                        <h1 className="text-textPrimary mb-2 pt-2 text-5xl font-black tracking-tight md:text-6xl">
                             {tournament.name}
                         </h1>
 
                         <div className="flex flex-wrap items-center gap-x-12 gap-y-6 pt-4">
+                            <InfoTile
+                                icon={Calendar}
+                                label="Start Date"
+                                value={
+                                    tournament.start_date
+                                        ? formatDateOnly(
+                                              toUnixTimestamp(
+                                                  tournament.start_date,
+                                              )!,
+                                          )
+                                        : "TBD"
+                                }
+                            />
                             <InfoTile
                                 icon={Calendar}
                                 label="Registration Deadline" //TODO: Change to Registration Deadline
@@ -155,12 +147,38 @@ function RouteComponent() {
                                 }
                             />
                             <InfoTile
+                                icon={Calendar}
+                                label="End Date"
+                                value={
+                                    tournament.end_date
+                                        ? formatDateOnly(
+                                              toUnixTimestamp(
+                                                  tournament.start_date,
+                                              )!,
+                                          )
+                                        : "TBD"
+                                }
+                            />
+                            {/* <InfoTile
                                 icon={Users}
-                                label="Teams"
+                                label="RegisteredTeams"
                                 value={
                                     currentStage
                                         ? `${currentStage.teams_count ?? 0} / ${currentStage.max_teams}`
                                         : "N/A"
+                                }
+                            /> */}
+                            <InfoTile
+                                icon={Calendar}
+                                label="Prize Pool"
+                                value={
+                                    tournament.prize_pool
+                                        ? formatDateOnly(
+                                              toUnixTimestamp(
+                                                  tournament.start_date,
+                                              )!,
+                                          )
+                                        : "TBD"
                                 }
                             />
                         </div>
@@ -174,11 +192,12 @@ function RouteComponent() {
                                     key={tab.to}
                                     to={tab.to}
                                     params={{ tournamentId, stageId }}
-                                    className={`relative flex items-center gap-2.5 pb-4 text-sm font-black transition-all ${
+                                    className={cn(
+                                        "relative flex items-center gap-2.5 pb-4 text-sm font-black transition-all",
                                         isActiveTab(tab.to, tab.exact)
                                             ? "text-textPrimary"
-                                            : "text-textSecondary hover:text-textPrimary"
-                                    }`}
+                                            : "text-textSecondary hover:text-textPrimary",
+                                    )}
                                 >
                                     <tab.icon size={18} />
                                     {tab.label}

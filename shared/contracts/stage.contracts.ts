@@ -26,3 +26,10 @@ export const StageWithFormatContract = StageContract.extend({
 });
 
 export type StageWithFormatDTO = z.infer<typeof StageWithFormatContract>;
+
+export const MinimalStageContract = z.object({
+    ID: z.number(),
+    name: z.string(),
+});
+
+export type MinimalStageDTO = z.infer<typeof MinimalStageContract>;

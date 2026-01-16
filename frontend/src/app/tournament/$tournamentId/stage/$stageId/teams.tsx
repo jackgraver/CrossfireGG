@@ -16,8 +16,6 @@ function TeamsPage() {
 
     const { data, isLoading } = useStageTeams(Number(stageId));
 
-    console.log(data);
-
     return (
         <div className="rounded-xl shadow-md">
             {/* <div className="py-4">

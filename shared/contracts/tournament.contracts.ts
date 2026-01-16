@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { StageContract } from "./stage.contracts";
+import { MinimalStageContract, StageContract } from "./stage.contracts";
 
 export const TournamentContract = z.object({
     ID: z.number(),
@@ -23,4 +23,12 @@ export const TournamentWithStagesContract = TournamentContract.extend({
 
 export type TournamentWithStagesDTO = z.infer<
     typeof TournamentWithStagesContract
+>;
+
+export const TournamentWithMinimalStagesContract = TournamentContract.extend({
+    stages: z.array(MinimalStageContract),
+});
+
+export type TournamentWithMinimalStagesDTO = z.infer<
+    typeof TournamentWithMinimalStagesContract
 >;

@@ -13,17 +13,19 @@ import { playerRepository } from "../players/player.repository";
 import { tournamentRepository } from "./tournament.repository";
 import {
     StageGroupsWithTeams,
+    TournamentWithMinimalStagesContract,
     TournamentWithStagesContract,
 } from "@repo/contracts";
 
 export const tournamentController = {
     getAllTournaments: async (_: Request, res: Response) => {
         try {
-            setTimeout(() => {
-                tournamentService.getAllTournaments().then((tournaments) => {
-                    res.json(tournaments);
-                });
-            }, 0);
+            const tournaments = await tournamentService.getAllTournaments();
+
+            const payload =
+                TournamentWithStagesContract.array().parse(tournaments);
+
+            res.json(payload);
         } catch (error) {
             logger.error("Error fetching tournaments:", error);
             res.status(500).json({
@@ -49,9 +51,8 @@ export const tournamentController = {
                 validation.data.tournamentId
             );
 
-            res.json(tournament);
-
-            const payload = TournamentWithStagesContract.parse(tournament);
+            const payload =
+                TournamentWithMinimalStagesContract.parse(tournament);
 
             res.json(payload);
         } catch (error: any) {
