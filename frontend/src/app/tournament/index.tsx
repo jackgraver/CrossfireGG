@@ -3,7 +3,14 @@ import { useAllTournaments } from "./-queries/tournamentsQueries";
 import { formatDateOnly, toUnixTimestamp } from "@/lib/dateUtils";
 import SignUpButton from "./-components/SignUpButton";
 import { openInNewTab } from "@/lib/NewTab";
-import { Trophy, Clock, Users, ExternalLink, Calendar } from "lucide-react";
+import {
+    Trophy,
+    Users,
+    ExternalLink,
+    Calendar,
+    DollarSign,
+} from "lucide-react";
+import { TournamentWithStagesDTO } from "@repo/contracts";
 
 export const Route = createFileRoute("/tournament/")({
     component: RouteComponent,
@@ -13,19 +20,6 @@ function RouteComponent() {
     const navigate = useNavigate();
     const session = Route.useRouteContext().session;
     const { data, isLoading, error } = useAllTournaments();
-
-    // if (isLoading) {
-    //     return (
-    //         <div className="flex min-h-screen items-center justify-center">
-    //             <div className="text-textPrimary flex animate-pulse flex-col items-center gap-4">
-    //                 <div className="border-cfRed h-12 w-12 animate-spin rounded-full border-4 border-t-transparent"></div>
-    //                 <span className="text-sm font-bold tracking-widest uppercase">
-    //                     Loading tournaments...
-    //                 </span>
-    //             </div>
-    //         </div>
-    //     );
-    // }
 
     if (error) {
         return (
@@ -46,7 +40,7 @@ function RouteComponent() {
 
     return (
         <div className="mx-auto min-h-screen max-w-[1200px] p-6">
-            <header className="border-border/40 border-b pb-12 md:pb-16">
+            <header className="border-border/40 border-b pb-4">
                 <h1 className="text-textPrimary text-5xl font-black tracking-tight md:text-6xl">
                     Tournaments
                 </h1>
@@ -73,143 +67,176 @@ function RouteComponent() {
                             </p>
                         </div>
                     ) : (
-                        <div className="mt-12 space-y-24">
-                            {tournaments.map((tournament) => (
-                                <section key={tournament.ID} className="group">
-                                    <div
-                                        onClick={() =>
-                                            navigate({
-                                                to: `/tournament/${tournament.ID}/stage/${tournament.stages[0]?.ID}`,
-                                            })
-                                        }
-                                        className="border-border/20 flex cursor-pointer flex-col justify-between gap-6 border-b pb-8 transition-all md:flex-row md:items-end"
+                        <div className="mt-12 space-y-12">
+                            {tournaments.map(
+                                (tournament: TournamentWithStagesDTO) => (
+                                    <section
+                                        key={tournament.ID}
+                                        className="group bg-firstBg rounded-2xl p-6"
                                     >
-                                        <div className="space-y-4">
-                                            <div className="flex items-center gap-3">
-                                                <span className="bg-cfRed rounded-full px-3 py-1 text-[10px] font-black tracking-widest text-white uppercase">
-                                                    Season
-                                                </span>
-                                                {tournament.start_date && (
-                                                    <span className="text-textSecondary flex items-center gap-1.5 text-xs font-medium">
-                                                        <Clock
-                                                            size={14}
-                                                            className="opacity-50"
-                                                        />
-                                                        {formatDateOnly(
-                                                            toUnixTimestamp(
-                                                                tournament.start_date,
-                                                            )!,
-                                                        )}
+                                        <div
+                                            onClick={() =>
+                                                navigate({
+                                                    to: `/tournament/${tournament.ID}/stage/${tournament.stages[0]?.ID}`,
+                                                })
+                                            }
+                                            className="flex cursor-pointer flex-col justify-between gap-6 pb-8 transition-all md:flex-row md:items-end"
+                                        >
+                                            <div className="space-y-4">
+                                                <div className="flex items-center gap-4">
+                                                    <span
+                                                        className={`rounded-full px-3 py-1 text-[10px] font-black tracking-widest text-white uppercase ${tournament.ID === 1 ? "bg-green-500" : "bg-blue-500"}`}
+                                                    >
+                                                        {tournament.ID === 1
+                                                            ? "Live"
+                                                            : "Upcoming"}
                                                     </span>
-                                                )}
+                                                    {tournament.start_date && (
+                                                        <span className="text-textSecondary flex items-center gap-1.5 text-xs font-medium">
+                                                            <Calendar
+                                                                size={14}
+                                                                className="opacity-50"
+                                                            />
+                                                            {formatDateOnly(
+                                                                toUnixTimestamp(
+                                                                    tournament.start_date,
+                                                                )!,
+                                                            )}
+                                                            {" - "}
+                                                            {tournament.end_date && (
+                                                                <span>
+                                                                    {formatDateOnly(
+                                                                        toUnixTimestamp(
+                                                                            tournament.end_date,
+                                                                        )!,
+                                                                    )}
+                                                                </span>
+                                                            )}
+                                                        </span>
+                                                    )}
+                                                    {tournament.prize_pool !=
+                                                        null && (
+                                                        <span className="text-textSecondary flex items-center text-xs font-medium">
+                                                            <DollarSign
+                                                                size={14}
+                                                                className="opacity-50"
+                                                            />
+                                                            {tournament.prize_pool.toLocaleString()}
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                <h2 className="text-textPrimary text-4xl font-black tracking-tight transition-colors md:text-5xl">
+                                                    {tournament.name}
+                                                </h2>
                                             </div>
-                                            <h2 className="text-textPrimary text-4xl font-black tracking-tight transition-colors md:text-5xl">
-                                                {tournament.name}
-                                            </h2>
+                                            <div className="text-cfRed flex-start flex gap-2">
+                                                <SignUpButton
+                                                    session={session}
+                                                />
+                                            </div>
                                         </div>
-                                        <div className="text-cfRed flex items-center gap-2">
-                                            <span className="text-xs font-black tracking-widest uppercase">
-                                                View Details
-                                            </span>
-                                            <ExternalLink size={16} />
-                                        </div>
-                                    </div>
-                                    {tournament.stages &&
-                                        tournament.stages.length > 0 && (
-                                            <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
-                                                {tournament.stages.map(
-                                                    (stage: any) => (
-                                                        <div
-                                                            key={stage.ID}
-                                                            className="bg-secondBg/30 hover:bg-secondBg/60 relative flex flex-col justify-between gap-6 rounded-2xl p-6 transition-all"
-                                                        >
-                                                            <div className="space-y-4">
-                                                                <div className="flex items-center justify-between">
-                                                                    <h3 className="text-textPrimary text-xl font-black tracking-tight">
-                                                                        {
-                                                                            stage.name
-                                                                        }
-                                                                    </h3>
-                                                                    {stage.teams_count !==
-                                                                        undefined && (
-                                                                        <div className="text-textSecondary flex items-center gap-1.5 text-[10px] font-bold tracking-widest uppercase">
-                                                                            <Users
+                                        {tournament.stages &&
+                                            tournament.stages.length > 0 && (
+                                                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                                    {tournament.stages.map(
+                                                        (stage: any) => (
+                                                            <div
+                                                                key={stage.ID}
+                                                                className="bg-secondBg relative flex flex-col justify-between gap-6 rounded-2xl p-6"
+                                                            >
+                                                                <div className="space-y-4">
+                                                                    <div className="mb-2 flex items-center gap-4">
+                                                                        <span
+                                                                            className={`rounded-full px-3 py-1 text-[10px] font-black tracking-widest text-white uppercase ${stage.ID === 4 ? "bg-green-500" : "bg-gray-500"}`}
+                                                                        >
+                                                                            {stage.ID ===
+                                                                            4
+                                                                                ? "Current"
+                                                                                : "Ended"}
+                                                                        </span>
+                                                                        {stage.start_date && (
+                                                                            <div className="text-textSecondary flex items-center gap-2 text-xs font-medium opacity-70">
+                                                                                <Calendar
+                                                                                    size={
+                                                                                        14
+                                                                                    }
+                                                                                />
+                                                                                <span>
+                                                                                    {formatDateOnly(
+                                                                                        toUnixTimestamp(
+                                                                                            stage.start_date,
+                                                                                        )!,
+                                                                                    )}
+                                                                                    {
+                                                                                        " - "
+                                                                                    }
+                                                                                    {formatDateOnly(
+                                                                                        toUnixTimestamp(
+                                                                                            stage.end_date,
+                                                                                        )!,
+                                                                                    )}
+                                                                                </span>
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
+                                                                    <div className="flex items-baseline justify-between">
+                                                                        <h3 className="text-textPrimary text-2xl font-black tracking-tight">
+                                                                            {
+                                                                                stage.name
+                                                                            }
+                                                                        </h3>
+
+                                                                        {stage.teams_count !==
+                                                                            undefined && (
+                                                                            <div className="text-textSecondary flex items-center gap-1.5 text-[10px] font-bold tracking-widest uppercase">
+                                                                                <Users
+                                                                                    size={
+                                                                                        12
+                                                                                    }
+                                                                                />
+                                                                                {
+                                                                                    stage.teams_count
+                                                                                }{" "}
+                                                                                /{" "}
+                                                                                {
+                                                                                    stage.max_teams
+                                                                                }
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
+                                                                </div>
+                                                                <div className="flex items-center gap-2">
+                                                                    {stage.faceit_id && (
+                                                                        <button
+                                                                            onClick={(
+                                                                                e,
+                                                                            ) => {
+                                                                                openInNewTab(
+                                                                                    `https://www.faceit.com/en/championship/${stage.faceit_id}`,
+                                                                                );
+                                                                                e.stopPropagation();
+                                                                            }}
+                                                                            className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-orange-600/10 py-3 text-xs font-black tracking-widest text-orange-500 uppercase transition-all hover:bg-orange-600 hover:text-white"
+                                                                        >
+                                                                            <ExternalLink
                                                                                 size={
-                                                                                    12
+                                                                                    14
                                                                                 }
                                                                             />
-                                                                            {
-                                                                                stage.teams_count
-                                                                            }{" "}
-                                                                            /{" "}
-                                                                            {
-                                                                                stage.max_teams
-                                                                            }
-                                                                        </div>
+                                                                            View
+                                                                            on
+                                                                            Faceit
+                                                                        </button>
                                                                     )}
                                                                 </div>
-
-                                                                {stage.start_date && (
-                                                                    <div className="text-textSecondary flex items-center gap-2 text-xs font-medium opacity-70">
-                                                                        <Calendar
-                                                                            size={
-                                                                                14
-                                                                            }
-                                                                        />
-                                                                        <span>
-                                                                            {formatDateOnly(
-                                                                                toUnixTimestamp(
-                                                                                    stage.start_date,
-                                                                                )!,
-                                                                            )}
-                                                                            {
-                                                                                " - "
-                                                                            }
-                                                                            {formatDateOnly(
-                                                                                toUnixTimestamp(
-                                                                                    stage.end_date,
-                                                                                )!,
-                                                                            )}
-                                                                        </span>
-                                                                    </div>
-                                                                )}
                                                             </div>
-                                                            <div className="flex items-center gap-2">
-                                                                {stage.faceit_id && (
-                                                                    <button
-                                                                        onClick={(
-                                                                            e,
-                                                                        ) => {
-                                                                            openInNewTab(
-                                                                                `https://www.faceit.com/en/championship/${stage.faceit_id}`,
-                                                                            );
-                                                                            e.stopPropagation();
-                                                                        }}
-                                                                        className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-orange-600/10 py-3 text-xs font-black tracking-widest text-orange-500 uppercase transition-all hover:bg-orange-600 hover:text-white"
-                                                                    >
-                                                                        <ExternalLink
-                                                                            size={
-                                                                                14
-                                                                            }
-                                                                        />
-                                                                        Faceit
-                                                                    </button>
-                                                                )}
-                                                                <div className="flex-1">
-                                                                    <SignUpButton
-                                                                        session={
-                                                                            session
-                                                                        }
-                                                                    />
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    ),
-                                                )}
-                                            </div>
-                                        )}
-                                </section>
-                            ))}
+                                                        ),
+                                                    )}
+                                                </div>
+                                            )}
+                                    </section>
+                                ),
+                            )}
                         </div>
                     )}
                 </>
