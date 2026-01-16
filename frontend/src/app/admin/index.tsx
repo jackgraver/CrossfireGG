@@ -1,9 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import ManageTournaments from "./-components/tournaments";
-import ManageUsers from "./-components/users";
-import ManageTeams from "./-components/teams";
-import { api } from "@/lib/api";
-import ProtectedRoute from "@/shared/ProtectedRoute";
 
 export const Route = createFileRoute("/admin/")({
     component: Admin,

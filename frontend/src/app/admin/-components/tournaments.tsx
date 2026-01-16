@@ -1,6 +1,4 @@
-import { api } from "@/lib/api";
-import { Tournament } from "@/types/TournamentModel";
-import { PromiseReturn } from "@/types/Types";
+import { api } from "@/api/client";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 
@@ -51,15 +49,14 @@ function SelectTournament() {
 
     const { data, isLoading, error } = useQuery({
         queryKey: ["all_tournaments"],
-        queryFn: () =>
-            api.get<{ tournaments: Tournament[] }>("/tournament/all"),
+        queryFn: () => api.get<{ tournaments: any[] }>("/tournament/all"),
     });
 
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>Error: {error.message}</div>;
     if (!data) return <div>No data</div>;
 
-    const tournaments = data.tournaments;
+    const tournaments = data.data.tournaments;
 
     return (
         <div>
@@ -70,7 +67,7 @@ function SelectTournament() {
                 onChange={(e) => setSelectedTournament(e.target.value || "")}
                 className="text-text-primary bg-secondBg focus:border-thirdBg rounded-lg px-4 py-2 shadow-sm focus:outline-none"
             >
-                {tournaments.map((tournament: Tournament) => (
+                {tournaments.map((tournament: any) => (
                     <option key={tournament.ID} value={tournament.ID}>
                         {tournament.name}
                     </option>

@@ -208,10 +208,11 @@ export const tournamentRepository = {
                 .set({
                     name: stageData.name,
                     max_teams: stageData.max_teams,
-                    format_id: stageData.format_id!,
-                    start_date: stageData.start_date!,
-                    end_date: stageData.end_date!,
-                    registration_deadline: stageData.registration_deadline!,
+                    format_id: stageData.format_id ?? 1,
+                    start_date: stageData.start_date ?? new Date(),
+                    end_date: stageData.end_date ?? new Date(),
+                    registration_deadline:
+                        stageData.registration_deadline ?? new Date(),
                     updated_at: new Date(),
                 })
                 .where(eq(stages.ID, existing[0].ID))
@@ -225,10 +226,11 @@ export const tournamentRepository = {
                     faceit_id: stageData.faceit_id,
                     tournament_id: stageData.tournament_id,
                     max_teams: stageData.max_teams,
-                    format_id: stageData.format_id!,
-                    start_date: stageData.start_date!,
-                    end_date: stageData.end_date!,
-                    registration_deadline: stageData.registration_deadline!,
+                    format_id: stageData.format_id ?? 1,
+                    start_date: stageData.start_date ?? new Date(),
+                    end_date: stageData.end_date ?? new Date(),
+                    registration_deadline:
+                        stageData.registration_deadline ?? new Date(),
                     created_at: new Date(),
                     updated_at: new Date(),
                 })
