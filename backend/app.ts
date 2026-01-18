@@ -30,7 +30,7 @@ export const globalLimiter = rateLimit({
 const app = express();
 app.set("trust proxy", 1);
 
-app.use(burstLimiter);
+// app.use(burstLimiter);
 app.use(globalLimiter);
 app.use(morgan("dev"));
 app.use(
