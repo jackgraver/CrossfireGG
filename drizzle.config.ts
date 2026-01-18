@@ -14,6 +14,6 @@ export default {
     out: "./drizzle",
     dialect: "postgresql",
     dbCredentials: {
-        url: "postgres://app_user:app_password@localhost:5432/cf_db",
+        url: "postgres://app_user:app_password@localhost:5432/cf-db",
     },
 } satisfies Config;

@@ -5,7 +5,7 @@ export const config = {
         path: process.env.DATABASE_PATH || "./cf.db",
         url:
             process.env.DATABASE_URL ??
-            "postgresql://app_user:app_password@localhost:5432/app_db",
+            "postgresql://app_user:app_password@localhost:5432/cf-db",
     },
     cors: {
         allowedOrigins: ["http://localhost:5173"],

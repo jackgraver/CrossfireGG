@@ -1,1 +1,1 @@
-pgcli postgres://app_user:app_password@localhost:5432/app_db
+pgcli postgres://app_user:app_password@localhost:5432/cf-db
