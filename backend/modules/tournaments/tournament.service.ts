@@ -147,8 +147,8 @@ export const tournamentService = {
         // return Object.values(groupedTeams);
     },
 
-    getStageTeamsByGroups: async (stageId: number) => {
-        return await tournamentRepository.findAllStageTeamsByGroups(stageId);
+    getStageTeams: async (stageId: number) => {
+        return await tournamentRepository.findAllStageTeams(stageId);
     },
 
     getUpcomingTournament: async () => {

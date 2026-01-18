@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { TeamContract } from "./team.contracts";
 
 export const StageTeamContract = z.object({
     ID: z.number(),
@@ -13,3 +14,9 @@ export const StageTeamContract = z.object({
 });
 
 export type StageTeamDTO = z.infer<typeof StageTeamContract>;
+
+export const StageTeamWithTeamContract = StageTeamContract.extend({
+    team: TeamContract,
+});
+
+export type StageTeamWithTeamDTO = z.infer<typeof StageTeamWithTeamContract>;

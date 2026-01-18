@@ -12,7 +12,7 @@ import { teamRepository } from "../teams/team.repository";
 import { playerRepository } from "../players/player.repository";
 import { tournamentRepository } from "./tournament.repository";
 import {
-    StageGroupsWithTeams,
+    StageTeamWithTeamContract,
     TournamentWithMinimalStagesContract,
     TournamentWithStagesContract,
 } from "@repo/contracts";
@@ -129,11 +129,11 @@ export const tournamentController = {
                     error: "Validation failed",
                 });
             }
-            const teams = await tournamentService.getStageTeamsByGroups(
+            const teams = await tournamentService.getStageTeams(
                 validation.data.stageId
             );
 
-            const payload = StageGroupsWithTeams.parse(teams);
+            const payload = StageTeamWithTeamContract.array().parse(teams);
 
             res.json(payload);
         } catch (error) {
@@ -287,11 +287,11 @@ export const tournamentController = {
                 })),
                 ...(coachId
                     ? [
-                          {
-                              playerId: coachId,
-                              role: "coach" as const,
-                          },
-                      ]
+                        {
+                            playerId: coachId,
+                            role: "coach" as const,
+                        },
+                    ]
                     : []),
             ];
 

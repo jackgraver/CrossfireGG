@@ -3,7 +3,8 @@ import { useState } from "react";
 import { useStageTeams } from "./-queries/tournament.queries";
 import TeamLogo from "@/shared/bracket/atoms/TeamLogo";
 import { MoveUpRight } from "lucide-react";
-import { StageTeamWithTeam } from "@repo/types";
+import { StageTeamWithTeamDTO } from "@repo/contracts";
+import { cn } from "@/utils/cn";
 
 export const Route = createFileRoute(
     "/tournament/$tournamentId/stage/$stageId/teams",
@@ -14,32 +15,34 @@ export const Route = createFileRoute(
 function TeamsPage() {
     const { tournamentId, stageId } = Route.useParams();
 
-    const { data, isLoading } = useStageTeams(Number(stageId));
+    const { data: teams, isLoading } = useStageTeams(Number(stageId));
+
+    const sortedTeams = [...teams || []].sort((a, b) => a.seed - b.seed);
 
     return (
         <div className="rounded-xl shadow-md">
-            {/* <div className="py-4">
+            <div className="py-4">
                 {isLoading ? (
                     <div className="text-textSecondary py-8 text-center">
                         Loading teams...
                     </div>
-                ) : stageTeams?.teams.length === 0 ? (
+                ) : teams?.length === 0 ? (
                     <div className="text-textSecondary py-8 text-center">
                         No teams registered for this stage
                     </div>
                 ) : (
                     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                        {stageTeams?.teams.map((team) => (
+                        {sortedTeams?.map((team: StageTeamWithTeamDTO) => (
                             <TeamCard key={team.team_id} team={team} />
                         ))}
                     </div>
                 )}
-            </div> */}
+            </div>
         </div>
     );
 }
 
-function TeamCard({ team }: { team: StageTeamWithTeam }) {
+function TeamCard({ team }: { team: StageTeamWithTeamDTO }) {
     const [isHovering, setIsHovering] = useState(false);
 
     return (
@@ -48,7 +51,7 @@ function TeamCard({ team }: { team: StageTeamWithTeam }) {
             params={{ team_id: team.team_id.toString() }}
             onMouseEnter={() => setIsHovering(true)}
             onMouseLeave={() => setIsHovering(false)}
-            className="border-border bg-firstBg hover:bg-secondBg flex items-center gap-4 rounded-lg border p-4 transition-colors"
+            className=" bg-firstBg hover:bg-secondBg flex items-center gap-4 rounded-lg p-4 transition-colors"
         >
             <TeamLogo
                 avatar={team.team.team_logo || undefined}
@@ -59,17 +62,27 @@ function TeamCard({ team }: { team: StageTeamWithTeam }) {
                     {team.team.name}
                 </div>
                 <div className="text-textSecondary mt-0.5 flex gap-3 text-sm">
-                    <span>
-                        {team.wins}W - {team.losses}L
+                    <span className="font-bold text-green-500">
+                        {team.wins}W
                     </span>
-                    {team.seed > 0 && <span>Seed #{team.seed}</span>}
+                    {"-"}
+                    <span className="font-bold text-red-500">
+                        {team.losses}L
+                    </span>
+                    {team.seed !== undefined && <span>Seed #{team.seed}</span>}
                 </div>
             </div>
-            <MoveUpRight
-                className={`text-textSecondary h-6 w-6 transition-all duration-300 ease-out ${
-                    isHovering ? "opacity-100" : "opacity-0"
-                }`}
-            />
+            <div
+                className={cn(
+                    "group rounded-md p-2 transition-all duration-300 ease-out",
+                    isHovering ? "opacity-100" : "opacity-0",
+                    "hover:bg-thirdBg"
+                )}
+            >
+                <MoveUpRight
+                    className="h-6 w-6 text-textSecondary transition-colors group-hover:text-textPrimary"
+                />
+            </div>
         </Link>
     );
 }

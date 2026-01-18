@@ -1,12 +1,13 @@
 import { api } from "./client";
 import {
-    StageGroupsWithTeamsDTO,
+    StageTeamWithTeamDTO,
     TournamentWithMinimalStagesDTO,
+    TournamentWithStagesDTO,
 } from "@repo/contracts";
 
 export const tournamentApi = {
     allTournaments: async () => {
-        const response = await api.get<any>("/tournament/all");
+        const response = await api.get<TournamentWithStagesDTO[]>("/tournament/all");
         return response.data;
     },
     tournamentById: async (tournamentId: string) => {
@@ -21,8 +22,8 @@ export const tournamentApi = {
         );
         return response.data;
     },
-    stageTeamsByStageId: async (stageId: string) => {
-        const response = await api.get<StageGroupsWithTeamsDTO>(
+    stageTeams: async (stageId: number) => {
+        const response = await api.get<StageTeamWithTeamDTO[]>(
             `/tournament/stage/${stageId}/teams`,
         );
         return response.data;

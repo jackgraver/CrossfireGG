@@ -362,16 +362,12 @@ export const tournamentRepository = {
         });
     },
 
-    findAllStageTeamsByGroups: async (stageId: number) => {
-        return await db.query.groups.findMany({
-            where: (g, { eq, and, isNull }) =>
-                and(eq(g.stage_id, stageId), isNull(g.deleted_at)),
+    findAllStageTeams: async (stageId: number) => {
+        return await db.query.stageTeams.findMany({
+            where: (st, { eq, and, isNull }) =>
+                and(eq(st.stage_id, stageId), isNull(st.deleted_at)),
             with: {
-                stageTeams: {
-                    with: {
-                        team: true,
-                    },
-                },
+                team: true,
             },
         });
     },
