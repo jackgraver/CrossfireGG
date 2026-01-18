@@ -1,5 +1,6 @@
 import { api } from "./client";
 import {
+    GroupWithMatchesAndFormatDTO,
     StageTeamWithTeamDTO,
     TournamentWithMinimalStagesDTO,
     TournamentWithStagesDTO,
@@ -28,9 +29,9 @@ export const tournamentApi = {
         );
         return response.data;
     },
-    stageStandingsByStageId: async (stageId: string) => {
-        const response = await api.get<any>(
-            `/tournament/stage/${stageId}/standings`,
+    stageBracket: async (stageId: string) => {
+        const response = await api.get<GroupWithMatchesAndFormatDTO>(
+            `/tournament/stage/${stageId}/bracket`,
         );
         return response.data;
     },

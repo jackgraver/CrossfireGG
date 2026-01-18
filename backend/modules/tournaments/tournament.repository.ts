@@ -342,11 +342,6 @@ export const tournamentRepository = {
                 stageFormat: true,
                 groups: {
                     with: {
-                        stageTeams: {
-                            with: {
-                                team: true,
-                            },
-                        },
                         matches: {
                             with: {
                                 participants: {

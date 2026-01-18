@@ -12,6 +12,7 @@ import { teamRepository } from "../teams/team.repository";
 import { playerRepository } from "../players/player.repository";
 import { tournamentRepository } from "./tournament.repository";
 import {
+    GroupWithMatchesAndFormatContract,
     StageTeamWithTeamContract,
     TournamentWithMinimalStagesContract,
     TournamentWithStagesContract,
@@ -92,7 +93,7 @@ export const tournamentController = {
         }
     },
 
-    getStageStandings: async (req: Request, res: Response) => {
+    getStageBracket: async (req: Request, res: Response) => {
         try {
             const validation = StageParamsSchema.safeParse(req.params);
             if (!validation.success) {
@@ -104,14 +105,16 @@ export const tournamentController = {
                     })),
                 });
             }
-            const groups = await tournamentService.getStageStandings(
+            const groups = await tournamentService.getStageBracket(
                 validation.data.stageId
             );
-            console.log(groups);
 
-            // const payload = StageWithGroupsContract.parse(groups);
+            const payload = GroupWithMatchesAndFormatContract.parse({
+                format: groups?.stageFormat,
+                groups: groups?.groups,
+            });
 
-            res.json(groups);
+            res.json(payload);
         } catch (error) {
             logger.error("Error fetching stage standings:", error);
             res.status(500).json({

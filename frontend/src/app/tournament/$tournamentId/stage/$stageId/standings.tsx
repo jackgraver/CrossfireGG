@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import {
     useTournamentById,
     useStageTeams,
-    useStageStandings,
+    useStageBracket,
 } from "./-queries/tournament.queries";
 import OSSTable from "@/shared/OSSTable";
 import { StageTeamDTO, Team } from "@repo/contracts";
@@ -21,7 +21,7 @@ function StandingsPage() {
         data: stageTeams,
         isLoading,
         error,
-    } = useStageStandings(Number(stageId));
+    } = useStageBracket(Number(stageId));
 
     if (error) {
         return <div>Error loading standings</div>;

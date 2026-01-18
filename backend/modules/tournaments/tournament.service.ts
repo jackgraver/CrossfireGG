@@ -59,7 +59,7 @@ export const tournamentService = {
         return matches;
     },
 
-    getStageStandings: async (stageId: number) => {
+    getStageBracket: async (stageId: number) => {
         return await tournamentRepository.findStageStandings(stageId);
 
         // const stageStandings = await tournamentRepository.findStageStandings(

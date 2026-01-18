@@ -1,17 +1,14 @@
-import { StageFormatDTO } from "@repo/contracts";
-import { Match } from "@repo/contracts";
+import { GroupWithMatchesAndFormatDTO, GroupWithMatchesDTO, StageFormatDTO } from "@repo/contracts";
 import RegularSeasonBracket from "./bracket_types/RegularSeasonBracket";
 import Groups from "./bracket_types/Groups";
 import PlayoffBracket from "./bracket_types/PlayoffBracket";
 
 export default function TopLevelBracket({
     stageFormat,
-    stageId,
-    matches,
+    groups,
 }: {
-    stageFormat: StageFormatDTO | undefined;
-    stageId: number | null;
-    matches: Match[];
+    stageFormat: StageFormatDTO;
+    groups: GroupWithMatchesDTO[];
 }) {
     if (!stageFormat) {
         return <></>;
@@ -19,11 +16,11 @@ export default function TopLevelBracket({
 
     switch (stageFormat.name.toLowerCase()) {
         case "groups":
-            return <Groups stageId={stageId} matches={matches} />;
+            return <Groups groups={groups} />;
         case "single elimination":
-            return <PlayoffBracket matches={matches} />;
+            return <PlayoffBracket matches={groups.flatMap((group) => group.matches)} />;
         case "swiss":
-            return <RegularSeasonBracket matches={matches} />;
+            return <RegularSeasonBracket matches={groups.flatMap((group) => group.matches)} />;
         default:
             return (
                 <div className="text-xl text-red-500">

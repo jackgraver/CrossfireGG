@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { Match } from "@repo/contracts";
+import { GroupWithMatchesDTO, MatchParticipantWithTeamDTO, MatchWithParticipantsDTO, StageTeamWithTeamDTO, TeamDTO } from "@repo/contracts";
 import { useStageTeams } from "@/app/tournament/$tournamentId/stage/$stageId/-queries/tournament.queries";
-import type { GroupWithTeams, StageTeamWithTeam } from "@repo/types";
 import { getMatchesByGroup } from "../Bracket.util";
 import MatchCard from "../components/MatchCard";
 import { ChevronDown, ChevronUp } from "lucide-react";
@@ -12,13 +11,13 @@ function TeamStandingsRow({
     team,
     rank,
 }: {
-    team: StageTeamWithTeam;
+    team: MatchParticipantWithTeamDTO;
     rank: number;
 }) {
     return (
         <Link
             to="/team/$team_id"
-            params={{ team_id: team.team_id.toString() }}
+            params={{ team_id: team.id.toString() }}
             className="border-border hover:bg-thirdBg flex items-center gap-3 border-b py-2 transition-all duration-300 ease-out last:border-b-0"
         >
             <span className="text-textSecondary w-6 text-center text-sm font-medium">
@@ -26,7 +25,7 @@ function TeamStandingsRow({
             </span>
             <TeamLogo
                 team={{
-                    team_id: team.team_id.toString(),
+                    team_id: team.id.toString(),
                     name: team.team.name,
                     team_logo: team.team.team_logo,
                     faceit_id: team.team.faceit_id || "",
@@ -44,7 +43,7 @@ function TeamStandingsRow({
     );
 }
 
-function MatchesDropdown({ matches }: { matches: Match[] }) {
+function MatchesDropdown({ matches }: { matches: MatchWithParticipantsDTO[] }) {
     const [isOpen, setIsOpen] = useState(false);
 
     const matchesByRound = matches.reduce(
@@ -56,7 +55,7 @@ function MatchesDropdown({ matches }: { matches: Match[] }) {
             acc[round].push(match);
             return acc;
         },
-        {} as Record<string, Match[]>,
+        {} as Record<string, MatchWithParticipantsDTO[]>,
     );
 
     return (
@@ -98,20 +97,24 @@ function GroupCard({
     group,
     matches,
 }: {
-    group: GroupWithTeams;
-    matches: Match[];
+    group: GroupWithMatchesDTO;
+    matches: MatchWithParticipantsDTO[];
 }) {
+    const groupTeams = Array.from(
+        new Map(matches.flatMap(m => m.participants).map(p => [p.team_id, p])).values()
+    );
+
     return (
         <div className="border-border bg-firstBg flex min-w-[300px] flex-col rounded-lg border p-4">
             <h2 className="text-textPrimary mb-3 text-lg font-semibold">
                 {group.name}
             </h2>
             <div className="flex flex-col">
-                {group.teams.map((team, index) => (
+                {groupTeams.map((team, index) => (
                     <TeamStandingsRow
                         key={team.id}
-                        team={undefined as unknown as StageTeamWithTeam}
-                        rank={index + 1}
+                        team={team}
+                        rank={0}
                     />
                 ))}
             </div>
@@ -121,35 +124,19 @@ function GroupCard({
 }
 
 export default function Groups({
-    stageId,
-    matches,
+    groups,
 }: {
-    stageId: number | null;
-    matches: Match[];
+    groups: GroupWithMatchesDTO[];
 }) {
-    const { data, isLoading } = useStageTeams(stageId);
-    const matchesByGroup = getMatchesByGroup(matches);
-
-    if (isLoading) {
-        return <div className="text-textSecondary p-4">Loading groups...</div>;
-    }
-
-    if (!data || data.teams.length === 0) {
-        return <div className="text-textSecondary p-4">No groups found</div>;
-    }
-
-    const stageTeamsData = data.teams;
-
     return (
         <div className="flex flex-wrap items-start gap-4 overflow-x-auto p-4">
-            {stageTeamsData.map((group) => (
+            {groups.map((group) => (
                 <GroupCard
                     key={group.id}
-                    group={null as unknown as GroupWithTeams}
-                    matches={matchesByGroup[String(group.id)] || []}
+                    group={group}
+                    matches={group.matches}
                 />
             ))}
-            <h1>wip</h1>
         </div>
     );
 }

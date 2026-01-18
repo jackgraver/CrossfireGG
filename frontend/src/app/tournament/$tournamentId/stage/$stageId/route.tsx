@@ -76,12 +76,12 @@ function RouteComponent() {
             icon: LayoutDashboard,
             exact: false,
         },
-        {
-            to: "/tournament/$tournamentId/stage/$stageId/standings",
-            label: "Standings",
-            icon: Trophy,
-            exact: false,
-        },
+        // {
+        //     to: "/tournament/$tournamentId/stage/$stageId/standings",
+        //     label: "Standings",
+        //     icon: Trophy,
+        //     exact: false,
+        // },
         {
             to: "/tournament/$tournamentId/stage/$stageId/teams",
             label: "Teams",
@@ -215,8 +215,8 @@ function RouteComponent() {
                                             stageId: stage.id,
                                         })}
                                         className={`relative flex items-center gap-2.5 pb-4 text-sm font-black transition-all ${stageId === stage.id.toString()
-                                                ? "text-textPrimary"
-                                                : "text-textSecondary hover:text-textPrimary"
+                                            ? "text-textPrimary"
+                                            : "text-textSecondary hover:text-textPrimary"
                                             }`}
                                     >
                                         {stage.name}

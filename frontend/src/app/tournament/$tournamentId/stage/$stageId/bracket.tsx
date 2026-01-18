@@ -1,9 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
 import {
-    useTournamentById,
-    useMatchesByStage,
-    useStageStandings,
+    useStageBracket,
 } from "./-queries/tournament.queries";
 import TopLevelBracket from "@/shared/bracket/TopLevelBracket";
 
@@ -16,7 +13,7 @@ export const Route = createFileRoute(
 function BracketPage() {
     const { tournamentId, stageId } = Route.useParams();
 
-    const { data, isLoading, error } = useStageStandings(Number(stageId));
+    const { data, isLoading, error } = useStageBracket(Number(stageId));
 
     if (error) {
         return <div>Error loading standings</div>;
@@ -30,15 +27,12 @@ function BracketPage() {
         return <div>No matches found for this stage</div>;
     }
 
-    console.log(data);
-
     return (
         <div className="bg-firstBg rounded-xl shadow-md">
             <div className="p-4">
                 <TopLevelBracket
-                    stageFormat={data.stageFormat}
-                    stageId={data?.id}
-                    matches={data.groups.flatMap((group) => group.matches)}
+                    stageFormat={data.format}
+                    groups={data.groups}
                 />
             </div>
         </div>

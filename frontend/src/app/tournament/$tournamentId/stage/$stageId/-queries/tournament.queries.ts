@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { StageTeamWithTeamDTO, TournamentWithMinimalStagesDTO } from "@repo/contracts";
+import { GroupWithMatchesAndFormatDTO, StageTeamWithTeamDTO, TournamentWithMinimalStagesDTO } from "@repo/contracts";
 
 import { tournamentApi } from "@/api/tournament.api";
 
@@ -27,11 +27,11 @@ export const useStageTeams = (stageId: number) => {
     });
 };
 
-export const useStageStandings = (stageId: number | null) => {
-    return useQuery<any>({
+export const useStageBracket = (stageId: number | null) => {
+    return useQuery<GroupWithMatchesAndFormatDTO>({
         queryKey: ["stageStandings", stageId],
         queryFn: () =>
-            tournamentApi.stageStandingsByStageId(stageId!.toString()),
+            tournamentApi.stageBracket(stageId!.toString()),
         enabled: !!stageId,
     });
 };
