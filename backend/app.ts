@@ -13,6 +13,13 @@ import helmet from "helmet";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
 
+const burstLimiter = rateLimit({
+    windowMs: 10 * 1000,
+    max: 5,
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
 export const globalLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
     max: 300,                 // 300 requests per IP per window
@@ -23,6 +30,7 @@ export const globalLimiter = rateLimit({
 const app = express();
 app.set("trust proxy", 1);
 
+app.use(burstLimiter);
 app.use(globalLimiter);
 app.use(morgan("dev"));
 app.use(
