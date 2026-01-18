@@ -9,10 +9,12 @@ import matchRoutes from "./modules/matches/match.routes";
 import teamRoutes from "./modules/teams/team.routes";
 import userRoutes from "./modules/users/user.routes";
 import faceitRoutes from "./modules/faceit/faceit.routes";
+import morgan from "morgan";
 
 const app = express();
 
-app.use(requestLogger);
+// app.use(requestLogger);
+app.use(morgan("dev"));
 
 app.use((req: Request, res: Response, next: NextFunction) => {
     const origin = req.headers.origin;
