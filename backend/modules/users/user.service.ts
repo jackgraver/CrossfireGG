@@ -29,23 +29,23 @@ export const userService = {
             throw new Error("Failed to create user");
         }
 
-        const roles = await userRepository.getUserRoles(newUser.ID);
+        const roles = await userRepository.getUserRoles(newUser.id);
 
         const tokenVersion = 0;
         const refreshToken = jwtUtils.generateRefreshToken({
-            userId: newUser.ID,
+            userId: newUser.id,
             tokenVersion,
         });
 
         await userRepository.updateRefreshToken(
-            newUser.ID,
+            newUser.id,
             refreshToken,
             tokenVersion
         );
 
         return {
             user: {
-                id: newUser.ID,
+                id: newUser.id,
                 name: newUser.name,
                 email: newUser.email,
                 team_id: -1,
@@ -69,25 +69,25 @@ export const userService = {
             throw new Error("Invalid email or password");
         }
 
-        const roles = await userRepository.getUserRoles(user.ID);
+        const roles = await userRepository.getUserRoles(user.id);
 
         const tokenVersion = (user.token_version || 0) + 1;
         const refreshToken = jwtUtils.generateRefreshToken({
-            userId: user.ID,
+            userId: user.id,
             tokenVersion,
         });
 
         await userRepository.updateRefreshToken(
-            user.ID,
+            user.id,
             refreshToken,
             tokenVersion
         );
 
-        const team = await playerRepository.getPlayerByUserId(user.ID);
+        const team = await playerRepository.getPlayerByUserId(user.id);
 
         return {
             user: {
-                id: user.ID,
+                id: user.id,
                 name: user.name,
                 email: user.email,
                 team_id: team?.team_id || undefined,
@@ -112,23 +112,23 @@ export const userService = {
             throw new Error("Token version mismatch");
         }
 
-        const roles = await userRepository.getUserRoles(user.ID);
+        const roles = await userRepository.getUserRoles(user.id);
 
         const newTokenVersion = payload.tokenVersion + 1;
         const newRefreshToken = jwtUtils.generateRefreshToken({
-            userId: user.ID,
+            userId: user.id,
             tokenVersion: newTokenVersion,
         });
 
         await userRepository.updateRefreshToken(
-            user.ID,
+            user.id,
             newRefreshToken,
             newTokenVersion
         );
 
         return {
             user: {
-                id: user.ID,
+                id: user.id,
                 name: user.name,
                 email: user.email,
                 team_id: -1,
@@ -147,7 +147,7 @@ export const userService = {
         const roles = await userRepository.getUserRoles(userId);
 
         return {
-            id: user.ID,
+            id: user.id,
             name: user.name,
             email: user.email,
             team_id: -1,

@@ -21,11 +21,10 @@ export default function MatchCard({ match, margin }: MatchCardProps) {
 
     return (
         <div
-            className={`group border-border bg-firstBg text-textPrimary relative flex grow flex-col border ${
-                margin
+            className={`group border-border bg-firstBg text-textPrimary relative flex grow flex-col border ${margin
                     ? "m-2 rounded-md"
                     : "rounded-tr-md rounded-br-md rounded-bl-md"
-            }`}
+                }`}
         >
             <MatchTeam
                 team={match?.participants![0].team!}
@@ -51,7 +50,7 @@ export default function MatchCard({ match, margin }: MatchCardProps) {
                         <img src="/faceit.png" alt="F" className="h-5 w-5" />
                     </button>
                     <button
-                        onClick={() => navigate({ to: `/match/${match?.ID}` })}
+                        onClick={() => navigate({ to: `/match/${match?.id}` })}
                         className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-white transition hover:bg-gray-200"
                     >
                         <img src="/OSSLOGO.png" alt="OSS" className="h-8 w-8" />

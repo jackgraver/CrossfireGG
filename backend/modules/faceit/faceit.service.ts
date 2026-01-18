@@ -101,7 +101,7 @@ export const faceitImportService = {
         const stage = await tournamentRepository.upsertStageByFaceitId(
             stageData
         );
-        logger.info(`Stage created/updated: ${stage.name} (ID: ${stage.ID})`);
+        logger.info(`Stage created/updated: ${stage.name} (id: ${stage.id})`);
 
         return stage;
     },
@@ -195,7 +195,7 @@ export const faceitImportService = {
                         }
                     }
 
-                    const teamData = transformFaceitTeam(team, leaderPlayer.ID);
+                    const teamData = transformFaceitTeam(team, leaderPlayer.id);
                     const dbTeam = await teamRepository.upsertTeamByFaceitId(
                         teamData
                     );
@@ -204,17 +204,17 @@ export const faceitImportService = {
                         const dbPlayer = await playerRepository.findByFaceitId(
                             player.player_id
                         );
-                        if (dbPlayer && dbPlayer.team_id !== dbTeam.ID) {
+                        if (dbPlayer && dbPlayer.team_id !== dbTeam.id) {
                             await playerRepository.updatePlayerTeam(
-                                dbPlayer.ID,
-                                dbTeam.ID
+                                dbPlayer.id,
+                                dbTeam.id
                             );
                         }
                     }
 
                     await tournamentRepository.upsertStageTeam({
-                        stage_id: stage.ID,
-                        team_id: dbTeam.ID,
+                        stage_id: stage.id,
+                        team_id: dbTeam.id,
                         group_id: null,
                     });
 
@@ -233,10 +233,10 @@ export const faceitImportService = {
             for (const groupNum of groupNumbers) {
                 try {
                     const group = await tournamentRepository.upsertGroupByName(
-                        stage.ID,
+                        stage.id,
                         `Group ${groupNum}`
                     );
-                    groupIdMap.set(groupNum, group.ID);
+                    groupIdMap.set(groupNum, group.id);
                     result.counts.groups++;
                 } catch (error) {
                     logger.error(`Error creating group ${groupNum}:`, error);
@@ -258,7 +258,7 @@ export const faceitImportService = {
                 try {
                     await faceitImportService.importMatch(
                         match,
-                        stage.ID,
+                        stage.id,
                         groupIdMap,
                         matches,
                         stageFormat,
@@ -304,9 +304,9 @@ export const faceitImportService = {
         // Get current team records from the map (for Swiss format round labeling)
         let teamRecords:
             | {
-                  faction1?: { wins: number; losses: number };
-                  faction2?: { wins: number; losses: number };
-              }
+                faction1?: { wins: number; losses: number };
+                faction2?: { wins: number; losses: number };
+            }
             | undefined;
 
         if (
@@ -356,13 +356,13 @@ export const faceitImportService = {
         }
 
         const teamMap = {
-            faction1: team1.ID,
-            faction2: team2.ID,
+            faction1: team1.id,
+            faction2: team2.id,
         };
 
         const participants = transformFaceitMatchParticipants(
             faceitMatch,
-            dbMatch.ID,
+            dbMatch.id,
             teamMap
         );
 
@@ -375,16 +375,16 @@ export const faceitImportService = {
             const dbParticipant = await matchRepository.upsertMatchParticipant(
                 participant
             );
-            if (participant.team_id === team1.ID) {
-                participantMap.faction1 = dbParticipant.ID;
+            if (participant.team_id === team1.id) {
+                participantMap.faction1 = dbParticipant.id;
             } else {
-                participantMap.faction2 = dbParticipant.ID;
+                participantMap.faction2 = dbParticipant.id;
             }
         }
 
         const mapsData = transformFaceitMaps(
             faceitMatch,
-            dbMatch.ID,
+            dbMatch.id,
             participantMap,
             matchData.round || undefined
         );
@@ -396,13 +396,13 @@ export const faceitImportService = {
         if (groupId) {
             await tournamentRepository.upsertStageTeam({
                 stage_id: stageId,
-                team_id: team1.ID,
+                team_id: team1.id,
                 group_id: groupId,
             });
 
             await tournamentRepository.upsertStageTeam({
                 stage_id: stageId,
-                team_id: team2.ID,
+                team_id: team2.id,
                 group_id: groupId,
             });
         }
@@ -441,7 +441,7 @@ export const faceitImportService = {
                 // Update stage_teams with the new records
                 await tournamentRepository.upsertStageTeam({
                     stage_id: stageId,
-                    team_id: team1.ID,
+                    team_id: team1.id,
                     group_id: groupId,
                     wins: faction1Records.wins,
                     losses: faction1Records.losses,
@@ -449,7 +449,7 @@ export const faceitImportService = {
 
                 await tournamentRepository.upsertStageTeam({
                     stage_id: stageId,
-                    team_id: team2.ID,
+                    team_id: team2.id,
                     group_id: groupId,
                     wins: faction2Records.wins,
                     losses: faction2Records.losses,

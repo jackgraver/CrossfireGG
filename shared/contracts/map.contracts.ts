@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const MapContract = z.object({
-    ID: z.number(),
+    id: z.number(),
     match_id: z.number(),
     map_name: z.string(),
     map_order: z.number().nullable().optional(),

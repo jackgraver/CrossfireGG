@@ -11,13 +11,13 @@ import { users, matches } from "@repo/schemas";
 export const matchCasters = pgTable(
     "match_casters",
     {
-        ID: serial("ID").primaryKey(),
+        id: serial("id").primaryKey(),
         match_id: integer("match_id")
             .notNull()
-            .references(() => matches.ID, { onDelete: "cascade" }),
+            .references(() => matches.id, { onDelete: "cascade" }),
         caster_id: integer("caster_id")
             .notNull()
-            .references((): any => users.ID, {
+            .references((): any => users.id, {
                 onDelete: "cascade",
             }),
         assigned_at: timestamp("assigned_at").defaultNow(),
@@ -44,10 +44,10 @@ export const matchCasters = pgTable(
 export const matchCastersRelations = relations(matchCasters, ({ one }) => ({
     match: one(matches, {
         fields: [matchCasters.match_id],
-        references: [matches.ID],
+        references: [matches.id],
     }),
     caster: one(users, {
         fields: [matchCasters.caster_id],
-        references: [users.ID],
+        references: [users.id],
     }),
 }));

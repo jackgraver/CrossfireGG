@@ -37,7 +37,7 @@ function BracketPage() {
             <div className="p-4">
                 <TopLevelBracket
                     stageFormat={data.stageFormat}
-                    stageId={data?.ID}
+                    stageId={data?.id}
                     matches={data.groups.flatMap((group) => group.matches)}
                 />
             </div>

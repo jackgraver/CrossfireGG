@@ -79,7 +79,7 @@ export async function transformFaceitTournament(
 ) {
     const formatId = await tournamentRepository
         .findFormatByName(faceitTournament.type)
-        .then((format) => format?.ID || null);
+        .then((format) => format?.id || null);
 
     return {
         tournament_id: tournamentId,
@@ -215,8 +215,8 @@ export function transformFaceitMaps(
             result.winner === "faction1"
                 ? participantMap.faction1
                 : result.winner === "faction2"
-                ? participantMap.faction2
-                : null;
+                    ? participantMap.faction2
+                    : null;
 
         maps.push({
             match_id: matchId,

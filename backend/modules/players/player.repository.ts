@@ -7,7 +7,7 @@ export const playerRepository = {
         const result = await db
             .select()
             .from(players)
-            .where(and(eq(players.ID, playerId), isNull(players.deleted_at)))
+            .where(and(eq(players.id, playerId), isNull(players.deleted_at)))
             .limit(1);
         return result[0];
     },
@@ -54,7 +54,7 @@ export const playerRepository = {
                             : existing[0].team_id,
                     updated_at: new Date(),
                 })
-                .where(eq(players.ID, existing[0].ID))
+                .where(eq(players.id, existing[0].id))
                 .returning();
             return result[0];
         } else {
@@ -78,7 +78,7 @@ export const playerRepository = {
                 team_id: teamId,
                 updated_at: new Date(),
             })
-            .where(and(eq(players.ID, playerId), isNull(players.deleted_at)))
+            .where(and(eq(players.id, playerId), isNull(players.deleted_at)))
             .returning();
         return result[0];
     },

@@ -23,7 +23,7 @@ export const teamRepository = {
         const result = await db
             .select()
             .from(teams)
-            .where(and(eq(teams.ID, teamId), isNull(teams.deleted_at)))
+            .where(and(eq(teams.id, teamId), isNull(teams.deleted_at)))
             .limit(1);
         return result[0];
     },
@@ -66,7 +66,7 @@ export const teamRepository = {
             .select()
             .from(matches)
             .where(
-                and(inArray(matches.ID, matchIds), isNull(matches.deleted_at))
+                and(inArray(matches.id, matchIds), isNull(matches.deleted_at))
             );
     },
 
@@ -90,7 +90,7 @@ export const teamRepository = {
             .from(matches)
             .where(
                 and(
-                    inArray(matches.ID, matchIds),
+                    inArray(matches.id, matchIds),
                     eq(matches.stage_id, stageId),
                     isNull(matches.deleted_at)
                 )
@@ -105,8 +105,8 @@ export const teamRepository = {
                 tournament: tournaments,
             })
             .from(stageTeams)
-            .innerJoin(stages, eq(stageTeams.stage_id, stages.ID))
-            .innerJoin(tournaments, eq(stages.tournament_id, tournaments.ID))
+            .innerJoin(stages, eq(stageTeams.stage_id, stages.id))
+            .innerJoin(tournaments, eq(stages.tournament_id, tournaments.id))
             .where(
                 and(
                     eq(stageTeams.team_id, teamId),
@@ -124,7 +124,7 @@ export const teamRepository = {
                 team: teams,
             })
             .from(matchParticipants)
-            .innerJoin(teams, eq(matchParticipants.team_id, teams.ID))
+            .innerJoin(teams, eq(matchParticipants.team_id, teams.id))
             .where(
                 and(
                     eq(matchParticipants.match_id, matchId),
@@ -172,7 +172,7 @@ export const teamRepository = {
                 team_id: teamId,
                 updated_at: new Date(),
             })
-            .where(and(eq(players.ID, playerId), isNull(players.deleted_at)))
+            .where(and(eq(players.id, playerId), isNull(players.deleted_at)))
             .returning();
         return result[0];
     },
@@ -184,7 +184,7 @@ export const teamRepository = {
                 team_id: null,
                 updated_at: new Date(),
             })
-            .where(and(eq(players.ID, playerId), isNull(players.deleted_at)))
+            .where(and(eq(players.id, playerId), isNull(players.deleted_at)))
             .returning();
         return result[0];
     },
@@ -224,7 +224,7 @@ export const teamRepository = {
                     team_captain_id: teamData.team_captain_id,
                     updated_at: new Date(),
                 })
-                .where(eq(teams.ID, existing[0].ID))
+                .where(eq(teams.id, existing[0].id))
                 .returning();
             return result[0];
         } else {

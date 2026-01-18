@@ -32,10 +32,10 @@ export const matchService = {
 
         const winnerId =
             team1Participant.winner === true
-                ? team1Data.ID.toString()
+                ? team1Data.id.toString()
                 : team2Participant.winner === true
-                ? team2Data.ID.toString()
-                : null;
+                    ? team2Data.id.toString()
+                    : null;
 
         const group = match.group_id
             ? await matchRepository.findGroupById(match.group_id)
@@ -44,31 +44,31 @@ export const matchService = {
             ? await matchRepository.findStageById(group.stage_id)
             : null;
 
-        const sub_t_id = stage ? stage.ID.toString() : null;
+        const sub_t_id = stage ? stage.id.toString() : null;
 
         const players1 = await matchRepository.findPlayersByTeamId(
-            team1Data.ID
+            team1Data.id
         );
         const players2 = await matchRepository.findPlayersByTeamId(
-            team2Data.ID
+            team2Data.id
         );
 
         const matchMaps = await matchRepository.findMapsByMatchId(matchId);
 
         const team1 = {
-            team_id: team1Data.ID.toString(),
+            team_id: team1Data.id.toString(),
             team_name: team1Data.name,
             team_logo: team1Data.team_logo || null,
         };
 
         const team2 = {
-            team_id: team2Data.ID.toString(),
+            team_id: team2Data.id.toString(),
             team_name: team2Data.name,
             team_logo: team2Data.team_logo || null,
         };
 
         const formattedMatch = {
-            match_id: match.ID.toString(),
+            match_id: match.id.toString(),
             status: match.status || "SCHEDULED",
             scheduled_at: match.scheduled_at
                 ? Math.floor(match.scheduled_at.getTime() / 1000)
@@ -86,21 +86,21 @@ export const matchService = {
         };
 
         const formattedPlayers1 = players1.map((player) => ({
-            player_id: player.ID.toString(),
-            player_id_i: player.ID.toString(),
+            player_id: player.id.toString(),
+            player_id_i: player.id.toString(),
             player_logo: player.player_logo || "",
             player_name: player.player_name,
             sub_t_id: sub_t_id || "",
-            team_id: team1Data.ID.toString(),
+            team_id: team1Data.id.toString(),
         }));
 
         const formattedPlayers2 = players2.map((player) => ({
-            player_id: player.ID.toString(),
-            player_id_i: player.ID.toString(),
+            player_id: player.id.toString(),
+            player_id_i: player.id.toString(),
             player_logo: player.player_logo || "",
             player_name: player.player_name,
             sub_t_id: sub_t_id || "",
-            team_id: team2Data.ID.toString(),
+            team_id: team2Data.id.toString(),
         }));
 
         const formattedMaps = matchMaps.map((map) => {
@@ -108,8 +108,8 @@ export const matchService = {
                 ? parseInt(map.round.toString(), 10) || 0
                 : 0;
             return {
-                map_id: map.ID.toString(),
-                match_id: match.ID.toString(),
+                map_id: map.id.toString(),
+                match_id: match.id.toString(),
                 map_name: map.map_name,
                 round: roundNumber,
                 winner_id: map.winner_id?.toString() || "",

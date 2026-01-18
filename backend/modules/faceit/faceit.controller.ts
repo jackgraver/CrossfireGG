@@ -147,33 +147,33 @@ export const faceitController = {
 
             const existingTeamIds = new Set(
                 existingTeams.map(
-                    (t) => t.faceit_id || t.faceit_id || t.ID?.toString()
+                    (t) => t.faceit_id || t.faceit_id || t.id?.toString()
                 )
             );
             const inputTeams = Array.isArray(response.items)
                 ? response.items
                 : response.items
-                ? [response.items]
-                : [];
+                    ? [response.items]
+                    : [];
 
             res.json({
                 success: true,
                 message: "Faceit player teams verified successfully",
                 teams: Array.isArray(inputTeams)
                     ? inputTeams
-                          .map((team) => ({
-                              team_id: team.team_id,
-                              name: team.name,
-                              avatar: team.avatar,
-                              leader: team.leader,
-                              exists:
-                                  existingTeamIds.has(team.team_id) ||
-                                  team.name === "regain",
-                              isRegistered: false,
-                          }))
-                          .sort((a, b) =>
-                              a.exists === b.exists ? 0 : a.exists ? 1 : -1
-                          )
+                        .map((team) => ({
+                            team_id: team.team_id,
+                            name: team.name,
+                            avatar: team.avatar,
+                            leader: team.leader,
+                            exists:
+                                existingTeamIds.has(team.team_id) ||
+                                team.name === "regain",
+                            isRegistered: false,
+                        }))
+                        .sort((a, b) =>
+                            a.exists === b.exists ? 0 : a.exists ? 1 : -1
+                        )
                     : [],
             });
         } catch (error: any) {

@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const PlayerContract = z.object({
-    ID: z.number(),
+    id: z.number(),
     player_name: z.string(),
     faceit_id: z.string().nullable().optional(),
     team_id: z.number().nullable().optional(),
@@ -13,7 +13,7 @@ export const PlayerContract = z.object({
 export type PlayerDTO = z.infer<typeof PlayerContract>;
 
 export const PlayerStatsContract = z.object({
-    ID: z.number(),
+    id: z.number(),
     player_id: z.number(),
     match_id: z.number(),
     map_id: z.number(),

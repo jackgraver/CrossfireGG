@@ -7,16 +7,16 @@ import { stages } from "./stage.schema";
 export const stageTeams = pgTable(
     "stage_teams",
     {
-        ID: serial("ID").primaryKey(),
+        id: serial("id").primaryKey(),
         stage_id: integer("stage_id")
             .notNull()
-            .references(() => stages.ID, { onDelete: "cascade" }),
+            .references(() => stages.id, { onDelete: "cascade" }),
         team_id: integer("team_id")
             .notNull()
-            .references((): any => teams.ID, {
+            .references((): any => teams.id, {
                 onDelete: "cascade",
             }),
-        group_id: integer("group_id").references(() => groups.ID, {
+        group_id: integer("group_id").references(() => groups.id, {
             onDelete: "set null",
         }),
         seed: integer("seed").default(0),
@@ -51,14 +51,14 @@ export const stageTeams = pgTable(
 export const stageTeamsRelations = relations(stageTeams, ({ one }) => ({
     stage: one(stages, {
         fields: [stageTeams.stage_id],
-        references: [stages.ID],
+        references: [stages.id],
     }),
     team: one(teams, {
         fields: [stageTeams.team_id],
-        references: [teams.ID],
+        references: [teams.id],
     }),
     group: one(groups, {
         fields: [stageTeams.group_id],
-        references: [groups.ID],
+        references: [groups.id],
     }),
 }));

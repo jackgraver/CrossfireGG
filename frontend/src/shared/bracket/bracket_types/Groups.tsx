@@ -109,7 +109,7 @@ function GroupCard({
             <div className="flex flex-col">
                 {group.teams.map((team, index) => (
                     <TeamStandingsRow
-                        key={team.ID}
+                        key={team.id}
                         team={undefined as unknown as StageTeamWithTeam}
                         rank={index + 1}
                     />
@@ -144,9 +144,9 @@ export default function Groups({
         <div className="flex flex-wrap items-start gap-4 overflow-x-auto p-4">
             {stageTeamsData.map((group) => (
                 <GroupCard
-                    key={group.ID}
+                    key={group.id}
                     group={null as unknown as GroupWithTeams}
-                    matches={matchesByGroup[String(group.ID)] || []}
+                    matches={matchesByGroup[String(group.id)] || []}
                 />
             ))}
             <h1>wip</h1>

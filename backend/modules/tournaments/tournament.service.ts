@@ -8,16 +8,16 @@ export const tournamentService = {
             allTournaments.map(async (tournament) => {
                 const tournamentStages =
                     await tournamentRepository.findStagesByTournamentId(
-                        tournament.ID
+                        tournament.id
                     );
 
-                const stageIds = tournamentStages.map((s: any) => s.ID);
+                const stageIds = tournamentStages.map((s: any) => s.id);
                 const teamsCountsMap =
                     await tournamentRepository.countTeamsByStageIds(stageIds);
 
                 const stagesWithCounts = tournamentStages.map((stage: any) => ({
                     ...stage,
-                    teams_count: teamsCountsMap.get(stage.ID) || 0,
+                    teams_count: teamsCountsMap.get(stage.id) || 0,
                 }));
 
                 return {
@@ -46,7 +46,7 @@ export const tournamentService = {
             stages: tournament?.stages.map((s) => ({
                 ...s,
                 teams_count:
-                    stagesWithCounts.find((sc) => sc.stageId === s.ID)
+                    stagesWithCounts.find((sc) => sc.stageId === s.id)
                         ?.teamsCount || 0,
             })),
         };
@@ -71,14 +71,14 @@ export const tournamentService = {
         // for (const { group, stageTeam, team } of stageStandings) {
         //     if (!group) continue;
 
-        //     let g = groups.get(group.ID);
+        //     let g = groups.get(group.id);
 
         //     if (!g) {
         //         g = {
         //             ...group,
         //             teams: [],
         //         } as GroupWithStageTeams;
-        //         groups.set(group.ID, g);
+        //         groups.set(group.id, g);
         //     }
 
         //     g.teams.push({
@@ -113,7 +113,7 @@ export const tournamentService = {
         // > = {};
 
         // for (const row of stageTeamsData) {
-        //     const groupId = row.group?.ID || 0;
+        //     const groupId = row.group?.id || 0;
         //     const groupName = row.group?.name || "Ungrouped";
         //     const key = String(groupId);
 
@@ -126,7 +126,7 @@ export const tournamentService = {
         //     }
 
         //     groupedTeams[key].teams.push({
-        //         team_id: row.team.ID,
+        //         team_id: row.team.id,
         //         team_name: row.team.name,
         //         team_logo: row.team.team_logo,
         //         faceit_id: row.team.faceit_id,

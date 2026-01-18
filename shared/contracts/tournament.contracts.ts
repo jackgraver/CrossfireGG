@@ -2,7 +2,7 @@ import { z } from "zod";
 import { MinimalStageContract, StageContract } from "./stage.contracts";
 
 export const TournamentContract = z.object({
-    ID: z.number(),
+    id: z.number(),
     name: z.string(),
     status: z.string().default("draft"),
     description: z.string().nullable().optional(),

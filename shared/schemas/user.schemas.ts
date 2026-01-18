@@ -13,7 +13,7 @@ import { players, teams } from "@repo/schemas";
 import { matchCasters } from "./match_caster.schema";
 
 export const users = pgTable("users", {
-    ID: serial("ID").primaryKey(),
+    id: serial("id").primaryKey(),
     name: text("name").notNull(),
     email: text("email").notNull().unique(),
     password: text("password").notNull(),
@@ -30,20 +30,20 @@ export const users = pgTable("users", {
 });
 
 export const roles = pgTable("roles", {
-    ID: serial("ID").primaryKey(),
+    id: serial("id").primaryKey(),
     name: text("name").notNull().unique(),
 });
 
 export const userRoles = pgTable(
     "user_roles",
     {
-        ID: serial("ID").primaryKey(),
+        id: serial("id").primaryKey(),
         user_id: integer("user_id")
             .notNull()
-            .references(() => users.ID, { onDelete: "cascade" }),
+            .references(() => users.id, { onDelete: "cascade" }),
         role_id: integer("role_id")
             .notNull()
-            .references(() => roles.ID, { onDelete: "cascade" }),
+            .references(() => roles.id, { onDelete: "cascade" }),
         created_at: timestamp("created_at").notNull().defaultNow(),
         updated_at: timestamp("updated_at").notNull().defaultNow(),
         deleted_at: timestamp("deleted_at"),
@@ -69,11 +69,11 @@ export const userRoles = pgTable(
  */
 export const usersRelations = relations(users, ({ one, many }) => ({
     captainOfTeam: one(teams, {
-        fields: [users.ID],
+        fields: [users.id],
         references: [teams.team_captain_id],
     }),
     player: one(players, {
-        fields: [users.ID],
+        fields: [users.id],
         references: [players.user_id],
     }),
     userRoles: many(userRoles),
@@ -97,10 +97,10 @@ export const rolesRelations = relations(roles, ({ many }) => ({
 export const userRolesRelations = relations(userRoles, ({ one }) => ({
     user: one(users, {
         fields: [userRoles.user_id],
-        references: [users.ID],
+        references: [users.id],
     }),
     role: one(roles, {
         fields: [userRoles.role_id],
-        references: [roles.ID],
+        references: [roles.id],
     }),
 }));

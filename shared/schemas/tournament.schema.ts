@@ -3,7 +3,7 @@ import { relations } from "drizzle-orm";
 import { stages } from "./stage.schema";
 
 export const tournaments = pgTable("tournaments", {
-    ID: serial("ID").primaryKey(),
+    id: serial("id").primaryKey(),
     name: text("name").notNull(),
     status: text("status").default("draft"),
     description: text("description"),
@@ -25,6 +25,6 @@ export const tournaments = pgTable("tournaments", {
  * - Have one tournament type (optional)
  * - Have multiple stages (e.g., Group Stage, Playoffs, Finals)
  */
-export const tournamentsRelations = relations(tournaments, ({ one, many }) => ({
+export const tournamentsRelations = relations(tournaments, ({ many }) => ({
     stages: many(stages),
 }));

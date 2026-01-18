@@ -169,7 +169,7 @@ export const tournamentController = {
                 });
             }
             const entryStage = await tournamentService.getEntryStage(
-                currentTournament.ID
+                currentTournament.id
             );
             if (!entryStage) {
                 return res.status(404).json({
@@ -239,7 +239,7 @@ export const tournamentController = {
                 name: teamInfoAndPlayers.name,
                 team_logo: teamInfoAndPlayers.avatar,
                 faceit_id: teamInfoAndPlayers.team_id,
-                team_captain_id: leaderPlayer.ID,
+                team_captain_id: leaderPlayer.id,
             });
 
             // Upsert all players with the team_id
@@ -251,15 +251,15 @@ export const tournamentController = {
                         faceit_id: memberData.user_id,
                         player_logo: memberData.avatar,
                         country: memberData.country,
-                        team_id: team.ID,
+                        team_id: team.id,
                     });
                 })
             );
 
             // Check if team is already registered for this stage
             const existingStageTeam = await teamRepository.findStageTeam(
-                team.ID,
-                entryStage.ID
+                team.id,
+                entryStage.id
             );
 
             if (existingStageTeam) {
@@ -270,8 +270,8 @@ export const tournamentController = {
 
             // Create stage_teams entry
             const stageTeam = await tournamentRepository.upsertStageTeam({
-                stage_id: entryStage.ID,
-                team_id: team.ID,
+                stage_id: entryStage.id,
+                team_id: team.id,
                 group_id: null,
             });
 
@@ -303,8 +303,8 @@ export const tournamentController = {
                     if (!player) return Promise.resolve();
 
                     return tournamentRepository.upsertStageRoster({
-                        stage_id: entryStage.ID,
-                        player_id: player.ID,
+                        stage_id: entryStage.id,
+                        player_id: player.id,
                         role: entry.role,
                     });
                 })
@@ -314,12 +314,12 @@ export const tournamentController = {
                 success: true,
                 message: "Tournament registered successfully",
                 registration: {
-                    tournamentId: currentTournament.ID,
-                    stageId: entryStage.ID,
-                    teamId: team.ID,
+                    tournamentId: currentTournament.id,
+                    stageId: entryStage.id,
+                    teamId: team.id,
                     teamFaceitId: teamId,
                     players: createdPlayers.length,
-                    stageTeamId: stageTeam.ID,
+                    stageTeamId: stageTeam.id,
                 },
             });
         } catch (error: any) {

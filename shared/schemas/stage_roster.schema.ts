@@ -14,13 +14,13 @@ import { stages } from "./stage.schema";
 export const stageRosters = pgTable(
     "stage_rosters",
     {
-        ID: serial("ID").primaryKey(),
+        id: serial("id").primaryKey(),
         stage_id: integer("stage_id")
             .notNull()
-            .references(() => stages.ID, { onDelete: "cascade" }),
+            .references(() => stages.id, { onDelete: "cascade" }),
         player_id: integer("player_id")
             .notNull()
-            .references((): any => players.ID, {
+            .references((): any => players.id, {
                 onDelete: "cascade",
             }),
         role: text("role", { enum: ["starter", "sub", "coach"] }).notNull(),
@@ -49,10 +49,10 @@ export const stageRosters = pgTable(
 export const stageRostersRelations = relations(stageRosters, ({ one }) => ({
     stage: one(stages, {
         fields: [stageRosters.stage_id],
-        references: [stages.ID],
+        references: [stages.id],
     }),
     player: one(players, {
         fields: [stageRosters.player_id],
-        references: [players.ID],
+        references: [players.id],
     }),
 }));

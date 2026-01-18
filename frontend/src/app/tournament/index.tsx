@@ -71,13 +71,13 @@ function RouteComponent() {
                             {tournaments.map(
                                 (tournament: TournamentWithStagesDTO) => (
                                     <section
-                                        key={tournament.ID}
+                                        key={tournament.id}
                                         className="group bg-firstBg rounded-2xl p-6"
                                     >
                                         <div
                                             onClick={() =>
                                                 navigate({
-                                                    to: `/tournament/${tournament.ID}/stage/${tournament.stages[0]?.ID}`,
+                                                    to: `/tournament/${tournament.id}/stage/${tournament.stages[0]?.id}`,
                                                 })
                                             }
                                             className="flex cursor-pointer flex-col justify-between gap-6 pb-8 transition-all md:flex-row md:items-end"
@@ -85,9 +85,9 @@ function RouteComponent() {
                                             <div className="space-y-4">
                                                 <div className="flex items-center gap-4">
                                                     <span
-                                                        className={`rounded-full px-3 py-1 text-[10px] font-black tracking-widest text-white uppercase ${tournament.ID === 1 ? "bg-green-500" : "bg-blue-500"}`}
+                                                        className={`rounded-full px-3 py-1 text-[10px] font-black tracking-widest text-white uppercase ${tournament.id === 1 ? "bg-green-500" : "bg-blue-500"}`}
                                                     >
-                                                        {tournament.ID === 1
+                                                        {tournament.id === 1
                                                             ? "Live"
                                                             : "Upcoming"}
                                                     </span>
@@ -116,14 +116,14 @@ function RouteComponent() {
                                                     )}
                                                     {tournament.prize_pool !=
                                                         null && (
-                                                        <span className="text-textSecondary flex items-center text-xs font-medium">
-                                                            <DollarSign
-                                                                size={14}
-                                                                className="opacity-50"
-                                                            />
-                                                            {tournament.prize_pool.toLocaleString()}
-                                                        </span>
-                                                    )}
+                                                            <span className="text-textSecondary flex items-center text-xs font-medium">
+                                                                <DollarSign
+                                                                    size={14}
+                                                                    className="opacity-50"
+                                                                />
+                                                                {tournament.prize_pool.toLocaleString()}
+                                                            </span>
+                                                        )}
                                                 </div>
                                                 <h2 className="text-textPrimary text-4xl font-black tracking-tight transition-colors md:text-5xl">
                                                     {tournament.name}
@@ -141,16 +141,16 @@ function RouteComponent() {
                                                     {tournament.stages.map(
                                                         (stage: any) => (
                                                             <div
-                                                                key={stage.ID}
+                                                                key={stage.id}
                                                                 className="bg-secondBg relative flex flex-col justify-between gap-6 rounded-2xl p-6"
                                                             >
                                                                 <div className="space-y-4">
                                                                     <div className="mb-2 flex items-center gap-4">
                                                                         <span
-                                                                            className={`rounded-full px-3 py-1 text-[10px] font-black tracking-widest text-white uppercase ${stage.ID === 4 ? "bg-green-500" : "bg-gray-500"}`}
+                                                                            className={`rounded-full px-3 py-1 text-[10px] font-black tracking-widest text-white uppercase ${stage.id === 4 ? "bg-green-500" : "bg-gray-500"}`}
                                                                         >
-                                                                            {stage.ID ===
-                                                                            4
+                                                                            {stage.id ===
+                                                                                4
                                                                                 ? "Current"
                                                                                 : "Ended"}
                                                                         </span>
@@ -188,21 +188,21 @@ function RouteComponent() {
 
                                                                         {stage.teams_count !==
                                                                             undefined && (
-                                                                            <div className="text-textSecondary flex items-center gap-1.5 text-[10px] font-bold tracking-widest uppercase">
-                                                                                <Users
-                                                                                    size={
-                                                                                        12
+                                                                                <div className="text-textSecondary flex items-center gap-1.5 text-[10px] font-bold tracking-widest uppercase">
+                                                                                    <Users
+                                                                                        size={
+                                                                                            12
+                                                                                        }
+                                                                                    />
+                                                                                    {
+                                                                                        stage.teams_count
+                                                                                    }{" "}
+                                                                                    /{" "}
+                                                                                    {
+                                                                                        stage.max_teams
                                                                                     }
-                                                                                />
-                                                                                {
-                                                                                    stage.teams_count
-                                                                                }{" "}
-                                                                                /{" "}
-                                                                                {
-                                                                                    stage.max_teams
-                                                                                }
-                                                                            </div>
-                                                                        )}
+                                                                                </div>
+                                                                            )}
                                                                     </div>
                                                                 </div>
                                                                 <div className="flex items-center gap-2">

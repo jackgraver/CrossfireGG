@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const GroupContract = z.object({
-    ID: z.number(),
+    id: z.number(),
     name: z.string(),
     stage_id: z.number(),
 });

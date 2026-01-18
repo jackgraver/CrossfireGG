@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const UserContract = z.object({
-    ID: z.number(),
+    id: z.number(),
     name: z.string(),
     email: z.string(),
     password: z.string(),
@@ -17,14 +17,14 @@ export const UserContract = z.object({
 export type UserDTO = z.infer<typeof UserContract>;
 
 export const RoleContract = z.object({
-    ID: z.number(),
+    id: z.number(),
     name: z.string(),
 });
 
 export type RoleDTO = z.infer<typeof RoleContract>;
 
 export const UserRoleContract = z.object({
-    ID: z.number(),
+    id: z.number(),
     user_id: z.number(),
     role_id: z.number(),
 });

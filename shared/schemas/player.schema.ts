@@ -7,13 +7,13 @@ import { maps } from "./map.schema";
 export const players = pgTable(
     "players",
     {
-        ID: serial("ID").primaryKey(),
+        id: serial("id").primaryKey(),
         player_name: text("player_name").notNull(),
         faceit_id: text("faceit_id"),
-        team_id: integer("team_id").references((): any => teams.ID, {
+        team_id: integer("team_id").references((): any => teams.id, {
             onDelete: "set null",
         }),
-        user_id: integer("user_id").references((): any => users.ID, {
+        user_id: integer("user_id").references((): any => users.id, {
             onDelete: "set null",
         }),
         player_logo: text("player_logo"),
@@ -35,18 +35,18 @@ export const players = pgTable(
 export const playerStats = pgTable(
     "player_stats",
     {
-        ID: serial("ID").primaryKey(),
+        id: serial("id").primaryKey(),
         player_id: integer("player_id")
             .notNull()
-            .references(() => players.ID, { onDelete: "cascade" }),
+            .references(() => players.id, { onDelete: "cascade" }),
         match_id: integer("match_id")
             .notNull()
-            .references((): any => matches.ID, {
+            .references((): any => matches.id, {
                 onDelete: "cascade",
             }),
         map_id: integer("map_id")
             .notNull()
-            .references((): any => maps.ID, {
+            .references((): any => maps.id, {
                 onDelete: "cascade",
             }),
         kills: integer("kills").default(0),
@@ -81,11 +81,11 @@ export const playerStats = pgTable(
 export const playersRelations = relations(players, ({ one, many }) => ({
     team: one(teams, {
         fields: [players.team_id],
-        references: [teams.ID],
+        references: [teams.id],
     }),
     user: one(users, {
         fields: [players.user_id],
-        references: [users.ID],
+        references: [users.id],
     }),
     stats: many(playerStats),
 }));
@@ -101,14 +101,14 @@ export const playersRelations = relations(players, ({ one, many }) => ({
 export const playerStatsRelations = relations(playerStats, ({ one }) => ({
     player: one(players, {
         fields: [playerStats.player_id],
-        references: [players.ID],
+        references: [players.id],
     }),
     match: one(matches, {
         fields: [playerStats.match_id],
-        references: [matches.ID],
+        references: [matches.id],
     }),
     map: one(maps, {
         fields: [playerStats.map_id],
-        references: [maps.ID],
+        references: [maps.id],
     }),
 }));

@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const MatchParticipantContract = z.object({
-    ID: z.number(),
+    id: z.number(),
     match_id: z.number(),
     team_id: z.number(),
     position: z.number(),

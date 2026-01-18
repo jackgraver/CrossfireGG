@@ -8,16 +8,16 @@ import { stageRosters } from "./stage_roster.schema";
 export const stages = pgTable(
     "stages",
     {
-        ID: serial("ID").primaryKey(),
+        id: serial("id").primaryKey(),
         tournament_id: integer("tournament_id")
             .notNull()
-            .references(() => tournaments.ID, { onDelete: "cascade" }),
+            .references(() => tournaments.id, { onDelete: "cascade" }),
         name: text("name").notNull(),
         faceit_id: text("faceit_id").notNull().unique(),
         max_teams: integer("max_teams").notNull().default(0),
         format_id: integer("format_id")
             .notNull()
-            .references(() => stageFormats.ID, {
+            .references(() => stageFormats.id, {
                 onDelete: "restrict",
             }),
         is_current: boolean("is_current")
@@ -51,7 +51,7 @@ export const stages = pgTable(
 export const stagesRelations = relations(stages, ({ one, many }) => ({
     tournament: one(tournaments, {
         fields: [stages.tournament_id],
-        references: [tournaments.ID],
+        references: [tournaments.id],
     }),
     groups: many(groups),
     stageTeams: many(stageTeams),
@@ -59,12 +59,12 @@ export const stagesRelations = relations(stages, ({ one, many }) => ({
     matches: many(matches),
     stageFormat: one(stageFormats, {
         fields: [stages.format_id],
-        references: [stageFormats.ID],
+        references: [stageFormats.id],
     }),
 }));
 
 export const stageFormats = pgTable("stage_formats", {
-    ID: serial("ID").primaryKey(),
+    id: serial("id").primaryKey(),
     name: text("name").notNull().unique(),
 });
 

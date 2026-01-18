@@ -126,10 +126,10 @@ function RouteComponent() {
                                 value={
                                     tournament.start_date
                                         ? formatDateOnly(
-                                              toUnixTimestamp(
-                                                  tournament.start_date,
-                                              )!,
-                                          )
+                                            toUnixTimestamp(
+                                                tournament.start_date,
+                                            )!,
+                                        )
                                         : "TBD"
                                 }
                             />
@@ -139,10 +139,10 @@ function RouteComponent() {
                                 value={
                                     tournament.start_date
                                         ? formatDateOnly(
-                                              toUnixTimestamp(
-                                                  tournament.start_date,
-                                              )!,
-                                          )
+                                            toUnixTimestamp(
+                                                tournament.start_date,
+                                            )!,
+                                        )
                                         : "TBD"
                                 }
                             />
@@ -152,10 +152,10 @@ function RouteComponent() {
                                 value={
                                     tournament.end_date
                                         ? formatDateOnly(
-                                              toUnixTimestamp(
-                                                  tournament.start_date,
-                                              )!,
-                                          )
+                                            toUnixTimestamp(
+                                                tournament.start_date,
+                                            )!,
+                                        )
                                         : "TBD"
                                 }
                             />
@@ -174,10 +174,10 @@ function RouteComponent() {
                                 value={
                                     tournament.prize_pool
                                         ? formatDateOnly(
-                                              toUnixTimestamp(
-                                                  tournament.start_date,
-                                              )!,
-                                          )
+                                            toUnixTimestamp(
+                                                tournament.start_date,
+                                            )!,
+                                        )
                                         : "TBD"
                                 }
                             />
@@ -208,17 +208,16 @@ function RouteComponent() {
                             <div className="flex gap-10">
                                 {tournament.stages.map((stage) => (
                                     <Link
-                                        key={stage.ID}
+                                        key={stage.id}
                                         to="."
                                         params={(prev: any) => ({
                                             ...prev,
-                                            stageId: stage.ID,
+                                            stageId: stage.id,
                                         })}
-                                        className={`relative flex items-center gap-2.5 pb-4 text-sm font-black transition-all ${
-                                            stageId === stage.ID.toString()
+                                        className={`relative flex items-center gap-2.5 pb-4 text-sm font-black transition-all ${stageId === stage.id.toString()
                                                 ? "text-textPrimary"
                                                 : "text-textSecondary hover:text-textPrimary"
-                                        }`}
+                                            }`}
                                     >
                                         {stage.name}
                                     </Link>

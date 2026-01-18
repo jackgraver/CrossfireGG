@@ -5,13 +5,13 @@ import { matchParticipants } from "./match_participant.schema";
 import { stageTeams } from "./stage_team.schema";
 
 export const teams = pgTable("teams", {
-    ID: serial("ID").primaryKey(),
+    id: serial("id").primaryKey(),
     name: text("name").notNull(),
     team_logo: text("team_logo"),
     faceit_id: text("faceit_id"),
     team_captain_id: integer("team_captain_id")
         .notNull()
-        .references((): any => players.ID, {
+        .references((): any => players.id, {
             onDelete: "restrict",
         }),
     social_links: text("social_links"),
@@ -37,7 +37,7 @@ export const teams = pgTable("teams", {
 export const teamsRelations = relations(teams, ({ one, many }) => ({
     captain: one(players, {
         fields: [teams.team_captain_id],
-        references: [players.ID],
+        references: [players.id],
     }),
     players: many(players),
     matchParticipants: many(matchParticipants),

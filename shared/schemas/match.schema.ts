@@ -17,11 +17,11 @@ import { maps } from "./map.schema";
 export const matches = pgTable(
     "matches",
     {
-        ID: serial("ID").primaryKey(),
-        group_id: integer("group_id").references((): any => groups.ID, {
+        id: serial("id").primaryKey(),
+        group_id: integer("group_id").references((): any => groups.id, {
             onDelete: "cascade",
         }),
-        stage_id: integer("stage_id").references((): any => stages.ID, {
+        stage_id: integer("stage_id").references((): any => stages.id, {
             onDelete: "cascade",
         }),
         faceit_id: text("faceit_id"),
@@ -59,11 +59,11 @@ export const matches = pgTable(
 export const matchesRelations = relations(matches, ({ one, many }) => ({
     group: one(groups, {
         fields: [matches.group_id],
-        references: [groups.ID],
+        references: [groups.id],
     }),
     stage: one(stages, {
         fields: [matches.stage_id],
-        references: [stages.ID],
+        references: [stages.id],
     }),
     participants: many(matchParticipants),
     casters: many(matchCasters),

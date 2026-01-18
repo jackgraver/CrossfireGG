@@ -14,10 +14,10 @@ import { stageTeams } from "./stage_team.schema";
 export const groups = pgTable(
     "groups",
     {
-        ID: serial("ID").primaryKey(),
+        id: serial("id").primaryKey(),
         stage_id: integer("stage_id")
             .notNull()
-            .references(() => stages.ID, { onDelete: "cascade" }),
+            .references(() => stages.id, { onDelete: "cascade" }),
         name: text("name").notNull(),
         created_at: timestamp("created_at").notNull().defaultNow(),
         updated_at: timestamp("updated_at").notNull().defaultNow(),
@@ -36,7 +36,7 @@ export const groups = pgTable(
 export const groupsRelations = relations(groups, ({ one, many }) => ({
     stage: one(stages, {
         fields: [groups.stage_id],
-        references: [stages.ID],
+        references: [stages.id],
     }),
     matches: many(matches),
     stageTeams: many(stageTeams),

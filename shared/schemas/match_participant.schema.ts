@@ -15,13 +15,13 @@ import { maps } from "./map.schema";
 export const matchParticipants = pgTable(
     "match_participants",
     {
-        ID: serial("ID").primaryKey(),
+        id: serial("id").primaryKey(),
         match_id: integer("match_id")
             .notNull()
-            .references(() => matches.ID, { onDelete: "cascade" }),
+            .references(() => matches.id, { onDelete: "cascade" }),
         team_id: integer("team_id")
             .notNull()
-            .references((): any => teams.ID, {
+            .references((): any => teams.id, {
                 onDelete: "cascade",
             }),
         position: integer("position").notNull(),
@@ -57,11 +57,11 @@ export const matchParticipantsRelations = relations(
     ({ one, many }) => ({
         match: one(matches, {
             fields: [matchParticipants.match_id],
-            references: [matches.ID],
+            references: [matches.id],
         }),
         team: one(teams, {
             fields: [matchParticipants.team_id],
-            references: [teams.ID],
+            references: [teams.id],
         }),
         maps: many(maps),
     })

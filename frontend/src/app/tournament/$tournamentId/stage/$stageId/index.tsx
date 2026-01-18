@@ -30,7 +30,7 @@ function StagePage() {
                     </div>
                 ) : (
                     <TopLevelBracket
-                        stageFormat={{ ID: 1, name: "Groups" }}
+                        stageFormat={{ id: 1, name: "Groups" }}
                         stageId={1}
                         matches={matches}
                     />

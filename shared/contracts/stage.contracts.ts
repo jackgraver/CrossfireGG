@@ -1,14 +1,14 @@
 import { z } from "zod";
 
 export const StageFormatContract = z.object({
-    ID: z.number(),
+    id: z.number(),
     name: z.string(),
 });
 
 export type StageFormatDTO = z.infer<typeof StageFormatContract>;
 
 export const StageContract = z.object({
-    ID: z.number(),
+    id: z.number(),
     tournament_id: z.number(),
     name: z.string(),
     faceit_id: z.string(),
@@ -29,7 +29,7 @@ export const StageWithFormatContract = StageContract.extend({
 export type StageWithFormatDTO = z.infer<typeof StageWithFormatContract>;
 
 export const MinimalStageContract = z.object({
-    ID: z.number(),
+    id: z.number(),
     name: z.string(),
 });
 

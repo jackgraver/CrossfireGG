@@ -25,7 +25,7 @@ export const tournamentRepository = {
             .from(tournaments)
             .where(
                 and(
-                    eq(tournaments.ID, tournamentId),
+                    eq(tournaments.id, tournamentId),
                     isNull(tournaments.deleted_at)
                 )
             )
@@ -36,7 +36,7 @@ export const tournamentRepository = {
     findStageById: async (stageId: number) => {
         return await db.query.stages.findFirst({
             where: (s, { eq, and, isNull }) =>
-                and(eq(s.ID, stageId), isNull(s.deleted_at)),
+                and(eq(s.id, stageId), isNull(s.deleted_at)),
             with: {
                 stageFormat: true,
             },
@@ -46,7 +46,7 @@ export const tournamentRepository = {
     findTournamentById: async (tournamentId: number) => {
         return await db.query.tournaments.findFirst({
             where: (t, { eq, and, isNull }) =>
-                and(eq(t.ID, tournamentId), isNull(t.deleted_at)),
+                and(eq(t.id, tournamentId), isNull(t.deleted_at)),
             with: {
                 stages: true,
             },
@@ -56,18 +56,18 @@ export const tournamentRepository = {
     findStageMatchCountsByTournamentId: async (tournamentId: number) => {
         return await db
             .select({
-                stageId: stages.ID,
-                teamsCount: count(stageTeams.ID),
+                stageId: stages.id,
+                teamsCount: count(stageTeams.id),
             })
             .from(stages)
-            .leftJoin(stageTeams, eq(stages.ID, stageTeams.stage_id))
+            .leftJoin(stageTeams, eq(stages.id, stageTeams.stage_id))
             .where(
                 and(
                     eq(stages.tournament_id, tournamentId),
                     isNull(stages.deleted_at)
                 )
             )
-            .groupBy(stages.ID);
+            .groupBy(stages.id);
     },
 
     findStagesByTournamentId: async (tournamentId: number): Promise<any> => {
@@ -215,7 +215,7 @@ export const tournamentRepository = {
                         stageData.registration_deadline ?? new Date(),
                     updated_at: new Date(),
                 })
-                .where(eq(stages.ID, existing[0].ID))
+                .where(eq(stages.id, existing[0].id))
                 .returning();
             return result[0];
         } else {
@@ -307,7 +307,7 @@ export const tournamentRepository = {
                             : existing[0].losses,
                     updated_at: new Date(),
                 })
-                .where(eq(stageTeams.ID, existing[0].ID))
+                .where(eq(stageTeams.id, existing[0].id))
                 .returning();
             return result[0];
         } else {
@@ -337,7 +337,7 @@ export const tournamentRepository = {
     findStageStandings: async (stageId: number) => {
         return await db.query.stages.findFirst({
             where: (s, { eq, and, isNull }) =>
-                and(eq(s.ID, stageId), isNull(s.deleted_at)),
+                and(eq(s.id, stageId), isNull(s.deleted_at)),
             with: {
                 stageFormat: true,
                 groups: {
@@ -427,7 +427,7 @@ export const tournamentRepository = {
                     role: rosterData.role,
                     updated_at: new Date(),
                 })
-                .where(eq(stageRosters.ID, existing[0].ID))
+                .where(eq(stageRosters.id, existing[0].id))
                 .returning();
             return result[0];
         } else {
@@ -453,7 +453,7 @@ export const tournamentRepository = {
                 player: players,
             })
             .from(stageRosters)
-            .innerJoin(players, eq(stageRosters.player_id, players.ID))
+            .innerJoin(players, eq(stageRosters.player_id, players.id))
             .where(
                 and(
                     eq(stageRosters.stage_id, stageId),

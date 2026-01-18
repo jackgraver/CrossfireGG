@@ -68,7 +68,7 @@ function SelectTournament() {
                 className="text-text-primary bg-secondBg focus:border-thirdBg rounded-lg px-4 py-2 shadow-sm focus:outline-none"
             >
                 {tournaments.map((tournament: any) => (
-                    <option key={tournament.ID} value={tournament.ID}>
+                    <option key={tournament.id} value={tournament.id}>
                         {tournament.name}
                     </option>
                 ))}

@@ -53,7 +53,7 @@ function StandingsPage() {
                     <div className="flex flex-col gap-6">
                         {groups.map((group) => (
                             <GroupStandings
-                                key={group.ID}
+                                key={group.id}
                                 groupName={group.name}
                                 teams={group.teams}
                             />

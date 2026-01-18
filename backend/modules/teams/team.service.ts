@@ -22,7 +22,7 @@ export const teamService = {
         }
 
         const formattedTeam: FormattedTeam = {
-            team_id: team.ID.toString(),
+            team_id: team.id.toString(),
             name: team.name,
             team_logo: team.team_logo || null,
             faceit_id: team.faceit_id || null,
@@ -34,7 +34,7 @@ export const teamService = {
         const tournamentMap = new Map<number, FormattedTournament>();
 
         teamStages.forEach((item) => {
-            const tournamentId = item.tournament.ID;
+            const tournamentId = item.tournament.id;
 
             if (!tournamentMap.has(tournamentId)) {
                 tournamentMap.set(tournamentId, {
@@ -46,7 +46,7 @@ export const teamService = {
 
             const tournament = tournamentMap.get(tournamentId)!;
             tournament.stages.push({
-                stage_id: item.stage.ID.toString(),
+                stage_id: item.stage.id.toString(),
                 stage_name: item.stage.name,
                 seed: item.stageTeam.seed ?? undefined,
                 wins: item.stageTeam.wins ?? undefined,
@@ -86,7 +86,7 @@ export const teamService = {
         const formattedMatches: FormattedMatch[] = await Promise.all(
             teamMatches.map(async (match) => {
                 const participants = await teamRepository.findMatchParticipants(
-                    match.ID
+                    match.id
                 );
 
                 const team1Entry = participants.find(
@@ -101,26 +101,26 @@ export const teamService = {
 
                 const team1: FormattedTeam | null = team1Data
                     ? {
-                          team_id: team1Data.ID.toString(),
-                          name: team1Data.name,
-                          team_logo: team1Data.team_logo || null,
-                          faceit_id: team1Data.faceit_id || null,
-                          team_captain_id: team1Data.team_captain_id.toString(),
-                      }
+                        team_id: team1Data.id.toString(),
+                        name: team1Data.name,
+                        team_logo: team1Data.team_logo || null,
+                        faceit_id: team1Data.faceit_id || null,
+                        team_captain_id: team1Data.team_captain_id.toString(),
+                    }
                     : null;
 
                 const team2: FormattedTeam | null = team2Data
                     ? {
-                          team_id: team2Data.ID.toString(),
-                          name: team2Data.name,
-                          team_logo: team2Data.team_logo || null,
-                          faceit_id: team2Data.faceit_id || null,
-                          team_captain_id: team2Data.team_captain_id.toString(),
-                      }
+                        team_id: team2Data.id.toString(),
+                        name: team2Data.name,
+                        team_logo: team2Data.team_logo || null,
+                        faceit_id: team2Data.faceit_id || null,
+                        team_captain_id: team2Data.team_captain_id.toString(),
+                    }
                     : null;
 
                 return {
-                    match_id: match.ID.toString(),
+                    match_id: match.id.toString(),
                     group_id: match.group_id?.toString() || "",
                     status: match.status || null,
                     scheduled_at: match.scheduled_at
@@ -143,7 +143,7 @@ export const teamService = {
     getTeamPlayers: async (teamId: number) => {
         const teamPlayers = await teamRepository.findPlayersByTeamId(teamId);
         return teamPlayers.map((player) => ({
-            player_id: player.ID.toString(),
+            player_id: player.id.toString(),
             player_name: player.player_name,
             faceit_id: player.faceit_id || null,
             team_id: player.team_id?.toString() || null,
@@ -158,7 +158,7 @@ export const teamService = {
             excludeTeamId
         );
         return foundPlayers.map((player) => ({
-            player_id: player.ID.toString(),
+            player_id: player.id.toString(),
             player_name: player.player_name,
             faceit_id: player.faceit_id || null,
             team_id: player.team_id?.toString() || null,
@@ -173,7 +173,7 @@ export const teamService = {
             return null;
         }
         return {
-            player_id: player.ID.toString(),
+            player_id: player.id.toString(),
             player_name: player.player_name,
             faceit_id: player.faceit_id || null,
             team_id: player.team_id?.toString() || null,
@@ -188,7 +188,7 @@ export const teamService = {
             return null;
         }
         return {
-            player_id: player.ID.toString(),
+            player_id: player.id.toString(),
             player_name: player.player_name,
             faceit_id: player.faceit_id || null,
             team_id: player.team_id?.toString() || null,

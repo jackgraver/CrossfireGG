@@ -15,7 +15,7 @@ export const matchRepository = {
         const result = await db
             .select()
             .from(matches)
-            .where(and(eq(matches.ID, matchId), isNull(matches.deleted_at)))
+            .where(and(eq(matches.id, matchId), isNull(matches.deleted_at)))
             .limit(1);
         return result[0] || null;
     },
@@ -27,7 +27,7 @@ export const matchRepository = {
                 team: teams,
             })
             .from(matchParticipants)
-            .innerJoin(teams, eq(matchParticipants.team_id, teams.ID))
+            .innerJoin(teams, eq(matchParticipants.team_id, teams.id))
             .where(
                 and(
                     eq(matchParticipants.match_id, matchId),
@@ -42,7 +42,7 @@ export const matchRepository = {
         const result = await db
             .select()
             .from(groups)
-            .where(eq(groups.ID, groupId))
+            .where(eq(groups.id, groupId))
             .limit(1);
         return result[0] || null;
     },
@@ -50,7 +50,7 @@ export const matchRepository = {
     findStageById: async (stageId: number) => {
         const result = await db
             .select({
-                ID: stages.ID,
+                id: stages.id,
                 tournament_id: stages.tournament_id,
                 name: stages.name,
                 faceit_id: stages.faceit_id,
@@ -64,7 +64,7 @@ export const matchRepository = {
                 deleted_at: stages.deleted_at,
             })
             .from(stages)
-            .where(eq(stages.ID, stageId))
+            .where(eq(stages.id, stageId))
             .limit(1);
         return result[0] || null;
     },
@@ -134,7 +134,7 @@ export const matchRepository = {
                     faceit_url: matchData.faceit_url,
                     updated_at: new Date(),
                 })
-                .where(eq(matches.ID, existing[0].ID))
+                .where(eq(matches.id, existing[0].id))
                 .returning();
             return result[0];
         } else {
@@ -178,7 +178,7 @@ export const matchRepository = {
                     winner: participantData.winner,
                     updated_at: new Date(),
                 })
-                .where(eq(matchParticipants.ID, existing[0].ID))
+                .where(eq(matchParticipants.id, existing[0].id))
                 .returning();
             return result[0];
         } else {
@@ -226,7 +226,7 @@ export const matchRepository = {
                     winner_id: mapData.winner_id,
                     updated_at: new Date(),
                 })
-                .where(eq(maps.ID, existing[0].ID))
+                .where(eq(maps.id, existing[0].id))
                 .returning();
             return result[0];
         } else {

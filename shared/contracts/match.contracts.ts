@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const MatchContract = z.object({
-    ID: z.number(),
+    id: z.number(),
     group_id: z.number().nullable().optional(),
     stage_id: z.number().nullable().optional(),
     faceit_id: z.string().nullable().optional(),

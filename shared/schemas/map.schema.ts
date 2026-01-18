@@ -13,16 +13,16 @@ import { matchParticipants } from "./match_participant.schema";
 export const maps = pgTable(
     "maps",
     {
-        ID: serial("ID").primaryKey(),
+        id: serial("id").primaryKey(),
         match_id: integer("match_id")
             .notNull()
-            .references(() => matches.ID, { onDelete: "cascade" }),
+            .references(() => matches.id, { onDelete: "cascade" }),
         map_name: text("map_name").notNull(),
         map_order: integer("map_order"),
         round: text("round"),
         team1_score: integer("team1_score").default(0),
         team2_score: integer("team2_score").default(0),
-        winner_id: integer("winner_id").references(() => matchParticipants.ID, {
+        winner_id: integer("winner_id").references(() => matchParticipants.id, {
             onDelete: "set null",
         }),
         created_at: timestamp("created_at")
@@ -49,11 +49,11 @@ export const maps = pgTable(
 export const mapsRelations = relations(maps, ({ one, many }) => ({
     match: one(matches, {
         fields: [maps.match_id],
-        references: [matches.ID],
+        references: [matches.id],
     }),
     winner: one(matchParticipants, {
         fields: [maps.winner_id],
-        references: [matchParticipants.ID],
+        references: [matchParticipants.id],
     }),
     playerStats: many(playerStats),
 }));
