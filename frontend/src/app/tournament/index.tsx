@@ -77,7 +77,7 @@ function RouteComponent() {
                                         <div
                                             onClick={() =>
                                                 navigate({
-                                                    to: `/tournament/${tournament.id}/stage/${tournament.stages[0]?.id}`,
+                                                    to: `/tournament/${tournament.id}/stage/${tournament.stages[0]?.id}/bracket`,
                                                 })
                                             }
                                             className="flex cursor-pointer flex-col justify-between gap-6 pb-8 transition-all md:flex-row md:items-end"

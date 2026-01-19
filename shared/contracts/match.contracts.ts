@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { MatchParticipantWithTeamContract } from "./match_participant.contracts";
+import { MatchCasterContract } from "./match_caster.contracts";
 
 export const MatchContract = z.object({
     id: z.number(),
@@ -22,3 +23,16 @@ export const MatchWithParticipantsContract = MatchContract.extend({
 });
 
 export type MatchWithParticipantsDTO = z.infer<typeof MatchWithParticipantsContract>;
+
+export const MatchWithCastersContract = MatchWithParticipantsContract.extend({
+    casters: MatchCasterContract.array(),
+});
+
+export type MatchWithCastersDTO = z.infer<typeof MatchWithCastersContract>;
+
+export const ClaimedAndUnclaimedMatchesContract = z.object({
+    claimed: MatchWithCastersContract.array(),
+    unclaimed: MatchWithParticipantsContract.array(),
+});
+
+export type ClaimedAndUnclaimedMatchesDTO = z.infer<typeof ClaimedAndUnclaimedMatchesContract>;

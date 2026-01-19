@@ -7,6 +7,7 @@ import {
     maps,
     groups,
     stages,
+    matchCasters,
 } from "@repo/schemas";
 import { eq, and, isNull } from "drizzle-orm";
 
@@ -18,6 +19,38 @@ export const matchRepository = {
             .where(and(eq(matches.id, matchId), isNull(matches.deleted_at)))
             .limit(1);
         return result[0] || null;
+    },
+
+    findAllMatchCasting: async () => {
+        return await db.query.matches.findMany({
+            where: isNull(matches.deleted_at),
+            with: {
+                casters: {
+                    with: {
+                        caster: true,
+                    },
+                },
+                participants: {
+                    with: {
+                        team: true,
+                    },
+                },
+            },
+        });
+    },
+
+    upsertCaster: async (matchId: number, casterId: number) => {
+        return await db.insert(matchCasters).values({
+            match_id: matchId,
+            caster_id: casterId,
+            assigned_at: new Date(),
+        }).returning();
+    },
+
+    deleteCaster: async (matchId: number, casterId: number) => {
+        return await db.delete(matchCasters)
+            .where(and(eq(matchCasters.match_id, matchId), eq(matchCasters.caster_id, casterId)))
+            .returning();
     },
 
     findParticipants: async (matchId: number) => {

@@ -128,4 +128,33 @@ export const matchService = {
             maps: formattedMaps,
         };
     },
+    getAllMatchCasting: async () => {
+        const allMatches = await matchRepository.findAllMatchCasting();
+
+        const claimedMatches = allMatches.filter((match) => match.casters.length > 0);
+        const unclaimedMatches = allMatches.filter((match) => match.casters.length === 0);
+
+        return {
+            claimed: claimedMatches,
+            unclaimed: unclaimedMatches,
+        };
+    },
+    claimMatch: async (matchId: number, casterId: number) => {
+        const match = await matchRepository.findById(matchId);
+        if (!match) {
+            throw new Error("Match not found");
+        }
+        const result = await matchRepository.upsertCaster(matchId, casterId);
+        if (result.length === 0) {
+            throw new Error("Failed to claim match");
+        }
+        return result[0];
+    },
+    unclaimMatch: async (matchId: number, casterId: number) => {
+        const result = await matchRepository.deleteCaster(matchId, casterId);
+        if (result.length === 0) {
+            throw new Error("Caster not found");
+        }
+        return result[0];
+    },
 };

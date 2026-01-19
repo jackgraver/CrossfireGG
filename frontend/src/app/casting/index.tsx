@@ -1,13 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import type { Match, MatchesWithCasters } from "@/types/Types";
 import { useState } from "react";
-import { api } from "@/lib/api";
+import { api } from "@/api/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { formatMatchDate } from "@/lib/dateUtils";
 import { useNavigate } from "@tanstack/react-router";
-import ProtectedRoute from "@/shared/ProtectedRoute";
 import ProtectedElement from "@/shared/ProtectedButton";
 import TeamLogo from "@/shared/bracket/atoms/TeamLogo";
+import { useAllMatchCasting, useClaimMatch, useUnclaimMatch } from "./-queries/casting.queries";
+import { MatchDTO, MatchWithCastersDTO, MatchWithParticipantsDTO } from "@repo/contracts";
 
 export const Route = createFileRoute("/casting/")({
     component: Casting,
@@ -19,91 +19,7 @@ const getMatchCaster = (match: string, match_casters: any) => {
 };
 
 function Casting() {
-    const navigate = useNavigate();
-
-    const queryClient = useQueryClient();
-    const [claimStatus, setClaimStatus] = useState<{
-        type: "success" | "error" | null;
-        message: string;
-    }>({ type: null, message: "" });
-
-    const {
-        data: castingData,
-        isLoading,
-        error,
-        refetch,
-    } = useQuery({
-        queryKey: ["matches-casting"],
-        queryFn: () => api.get<MatchesWithCasters>("/match/casting"),
-    });
-
-    const claimMutation = useMutation({
-        mutationFn: (matchId: string) =>
-            api.post("/match/claim", { match_id: matchId }),
-        onSuccess: () => {
-            setClaimStatus({
-                type: "success",
-                message: "Match claimed successfully!",
-            });
-            // Refetch the data to update the UI
-            queryClient.invalidateQueries({ queryKey: ["matches-casting"] });
-            // Clear the status after 3 seconds
-            setTimeout(() => {
-                setClaimStatus({ type: null, message: "" });
-            }, 3000);
-        },
-        onError: (error: any) => {
-            setClaimStatus({
-                type: "error",
-                message:
-                    error.response?.data?.detail || "Failed to claim match",
-            });
-            // Clear the status after 5 seconds
-            setTimeout(() => {
-                setClaimStatus({ type: null, message: "" });
-            }, 5000);
-        },
-    });
-
-    const unclaimMutation = useMutation({
-        mutationFn: (matchId: string) =>
-            api.post("/match/unclaim", { match_id: matchId }),
-        onSuccess: () => {
-            setClaimStatus({
-                type: "success",
-                message: "Match unclaimed successfully!",
-            });
-            // Refetch the data to update the UI
-            queryClient.invalidateQueries({ queryKey: ["matches-casting"] });
-            // Clear the status after 3 seconds
-            setTimeout(() => {
-                setClaimStatus({ type: null, message: "" });
-            }, 3000);
-        },
-        onError: (error: any) => {
-            setClaimStatus({
-                type: "error",
-                message:
-                    error.response?.data?.detail || "Failed to unclaim match",
-            });
-            // Clear the status after 5 seconds
-            setTimeout(() => {
-                setClaimStatus({ type: null, message: "" });
-            }, 5000);
-        },
-    });
-
-    const handleClaimMatch = (matchId: string) => {
-        claimMutation.mutate(matchId);
-    };
-
-    const handleUnclaimMatch = (matchId: string) => {
-        unclaimMutation.mutate(matchId);
-    };
-
-    const handleViewMatch = (matchId: string) => {
-        navigate({ to: `/match/${matchId}` });
-    };
+    const { data: castingData, isLoading, error } = useAllMatchCasting();
 
     if (isLoading) {
         return (
@@ -125,23 +41,108 @@ function Casting() {
         );
     }
 
-    const { claimed, unclaimed, claimed_match_caster } = castingData || {
+    const { claimed, unclaimed } = castingData || {
         claimed: [],
         unclaimed: [],
-        claimed_match_caster: [],
     };
 
-    const formatMatchTime = (timestamp: number) => {
-        return formatMatchDate(timestamp);
-    };
+    return (
+        <div className="container mx-auto px-4 py-8">
+            <div className="mb-8">
+                <h1 className="text-textPrimary mb-2 text-4xl font-bold">
+                    Match Casting
+                </h1>
+                <p className="text-textSecondary">
+                    Manage match casting assignments and claim matches for
+                    casting
+                </p>
+            </div>
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+                <div>
+                    <div className="mb-4">
+                        <h2 className="text-textPrimary mb-2 text-2xl font-semibold">
+                            Available Matches
+                        </h2>
+                        <p className="text-textSecondary text-sm">
+                            {unclaimed.length} match
+                            {unclaimed.length !== 1 ? "es" : ""} available
+                            for casting
+                        </p>
+                    </div>
+                    <div className="space-y-4">
+                        {unclaimed.length === 0 ? (
+                            <div className="py-8 text-center text-gray-500">
+                                No matches available for casting
+                            </div>
+                        ) : (
+                            unclaimed.map((match) => (
+                                <MatchCard
+                                    key={match.id}
+                                    match={match}
+                                    isClaimed={false}
+                                />
+                            ))
+                        )}
+                    </div>
+                </div>
+                <div>
+                    <div className="mb-4">
+                        <h2 className="text-textPrimary mb-2 text-2xl font-semibold">
+                            Claimed Matches
+                        </h2>
+                        <p className="text-textSecondary text-sm">
+                            {claimed.length} match
+                            {claimed.length !== 1 ? "es" : ""} assigned to
+                            casters
+                        </p>
+                    </div>
+                    <div className="space-y-4">
+                        {claimed.length === 0 ? (
+                            <div className="py-8 text-center text-gray-500">
+                                No matches have been claimed yet
+                            </div>
+                        ) : (
+                            claimed.map((match) => (
+                                <MatchCard
+                                    key={match.id}
+                                    match={match}
+                                    isClaimed={true}
+                                />
+                            ))
+                        )}
+                    </div>
+                </div>
+            </div>
+            <div className="mt-8 flex justify-end">
+                <button
+                    onClick={() => { }}
+                    className="rounded bg-gray-700 px-4 py-2 text-white transition-colors hover:bg-gray-600"
+                >
+                    Refresh
+                </button>
+            </div>
+        </div>
+    );
+}
 
-    const MatchCard = ({
-        match,
-        isClaimed,
-    }: {
-        match: Match;
-        isClaimed: boolean;
-    }) => (
+
+const formatMatchTime = (timestamp: number) => {
+    return formatMatchDate(timestamp);
+};
+
+
+const MatchCard = ({
+    match,
+    isClaimed,
+}: {
+    match: MatchWithCastersDTO | MatchWithParticipantsDTO;
+    isClaimed: boolean;
+}
+) => {
+    const claimMutation = useClaimMatch();
+    const unclaimMutation = useUnclaimMatch();
+
+    return (
         <div className="border-border bg-firstBg hover:bg-secondBg rounded-lg border p-4 transition-colors">
             <div className="mb-3 flex items-start justify-between">
                 <div className="flex-1">
@@ -151,12 +152,9 @@ function Casting() {
                             {match.round}
                         </span>
                         <div className="ml-8">
-                            {isClaimed && (
+                            {isClaimed && "casters" in match && (
                                 <span className="mt-1 font-medium text-green-400">
-                                    {getMatchCaster(
-                                        match.match_id,
-                                        claimed_match_caster,
-                                    )}
+                                    Claimed by {match.casters[0].id}
                                 </span>
                             )}
                         </div>
@@ -164,26 +162,26 @@ function Casting() {
                     <div className="mb-3 flex items-center gap-4">
                         <div className="flex items-center gap-2">
                             <TeamLogo
-                                team={match.teams.team1}
+                                team={match.participants[0].team}
                                 styling="h-6 w-6 rounded"
                             />
                             <span className="text-textPrimary font-medium">
-                                {match.teams.team1.team_name}
+                                {match.participants[0].team.name}
                             </span>
                         </div>
                         <span className="text-gray-400">vs</span>
                         <div className="flex items-center gap-2">
                             <TeamLogo
-                                team={match.teams.team1}
+                                team={match.participants[1].team}
                                 styling="h-6 w-6 rounded"
                             />
                             <span className="text-textPrimary font-medium">
-                                {match.teams.team2.team_name}
+                                {match.participants[1].team.name}
                             </span>
                         </div>
                     </div>
                     <div className="text-sm text-gray-400">
-                        Scheduled: {formatMatchTime(match.scheduled_at)}
+                        Scheduled:
                     </div>
                     <div className="text-sm text-gray-400">
                         Status: {match.status}
@@ -191,136 +189,32 @@ function Casting() {
                 </div>
                 <div className="flex flex-col gap-2">
                     <button
-                        onClick={() => handleViewMatch(match.match_id)}
+                        onClick={() => { }}
                         className="text-text border-border bg-firstBg text-textPrimary hover:bg-secondBg rounded border px-3 py-1 text-sm transition-colors"
                     >
                         View
                     </button>
-                    <ProtectedElement roles={["PRODUCTION", "PRODUCTION_LEAD"]}>
-                        {!isClaimed ? (
-                            <button
-                                onClick={() => handleClaimMatch(match.match_id)}
-                                disabled={claimMutation.isPending}
-                                className="rounded bg-green-600 px-3 py-1 text-sm text-white transition-colors hover:bg-green-700 disabled:bg-gray-600"
-                            >
-                                {claimMutation.isPending
-                                    ? "Claiming..."
-                                    : "Claim"}
-                            </button>
-                        ) : (
-                            <button
-                                onClick={() =>
-                                    handleUnclaimMatch(match.match_id)
-                                }
-                                disabled={unclaimMutation.isPending}
-                                className="rounded bg-red-600 px-3 py-1 text-sm text-white transition-colors hover:bg-red-700 disabled:bg-gray-600"
-                            >
-                                {unclaimMutation.isPending
-                                    ? "Unclaiming..."
-                                    : "Unclaim"}
-                            </button>
-                        )}
-                    </ProtectedElement>
+                    {/* <ProtectedElement roles={["PRODUCTION", "PRODUCTION_LEAD"]}> */}
+                    {!isClaimed ? (
+                        <button
+                            onClick={() => claimMutation.mutate(match.id.toString())}
+                            // disabled={claimMutation.isPending}
+                            className="rounded bg-green-600 px-3 py-1 text-sm text-white transition-colors hover:bg-green-700 disabled:bg-gray-600"
+                        >
+                            Claim
+                        </button>
+                    ) : (
+                        <button
+                            onClick={() => { unclaimMutation.mutate(match.id.toString()); }}
+                            // disabled={unclaimMutation.isPending}
+                            className="rounded bg-red-600 px-3 py-1 text-sm text-white transition-colors hover:bg-red-700 disabled:bg-gray-600"
+                        >
+                            Unclaim
+                        </button>
+                    )}
+                    {/* </ProtectedElement> */}
                 </div>
             </div>
         </div>
-    );
-
-    return (
-        <ProtectedRoute>
-            <div className="container mx-auto px-4 py-8">
-                {/* Status Notification */}
-                {claimStatus.type && (
-                    <div
-                        className={`fixed top-4 right-4 z-50 rounded-lg p-4 shadow-lg ${
-                            claimStatus.type === "success"
-                                ? "bg-green-600 text-white"
-                                : "bg-red-600 text-white"
-                        }`}
-                    >
-                        {claimStatus.message}
-                    </div>
-                )}
-
-                <div className="mb-8">
-                    <h1 className="text-textPrimary mb-2 text-4xl font-bold">
-                        Match Casting
-                    </h1>
-                    <p className="text-textSecondary">
-                        Manage match casting assignments and claim matches for
-                        casting
-                    </p>
-                </div>
-
-                <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-                    {/* Unclaimed Matches */}
-                    <div>
-                        <div className="mb-4">
-                            <h2 className="text-textPrimary mb-2 text-2xl font-semibold">
-                                Available Matches
-                            </h2>
-                            <p className="text-textSecondary text-sm">
-                                {unclaimed.length} match
-                                {unclaimed.length !== 1 ? "es" : ""} available
-                                for casting
-                            </p>
-                        </div>
-                        <div className="space-y-4">
-                            {unclaimed.length === 0 ? (
-                                <div className="py-8 text-center text-gray-500">
-                                    No matches available for casting
-                                </div>
-                            ) : (
-                                unclaimed.map((match) => (
-                                    <MatchCard
-                                        key={match.match_id}
-                                        match={match}
-                                        isClaimed={false}
-                                    />
-                                ))
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Claimed Matches */}
-                    <div>
-                        <div className="mb-4">
-                            <h2 className="text-textPrimary mb-2 text-2xl font-semibold">
-                                Claimed Matches
-                            </h2>
-                            <p className="text-textSecondary text-sm">
-                                {claimed.length} match
-                                {claimed.length !== 1 ? "es" : ""} assigned to
-                                casters
-                            </p>
-                        </div>
-                        <div className="space-y-4">
-                            {claimed.length === 0 ? (
-                                <div className="py-8 text-center text-gray-500">
-                                    No matches have been claimed yet
-                                </div>
-                            ) : (
-                                claimed.map((match) => (
-                                    <MatchCard
-                                        key={match.match_id}
-                                        match={match}
-                                        isClaimed={true}
-                                    />
-                                ))
-                            )}
-                        </div>
-                    </div>
-                </div>
-
-                <div className="mt-8 flex justify-end">
-                    <button
-                        onClick={() => refetch()}
-                        className="rounded bg-gray-700 px-4 py-2 text-white transition-colors hover:bg-gray-600"
-                    >
-                        Refresh
-                    </button>
-                </div>
-            </div>
-        </ProtectedRoute>
-    );
-}
+    )
+};
