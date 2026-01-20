@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useNavigate } from "@tanstack/react-router";
-import { useMatch } from "../-queries/matchQueries";
-import MatchHeader from "../-components/MatchHeader";
-import MapResults from "../-components/MapResults";
-import TeamDisplay from "../-components/TeamDisplay";
+import { useMatch } from "./-queries/matchQueries";
+import MatchHeader from "./-components/MatchHeader";
+import MapResults from "./-components/MapResults";
+import TeamDisplay from "./-components/TeamDisplay";
 
 export const Route = createFileRoute("/match/$match_id/")({
     component: MatchPage,

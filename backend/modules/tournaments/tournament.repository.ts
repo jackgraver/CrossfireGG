@@ -401,35 +401,36 @@ export const tournamentRepository = {
         player_id: number;
         role: "starter" | "sub" | "coach";
     }) => {
-        const { stageRosters } = await import("@repo/schemas");
+        const { stagePlayers } = await import("@repo/schemas");
 
         const existing = await db
             .select()
-            .from(stageRosters)
+            .from(stagePlayers)
             .where(
                 and(
-                    eq(stageRosters.stage_id, rosterData.stage_id),
-                    eq(stageRosters.player_id, rosterData.player_id),
-                    isNull(stageRosters.deleted_at)
+                    eq(stagePlayers.stage_id, rosterData.stage_id),
+                    eq(stagePlayers.player_id, rosterData.player_id),
+                    isNull(stagePlayers.deleted_at)
                 )
             )
             .limit(1);
 
         if (existing.length > 0) {
             const result = await db
-                .update(stageRosters)
+                .update(stagePlayers)
                 .set({
                     role: rosterData.role,
                     updated_at: new Date(),
                 })
-                .where(eq(stageRosters.id, existing[0].id))
+                .where(eq(stagePlayers.id, existing[0].id))
                 .returning();
             return result[0];
         } else {
             const result = await db
-                .insert(stageRosters)
+                .insert(stagePlayers)
                 .values({
                     ...rosterData,
+                    stage_team_id: 0,
                     created_at: new Date(),
                     updated_at: new Date(),
                 })
@@ -438,21 +439,21 @@ export const tournamentRepository = {
         }
     },
 
-    findStageRostersByStageId: async (stageId: number) => {
-        const { stageRosters } = await import("@repo/schemas");
+    findstagePlayersByStageId: async (stageId: number) => {
+        const { stagePlayers } = await import("@repo/schemas");
         const { players } = await import("@repo/schemas");
 
         return await db
             .select({
-                roster: stageRosters,
+                roster: stagePlayers,
                 player: players,
             })
-            .from(stageRosters)
-            .innerJoin(players, eq(stageRosters.player_id, players.id))
+            .from(stagePlayers)
+            .innerJoin(players, eq(stagePlayers.player_id, players.id))
             .where(
                 and(
-                    eq(stageRosters.stage_id, stageId),
-                    isNull(stageRosters.deleted_at)
+                    eq(stagePlayers.stage_id, stageId),
+                    isNull(stagePlayers.deleted_at)
                 )
             );
     },

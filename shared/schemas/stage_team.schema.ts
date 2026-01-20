@@ -1,6 +1,6 @@
 import { pgTable, serial, integer, timestamp, boolean, unique, index } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import { teams } from "@repo/schemas";
+import { stagePlayers, teams } from "@repo/schemas";
 import { groups } from "./group.schema";
 import { stages } from "./stage.schema";
 
@@ -48,7 +48,7 @@ export const stageTeams = pgTable(
  * - Optionally assigned to a specific group within the stage (for group-based stages)
  * Stores stage-specific team data: seed, wins, losses, payment status, signup status
  */
-export const stageTeamsRelations = relations(stageTeams, ({ one }) => ({
+export const stageTeamsRelations = relations(stageTeams, ({ one, many }) => ({
     stage: one(stages, {
         fields: [stageTeams.stage_id],
         references: [stages.id],
@@ -57,6 +57,7 @@ export const stageTeamsRelations = relations(stageTeams, ({ one }) => ({
         fields: [stageTeams.team_id],
         references: [teams.id],
     }),
+    players: many(stagePlayers),
     group: one(groups, {
         fields: [stageTeams.group_id],
         references: [groups.id],

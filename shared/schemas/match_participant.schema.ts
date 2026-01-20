@@ -9,7 +9,8 @@ import {
     index,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import { teams, matches } from "@repo/schemas";
+import { matches, stagePlayers } from "@repo/schemas";
+import { stageTeams } from "./stage_team.schema";
 import { maps } from "./map.schema";
 
 export const matchParticipants = pgTable(
@@ -21,7 +22,7 @@ export const matchParticipants = pgTable(
             .references(() => matches.id, { onDelete: "cascade" }),
         team_id: integer("team_id")
             .notNull()
-            .references((): any => teams.id, {
+            .references((): any => stageTeams.id, {
                 onDelete: "cascade",
             }),
         position: integer("position").notNull(),
@@ -59,9 +60,9 @@ export const matchParticipantsRelations = relations(
             fields: [matchParticipants.match_id],
             references: [matches.id],
         }),
-        team: one(teams, {
+        team: one(stageTeams, {
             fields: [matchParticipants.team_id],
-            references: [teams.id],
+            references: [stageTeams.id],
         }),
         maps: many(maps),
     })

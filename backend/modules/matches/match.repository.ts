@@ -13,12 +13,25 @@ import { eq, and, isNull } from "drizzle-orm";
 
 export const matchRepository = {
     findById: async (matchId: number) => {
-        const result = await db
-            .select()
-            .from(matches)
-            .where(and(eq(matches.id, matchId), isNull(matches.deleted_at)))
-            .limit(1);
-        return result[0] || null;
+        return await db.query.matches.findFirst({
+            where: and(eq(matches.id, matchId), isNull(matches.deleted_at)),
+            with: {
+                participants: {
+                    with: {
+                        team: {
+                            with: {
+                                players: {
+                                    with: {
+                                        player: true,
+                                    }
+                                }
+                            }
+                        },
+                    },
+                },
+                maps: true,
+            }
+        });
     },
 
     findAllMatchCasting: async () => {

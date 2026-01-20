@@ -3,7 +3,7 @@ import { relations } from "drizzle-orm";
 import { matches, tournaments } from "@repo/schemas";
 import { groups } from "./group.schema";
 import { stageTeams } from "./stage_team.schema";
-import { stageRosters } from "./stage_roster.schema";
+import { stagePlayers } from "./stage_player.schema";
 
 export const stages = pgTable(
     "stages",
@@ -55,7 +55,7 @@ export const stagesRelations = relations(stages, ({ one, many }) => ({
     }),
     groups: many(groups),
     stageTeams: many(stageTeams),
-    stageRosters: many(stageRosters),
+    stagePlayers: many(stagePlayers),
     matches: many(matches),
     stageFormat: one(stageFormats, {
         fields: [stages.format_id],

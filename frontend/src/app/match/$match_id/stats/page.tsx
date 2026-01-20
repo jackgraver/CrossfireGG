@@ -10,7 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import { formatMatchDate } from "@/lib/dateUtils";
 import { notFound } from "@tanstack/react-router";
 import { use } from "react";
-import MatchHeader from "../../-components/MatchHeader";
+import MatchHeader from "../-components/MatchHeader";
 
 export const Route = createFileRoute("/match/$match_id/stats/page")({
     component: MatchStats,
@@ -205,11 +205,10 @@ function MatchStats() {
                     {maps?.map((map) => (
                         <div
                             key={map.map_id}
-                            className={`bg-firstBg hover:bg-secondBg flex min-w-64 flex-row items-center gap-x-4 rounded-lg px-4 py-2 transition-colors ${
-                                currentMapIds?.includes(map.map_id)
+                            className={`bg-firstBg hover:bg-secondBg flex min-w-64 flex-row items-center gap-x-4 rounded-lg px-4 py-2 transition-colors ${currentMapIds?.includes(map.map_id)
                                     ? "bg-secondBg text-textPrimary"
                                     : "text-textSecondary"
-                            }`}
+                                }`}
                             onClick={() => {
                                 if (currentMapIds.includes(map.map_id)) {
                                     setCurrentMapIds(

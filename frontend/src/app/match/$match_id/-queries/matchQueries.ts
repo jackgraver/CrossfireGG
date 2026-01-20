@@ -1,10 +1,10 @@
+import { matchApi } from "@/api/match.api";
 import { useQuery } from "@tanstack/react-query";
-import { matchApi, type MatchDetailResponse } from "../-api/matchApi";
 
 export const useMatch = (matchId: string) => {
-    return useQuery<MatchDetailResponse>({
+    return useQuery<unknown>({
         queryKey: ["match", matchId],
-        queryFn: () => matchApi.getMatchById(matchId),
+        queryFn: () => matchApi.matchById(matchId),
         enabled: !!matchId,
     });
 };

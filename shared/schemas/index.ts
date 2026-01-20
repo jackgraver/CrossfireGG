@@ -8,5 +8,5 @@ export * from "./map.schema";
 export * from "./match_caster.schema";
 export * from "./match_participant.schema";
 export * from "./stage.schema";
-export * from "./stage_roster.schema";
+export * from "./stage_player.schema";
 export * from "./stage_team.schema";
