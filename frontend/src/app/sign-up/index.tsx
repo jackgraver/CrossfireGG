@@ -4,7 +4,6 @@ import { useForm } from "@tanstack/react-form";
 import { useServerFn } from "@tanstack/react-start";
 import { signUpFn } from "@/lib/server/auth.server";
 import { useAuth } from "@/contexts/auth";
-import { api } from "@/lib/api";
 import {
     Input,
     PasswordInput,

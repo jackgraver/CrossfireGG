@@ -1,7 +1,7 @@
 import { api } from "@/api/client";
 import { matchApi } from "@/api/match.api";
 import { ClaimedAndUnclaimedMatchesDTO } from "@repo/contracts";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 
 export const useAllMatchCasting = () => {
@@ -12,11 +12,13 @@ export const useAllMatchCasting = () => {
 };
 
 export const useClaimMatch = () => {
+    const queryClient = useQueryClient();
+
     return useMutation({
         mutationFn: (matchId: string) =>
             matchApi.claimMatch(matchId),
         onSuccess: () => {
-            console.log("Match claimed successfully!");
+            queryClient.invalidateQueries({ queryKey: ["matches-casting"] });
         },
         onError: (error) => {
             console.error("Error claiming match:", error);
@@ -25,11 +27,13 @@ export const useClaimMatch = () => {
 }
 
 export const useUnclaimMatch = () => {
+    const queryClient = useQueryClient();
+
     return useMutation({
         mutationFn: (matchId: string) =>
             matchApi.unclaimMatch(matchId),
         onSuccess: () => {
-            console.log("Match unclaimed successfully!");
+            queryClient.invalidateQueries({ queryKey: ["matches-casting"] });
         },
         onError: (error) => {
             console.error("Error unclaiming match:", error);
