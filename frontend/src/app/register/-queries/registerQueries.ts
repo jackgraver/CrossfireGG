@@ -3,7 +3,16 @@ import { faceitApi } from "@/api/faceit.api";
 import { tournamentApi } from "@/api/tournament.api";
 
 export const usePlayerFaceitTeams = (playerId: string) => {
-    return useQuery<{ success: boolean; teams: PlayerFaceitTeam[] }>({
+    return useQuery<{
+        teams: {
+            team_id: string,
+            name: string,
+            avatar: string,
+            leader: string,
+            exists: boolean,
+            isRegistered: boolean,
+        }[]
+    }>({
         queryKey: ["player-faceit-teams", playerId],
         queryFn: () => faceitApi.playerFaceitTeams(playerId),
         enabled: !!playerId,
@@ -11,14 +20,21 @@ export const usePlayerFaceitTeams = (playerId: string) => {
 };
 
 export const useTeamPlayers = (teamId: string) => {
-    return useQuery<{ success: boolean; players: TeamPlayer[] }>({
+    return useQuery<{
+        players: {
+            user_id: string,
+            nickname: string,
+            avatar: string,
+        }[]
+    }>({
         queryKey: ["team-players", teamId],
         queryFn: () => faceitApi.teamFaceitPlayers(teamId),
         enabled: !!teamId,
     });
 };
 
-type RegisterParams = {
+type RegisterVariables = {
+    tournamentId: string;
     teamId: string;
     playerIds: string[];
     subIds: string[];
@@ -31,13 +47,20 @@ type RegisterParams = {
 
 export const useRegisterForTournament = () => {
     return useMutation({
-        mutationFn: (tournamentId: string, params: RegisterParams) =>
+        mutationFn: ({
+            tournamentId,
+            teamId,
+            playerIds,
+            subIds,
+            coachId,
+            agreements,
+        }: RegisterVariables) =>
             tournamentApi.registerForTournament(tournamentId, {
-                teamId: params.teamId,
-                playerIds: params.playerIds,
-                subIds: params.subIds,
-                coachId: params.coachId,
-                agreements: params.agreements,
+                teamId,
+                playerIds,
+                subIds,
+                coachId,
+                agreements,
             }),
     });
 };

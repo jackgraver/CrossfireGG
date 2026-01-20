@@ -408,7 +408,7 @@ export const tournamentRepository = {
             .from(stagePlayers)
             .where(
                 and(
-                    eq(stagePlayers.stage_id, rosterData.stage_id),
+                    // eq(stagePlayers.stage_id, rosterData.stage_id),
                     eq(stagePlayers.player_id, rosterData.player_id),
                     isNull(stagePlayers.deleted_at)
                 )
@@ -452,7 +452,7 @@ export const tournamentRepository = {
             .innerJoin(players, eq(stagePlayers.player_id, players.id))
             .where(
                 and(
-                    eq(stagePlayers.stage_id, stageId),
+                    // eq(stagePlayers.stage_id, stageId),
                     isNull(stagePlayers.deleted_at)
                 )
             );

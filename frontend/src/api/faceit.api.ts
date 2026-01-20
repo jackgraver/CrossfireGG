@@ -2,15 +2,32 @@ import { api } from "./client";
 
 export const faceitApi = {
     importFaceitStage: (stageId: string) => {
-        return api.post<any>(`/faceit/import/stage`, { stageId });
+        return api.post<unknown>(`/faceit/import/stage`, { stageId });
     },
     importFaceitMatches: async (stageId: string) => {
-        return api.post<any>(`/faceit/import/matches`, { stageId });
+        return api.post<unknown>(`/faceit/import/matches`, { stageId });
     },
     playerFaceitTeams: async (playerId: string) => {
-        return api.get<any>(`/faceit/player/${playerId}/teams`);
+        const response = await api.get<{
+            teams: {
+                team_id: string,
+                name: string,
+                avatar: string,
+                leader: string,
+                exists: boolean,
+                isRegistered: boolean,
+            }[]
+        }>(`/faceit/player/${playerId}/teams`);
+        return response.data;
     },
     teamFaceitPlayers: async (teamId: string) => {
-        return api.get<any>(`/faceit/team/${teamId}/players`);
+        const response = await api.get<{
+            players: {
+                user_id: string,
+                nickname: string,
+                avatar: string,
+            }[]
+        }>(`/faceit/team/${teamId}/players`);
+        return response.data;
     },
 };

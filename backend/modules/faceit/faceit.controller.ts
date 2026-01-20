@@ -3,15 +3,12 @@ import { logger } from "../../core/logger";
 import {
     ImportFaceitMatchesSchema,
     ImportFaceitStageSchema,
-    RegisterForTournamentSchema,
     VerifyFaceitPlayerTeamsSchema,
     VerifyTeamPlayersSchema,
 } from "./faceit.validation";
 import { faceitImportService } from "./faceit.service";
 import { faceitFetchUtil } from "../../utils/faceitFetch.util";
 import { teamRepository } from "../teams/team.repository";
-import { tournamentRepository } from "../tournaments/tournament.repository";
-import { playerRepository } from "../players/player.repository";
 import {
     FaceitPlayerTeamsResponse,
     FaceitTeamPlayersResponse,
@@ -157,8 +154,6 @@ export const faceitController = {
                     : [];
 
             res.json({
-                success: true,
-                message: "Faceit player teams verified successfully",
                 teams: Array.isArray(inputTeams)
                     ? inputTeams
                         .map((team) => ({

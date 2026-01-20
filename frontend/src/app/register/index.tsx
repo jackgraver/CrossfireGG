@@ -9,6 +9,7 @@ import { useForm, useStore } from "@tanstack/react-form";
 import { openInNewTab } from "@/lib/NewTab";
 import { useNavigate } from "@tanstack/react-router";
 import { useRegisterForTournament } from "./-queries/registerQueries";
+// import { useRegisterForTournament } from "./-queries/registerQueries";
 
 export const Route = createFileRoute("/register/")({
     component: RegisterPage,
@@ -34,7 +35,7 @@ function RegisterPage() {
     const form = useForm({
         defaultValues: {
             teamId: "" as string,
-            playerIds: [] as string[],
+            playerIds: ["2abbf5d5-ae35-40a1-bf6c-cf19c844168d"] as string[],
             subIds: [] as string[],
             coachId: "" as string,
             agreements: {
@@ -68,7 +69,7 @@ function RegisterPage() {
 
     const stepValidation: Record<FormStep, boolean> = {
         team: teamId !== "" && teamId !== undefined,
-        players: playerIds.length === 5,
+        players: true,
         subs: subIds.length <= 3,
         coach: true, // Coach is optional
         agreements:
@@ -121,7 +122,7 @@ function RegisterPage() {
                             }}
                         />
                     )}
-                    {currentStep === "subs" && (
+                    {/* {currentStep === "subs" && (
                         <form.Field
                             name="subIds"
                             children={(field) => (
@@ -185,7 +186,7 @@ function RegisterPage() {
                                 );
                             }}
                         />
-                    )}
+                    )} */}
                     {currentStep === "payment" && (
                         <div className="flex flex-col items-center gap-6 py-8">
                             <h1 className="mb-4 text-2xl font-bold">
@@ -233,17 +234,17 @@ function RegisterPage() {
                     >
                         Back
                     </button>
-                    {currentStep === "agreements" ? (
+                    {currentStep === "players" ? (
                         <button
                             onClick={() => {
-                                registerMutation.mutate(
-                                    {
-                                        teamId,
-                                        playerIds,
-                                        subIds,
-                                        coachId,
-                                        agreements,
-                                    },
+                                registerMutation.mutate({
+                                    tournamentId: "1",
+                                    teamId,
+                                    playerIds,
+                                    subIds,
+                                    coachId,
+                                    agreements,
+                                },
                                     {
                                         onSuccess: (res) => {
                                             console.log(res);

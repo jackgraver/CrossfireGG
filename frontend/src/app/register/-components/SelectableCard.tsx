@@ -36,17 +36,16 @@ export default function SelectableCard({
         <div className="flex w-full flex-col items-center pr-2">
             <div
                 onClick={handleClick}
-                className={`group grid w-full grid-cols-[48px_1fr_32px] items-center rounded-lg border p-2 transition-colors duration-150 ${
-                    disabled
+                className={`group grid w-full grid-cols-[48px_1fr_32px] items-center rounded-lg border p-2 transition-colors duration-150 ${disabled
                         ? "cursor-not-allowed bg-gray-700 opacity-50"
                         : isClickable
-                          ? "cursor-pointer hover:bg-gray-700"
-                          : "cursor-not-allowed opacity-70"
-                } ${selected ? "border-green-500 bg-gray-700/50" : "border-gray-600"}`}
+                            ? "cursor-pointer hover:bg-gray-700"
+                            : "cursor-not-allowed opacity-70"
+                    } ${selected ? "border-green-500 bg-gray-700/50" : "border-gray-600"}`}
             >
                 <TeamLogo
                     avatar={avatar ?? "/oss-logo-placeholder.png"}
-                    styling="h-12 w-12 rounded object-cover"
+                    styling="h-12 w-12 rounded-full object-cover"
                 />
                 <p className="px-3 text-lg font-medium">{name}</p>
                 <div className="ml-auto flex h-7 w-7 items-center justify-center">
