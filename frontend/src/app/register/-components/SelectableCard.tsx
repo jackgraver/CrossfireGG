@@ -37,10 +37,10 @@ export default function SelectableCard({
             <div
                 onClick={handleClick}
                 className={`group grid w-full grid-cols-[48px_1fr_32px] items-center rounded-lg border p-2 transition-colors duration-150 ${disabled
-                        ? "cursor-not-allowed bg-gray-700 opacity-50"
-                        : isClickable
-                            ? "cursor-pointer hover:bg-gray-700"
-                            : "cursor-not-allowed opacity-70"
+                    ? "cursor-not-allowed bg-gray-700 opacity-50"
+                    : isClickable
+                        ? "cursor-pointer hover:bg-gray-700"
+                        : "cursor-not-allowed opacity-70"
                     } ${selected ? "border-green-500 bg-gray-700/50" : "border-gray-600"}`}
             >
                 <TeamLogo

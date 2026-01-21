@@ -10,7 +10,6 @@ export const teams = pgTable("teams", {
     team_logo: text("team_logo"),
     faceit_id: text("faceit_id"),
     team_captain_id: integer("team_captain_id")
-        .notNull()
         .references((): any => players.id, {
             onDelete: "restrict",
         }),

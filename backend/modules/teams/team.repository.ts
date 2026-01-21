@@ -202,7 +202,7 @@ export const teamRepository = {
         name: string;
         team_logo: string | null;
         faceit_id: string;
-        team_captain_id: number;
+        team_captain_id: number | null;
     }) => {
         const existing = await db
             .select()
@@ -238,5 +238,16 @@ export const teamRepository = {
                 .returning();
             return result[0];
         }
+    },
+    updateTeamCaptain: async (teamId: number, playerId: number) => {
+        const result = await db
+            .update(teams)
+            .set({
+                team_captain_id: playerId,
+                updated_at: new Date(),
+            })
+            .where(eq(teams.id, teamId))
+            .returning();
+        return result[0];
     },
 };

@@ -26,7 +26,7 @@ export const teamService = {
             name: team.name,
             team_logo: team.team_logo || null,
             faceit_id: team.faceit_id || null,
-            team_captain_id: team.team_captain_id.toString(),
+            team_captain_id: team.team_captain_id?.toString() || null,
         };
 
         const teamStages = await teamRepository.findStagesByTeamId(teamId);
@@ -105,7 +105,7 @@ export const teamService = {
                         name: team1Data.name,
                         team_logo: team1Data.team_logo || null,
                         faceit_id: team1Data.faceit_id || null,
-                        team_captain_id: team1Data.team_captain_id.toString(),
+                        team_captain_id: team1Data.team_captain_id?.toString() || null,
                     }
                     : null;
 
@@ -115,7 +115,7 @@ export const teamService = {
                         name: team2Data.name,
                         team_logo: team2Data.team_logo || null,
                         faceit_id: team2Data.faceit_id || null,
-                        team_captain_id: team2Data.team_captain_id.toString(),
+                        team_captain_id: team2Data.team_captain_id?.toString() || null,
                     }
                     : null;
 

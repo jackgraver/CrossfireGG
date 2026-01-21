@@ -29,8 +29,8 @@ export const playerRepository = {
         player_logo: string | null;
         country: string | null;
         team_id?: number | null;
-    }) => {
-        const existing = await db
+    }, dbOrTx = db) => {
+        const existing = await dbOrTx
             .select()
             .from(players)
             .where(
@@ -42,7 +42,7 @@ export const playerRepository = {
             .limit(1);
 
         if (existing.length > 0) {
-            const result = await db
+            const result = await dbOrTx
                 .update(players)
                 .set({
                     player_name: playerData.player_name,
@@ -58,7 +58,7 @@ export const playerRepository = {
                 .returning();
             return result[0];
         } else {
-            const result = await db
+            const result = await dbOrTx
                 .insert(players)
                 .values({
                     ...playerData,

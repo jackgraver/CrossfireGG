@@ -3,6 +3,8 @@ import { teamController } from "./team.controller";
 
 const router = Router();
 
+router.post("/register", teamController.registerTeam);
+
 router.get("/:teamId", teamController.getTeamById);
 
 router.get("/:teamId/players", teamController.getTeamPlayers);

@@ -1,6 +1,12 @@
 import { Request, Response } from "express";
 import { teamService } from "./team.service";
 import { logger } from "../../core/logger";
+import { RegisterTeamSchema } from "./team.validation";
+import { faceitImportService } from "../faceit/faceit.service";
+import { faceitFetchUtil } from "../../utils/faceitFetch.util";
+import { FaceitTeamPlayersResponse } from "../faceit/faceit.types";
+import { teamRepository } from "./team.repository";
+import { playerRepository } from "../players/player.repository";
 
 export const teamController = {
     getTeamById: async (req: Request, res: Response) => {
@@ -151,6 +157,69 @@ export const teamController = {
             res.status(500).json({
                 error: "Failed to remove player from team",
             });
+        }
+    },
+
+    registerTeam: async (req: Request, res: Response) => {
+        try {
+            const validation = RegisterTeamSchema.safeParse(req.body);
+            if (!validation.success) {
+                return res.status(400).json({ error: "Validation failed", details: validation.error.issues });
+            }
+
+            const { teamId, playerIds } = validation.data;
+
+            const faceitTeam =
+                await faceitFetchUtil.fetchData<FaceitTeamPlayersResponse>(
+                    `/teams/${teamId}`,
+                    {
+                        readFileName: `team_players_${teamId}.json`,
+                        // writeFileName: `team_players_${teamId}.json`,
+                    }
+                );
+            console.log('faceitTeam', faceitTeam);
+
+            const faceitPlayerIds = new Set(
+                faceitTeam.members.map(m => m.user_id)
+            );
+
+            const missing = playerIds.filter(id => !faceitPlayerIds.has(id));
+            if (missing.length > 0) {
+                throw new Error(`Invalid players: ${missing.join(", ")}`);
+            }
+
+            console.log('create team', faceitTeam.name, faceitTeam.avatar, teamId);
+            const dbTeam = await teamRepository.upsertTeamByFaceitId({
+                name: faceitTeam.name,
+                team_logo: faceitTeam.avatar,
+                faceit_id: teamId,
+                team_captain_id: null,
+            });
+
+            for (const player of faceitTeam.members) {
+                if (!playerIds.includes(player.user_id)) continue;
+
+                const dbPlayer = await playerRepository.upsertPlayerByFaceitId({
+                    player_name: player.nickname,
+                    faceit_id: player.user_id,
+                    player_logo: player.avatar,
+                    country: player.country,
+                    team_id: dbTeam.id,
+                });
+
+                if (player.user_id === faceitTeam.leader) {
+                    console.log('update team captain', dbTeam.id, dbPlayer.id);
+                    await teamRepository.updateTeamCaptain(dbTeam.id, dbPlayer.id);
+                    continue;
+                }
+
+                await teamRepository.addPlayerToTeam(dbPlayer.id, dbTeam.id);
+            }
+
+            res.json({ success: true });
+        } catch (error: any) {
+            logger.error(`Error in registerTeam:`, error);
+            res.status(500).json({ error: "Failed to register team" });
         }
     },
 };

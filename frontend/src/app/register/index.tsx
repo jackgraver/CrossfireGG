@@ -8,7 +8,7 @@ import RegisterStep5Agreements from "./-steps/step5_agreements";
 import { useForm, useStore } from "@tanstack/react-form";
 import { openInNewTab } from "@/lib/NewTab";
 import { useNavigate } from "@tanstack/react-router";
-import { useRegisterForTournament } from "./-queries/registerQueries";
+import { useRegisterTeam } from "./-queries/registerQueries";
 // import { useRegisterForTournament } from "./-queries/registerQueries";
 
 export const Route = createFileRoute("/register/")({
@@ -27,7 +27,7 @@ type FormStep = (typeof formSteps)[number];
 
 function RegisterPage() {
     const navigate = useNavigate();
-    const registerMutation = useRegisterForTournament();
+    const registerMutation = useRegisterTeam();
 
     // TODO: Replace with actual auth check
     const isLoggedIn = true;
@@ -91,7 +91,6 @@ function RegisterPage() {
 
     return (
         <UserForm>
-            <form></form>
             <div className="flex w-full flex-col gap-y-4">
                 <div>
                     {currentStep === "team" && (
@@ -238,12 +237,8 @@ function RegisterPage() {
                         <button
                             onClick={() => {
                                 registerMutation.mutate({
-                                    tournamentId: "1",
                                     teamId,
                                     playerIds,
-                                    subIds,
-                                    coachId,
-                                    agreements,
                                 },
                                     {
                                         onSuccess: (res) => {

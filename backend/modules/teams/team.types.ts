@@ -11,7 +11,7 @@ export interface FormattedTeam {
     name: string;
     team_logo: string | null;
     faceit_id: string | null;
-    team_captain_id: string;
+    team_captain_id: string | null;
     win?: number;
     loss?: number;
     seed?: number;
