@@ -13,7 +13,7 @@ export const players = pgTable(
         team_id: integer("team_id").references((): any => teams.id, {
             onDelete: "set null",
         }),
-        user_id: integer("user_id").references((): any => users.id, {
+        user_id: text("user_id").references((): any => users.id, {
             onDelete: "set null",
         }),
         player_logo: text("player_logo"),

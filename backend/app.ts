@@ -12,6 +12,8 @@ import morgan from "morgan";
 import helmet from "helmet";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
+import { toNodeHandler } from "better-auth/node";
+import { auth } from "./lib/auth";
 
 const burstLimiter = rateLimit({
     windowMs: 10 * 1000,
@@ -42,6 +44,9 @@ app.use(cors({
     origin: config.cors.allowedOrigins,
     credentials: true,
 }));
+
+app.all('/api/auth/{*any}', toNodeHandler(auth));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());

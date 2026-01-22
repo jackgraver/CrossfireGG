@@ -55,14 +55,14 @@ export const matchRepository = {
     upsertCaster: async (matchId: number, casterId: number) => {
         return await db.insert(matchCasters).values({
             match_id: matchId,
-            caster_id: casterId,
+            caster_id: casterId.toString(),
             assigned_at: new Date(),
         }).returning();
     },
 
     deleteCaster: async (matchId: number, casterId: number) => {
         return await db.delete(matchCasters)
-            .where(and(eq(matchCasters.match_id, matchId), eq(matchCasters.caster_id, casterId)))
+            .where(and(eq(matchCasters.match_id, matchId), eq(matchCasters.caster_id, casterId.toString())))
             .returning();
     },
 

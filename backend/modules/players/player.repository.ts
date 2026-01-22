@@ -87,7 +87,7 @@ export const playerRepository = {
         const result = await db
             .select()
             .from(players)
-            .where(and(eq(players.user_id, userId), isNull(players.deleted_at)))
+            .where(and(eq(players.user_id, userId.toString()), isNull(players.deleted_at)))
             .limit(1);
         return result[0];
     },

@@ -13,19 +13,18 @@ import { players, teams } from "@repo/schemas";
 import { matchCasters } from "./match_caster.schema";
 
 export const users = pgTable("users", {
-    id: serial("id").primaryKey(),
+    id: text("id").primaryKey(),
     name: text("name").notNull(),
     email: text("email").notNull().unique(),
-    password: text("password").notNull(),
-    avatar_url: text("avatar_url"),
+    emailVerified: boolean("email_verified").default(false).notNull(),
+    image: text("image"),
     discord_id: text("discord_id"),
     steam_id: text("steam_id"),
-    last_login_at: timestamp("last_login_at"),
-    email_verified: boolean("email_verified").default(false),
-    refresh_token: text("refresh_token"),
-    token_version: integer("token_version").default(0),
-    created_at: timestamp("created_at").notNull().defaultNow(),
-    updated_at: timestamp("updated_at").notNull().defaultNow(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+        .defaultNow()
+        .$onUpdate(() => /* @__PURE__ */ new Date())
+        .notNull(),
     deleted_at: timestamp("deleted_at"),
 });
 
@@ -38,7 +37,7 @@ export const userRoles = pgTable(
     "user_roles",
     {
         id: serial("id").primaryKey(),
-        user_id: integer("user_id")
+        user_id: text("user_id")
             .notNull()
             .references(() => users.id, { onDelete: "cascade" }),
         role_id: integer("role_id")
@@ -102,5 +101,86 @@ export const userRolesRelations = relations(userRoles, ({ one }) => ({
     role: one(roles, {
         fields: [userRoles.role_id],
         references: [roles.id],
+    }),
+}));
+
+
+
+
+export const session = pgTable(
+    "session",
+    {
+        id: text("id").primaryKey(),
+        expiresAt: timestamp("expires_at").notNull(),
+        token: text("token").notNull().unique(),
+        createdAt: timestamp("created_at").defaultNow().notNull(),
+        updatedAt: timestamp("updated_at")
+            .$onUpdate(() => /* @__PURE__ */ new Date())
+            .notNull(),
+        ipAddress: text("ip_address"),
+        userAgent: text("user_agent"),
+        userId: text("user_id")
+            .notNull()
+            .references(() => users.id, { onDelete: "cascade" }),
+    },
+    (table) => [index("session_userId_idx").on(table.userId)],
+);
+
+export const account = pgTable(
+    "account",
+    {
+        id: text("id").primaryKey(),
+        accountId: text("account_id").notNull(),
+        providerId: text("provider_id").notNull(),
+        userId: text("user_id")
+            .notNull()
+            .references(() => users.id, { onDelete: "cascade" }),
+        accessToken: text("access_token"),
+        refreshToken: text("refresh_token"),
+        idToken: text("id_token"),
+        accessTokenExpiresAt: timestamp("access_token_expires_at"),
+        refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
+        scope: text("scope"),
+        password: text("password"),
+        createdAt: timestamp("created_at").defaultNow().notNull(),
+        updatedAt: timestamp("updated_at")
+            .$onUpdate(() => /* @__PURE__ */ new Date())
+            .notNull(),
+    },
+    (table) => [index("account_userId_idx").on(table.userId)],
+);
+
+export const verification = pgTable(
+    "verification",
+    {
+        id: text("id").primaryKey(),
+        identifier: text("identifier").notNull(),
+        value: text("value").notNull(),
+        expiresAt: timestamp("expires_at").notNull(),
+        createdAt: timestamp("created_at").defaultNow().notNull(),
+        updatedAt: timestamp("updated_at")
+            .defaultNow()
+            .$onUpdate(() => /* @__PURE__ */ new Date())
+            .notNull(),
+    },
+    (table) => [index("verification_identifier_idx").on(table.identifier)],
+);
+
+export const userRelations = relations(users, ({ many }) => ({
+    sessions: many(session),
+    accounts: many(account),
+}));
+
+export const sessionRelations = relations(session, ({ one }) => ({
+    user: one(users, {
+        fields: [session.userId],
+        references: [users.id],
+    }),
+}));
+
+export const accountRelations = relations(account, ({ one }) => ({
+    user: one(users, {
+        fields: [account.userId],
+        references: [users.id],
     }),
 }));

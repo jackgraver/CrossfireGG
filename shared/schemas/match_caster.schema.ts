@@ -4,6 +4,7 @@ import {
     integer,
     timestamp,
     index,
+    text,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { users, matches } from "@repo/schemas";
@@ -15,7 +16,7 @@ export const matchCasters = pgTable(
         match_id: integer("match_id")
             .notNull()
             .references(() => matches.id, { onDelete: "cascade" }),
-        caster_id: integer("caster_id")
+        caster_id: text("caster_id")
             .notNull()
             .references((): any => users.id, {
                 onDelete: "cascade",

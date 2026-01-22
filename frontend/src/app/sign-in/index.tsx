@@ -6,6 +6,7 @@ import { loginFn } from "@/lib/server/auth.server";
 import { signInSchema } from "@/schemas/auth";
 import { Input, PasswordInput, SubmitButton } from "@/shared/form";
 import UserForm from "@/shared/UserForm";
+import { authClient } from "@/lib/auth-client";
 
 export const Route = createFileRoute("/sign-in/")({
     component: SignIn,
@@ -54,7 +55,20 @@ function SignIn() {
     const isSubmitting = submitStatus === "submitting";
 
     return (
+
         <UserForm>
+            <button className="bg-border text-textSecondary hover:bg-secondBg rounded px-4 py-2" onClick={async () => {
+                const { data, error } = await authClient.signIn.social({
+                    provider: "google",
+                });
+                if (error) {
+                    console.log('error:', error);
+                }
+                if (data) {
+                    console.log('data:', data);
+                }
+
+            }}>testing</button>
             <h1 className="mb-2 text-2xl font-bold text-white">Welcome Back</h1>
             <form
                 onSubmit={(e) => {

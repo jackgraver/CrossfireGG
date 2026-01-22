@@ -8,7 +8,11 @@ export const config = {
             "postgresql://app_user:app_password@localhost:5432/cf-db",
     },
     cors: {
-        allowedOrigins: ["http://localhost:5173"],
+        allowedOrigins: ["http://localhost:5173", "https://noted-europe-drainage-stripes.trycloudflare.com"],
+    },
+    auth: {
+        clientId: process.env.FACEIT_CLIENT_ID,
+        clientSecret: process.env.FACEIT_CLIENT_SECRET,
     },
     faceit: {
         apiKey: process.env.FACEIT_API_KEY || "",
