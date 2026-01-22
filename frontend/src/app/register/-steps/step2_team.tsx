@@ -31,6 +31,10 @@ export default function RegisterStep2Team({
         );
     }
 
+    const nonRegisteredOnTop = playerFaceitTeams?.teams.sort((a, b) =>
+        a.isRegistered ? 1 : b.isRegistered ? -1 : 0
+    );
+
     return (
         <>
             <h1 className="mb-2 text-2xl font-bold text-white">
@@ -49,19 +53,19 @@ export default function RegisterStep2Team({
                     onChange={(value) => onSelectionChange(value[0])}
                 >
                     <div className="flex max-h-[400px] w-full flex-col gap-2 overflow-x-hidden overflow-y-auto">
-                        {playerFaceitTeams?.teams.map((team) => (
+                        {nonRegisteredOnTop?.map((team) => (
                             <SelectableCard
                                 key={team.team_id}
                                 id={team.team_id}
                                 avatar={team.avatar}
                                 name={team.name}
-                                disabled={team.isRegistered} //TODO: Sign up flow for existing team here too
+                                disabled={team.isRegistered !== null} //TODO: Sign up flow for existing team here too
                                 disabledAction={{
                                     label: "Team Already Registered",
                                     onClick: () => {
                                         navigate({
                                             to: `/team/$team_id`,
-                                            params: { team_id: team.team_id },
+                                            params: { team_id: team.isRegistered!! },
                                         });
                                     },
                                 }}

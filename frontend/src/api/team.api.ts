@@ -28,7 +28,7 @@ export const teamApi = {
         return response.data;
     },
     registerTeam: async (teamId: string, playerIds: string[]) => {
-        const response = await api.post<unknown>(`/team/register`, {
+        const response = await api.post<{ team_id: number }>(`/team/register`, {
             teamId: teamId,
             playerIds: playerIds,
         });

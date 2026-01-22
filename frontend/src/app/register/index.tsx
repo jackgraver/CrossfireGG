@@ -3,31 +3,32 @@ import UserForm from "@/shared/UserForm";
 import { useState, useEffect, useRef } from "react";
 import RegisterStep2Team from "./-steps/step2_team";
 import RegisterStep3Players from "./-steps/step3_players";
-import RegisterStep4SubCoach from "./-steps/step4_subcoach";
-import RegisterStep5Agreements from "./-steps/step5_agreements";
 import { useForm, useStore } from "@tanstack/react-form";
 import { openInNewTab } from "@/lib/NewTab";
 import { useNavigate } from "@tanstack/react-router";
 import { useRegisterTeam } from "./-queries/registerQueries";
-// import { useRegisterForTournament } from "./-queries/registerQueries";
-
-export const Route = createFileRoute("/register/")({
-    component: RegisterPage,
-});
+import z from "zod";
 
 const formSteps = [
     "team",
     "players",
-    "subs",
-    "coach",
-    "agreements",
-    "payment",
+    "finished",
 ] as const;
 type FormStep = (typeof formSteps)[number];
+
+export const Route = createFileRoute("/register/")({
+    component: RegisterPage,
+    validateSearch: z.object({
+        tournamentId: z.string().optional(),
+    }),
+});
 
 function RegisterPage() {
     const navigate = useNavigate();
     const registerMutation = useRegisterTeam();
+    const { tournamentId } = Route.useSearch();
+
+    const [registeredTeamId, setRegisteredTeamId] = useState<number>(0);
 
     // TODO: Replace with actual auth check
     const isLoggedIn = true;
@@ -44,17 +45,28 @@ function RegisterPage() {
             },
         },
         onSubmit: async ({ value }) => {
-            console.log(value);
+            registerMutation.mutate({
+                teamId,
+                playerIds,
+            },
+                {
+                    onSuccess: (res) => {
+                        setRegisteredTeamId(res.team_id);
+                        setStepIndex(formSteps.length - 1);
+                    },
+                    onError: (error) => {
+                        // TODO: Handle error
+                        // setStepIndex((i) => i + 1);
+                    },
+                },
+            );
         },
     });
-    const [stepIndex, setStepIndex] = useState(0);
+    const [stepIndex, setStepIndex] = useState(2);
     const currentStep = formSteps[stepIndex];
 
     const teamId = useStore(form.store, (state) => state.values.teamId);
     const playerIds = useStore(form.store, (state) => state.values.playerIds);
-    const subIds = useStore(form.store, (state) => state.values.subIds);
-    const coachId = useStore(form.store, (state) => state.values.coachId);
-    const agreements = useStore(form.store, (state) => state.values.agreements);
 
     const previousTeamIdRef = useRef(teamId);
 
@@ -69,12 +81,8 @@ function RegisterPage() {
 
     const stepValidation: Record<FormStep, boolean> = {
         team: teamId !== "" && teamId !== undefined,
-        players: true,
-        subs: subIds.length <= 3,
-        coach: true, // Coach is optional
-        agreements:
-            agreements.rulesAndGuidelines && agreements.discordConfirmation,
-        payment: true,
+        players: playerIds.length > 0,
+        finished: false,
     };
 
     const canContinue = stepValidation[currentStep];
@@ -121,102 +129,37 @@ function RegisterPage() {
                             }}
                         />
                     )}
-                    {/* {currentStep === "subs" && (
-                        <form.Field
-                            name="subIds"
-                            children={(field) => (
-                                <RegisterStep4SubCoach
-                                    mode="subs"
-                                    teamId={teamId}
-                                    excludedPlayerIds={playerIds}
-                                    selectedIds={field.state.value}
-                                    onSelectionChange={field.handleChange}
-                                />
-                            )}
-                        />
-                    )}
-                    {currentStep === "coach" && (
-                        <form.Field
-                            name="coachId"
-                            children={(field) => (
-                                <RegisterStep4SubCoach
-                                    mode="coach"
-                                    teamId={teamId}
-                                    excludedPlayerIds={[
-                                        ...playerIds,
-                                        ...subIds,
-                                    ]}
-                                    selectedId={field.state.value}
-                                    onSelectionChange={field.handleChange}
-                                />
-                            )}
-                        />
-                    )}
-                    {currentStep === "agreements" && (
-                        <form.Field
-                            name="agreements"
-                            children={(field) => {
-                                return (
-                                    <RegisterStep5Agreements
-                                        rulesAndGuidelines={
-                                            field.state.value.rulesAndGuidelines
-                                        }
-                                        discordConfirmation={
-                                            field.state.value
-                                                .discordConfirmation
-                                        }
-                                        onRulesAndGuidelinesChange={(
-                                            checked: boolean,
-                                        ) =>
-                                            field.handleChange({
-                                                ...field.state.value,
-                                                rulesAndGuidelines: checked,
-                                            })
-                                        }
-                                        onDiscordConfirmationChange={(
-                                            checked: boolean,
-                                        ) =>
-                                            field.handleChange({
-                                                ...field.state.value,
-                                                discordConfirmation: checked,
-                                            })
-                                        }
-                                    />
-                                );
-                            }}
-                        />
-                    )} */}
-                    {currentStep === "payment" && (
+                    {currentStep === "finished" && (
                         <div className="flex flex-col items-center gap-6 py-8">
                             <h1 className="mb-4 text-2xl font-bold">
                                 You have been registered successfully!
                             </h1>
-                            <button
-                                className="w-full max-w-xs rounded bg-blue-500 px-6 py-3 text-lg font-semibold text-white shadow transition-colors hover:bg-blue-600"
-                                onClick={() =>
-                                    openInNewTab(
-                                        "https://www.paypal.com/paypalme/OSSCSL/75?currencyCode=USD",
-                                    )
-                                }
-                            >
-                                Pay Registration Fee
-                            </button>
-                            <button
-                                className="w-full max-w-xs rounded bg-orange-500 px-6 py-3 text-lg font-semibold text-white shadow transition-colors hover:bg-orange-600"
-                                onClick={() =>
-                                    openInNewTab(
-                                        `https://www.faceit.com/en/championship${"TODO"}`,
-                                    )
-                                }
-                            >
-                                Join Faceit Tournament
-                            </button>
+                            {tournamentId ? (
+                                <button
+                                    className="w-full max-w-xs rounded bg-blue-500 px-6 py-3 text-lg font-semibold text-white shadow transition-colors hover:bg-blue-600"
+                                    onClick={() => { }
+                                    }
+                                >
+                                    Join {"TOURNAMENT_NAME"}
+                                </button>
+                            ) : (
+                                <button
+                                    className="w-full max-w-xs rounded bg-blue-500 px-6 py-3 text-lg font-semibold text-white shadow transition-colors hover:bg-blue-600"
+                                    onClick={() => {
+                                        navigate({
+                                            to: "/tournament",
+                                        });
+                                    }}
+                                >
+                                    Browse Tournaments
+                                </button>
+                            )}
                             <button
                                 className="w-full max-w-xs rounded bg-red-600 px-6 py-3 text-lg font-semibold text-white shadow transition-colors hover:bg-red-800"
                                 onClick={() =>
                                     navigate({
                                         to: `/team/$team_id`,
-                                        params: { team_id: teamId },
+                                        params: { team_id: registeredTeamId.toString() },
                                     })
                                 }
                             >
@@ -235,26 +178,8 @@ function RegisterPage() {
                     </button>
                     {currentStep === "players" ? (
                         <button
-                            onClick={() => {
-                                registerMutation.mutate({
-                                    teamId,
-                                    playerIds,
-                                },
-                                    {
-                                        onSuccess: (res) => {
-                                            console.log(res);
-                                            setStepIndex((i) => i + 1);
-                                        },
-                                        onError: (error) => {
-                                            console.error(
-                                                "Registration failed:",
-                                                error.message,
-                                            );
-                                            setStepIndex((i) => i + 1);
-                                        },
-                                    },
-                                );
-                            }}
+                            type="submit"
+                            onClick={() => form.handleSubmit()}
                             className="flex-1 rounded bg-green-600 px-6 py-2 font-semibold hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
                             disabled={
                                 !canContinue || registerMutation.isPending

@@ -68,7 +68,7 @@ export default function SelectableCard({
                         e.stopPropagation();
                         disabledAction.onClick();
                     }}
-                    className="flex w-[95%] items-center justify-center rounded-b-md bg-green-700 px-3 py-1.5 text-sm font-bold text-gray-100 transition-colors hover:bg-green-800 hover:text-white"
+                    className="flex w-[95%] items-center justify-center rounded-b-md bg-green-700 px-3 py-1 text-sm font-bold text-gray-100 transition-colors hover:bg-green-800 hover:text-white"
                 >
                     {disabledAction.label}
                     <MoveUpRight className="ml-1 h-5 w-5" />

@@ -15,7 +15,7 @@ export const faceitApi = {
                 avatar: string,
                 leader: string,
                 exists: boolean,
-                isRegistered: boolean,
+                isRegistered: string | null,
             }[]
         }>(`/faceit/player/${playerId}/teams`);
         return response.data;

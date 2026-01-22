@@ -1,6 +1,6 @@
 import { db } from "../../config/database";
 import { players } from "@repo/schemas";
-import { eq, and, isNull } from "drizzle-orm";
+import { eq, and, isNull, inArray } from "drizzle-orm";
 
 export const playerRepository = {
     findById: async (playerId: number) => {
@@ -90,5 +90,13 @@ export const playerRepository = {
             .where(and(eq(players.user_id, userId), isNull(players.deleted_at)))
             .limit(1);
         return result[0];
+    },
+    findByFaceitIds: async (faceitIds: string[]) => {
+        if (faceitIds.length === 0) return [];
+
+        return db
+            .select()
+            .from(players)
+            .where(inArray(players.faceit_id, faceitIds));
     },
 };

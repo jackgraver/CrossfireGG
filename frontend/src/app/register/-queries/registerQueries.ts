@@ -10,8 +10,7 @@ export const usePlayerFaceitTeams = (playerId: string) => {
             name: string,
             avatar: string,
             leader: string,
-            exists: boolean,
-            isRegistered: boolean,
+            isRegistered: string | null,
         }[]
     }>({
         queryKey: ["player-faceit-teams", playerId],
@@ -43,7 +42,6 @@ export const useRegisterTeam = () => {
             teamId: string;
             playerIds: string[];
         }) => {
-            console.log(teamId, playerIds);
             return teamApi.registerTeam(teamId, playerIds);
         }
     });

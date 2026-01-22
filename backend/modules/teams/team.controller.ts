@@ -177,7 +177,6 @@ export const teamController = {
                         // writeFileName: `team_players_${teamId}.json`,
                     }
                 );
-            console.log('faceitTeam', faceitTeam);
 
             const faceitPlayerIds = new Set(
                 faceitTeam.members.map(m => m.user_id)
@@ -188,7 +187,6 @@ export const teamController = {
                 throw new Error(`Invalid players: ${missing.join(", ")}`);
             }
 
-            console.log('create team', faceitTeam.name, faceitTeam.avatar, teamId);
             const dbTeam = await teamRepository.upsertTeamByFaceitId({
                 name: faceitTeam.name,
                 team_logo: faceitTeam.avatar,
@@ -216,7 +214,7 @@ export const teamController = {
                 await teamRepository.addPlayerToTeam(dbPlayer.id, dbTeam.id);
             }
 
-            res.json({ success: true });
+            res.json({ team_id: dbTeam.id });
         } catch (error: any) {
             logger.error(`Error in registerTeam:`, error);
             res.status(500).json({ error: "Failed to register team" });

@@ -1,3 +1,4 @@
+import { playerRepository } from "../players/player.repository";
 import { teamRepository } from "./team.repository";
 import type {
     TeamDetailResponse,

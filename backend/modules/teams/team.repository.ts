@@ -250,4 +250,12 @@ export const teamRepository = {
             .returning();
         return result[0];
     },
+    findByFaceitIds: async (faceitIds: string[]) => {
+        if (faceitIds.length === 0) return [];
+
+        return db
+            .select()
+            .from(teams)
+            .where(inArray(teams.faceit_id, faceitIds));
+    },
 };

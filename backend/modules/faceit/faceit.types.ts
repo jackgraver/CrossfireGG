@@ -4,7 +4,7 @@ export type FaceitPlayerTeamsResponse = {
         name: string;
         avatar: string;
         leader: string;
-    };
+    }[];
 };
 
 export type FaceitTeamPlayersResponse = {

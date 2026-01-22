@@ -13,6 +13,7 @@ import {
     FaceitPlayerTeamsResponse,
     FaceitTeamPlayersResponse,
 } from "./faceit.types";
+import { playerRepository } from "../players/player.repository";
 
 export const faceitController = {
     importFaceitStage: async (req: Request, res: Response) => {
@@ -140,37 +141,29 @@ export const faceitController = {
                     }
                 );
 
-            const existingTeams = await teamRepository.findAll();
+            const ledTeams = response.items.filter(team => team.leader === playerId);
 
-            const existingTeamIds = new Set(
-                existingTeams.map(
-                    (t) => t.faceit_id || t.faceit_id || t.id?.toString()
-                )
+            if (ledTeams.length === 0) {
+                res.status(200).json({ teams: [] });
+                return;
+            }
+
+            const existingTeams = await teamRepository.findByFaceitIds(ledTeams.map(team => team.team_id));
+
+            const existingTeamsByFaceitId = new Map(
+                existingTeams.map(t => [t.faceit_id!, t])
             );
-            const inputTeams = Array.isArray(response.items)
-                ? response.items
-                : response.items
-                    ? [response.items]
-                    : [];
 
-            res.json({
-                teams: Array.isArray(inputTeams)
-                    ? inputTeams
-                        .map((team) => ({
-                            team_id: team.team_id,
-                            name: team.name,
-                            avatar: team.avatar,
-                            leader: team.leader,
-                            exists:
-                                existingTeamIds.has(team.team_id) ||
-                                team.name === "regain",
-                            isRegistered: false,
-                        }))
-                        .sort((a, b) =>
-                            a.exists === b.exists ? 0 : a.exists ? 1 : -1
-                        )
-                    : [],
-            });
+            const result = ledTeams.map(team => ({
+                team_id: team.team_id,
+                name: team.name,
+                avatar: team.avatar,
+                leader: team.leader,
+                isRegistered:
+                    existingTeamsByFaceitId.get(team.team_id)?.id?.toString() ?? null,
+            }));
+
+            res.json({ teams: result });
         } catch (error: any) {
             logger.error("Error verifying Faceit team:", error);
             res.status(500).json({
@@ -204,15 +197,20 @@ export const faceitController = {
                     }
                 );
 
-            res.json({
-                success: true,
-                message: "Faceit team players fetched successfully",
-                players: players.members.map((member) => ({
-                    user_id: member.user_id,
-                    nickname: member.nickname,
-                    avatar: member.avatar,
-                })),
-            });
+            const existingPlayersByFaceitId = await playerRepository.findByFaceitIds(players.members.map(member => member.user_id));
+
+            if (existingPlayersByFaceitId.length === 0) {
+                res.status(200).json({ players: [] });
+                return;
+            }
+
+            const result = players.members.map(member => ({
+                user_id: member.user_id,
+                nickname: member.nickname,
+                avatar: member.avatar,
+            }));
+
+            res.json({ players: result });
         } catch (error: any) {
             logger.error("Error fetching Faceit team players:", error);
             res.status(500).json({
