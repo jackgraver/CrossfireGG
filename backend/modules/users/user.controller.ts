@@ -150,10 +150,12 @@ export const userController = {
             });
 
             if (!session?.user.id) {
-                return res.status(401).json({ error: "Unauthorized" });
+                return res.json(null);
             }
             const userInfo = await userRepository.userPlayerInfo(session.user.id);
             res.json({
+                userId: session.user.id,
+                name: session.user.name,
                 faceitId: userInfo?.faceit_id,
                 teamId: userInfo?.team_id,
                 roles: ["admin"],

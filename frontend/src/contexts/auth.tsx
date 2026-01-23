@@ -9,6 +9,7 @@ const useUserRole = (hasSession: boolean) => {
         queryKey: ["user-role"],
         queryFn: async () => {
             const res = await api.get<User>("/user/user-role");
+            console.log('user', res.data);
             return res.data;
         },
         enabled: hasSession,
@@ -16,7 +17,7 @@ const useUserRole = (hasSession: boolean) => {
 }
 
 type AuthContextType = {
-    session: any | null;
+    // session: any | null;
     user: User | null;
     isLoading: boolean;
     refetch: () => void;
@@ -24,25 +25,24 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-    const {
-        data: session,
-        isPending: sessionLoading,
-    } = authClient.useSession();
-    console.log('session', session);
+    // const {
+    //     data: session,
+    //     isPending: sessionLoading,
+    // } = authClient.useSession();
+    // console.log('session', session);
 
     const {
         data: user,
         isPending: userLoading,
         refetch: refetchUser,
-    } = useUserRole(!!session);
-    console.log('user', user);
+    } = useUserRole(true);
 
     return (
         <AuthContext.Provider
             value={{
-                session,
+                // session,
                 user: user ?? null,
-                isLoading: sessionLoading || userLoading,
+                isLoading: userLoading,
                 refetch: refetchUser,
             }}
         >

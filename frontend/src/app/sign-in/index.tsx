@@ -74,7 +74,8 @@ function SignIn() {
             <button className="bg-border text-textSecondary hover:bg-secondBg rounded px-4 py-2" onClick={async () => {
                 await authClient.signOut({
                     fetchOptions: {
-                        onSuccess: () => {
+                        onSuccess: async () => {
+                            await queryClient.refetchQueries({ queryKey: ["user-role"] });
                             navigate({ to: "/" });
                         }
                     }

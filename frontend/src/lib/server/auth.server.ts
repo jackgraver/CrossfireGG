@@ -9,6 +9,8 @@ import { authClient } from "../auth-client";
 const API_BASE_URL = process.env.VITE_API_BASE_URL || "http://localhost:3000";
 
 export type User = {
+    userId: string;
+    name: string;
     faceitId: string;
     teamId: number;
     roles: string[];

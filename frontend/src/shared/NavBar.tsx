@@ -3,7 +3,6 @@ import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { logoutFn } from "@/lib/server/auth.server";
 import { matchesRole } from "@/lib/role.util";
-import { hasSession } from "@/lib/auth.util";
 import {
     Trophy,
     Users,
@@ -14,6 +13,7 @@ import {
     LogOut,
     Moon,
 } from "lucide-react";
+import { useAuth } from "@/contexts/auth";
 
 function toggleDarkMode() {
     const isDark = document.documentElement.classList.toggle("dark");
@@ -74,7 +74,8 @@ const NavItem = ({
     );
 };
 
-export default function NavBar({ session }: { session: any }) {
+export default function NavBar() {
+    const { user } = useAuth();
     const logout = useServerFn(logoutFn);
 
     useEffect(() => {
@@ -103,15 +104,15 @@ export default function NavBar({ session }: { session: any }) {
                             icon={<Trophy size={18} />}
                             label="Tournaments"
                         />
-                        {session?.team_id && (
+                        {user?.teamId && (
                             <NavItem
                                 to="/team/$team_id"
-                                params={{ team_id: session.team_id }}
+                                params={{ team_id: user.teamId.toString() }}
                                 icon={<Users size={18} />}
                                 label="My Team"
                             />
                         )}
-                        {matchesRole(session?.roles, "ADMIN") && (
+                        {matchesRole(user?.roles, "ADMIN") && (
                             <NavItem
                                 to="/manage-teams"
                                 icon={<Users size={18} />}
@@ -119,7 +120,7 @@ export default function NavBar({ session }: { session: any }) {
                             />
                         )}
                         {matchesRole(
-                            session?.roles,
+                            user?.roles,
                             "ADMIN",
                             "PRODUCTION_LEAD",
                             "PRODUCTION",
@@ -130,7 +131,7 @@ export default function NavBar({ session }: { session: any }) {
                                     label="Casting"
                                 />
                             )}
-                        {matchesRole(session?.roles, "ADMIN") && (
+                        {matchesRole(user?.roles, "ADMIN") && (
                             <NavItem
                                 to="/admin"
                                 icon={<Settings size={18} />}
@@ -142,12 +143,12 @@ export default function NavBar({ session }: { session: any }) {
                             label="Theme"
                             onClick={() => toggleDarkMode()}
                         />
-                        {hasSession(session) ? (
+                        {user ? (
                             <>
                                 <NavItem
                                     to="/user"
                                     icon={<User size={18} />}
-                                    label={session?.user?.name}
+                                    label={user?.name}
                                 />
                                 <NavItem
                                     to="/"
