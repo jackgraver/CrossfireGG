@@ -11,6 +11,7 @@ import {
     DollarSign,
 } from "lucide-react";
 import { TournamentWithStagesDTO } from "@repo/contracts";
+import { useAuth } from "@/contexts/auth";
 
 export const Route = createFileRoute("/tournament/")({
     component: RouteComponent,
@@ -18,8 +19,8 @@ export const Route = createFileRoute("/tournament/")({
 
 function RouteComponent() {
     const navigate = useNavigate();
-    const session = Route.useRouteContext().session;
     const { data, isLoading, error } = useAllTournaments();
+    const { session, user, isLoading: isAuthLoading } = useAuth();
 
     if (error) {
         return (
@@ -131,7 +132,7 @@ function RouteComponent() {
                                             </div>
                                             <div className="text-cfRed flex-start flex gap-2">
                                                 <SignUpButton
-                                                    session={session}
+                                                    user={user}
                                                 />
                                             </div>
                                         </div>

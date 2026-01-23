@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import { userService } from "./user.service";
 import { userRepository } from "./user.repository";
 import { jwtUtils } from "../../lib/jwt";
+import { auth } from "../../lib/auth";
+import { fromNodeHeaders } from "better-auth/node";
 
 export const userController = {
     signUp: async (req: Request, res: Response) => {
@@ -143,20 +145,17 @@ export const userController = {
 
     getUserRole: async (req: Request, res: Response) => {
         try {
-            // const userId = (req as any).user?.userId;
-            // if (!userId) {
-            //     return res.status(401).json({ error: "Unauthorized" });
-            // }
+            const session = await auth.api.getSession({
+                headers: fromNodeHeaders(req.headers)
+            });
 
-            // const user = await userService.getUserWithRoles(userId);
-            // if (!user) {
-            //     return res.status(404).json({ error: "User not found" });
-            // }
-
-            // res.json(user);
+            if (!session?.user.id) {
+                return res.status(401).json({ error: "Unauthorized" });
+            }
+            const userInfo = await userRepository.userPlayerInfo(session.user.id);
             res.json({
-                faceitId: "2abbf5d5-ae35-40a1-bf6c-cf19c844168d",
-                teamId: 1,
+                faceitId: userInfo?.faceit_id,
+                teamId: userInfo?.team_id,
                 roles: ["admin"],
             })
         } catch (error: any) {

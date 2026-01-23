@@ -34,10 +34,6 @@ function RegisterPage() {
 
     const { session, user, isLoading } = useAuth();
 
-
-    console.log('s', session);
-    console.log('u', user);
-
     const [registeredTeamId, setRegisteredTeamId] = useState<number>(0);
 
     // TODO: Replace with actual auth check

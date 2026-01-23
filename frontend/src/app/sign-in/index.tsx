@@ -10,6 +10,8 @@ import { authClient } from "@/lib/auth-client";
 import { toastService } from "@/shared/toast/toastService";
 import { useAllTournaments } from "../tournament/-queries/tournamentsQueries";
 import { api } from "@/api/client";
+import { useAuth } from "@/contexts/auth";
+import { queryClient } from "@/lib/queryClient";
 
 export const Route = createFileRoute("/sign-in/")({
     component: SignIn,
@@ -21,6 +23,8 @@ function SignIn() {
     const [submitStatus, setSubmitStatus] = useState<
         "idle" | "submitting" | "success" | "error"
     >("idle");
+
+    const { refetch } = useAuth();
 
     const form = useForm({
         defaultValues: {
@@ -68,7 +72,13 @@ function SignIn() {
                 });
             }}>testing</button>
             <button className="bg-border text-textSecondary hover:bg-secondBg rounded px-4 py-2" onClick={async () => {
-
+                await authClient.signOut({
+                    fetchOptions: {
+                        onSuccess: () => {
+                            navigate({ to: "/" });
+                        }
+                    }
+                });
             }}>testing2</button>
             <h1 className="mb-2 text-2xl font-bold text-white">Welcome Back</h1>
             <form

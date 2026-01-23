@@ -1,16 +1,16 @@
+import { User } from "@/lib/server/auth.server";
 import { Link } from "@tanstack/react-router";
 import { MoveUpRight } from "lucide-react";
 
-export default function SignUpButton({ session }: { session: any }) {
+export default function SignUpButton({ user }: { user: User | null }) {
     const activeClass =
         "flex-start flex w-full items-center justify-center rounded-lg bg-cfRed px-4 py-2 text-xs font-black tracking-widest text-white uppercase shadow-sm transition-all hover:bg-cfRedDark gap-2";
 
     const getButtonContent = () => {
-        //TODO: revert this
-        // if (!hasSession(session)) {
-        //     return { to: "/sign-up", text: "Create Account" };
-        // }
-        if (!session?.team_id) {
+        if (!user) {
+            return { to: "/sign-up", text: "Create Account" };
+        }
+        if (!user?.teamId) {
             return { to: "/register", text: "Create Team To Join" };
         }
         return { to: "/tournament", text: "Join Tournament" };
