@@ -7,6 +7,9 @@ import { signInSchema } from "@/schemas/auth";
 import { Input, PasswordInput, SubmitButton } from "@/shared/form";
 import UserForm from "@/shared/UserForm";
 import { authClient } from "@/lib/auth-client";
+import { toastService } from "@/shared/toast/toastService";
+import { useAllTournaments } from "../tournament/-queries/tournamentsQueries";
+import { api } from "@/api/client";
 
 export const Route = createFileRoute("/sign-in/")({
     component: SignIn,
@@ -58,17 +61,15 @@ function SignIn() {
 
         <UserForm>
             <button className="bg-border text-textSecondary hover:bg-secondBg rounded px-4 py-2" onClick={async () => {
-                const { data, error } = await authClient.signIn.social({
-                    provider: "google",
+                await authClient.signIn.email({
+                    email: "test@test.com",
+                    password: "password",
+                    callbackURL: "/",
                 });
-                if (error) {
-                    console.log('error:', error);
-                }
-                if (data) {
-                    console.log('data:', data);
-                }
-
             }}>testing</button>
+            <button className="bg-border text-textSecondary hover:bg-secondBg rounded px-4 py-2" onClick={async () => {
+
+            }}>testing2</button>
             <h1 className="mb-2 text-2xl font-bold text-white">Welcome Back</h1>
             <form
                 onSubmit={(e) => {

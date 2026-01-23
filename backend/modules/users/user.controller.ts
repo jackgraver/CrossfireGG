@@ -44,22 +44,30 @@ export const userController = {
 
     signIn: async (req: Request, res: Response) => {
         try {
-            const credentials = req.body;
-            console.log("credentials", credentials);
-            const authResponse = await userService.signIn(credentials);
+            // const credentials = req.body;
+            // const authResponse = await userService.signIn(credentials);
+            const authResponse = {
+                user: {
+                    id: 1,
+                    name: "Test User",
+                    team_id: 1,
+                    faceit_id: "2abbf5d5-ae35-40a1-bf6c-cf19c844168d",
+                },
+            };
 
             const accessToken = jwtUtils.generateAccessToken({
                 userId: authResponse.user.id,
                 username: authResponse.user.name,
                 teamId: authResponse.user.team_id,
+                faceitId: authResponse.user.faceit_id,
             });
 
-            const userFromDb = await userRepository.findById(
-                authResponse.user.id
-            );
-            if (!userFromDb) {
-                throw new Error("User not found");
-            }
+            // const userFromDb = await userRepository.findById(
+            //     authResponse.user.id
+            // );
+            // if (!userFromDb) {
+            //     throw new Error("User not found");
+            // }
 
             const refreshToken = jwtUtils.generateRefreshToken({
                 userId: authResponse.user.id,
@@ -135,17 +143,22 @@ export const userController = {
 
     getUserRole: async (req: Request, res: Response) => {
         try {
-            const userId = (req as any).user?.userId;
-            if (!userId) {
-                return res.status(401).json({ error: "Unauthorized" });
-            }
+            // const userId = (req as any).user?.userId;
+            // if (!userId) {
+            //     return res.status(401).json({ error: "Unauthorized" });
+            // }
 
-            const user = await userService.getUserWithRoles(userId);
-            if (!user) {
-                return res.status(404).json({ error: "User not found" });
-            }
+            // const user = await userService.getUserWithRoles(userId);
+            // if (!user) {
+            //     return res.status(404).json({ error: "User not found" });
+            // }
 
-            res.json(user);
+            // res.json(user);
+            res.json({
+                faceitId: "2abbf5d5-ae35-40a1-bf6c-cf19c844168d",
+                teamId: 1,
+                roles: ["admin"],
+            })
         } catch (error: any) {
             res.status(500).json({ error: error.message });
         }

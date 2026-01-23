@@ -8,6 +8,10 @@ import { openInNewTab } from "@/lib/NewTab";
 import { useNavigate } from "@tanstack/react-router";
 import { useRegisterTeam } from "./-queries/registerQueries";
 import z from "zod";
+import { useSession } from "@tanstack/react-start/server";
+import { authClient } from "@/lib/auth-client";
+import { useAuthBundle } from "@/lib/auth.util";
+import { useAuth } from "@/contexts/auth";
 
 const formSteps = [
     "team",
@@ -27,6 +31,12 @@ function RegisterPage() {
     const navigate = useNavigate();
     const registerMutation = useRegisterTeam();
     const { tournamentId } = Route.useSearch();
+
+    const { session, user, isLoading } = useAuth();
+
+
+    console.log('s', session);
+    console.log('u', user);
 
     const [registeredTeamId, setRegisteredTeamId] = useState<number>(0);
 

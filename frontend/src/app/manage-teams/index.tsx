@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import ProtectedRoute from "@/shared/ProtectedRoute";
 import SeedControl from "./-components/SeedControl";
 import StageSelector from "@/shared/StageSelector";
 import { api } from "@/api/client";
@@ -11,6 +10,7 @@ export const Route = createFileRoute("/manage-teams/")({
 });
 
 function ManageTeams() {
+    return <div>Manage Teams</div>;
     // const queryClient = useQueryClient();
 
     // const [regSeasonTeams, setRegSeasonTeams] = useState<Team[]>([]);

@@ -19,13 +19,13 @@ export const api = axios.create({
 //     (error) => Promise.reject(error),
 // );
 
-api.interceptors.request.use((config) => {
-    const token = "temp"; //TODO: create token based access in backend
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-});
+// api.interceptors.request.use((config) => {
+//     const token = "temp"; //TODO: create token based access in backend
+//     if (token) {
+//         config.headers.Authorization = `Bearer ${token}`;
+//     }
+//     return config;
+// });
 
 api.interceptors.response.use(
     (response) => response,

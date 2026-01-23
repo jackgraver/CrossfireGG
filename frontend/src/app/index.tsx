@@ -40,7 +40,11 @@ function Home() {
                     Manage / Create Team
                     <MoveUpRight className="h-5 w-5" />
                 </button>
-                <button className="flex w-64 items-center justify-center gap-2 rounded-md bg-red-600 px-4 py-2 text-white">
+                <button className="flex w-64 items-center justify-center gap-2 rounded-md bg-red-600 px-4 py-2 text-white" onClick={() =>
+                    navigate({
+                        to: "/manage-teams",
+                    })
+                }>
                     ---
                     <MoveUpRight className="h-5 w-5" />
                 </button>

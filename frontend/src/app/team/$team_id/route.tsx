@@ -6,6 +6,7 @@ import {
     useMatchRoute,
 } from "@tanstack/react-router";
 import { useTeam } from "../-queries/team.queries";
+import { authMiddleware } from "@/middleware/auth.middlware";
 
 export const Route = createFileRoute("/team/$team_id")({
     component: RouteComponent,
@@ -86,11 +87,10 @@ function RouteComponent() {
                                 key={to}
                                 to={to}
                                 params={{ team_id }}
-                                className={`relative px-6 py-3 text-sm font-medium transition-colors ${
-                                    active
-                                        ? "text-textPrimary"
-                                        : "text-textSecondary hover:text-textPrimary"
-                                }`}
+                                className={`relative px-6 py-3 text-sm font-medium transition-colors ${active
+                                    ? "text-textPrimary"
+                                    : "text-textSecondary hover:text-textPrimary"
+                                    }`}
                             >
                                 {label}
                                 {active && (

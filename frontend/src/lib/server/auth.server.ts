@@ -4,6 +4,7 @@ import { redirect } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/api/client";
 import { useAppSession } from "@/contexts/session";
+import { authClient } from "../auth-client";
 
 const API_BASE_URL = process.env.VITE_API_BASE_URL || "http://localhost:3000";
 

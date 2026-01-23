@@ -2,6 +2,9 @@ import { createContext, useContext, ReactNode } from "react";
 import { getCurrentUserFn, type User } from "@/lib/server/auth.server";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
+import { useAuthBundle } from "@/lib/auth.util";
+import { authClient } from "@/lib/auth-client";
+import { api } from "@/api/client";
 
 type AuthContextType = {
     user: User | null;
@@ -9,25 +12,39 @@ type AuthContextType = {
     refetch: () => void;
 };
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const useUserRole = (hasSession: boolean) => {
+    return useQuery({
+        queryKey: ["user-role"],
+        queryFn: async () => {
+            const res = await api.get("/user/user-role");
+            return res.data;
+        },
+        enabled: hasSession,
+    });
+}
+
+const AuthContext = createContext<any | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-    const fetchUser = useServerFn(getCurrentUserFn);
+    const {
+        data: session,
+        isPending: sessionLoading,
+    } = authClient.useSession();
 
     const {
         data: user,
-        isLoading,
-        refetch,
-    } = useQuery({
-        queryKey: ["currentUser"],
-        queryFn: () => fetchUser(),
-        staleTime: 1000 * 60 * 5,
-        retry: false,
-    });
+        isPending: userLoading,
+        refetch: refetchUser,
+    } = useUserRole(!!session);
 
     return (
         <AuthContext.Provider
-            value={{ user: user ?? null, isLoading, refetch }}
+            value={{
+                session,
+                user: user ?? null,
+                isLoading: sessionLoading || userLoading,
+                refetch: refetchUser,
+            }}
         >
             {children}
         </AuthContext.Provider>

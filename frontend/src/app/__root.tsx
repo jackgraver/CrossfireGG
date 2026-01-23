@@ -14,12 +14,9 @@ import {
     createRootRouteWithContext,
 } from "@tanstack/react-router";
 import { fetchSession } from "@/lib/server/auth.server";
+import { authClient } from "@/lib/auth-client";
 
 export const Route = createRootRouteWithContext<{ session: any }>()({
-    beforeLoad: async () => {
-        const session = await fetchSession();
-        return { session };
-    },
     head: () => ({
         meta: [
             { charSet: "utf-8" },

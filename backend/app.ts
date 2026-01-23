@@ -2,7 +2,6 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import { config } from "./config/env";
 import { errorHandler } from "./core/middleware/errorHandler";
-import { authMiddleware } from "./core/middleware/auth";
 import tournamentRoutes from "./modules/tournaments/tournament.routes";
 import matchRoutes from "./modules/matches/match.routes";
 import teamRoutes from "./modules/teams/team.routes";
@@ -51,11 +50,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-app.use("/user", authMiddleware, userRoutes);
-app.use("/tournament", authMiddleware, tournamentRoutes);
-app.use("/match", authMiddleware, matchRoutes);
-app.use("/team", authMiddleware, teamRoutes);
-app.use("/faceit", authMiddleware, faceitRoutes);
+app.use("/user", userRoutes);
+app.use("/tournament", tournamentRoutes);
+app.use("/match", matchRoutes);
+app.use("/team", teamRoutes);
+app.use("/faceit", faceitRoutes);
 
 app.use(errorHandler);
 

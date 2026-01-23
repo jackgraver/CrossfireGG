@@ -5,6 +5,7 @@ export interface JWTPayload {
     userId: number;
     username: string;
     teamId?: number;
+    faceitId?: string;
 }
 
 export interface RefreshTokenPayload {

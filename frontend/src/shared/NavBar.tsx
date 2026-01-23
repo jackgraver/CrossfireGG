@@ -124,12 +124,12 @@ export default function NavBar({ session }: { session: any }) {
                             "PRODUCTION_LEAD",
                             "PRODUCTION",
                         ) && (
-                            <NavItem
-                                to="/casting"
-                                icon={<Video size={18} />}
-                                label="Casting"
-                            />
-                        )}
+                                <NavItem
+                                    to="/casting"
+                                    icon={<Video size={18} />}
+                                    label="Casting"
+                                />
+                            )}
                         {matchesRole(session?.roles, "ADMIN") && (
                             <NavItem
                                 to="/admin"
@@ -147,7 +147,7 @@ export default function NavBar({ session }: { session: any }) {
                                 <NavItem
                                     to="/user"
                                     icon={<User size={18} />}
-                                    label={session.name}
+                                    label={session?.user?.name}
                                 />
                                 <NavItem
                                     to="/"
