@@ -10,3 +10,25 @@ export const TeamContract = z.object({
 });
 
 export type TeamDTO = z.infer<typeof TeamContract>;
+
+export const TeamWithTournamentContract = TeamContract.extend({
+    tournaments: z.array(
+        z.object({
+            id: z.number(),
+            name: z.string(),
+            stages: z.array(
+                z.object({
+                    id: z.number(),
+                    name: z.string(),
+                    seed: z.number().nullable().optional(),
+                    wins: z.number().nullable().optional(),
+                    losses: z.number().nullable().optional(),
+                    paid: z.number().nullable().optional(),
+                    joined_tournament: z.number().nullable().optional(),
+                })
+            )
+        })
+    )
+});
+
+export type TeamWithTournamentDTO = z.infer<typeof TeamWithTournamentContract>;

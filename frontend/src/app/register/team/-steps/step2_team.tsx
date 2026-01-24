@@ -52,26 +52,24 @@ export default function RegisterStep2Team({
                     value={selectedTeamId}
                     onChange={(value) => onSelectionChange(value[0])}
                 >
-                    <div className="flex max-h-[400px] w-full flex-col gap-2 overflow-x-hidden overflow-y-auto">
-                        {nonRegisteredOnTop?.map((team) => (
-                            <SelectableCard
-                                key={team.team_id}
-                                id={team.team_id}
-                                avatar={team.avatar}
-                                name={team.name}
-                                disabled={team.isRegistered !== null} //TODO: Sign up flow for existing team here too
-                                disabledAction={{
-                                    label: "Team Already Registered",
-                                    onClick: () => {
-                                        navigate({
-                                            to: `/team/$team_id`,
-                                            params: { team_id: team.isRegistered!! },
-                                        });
-                                    },
-                                }}
-                            />
-                        ))}
-                    </div>
+                    {nonRegisteredOnTop?.map((team) => (
+                        <SelectableCard
+                            key={team.team_id}
+                            id={team.team_id}
+                            avatar={team.avatar}
+                            name={team.name}
+                            disabled={team.isRegistered !== null} //TODO: Sign up flow for existing team here too
+                            disabledAction={{
+                                label: "Team Already Registered",
+                                onClick: () => {
+                                    navigate({
+                                        to: `/team/$team_id`,
+                                        params: { team_id: team.isRegistered!! },
+                                    });
+                                },
+                            }}
+                        />
+                    ))}
                 </SelectableCardGroup>
             )}
         </>

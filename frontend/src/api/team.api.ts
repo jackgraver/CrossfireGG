@@ -1,12 +1,13 @@
+import { PlayerDTO, TeamDTO } from "@repo/contracts";
 import { api } from "./client";
 
 export const teamApi = {
     teamById: async (teamId: string) => {
-        const response = await api.get<unknown>(`/team/${teamId}`);
+        const response = await api.get<TeamDTO>(`/team/${teamId}`);
         return response.data;
     },
     teamPlayers: async (teamId: string) => {
-        const response = await api.get<unknown[]>(`/team/${teamId}/players`);
+        const response = await api.get<PlayerDTO[]>(`/team/${teamId}/players`);
         return response.data;
     },
     teamMatchesByStage: async (teamId: string, stageId: string) => {
@@ -27,10 +28,12 @@ export const teamApi = {
         );
         return response.data;
     },
-    registerTeam: async (teamId: string, playerIds: string[]) => {
+    registerTeam: async (teamId: string, playerIds: string[], subIds: string[], coachIds: string[]) => {
         const response = await api.post<{ team_id: number }>(`/team/register`, {
             teamId: teamId,
             playerIds: playerIds,
+            subIds: subIds,
+            coachIds: coachIds,
         });
         return response.data;
     },

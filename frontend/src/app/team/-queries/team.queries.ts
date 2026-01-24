@@ -1,8 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { teamApi } from "@/api/team.api";
+import { PlayerDTO, TeamDTO } from "@repo/contracts";
 
 export const useTeam = (teamId: string) => {
-    return useQuery<unknown>({
+    return useQuery<TeamDTO>({
         queryKey: ["team", teamId],
         queryFn: () => teamApi.teamById(teamId),
         enabled: !!teamId,
@@ -21,7 +22,7 @@ export const useTeamMatchesByStage = (
 };
 
 export const useTeamPlayers = (teamId: string) => {
-    return useQuery<unknown[]>({
+    return useQuery<PlayerDTO[]>({
         queryKey: ["team", teamId, "players"],
         queryFn: () => teamApi.teamPlayers(teamId),
         enabled: !!teamId,

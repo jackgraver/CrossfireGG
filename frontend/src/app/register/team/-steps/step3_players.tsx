@@ -7,12 +7,16 @@ type RegisterStep3PlayersProps = {
     teamId: string;
     selectedPlayerIds: string[];
     onSelectionChange: (ids: string[]) => void;
+    alreadySelectedPlayerIds: string[];
+    mode: "players" | "subs" | "coaches";
 };
 
 export default function RegisterStep3Players({
     teamId,
     selectedPlayerIds,
     onSelectionChange,
+    alreadySelectedPlayerIds,
+    mode,
 }: RegisterStep3PlayersProps) {
     if (!teamId) {
         return <div>No team selected</div>;
@@ -28,12 +32,14 @@ export default function RegisterStep3Players({
         return <div>No players found</div>;
     }
 
-    console.log(teamPlayers);
-
     const captainOnTop = teamPlayers?.players
         ? [...teamPlayers.players].sort((a, b) =>
             a.user_id === "2abbf5d5-ae35-40a1-bf6c-cf19c844168d" ? -1 :
                 b.user_id === "2abbf5d5-ae35-40a1-bf6c-cf19c844168d" ? 1 :
+                    0
+        ).sort((a, b) =>
+            alreadySelectedPlayerIds.includes(a.user_id) ? 1 :
+                alreadySelectedPlayerIds.includes(b.user_id) ? -1 :
                     0
         )
         : teamPlayers?.players ?? [];
@@ -41,7 +47,7 @@ export default function RegisterStep3Players({
     return (
         <>
             <h1 className="mb-2 text-2xl font-bold text-white">
-                Select up to 5 Players
+                {mode === "players" ? "Select All Starting Players" : mode === "subs" ? "Select All Substitutes" : "Select All Coaches"}
             </h1>
             {isLoading ? (
                 <div className="flex h-full w-full items-center justify-center">
@@ -50,21 +56,19 @@ export default function RegisterStep3Players({
                 </div>
             ) : (
                 <SelectableCardGroup
-                    min={0}
+                    min={mode === "players" ? 1 : 0}
                     value={selectedPlayerIds}
                     onChange={onSelectionChange}
                 >
-                    <div className="flex max-h-[400px] w-full flex-col gap-2 overflow-x-hidden overflow-y-auto">
-                        {captainOnTop.map((player) => (
-                            <SelectableCard
-                                key={player.user_id}
-                                id={player.user_id}
-                                avatar={player.avatar}
-                                name={player.nickname}
-                                disabled={player.user_id === "2abbf5d5-ae35-40a1-bf6c-cf19c844168d"}
-                            />
-                        ))}
-                    </div>
+                    {captainOnTop.map((player) => (
+                        <SelectableCard
+                            key={player.user_id}
+                            id={player.user_id}
+                            avatar={player.avatar}
+                            name={player.nickname}
+                            disabled={player.user_id === "2abbf5d5-ae35-40a1-bf6c-cf19c844168d" || alreadySelectedPlayerIds.includes(player.user_id)}
+                        />
+                    ))}
                 </SelectableCardGroup>
             )}
         </>

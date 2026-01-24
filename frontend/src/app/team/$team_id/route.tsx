@@ -6,15 +6,30 @@ import {
     useMatchRoute,
 } from "@tanstack/react-router";
 import { useTeam } from "../-queries/team.queries";
-import { authMiddleware } from "@/middleware/auth.middlware";
+import { teamApi } from "@/api/team.api";
+import { queryClient } from "@/lib/queryClient";
 
 export const Route = createFileRoute("/team/$team_id")({
     component: RouteComponent,
+    loader: async ({ context, params }) => {
+        // const user = await fetchSession();
+        // console.log('loader, user:', user);
+        // if (!user) {
+        //     throw redirect({ to: "/" });
+        // }
+        // return {
+        //     user,
+        // };
+        await queryClient.prefetchQuery({
+            queryKey: ["team", params.team_id],
+            queryFn: () => teamApi.teamById(params.team_id),
+        })
+    },
 });
 
 function RouteComponent() {
     const { team_id } = Route.useParams();
-    const { data, isLoading, error } = useTeam(team_id);
+    const { data: team, isLoading, error } = useTeam(team_id);
     const matchRoute = useMatchRoute();
 
     if (isLoading) {
@@ -25,7 +40,7 @@ function RouteComponent() {
         );
     }
 
-    if (error || !data) {
+    if (error || !team) {
         return (
             <div className="flex min-h-screen items-center justify-center">
                 <div className="bg-firstBg rounded-xl p-8 text-center shadow-md">
@@ -40,7 +55,6 @@ function RouteComponent() {
         );
     }
 
-    const { team } = data;
 
     const tabs = [
         { to: "/team/$team_id", label: "Overview", exact: true },

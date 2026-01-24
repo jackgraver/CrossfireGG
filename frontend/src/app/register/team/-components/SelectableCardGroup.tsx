@@ -67,7 +67,7 @@ export function SelectableCardGroup({
                 isValid,
             }}
         >
-            <div className="w-full">{children}</div>
+            <div className="flex max-h-[400px] w-full flex-col gap-2 overflow-x-hidden overflow-y-auto">{children}</div>
         </SelectableCardContext.Provider>
     );
 }

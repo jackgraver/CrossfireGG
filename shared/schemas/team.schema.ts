@@ -40,5 +40,5 @@ export const teamsRelations = relations(teams, ({ one, many }) => ({
     }),
     players: many(players),
     matchParticipants: many(matchParticipants),
-    stageTeams: many(stageTeams),
+    stages: many(stageTeams),
 }));

@@ -4,23 +4,23 @@ import { useState, useEffect, useRef } from "react";
 import RegisterStep2Team from "./-steps/step2_team";
 import RegisterStep3Players from "./-steps/step3_players";
 import { useForm, useStore } from "@tanstack/react-form";
-import { openInNewTab } from "@/lib/NewTab";
 import { useNavigate } from "@tanstack/react-router";
-import { useRegisterTeam } from "./-queries/registerQueries";
+import { useRegisterTeam, useTeamPlayers } from "./-queries/registerQueries";
 import z from "zod";
-import { useSession } from "@tanstack/react-start/server";
-import { authClient } from "@/lib/auth-client";
-import { useAuthBundle } from "@/lib/auth.util";
 import { useAuth } from "@/contexts/auth";
+import ReviewTeam from "./-components/ReviewTeam";
 
 const formSteps = [
     "team",
     "players",
+    "subs",
+    "coaches",
+    "review",
     "finished",
 ] as const;
 type FormStep = (typeof formSteps)[number];
 
-export const Route = createFileRoute("/register/")({
+export const Route = createFileRoute("/register/team/")({
     component: RegisterPage,
     validateSearch: z.object({
         tournamentId: z.string().optional(),
@@ -32,7 +32,7 @@ function RegisterPage() {
     const registerMutation = useRegisterTeam();
     const { tournamentId } = Route.useSearch();
 
-    const { session, user, isLoading } = useAuth();
+    const { user } = useAuth();
 
     const [registeredTeamId, setRegisteredTeamId] = useState<number>(0);
 
@@ -44,16 +44,14 @@ function RegisterPage() {
             teamId: "" as string,
             playerIds: ["2abbf5d5-ae35-40a1-bf6c-cf19c844168d"] as string[],
             subIds: [] as string[],
-            coachId: "" as string,
-            agreements: {
-                rulesAndGuidelines: false,
-                discordConfirmation: false,
-            },
+            coachIds: [] as string[],
         },
         onSubmit: async ({ value }) => {
             registerMutation.mutate({
                 teamId,
                 playerIds,
+                subIds,
+                coachIds,
             },
                 {
                     onSuccess: (res) => {
@@ -68,11 +66,13 @@ function RegisterPage() {
             );
         },
     });
-    const [stepIndex, setStepIndex] = useState(2);
+    const [stepIndex, setStepIndex] = useState(0);
     const currentStep = formSteps[stepIndex];
 
     const teamId = useStore(form.store, (state) => state.values.teamId);
     const playerIds = useStore(form.store, (state) => state.values.playerIds);
+    const subIds = useStore(form.store, (state) => state.values.subIds);
+    const coachIds = useStore(form.store, (state) => state.values.coachIds);
 
     const previousTeamIdRef = useRef(teamId);
 
@@ -80,14 +80,17 @@ function RegisterPage() {
         if (previousTeamIdRef.current && previousTeamIdRef.current !== teamId) {
             form.setFieldValue("playerIds", []);
             form.setFieldValue("subIds", []);
-            form.setFieldValue("coachId", "");
+            form.setFieldValue("coachIds", []);
         }
         previousTeamIdRef.current = teamId;
     }, [teamId, form]);
 
     const stepValidation: Record<FormStep, boolean> = {
         team: teamId !== "" && teamId !== undefined,
-        players: playerIds.length > 0,
+        players: playerIds.length >= 1,
+        subs: subIds.length > 0,
+        coaches: coachIds.length > 0,
+        review: true,
         finished: false,
     };
 
@@ -130,10 +133,49 @@ function RegisterPage() {
                                         teamId={teamId}
                                         selectedPlayerIds={field.state.value}
                                         onSelectionChange={field.handleChange}
+                                        alreadySelectedPlayerIds={[]}
+                                        mode="players"
                                     />
                                 );
                             }}
                         />
+                    )}
+                    {currentStep === "subs" && (
+                        <form.Field
+                            name="subIds"
+                            mode="array"
+                            children={(field) => {
+                                return (
+                                    <RegisterStep3Players
+                                        teamId={teamId}
+                                        selectedPlayerIds={field.state.value}
+                                        onSelectionChange={field.handleChange}
+                                        alreadySelectedPlayerIds={[...playerIds, ...coachIds]}
+                                        mode="subs"
+                                    />
+                                );
+                            }}
+                        />
+                    )}
+                    {currentStep === "coaches" && (
+                        <form.Field
+                            name="coachIds"
+                            mode="array"
+                            children={(field) => {
+                                return (
+                                    <RegisterStep3Players
+                                        teamId={teamId}
+                                        selectedPlayerIds={field.state.value}
+                                        onSelectionChange={field.handleChange}
+                                        alreadySelectedPlayerIds={[...playerIds, ...subIds]}
+                                        mode="coaches"
+                                    />
+                                );
+                            }}
+                        />
+                    )}
+                    {currentStep === "review" && (
+                        <ReviewTeam teamId={teamId} playerIds={playerIds} subIds={subIds} coachIds={coachIds} />
                     )}
                     {currentStep === "finished" && (
                         <div className="flex flex-col items-center gap-6 py-8">
@@ -182,7 +224,7 @@ function RegisterPage() {
                     >
                         Back
                     </button>
-                    {currentStep === "players" ? (
+                    {currentStep === "review" ? (
                         <button
                             type="submit"
                             onClick={() => form.handleSubmit()}

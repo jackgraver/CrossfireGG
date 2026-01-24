@@ -20,7 +20,7 @@ export const Route = createFileRoute("/tournament/")({
 function RouteComponent() {
     const navigate = useNavigate();
     const { data, isLoading, error } = useAllTournaments();
-    const { session, user, isLoading: isAuthLoading } = useAuth();
+    const { user, isLoading: isAuthLoading } = useAuth();
 
     if (error) {
         return (

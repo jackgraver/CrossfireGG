@@ -5,7 +5,10 @@ import { logger } from "./core/logger";
 
 const PORT = config.port;
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     logger.info(`Server is running on port ${PORT}`);
 });
 
+server.on("error", (error: NodeJS.ErrnoException) => {
+    console.error(error);
+});

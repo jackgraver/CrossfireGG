@@ -29,6 +29,7 @@ export const playerRepository = {
         player_logo: string | null;
         country: string | null;
         team_id?: number | null;
+        base_role?: "starter" | "sub" | "coach";
     }, dbOrTx = db) => {
         const existing = await dbOrTx
             .select()
@@ -48,6 +49,7 @@ export const playerRepository = {
                     player_name: playerData.player_name,
                     player_logo: playerData.player_logo,
                     country: playerData.country,
+                    base_role: playerData.base_role,
                     team_id:
                         playerData.team_id !== undefined
                             ? playerData.team_id

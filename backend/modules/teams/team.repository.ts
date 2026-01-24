@@ -20,12 +20,21 @@ export const teamRepository = {
     },
 
     findById: async (teamId: number) => {
-        const result = await db
-            .select()
-            .from(teams)
-            .where(and(eq(teams.id, teamId), isNull(teams.deleted_at)))
-            .limit(1);
-        return result[0];
+        return await db.query.teams.findFirst({
+            where: (t, { eq, and, isNull }) =>
+                and(eq(t.id, teamId), isNull(t.deleted_at)),
+            // with: {
+            //     stages: {
+            //         with: {
+            //             stage: {
+            //                 with: {
+            //                     tournament: true,
+            //                 }
+            //             },
+            //         },
+            //     },
+            // },
+        });
     },
 
     findStageTeam: async (teamId: number, stageId?: number) => {
@@ -136,12 +145,10 @@ export const teamRepository = {
     },
 
     findPlayersByTeamId: async (teamId: number) => {
-        return await db
-            .select()
-            .from(players)
-            .where(
-                and(eq(players.team_id, teamId), isNull(players.deleted_at))
-            );
+        return await db.query.players.findMany({
+            where: (p, { eq, and, isNull }) =>
+                and(eq(p.team_id, teamId), isNull(p.deleted_at)),
+        });
     },
 
     searchPlayers: async (searchQuery: string, excludeTeamId?: number) => {

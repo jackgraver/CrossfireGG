@@ -8,7 +8,7 @@ export const Route = createFileRoute("/team/$team_id/")({
 
 function TeamOverview() {
     const { team_id } = Route.useParams();
-    const { data, isLoading, error } = useTeam(team_id);
+    const { data: team, isLoading, error } = useTeam(team_id);
 
     if (isLoading) {
         return (
@@ -18,7 +18,7 @@ function TeamOverview() {
         );
     }
 
-    if (error || !data) {
+    if (error || !team) {
         return (
             <div className="text-textSecondary py-8 text-center">
                 Failed to load team data
@@ -26,7 +26,7 @@ function TeamOverview() {
         );
     }
 
-    const { tournaments } = data;
+    const tournaments: [] = [];
 
     if (tournaments.length === 0) {
         return (
@@ -40,7 +40,7 @@ function TeamOverview() {
 
     return (
         <div className="flex flex-col gap-6">
-            {tournaments.map((tournament) => (
+            {tournaments.map((tournament: any) => (
                 <div
                     key={tournament.tournament_id}
                     className="bg-firstBg rounded-xl shadow-md"
@@ -51,7 +51,7 @@ function TeamOverview() {
                         </h2>
                     </div>
                     <div className="grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-3">
-                        {tournament.stages.map((stage) => (
+                        {tournament.stages.map((stage: any) => (
                             <div
                                 key={stage.stage_id}
                                 className="border-border bg-secondBg rounded-lg border p-4"
@@ -86,34 +86,32 @@ function TeamOverview() {
                                 </div>
                                 {(stage.paid !== undefined ||
                                     stage.joined_tournament !== undefined) && (
-                                    <div className="mt-3 flex gap-2">
-                                        {stage.joined_tournament !==
-                                            undefined && (
-                                            <span
-                                                className={`rounded px-2 py-0.5 text-xs font-medium ${
-                                                    stage.joined_tournament
-                                                        ? "bg-green-500/20 text-green-400"
-                                                        : "bg-yellow-500/20 text-yellow-400"
-                                                }`}
-                                            >
-                                                {stage.joined_tournament
-                                                    ? "Signed Up"
-                                                    : "Not Signed Up"}
-                                            </span>
-                                        )}
-                                        {stage.paid !== undefined && (
-                                            <span
-                                                className={`rounded px-2 py-0.5 text-xs font-medium ${
-                                                    stage.paid
+                                        <div className="mt-3 flex gap-2">
+                                            {stage.joined_tournament !==
+                                                undefined && (
+                                                    <span
+                                                        className={`rounded px-2 py-0.5 text-xs font-medium ${stage.joined_tournament
+                                                            ? "bg-green-500/20 text-green-400"
+                                                            : "bg-yellow-500/20 text-yellow-400"
+                                                            }`}
+                                                    >
+                                                        {stage.joined_tournament
+                                                            ? "Signed Up"
+                                                            : "Not Signed Up"}
+                                                    </span>
+                                                )}
+                                            {stage.paid !== undefined && (
+                                                <span
+                                                    className={`rounded px-2 py-0.5 text-xs font-medium ${stage.paid
                                                         ? "bg-green-500/20 text-green-400"
                                                         : "bg-red-500/20 text-red-400"
-                                                }`}
-                                            >
-                                                {stage.paid ? "Paid" : "Unpaid"}
-                                            </span>
-                                        )}
-                                    </div>
-                                )}
+                                                        }`}
+                                                >
+                                                    {stage.paid ? "Paid" : "Unpaid"}
+                                                </span>
+                                            )}
+                                        </div>
+                                    )}
                             </div>
                         ))}
                     </div>

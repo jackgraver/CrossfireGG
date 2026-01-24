@@ -5,9 +5,10 @@ export const PlayerContract = z.object({
     player_name: z.string(),
     faceit_id: z.string().nullable().optional(),
     team_id: z.number().nullable().optional(),
-    user_id: z.number().nullable().optional(),
+    user_id: z.string().nullable().optional(),
     player_logo: z.string().nullable().optional(),
     country: z.string().nullable().optional(),
+    base_role: z.enum(["starter", "sub", "coach"]).nullable().optional(),
 });
 
 export type PlayerDTO = z.infer<typeof PlayerContract>;

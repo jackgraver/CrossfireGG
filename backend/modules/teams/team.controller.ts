@@ -7,6 +7,7 @@ import { faceitFetchUtil } from "../../utils/faceitFetch.util";
 import { FaceitTeamPlayersResponse } from "../faceit/faceit.types";
 import { teamRepository } from "./team.repository";
 import { playerRepository } from "../players/player.repository";
+import { PlayerContract, TeamContract } from "@repo/contracts";
 
 export const teamController = {
     getTeamById: async (req: Request, res: Response) => {
@@ -23,7 +24,9 @@ export const teamController = {
                 return res.status(404).json({ error: "Team not found" });
             }
 
-            res.json(teamDetails);
+            const payload = TeamContract.parse(teamDetails);
+
+            res.json(payload);
         } catch (error: any) {
             logger.error(
                 `Error in getTeamById for ID ${req.params.teamId}:`,
@@ -59,6 +62,7 @@ export const teamController = {
 
     getTeamPlayers: async (req: Request, res: Response) => {
         try {
+            console.log('getTeamPlayers', req.params.teamId);
             const teamId = parseInt(req.params.teamId);
 
             if (isNaN(teamId)) {
@@ -66,7 +70,10 @@ export const teamController = {
             }
 
             const players = await teamService.getTeamPlayers(teamId);
-            res.json(players);
+
+            const payload = PlayerContract.array().parse(players);
+
+            res.json(payload);
         } catch (error: any) {
             logger.error(
                 `Error in getTeamPlayers for team ID ${req.params.teamId}:`,
@@ -162,12 +169,15 @@ export const teamController = {
 
     registerTeam: async (req: Request, res: Response) => {
         try {
+            console.log('registerTeam', req.body);
             const validation = RegisterTeamSchema.safeParse(req.body);
             if (!validation.success) {
                 return res.status(400).json({ error: "Validation failed", details: validation.error.issues });
             }
 
-            const { teamId, playerIds } = validation.data;
+            const { teamId, playerIds, subIds, coachIds } = validation.data;
+
+            const combinedPlayerIds = [...playerIds, ...subIds, ...coachIds];
 
             const faceitTeam =
                 await faceitFetchUtil.fetchData<FaceitTeamPlayersResponse>(
@@ -182,7 +192,7 @@ export const teamController = {
                 faceitTeam.members.map(m => m.user_id)
             );
 
-            const missing = playerIds.filter(id => !faceitPlayerIds.has(id));
+            const missing = combinedPlayerIds.filter(id => !faceitPlayerIds.has(id));
             if (missing.length > 0) {
                 throw new Error(`Invalid players: ${missing.join(", ")}`);
             }
@@ -195,7 +205,7 @@ export const teamController = {
             });
 
             for (const player of faceitTeam.members) {
-                if (!playerIds.includes(player.user_id)) continue;
+                if (!combinedPlayerIds.includes(player.user_id)) continue;
 
                 const dbPlayer = await playerRepository.upsertPlayerByFaceitId({
                     player_name: player.nickname,
@@ -203,6 +213,7 @@ export const teamController = {
                     player_logo: player.avatar,
                     country: player.country,
                     team_id: dbTeam.id,
+                    base_role: playerIds.includes(player.user_id) ? "starter" : subIds.includes(player.user_id) ? "sub" : "coach",
                 });
 
                 if (player.user_id === faceitTeam.leader) {

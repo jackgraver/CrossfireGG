@@ -52,8 +52,8 @@ export default function RegisterStep4SubCoach(
     const value = isSubs
         ? props.selectedIds
         : props.selectedId
-          ? [props.selectedId]
-          : [];
+            ? [props.selectedId]
+            : [];
     const handleChange = isSubs
         ? props.onSelectionChange
         : (ids: string[]) => props.onSelectionChange(ids[0] ?? "");
@@ -67,19 +67,17 @@ export default function RegisterStep4SubCoach(
                 value={value}
                 onChange={handleChange}
             >
-                <div className="flex max-h-[400px] w-full flex-col gap-2 overflow-x-hidden overflow-y-auto">
-                    {sortedPlayers.map((player) => (
-                        <SelectableCard
-                            key={player.user_id}
-                            id={player.user_id}
-                            avatar={player.avatar}
-                            name={player.nickname}
-                            disabled={excludedPlayerIds.includes(
-                                player.user_id,
-                            )}
-                        />
-                    ))}
-                </div>
+                {sortedPlayers.map((player) => (
+                    <SelectableCard
+                        key={player.user_id}
+                        id={player.user_id}
+                        avatar={player.avatar}
+                        name={player.nickname}
+                        disabled={excludedPlayerIds.includes(
+                            player.user_id,
+                        )}
+                    />
+                ))}
             </SelectableCardGroup>
         </>
     );

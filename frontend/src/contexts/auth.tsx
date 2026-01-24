@@ -3,6 +3,8 @@ import { type User } from "@/lib/server/auth.server";
 import { useQuery } from "@tanstack/react-query";
 import { authClient } from "@/lib/auth-client";
 import { api } from "@/api/client";
+import { createServerFn } from "@tanstack/react-start";
+import { getRequestHeaders } from "@tanstack/react-start/server";
 
 const useUserRole = (hasSession: boolean) => {
     return useQuery({
@@ -58,3 +60,17 @@ export function useAuth() {
     }
     return context;
 }
+
+export const fetchSession = createServerFn({ method: "GET" }).handler(
+    async () => {
+        const headers = getRequestHeaders();
+
+        const res = await api.get("/user/user-role", {
+            headers: {
+                cookie: headers.get("cookie") ?? "",
+            },
+        });
+
+        return res.data as User;
+    }
+);

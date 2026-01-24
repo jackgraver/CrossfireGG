@@ -18,6 +18,7 @@ export const players = pgTable(
         }),
         player_logo: text("player_logo"),
         country: text("country"),
+        base_role: text("base_role", { enum: ["starter", "sub", "coach"] }).default("starter"),
         created_at: timestamp("created_at")
             .notNull()
             .defaultNow(),
