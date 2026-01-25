@@ -1,10 +1,10 @@
 import { createContext, useContext, ReactNode } from "react";
 
 type SelectableCardContextValue = {
-    selectedIds: string[];
+    selectedElements: any[];
     min: number;
     max: number;
-    toggle: (id: string) => void;
+    toggle: (element: any) => void;
     isSelected: (id: string) => boolean;
     canSelectMore: boolean;
     isValid: boolean;
@@ -28,7 +28,7 @@ type SelectableCardGroupProps = {
     children: ReactNode;
     min?: number;
     max?: number;
-    value: string[];
+    selectedElements: any[];
     onChange: (ids: string[]) => void;
 };
 
@@ -36,29 +36,36 @@ export function SelectableCardGroup({
     children,
     min = 0,
     max = Infinity,
-    value,
+    selectedElements,
     onChange,
 }: SelectableCardGroupProps) {
-    const toggle = (id: string) => {
-        if (value.includes(id)) {
-            onChange(value.filter((v) => v !== id));
-        } else {
-            if (max === 1) {
-                onChange([id]);
-            } else if (value.length < max) {
-                onChange([...value, id]);
-            }
-        }
+    const toggle = (element: any) => {
+        onChange(element);
+        // if (value.includes(id)) {
+        //     onChange(value.filter((v) => v !== id));
+        // } else {
+        //     if (max === 1) {
+        //         onChange([id]);
+        //     } else if (value.length < max) {
+        //         onChange([...value, id]);
+        //     }
+        // }
     };
 
-    const isSelected = (id: string) => value.includes(id);
-    const canSelectMore = value.length < max;
-    const isValid = value.length >= min && value.length <= max;
+    const isSelected = (element: any) => {
+        const elementId = element.user_id || element.faceitId || element.id || element.team_id;
+        return selectedElements.some((selected: any) => {
+            const selectedId = selected.faceitId || selected.user_id || selected.id || selected.teamId || selected.team_id;
+            return selectedId === elementId;
+        });
+    };
+    const canSelectMore = selectedElements.length < max;
+    const isValid = selectedElements.length >= min && selectedElements.length <= max;
 
     return (
         <SelectableCardContext.Provider
             value={{
-                selectedIds: value,
+                selectedElements: selectedElements,
                 min,
                 max,
                 toggle,
@@ -67,7 +74,7 @@ export function SelectableCardGroup({
                 isValid,
             }}
         >
-            <div className="flex max-h-[400px] w-full flex-col gap-2 overflow-x-hidden overflow-y-auto">{children}</div>
+            <div className="flex w-full flex-col gap-2">{children}</div>
         </SelectableCardContext.Provider>
     );
 }

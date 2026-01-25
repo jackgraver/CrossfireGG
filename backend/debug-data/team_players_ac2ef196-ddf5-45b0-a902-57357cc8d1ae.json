@@ -1,0 +1,44 @@
+{
+  "team_id": "ac2ef196-ddf5-45b0-a902-57357cc8d1ae",
+  "nickname": "wiff-",
+  "name": "Wiffys",
+  "avatar": "https://distribution.faceit-cdn.net/images/122aba6d-e475-4c17-913b-7c0e5f2b591d.jpeg",
+  "game": "csgo",
+  "team_type": "premade",
+  "members": [
+    {
+      "user_id": "468182c5-c69d-49f9-abdb-58c2efd82004",
+      "nickname": "c4ptainapolo",
+      "avatar": "https://assets.faceit-cdn.net/avatars/468182c5-c69d-49f9-abdb-58c2efd82004_1612648734770.jpg",
+      "country": "ca",
+      "faceit_url": "https://www.faceit.com/{lang}/players/c4ptainapolo"
+    },
+    {
+      "user_id": "c5d76817-97cc-4d24-8d87-aa9259b78783",
+      "nickname": "absolut-",
+      "avatar": "https://assets.faceit-cdn.net/avatars/c5d76817-97cc-4d24-8d87-aa9259b78783_1550791984162.png",
+      "country": "us",
+      "memberships": [
+        "esea"
+      ],
+      "faceit_url": "https://www.faceit.com/{lang}/players/absolut-"
+    },
+    {
+      "user_id": "4b174015-61f5-4cb8-a180-6eab65d948d8",
+      "nickname": "resh_-",
+      "avatar": "https://distribution.faceit-cdn.net/images/3ef4f674-f118-4643-9ac0-ed2cd48dda63.jpeg",
+      "country": "us",
+      "faceit_url": "https://www.faceit.com/{lang}/players/resh_-"
+    },
+    {
+      "user_id": "2abbf5d5-ae35-40a1-bf6c-cf19c844168d",
+      "nickname": "duw",
+      "avatar": "https://assets.faceit-cdn.net/avatars/2abbf5d5-ae35-40a1-bf6c-cf19c844168d_1550686836060.jpg",
+      "country": "ca",
+      "faceit_url": "https://www.faceit.com/{lang}/players/duw"
+    }
+  ],
+  "leader": "2abbf5d5-ae35-40a1-bf6c-cf19c844168d",
+  "chat_room_id": "team-ac2ef196-ddf5-45b0-a902-57357cc8d1ae",
+  "faceit_url": "https://www.faceit.com/{lang}/teams/ac2ef196-ddf5-45b0-a902-57357cc8d1ae"
+}

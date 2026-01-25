@@ -8,6 +8,7 @@ import { FaceitTeamPlayersResponse } from "../faceit/faceit.types";
 import { teamRepository } from "./team.repository";
 import { playerRepository } from "../players/player.repository";
 import { PlayerContract, TeamContract } from "@repo/contracts";
+import { tournamentRepository } from "../tournaments/tournament.repository";
 
 export const teamController = {
     getTeamById: async (req: Request, res: Response) => {
@@ -172,19 +173,20 @@ export const teamController = {
             console.log('registerTeam', req.body);
             const validation = RegisterTeamSchema.safeParse(req.body);
             if (!validation.success) {
+                console.log('validation failed', validation.error.issues);
                 return res.status(400).json({ error: "Validation failed", details: validation.error.issues });
             }
 
-            const { teamId, playerIds, subIds, coachIds } = validation.data;
+            const { team, starters, subs, coach, tournamentId } = validation.data;
 
-            const combinedPlayerIds = [...playerIds, ...subIds, ...coachIds];
+            const combinedPlayers = [...starters, ...subs, coach];
 
             const faceitTeam =
                 await faceitFetchUtil.fetchData<FaceitTeamPlayersResponse>(
-                    `/teams/${teamId}`,
+                    `/teams/${team.teamId}`,
                     {
-                        readFileName: `team_players_${teamId}.json`,
-                        // writeFileName: `team_players_${teamId}.json`,
+                        readFileName: `team_players_${team.teamId}.json`,
+                        // writeFileName: `team_players_${team.teamId}.json`,
                     }
                 );
 
@@ -192,7 +194,7 @@ export const teamController = {
                 faceitTeam.members.map(m => m.user_id)
             );
 
-            const missing = combinedPlayerIds.filter(id => !faceitPlayerIds.has(id));
+            const missing = combinedPlayers.filter((player) => !faceitPlayerIds.has(player.faceitId));
             if (missing.length > 0) {
                 throw new Error(`Invalid players: ${missing.join(", ")}`);
             }
@@ -200,12 +202,12 @@ export const teamController = {
             const dbTeam = await teamRepository.upsertTeamByFaceitId({
                 name: faceitTeam.name,
                 team_logo: faceitTeam.avatar,
-                faceit_id: teamId,
+                faceit_id: team.teamId,
                 team_captain_id: null,
             });
 
             for (const player of faceitTeam.members) {
-                if (!combinedPlayerIds.includes(player.user_id)) continue;
+                if (!combinedPlayers.some(p => p.faceitId === player.user_id)) continue;
 
                 const dbPlayer = await playerRepository.upsertPlayerByFaceitId({
                     player_name: player.nickname,
@@ -213,7 +215,7 @@ export const teamController = {
                     player_logo: player.avatar,
                     country: player.country,
                     team_id: dbTeam.id,
-                    base_role: playerIds.includes(player.user_id) ? "starter" : subIds.includes(player.user_id) ? "sub" : "coach",
+                    base_role: "starter",
                 });
 
                 if (player.user_id === faceitTeam.leader) {
@@ -223,6 +225,21 @@ export const teamController = {
                 }
 
                 await teamRepository.addPlayerToTeam(dbPlayer.id, dbTeam.id);
+            }
+
+            if (tournamentId) {
+                const entryStage = await tournamentRepository.findEntryStage(parseInt(tournamentId));
+                if (!entryStage) {
+                    throw new Error("Entry stage not found");
+                }
+                console.log('entryStage', entryStage);
+
+                const res = await tournamentRepository.upsertStageTeam({
+                    stage_id: entryStage.id,
+                    team_id: dbTeam.id,
+                    group_id: null,
+                });
+                console.log('upsertStageTeam', res);
             }
 
             res.json({ team_id: dbTeam.id });

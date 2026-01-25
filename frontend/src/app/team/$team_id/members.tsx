@@ -97,7 +97,6 @@ function AllPlayersView({
                         return 4;
                 }
             };
-
             return getRank(a) - getRank(b);
         });
     }, [players, teamCaptainId]);

@@ -383,17 +383,11 @@ export const tournamentRepository = {
     },
 
     findEntryStage: async (tournamentId: number) => {
-        const result = await db
-            .select()
-            .from(stages)
-            .where(
-                and(
-                    eq(stages.tournament_id, tournamentId),
-                    eq(stages.is_current, true)
-                )
-            )
-            .limit(1);
-        return result[0];
+        return await db.query.stages.findFirst({
+            where: (s, { eq, and, isNull }) =>
+                (eq(s.tournament_id, tournamentId)),
+            orderBy: (s, { asc }) => [asc(s.start_date)],
+        });
     },
 
     upsertStageRoster: async (rosterData: {

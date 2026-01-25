@@ -1,9 +1,9 @@
 import TeamLogo from "@/shared/bracket/atoms/TeamLogo";
-import { Check, Circle, MoveUpRight } from "lucide-react";
+import { Check, Circle, MoveUpRight, Plus } from "lucide-react";
 import { useSelectableCardGroup } from "./SelectableCardGroup";
 
 type SelectableCardProps = {
-    id: string;
+    element: any;
     avatar: string;
     name: string;
     disabled?: boolean;
@@ -14,21 +14,21 @@ type SelectableCardProps = {
 };
 
 export default function SelectableCard({
-    id,
+    element,
     avatar,
     name,
     disabled = false,
     disabledAction,
 }: SelectableCardProps) {
     const { toggle, isSelected, canSelectMore, max } = useSelectableCardGroup();
-    const selected = isSelected(id);
+    const selected = isSelected(element);
     const isSingleSelect = max === 1;
     const isClickable =
         !disabled && (isSingleSelect || selected || canSelectMore);
 
     const handleClick = () => {
         if (isClickable) {
-            toggle(id);
+            toggle(element);
         }
     };
 
@@ -51,13 +51,16 @@ export default function SelectableCard({
                 <div className="ml-auto flex h-7 w-7 items-center justify-center">
                     {!disabled && (
                         <>
-                            {selected ? (
+                            {/* {selected ? (
                                 <Check className="h-5 w-5 text-green-500" />
                             ) : (
                                 <Circle
                                     className={`h-5 w-5 ${disabled ? "text-gray-500" : "text-gray-400"}`}
                                 />
-                            )}
+                            )} */}
+                            <Plus
+                                className="h-6 w-6 text-green-500"
+                            />
                         </>
                     )}
                 </div>

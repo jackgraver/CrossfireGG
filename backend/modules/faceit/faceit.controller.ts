@@ -204,10 +204,22 @@ export const faceitController = {
                 return;
             }
 
+            const countryToString = (country: string) => {
+                switch (country) {
+                    case "us":
+                        return "American";
+                    case "ca":
+                        return "Canadian";
+                    default:
+                        return country;
+                }
+            }
+
             const result = players.members.map(member => ({
                 user_id: member.user_id,
                 nickname: member.nickname,
                 avatar: member.avatar,
+                nationality: countryToString(member.country),
             }));
 
             res.json({ players: result });

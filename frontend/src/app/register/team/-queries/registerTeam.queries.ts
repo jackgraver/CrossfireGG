@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { faceitApi } from "@/api/faceit.api";
 import { teamApi } from "@/api/team.api";
+import { Player, Team } from "../-types/registration.types";
 
 export const usePlayerFaceitTeams = (playerId: string) => {
     return useQuery<{
@@ -24,6 +25,7 @@ export const useTeamPlayers = (teamId: string) => {
             user_id: string,
             nickname: string,
             avatar: string,
+            nationality: string,
         }[]
     }>({
         queryKey: ["team-players", teamId],
@@ -34,18 +36,10 @@ export const useTeamPlayers = (teamId: string) => {
 
 export const useRegisterTeam = () => {
     return useMutation({
-        mutationFn: ({
-            teamId,
-            playerIds,
-            subIds,
-            coachIds,
-        }: {
-            teamId: string;
-            playerIds: string[];
-            subIds: string[];
-            coachIds: string[];
-        }) => {
-            return teamApi.registerTeam(teamId, playerIds, subIds, coachIds);
+        mutationFn: (
+            { team, starters, subs, coach, tournamentId }: { team: Team, starters: Player[], subs: Player[], coach: Player, tournamentId: string | null }
+        ) => {
+            return teamApi.registerTeam(team, starters, subs, coach, tournamentId);
         }
     });
 };

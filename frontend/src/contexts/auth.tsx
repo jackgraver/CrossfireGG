@@ -11,7 +11,6 @@ const useUserRole = (hasSession: boolean) => {
         queryKey: ["user-role"],
         queryFn: async () => {
             const res = await api.get<User>("/user/user-role");
-            console.log('user', res.data);
             return res.data;
         },
         enabled: hasSession,

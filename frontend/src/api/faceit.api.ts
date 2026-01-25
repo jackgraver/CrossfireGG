@@ -26,6 +26,7 @@ export const faceitApi = {
                 user_id: string,
                 nickname: string,
                 avatar: string,
+                nationality: string,
             }[]
         }>(`/faceit/team/${teamId}/players`);
         return response.data;
