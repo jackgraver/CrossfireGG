@@ -10,11 +10,7 @@ export default function SeedControl({
     return (
         <>
             <button onClick={() => setSeed(seed - 1)} disabled={seed === -1}>
-                <ChevronUp
-                    width={24}
-                    height={24}
-                    className="rounded-md hover:bg-secondBg"
-                />
+                <ChevronUp width={24} height={24} className="rounded-md hover:bg-secondBg" />
             </button>
             <p className="w-12 border-none bg-transparent text-center text-2xl font-bold outline-none">
                 {seed}
@@ -25,11 +21,7 @@ export default function SeedControl({
                     else setSeed(seed + 1);
                 }}
             >
-                <ChevronDown
-                    width={24}
-                    height={24}
-                    className="rounded-md hover:bg-secondBg"
-                />
+                <ChevronDown width={24} height={24} className="rounded-md hover:bg-secondBg" />
             </button>
         </>
     );

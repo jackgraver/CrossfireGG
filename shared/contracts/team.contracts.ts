@@ -25,10 +25,10 @@ export const TeamWithTournamentContract = TeamContract.extend({
                     losses: z.number().nullable().optional(),
                     paid: z.number().nullable().optional(),
                     joined_tournament: z.number().nullable().optional(),
-                })
-            )
-        })
-    )
+                }),
+            ),
+        }),
+    ),
 });
 
 export type TeamWithTournamentDTO = z.infer<typeof TeamWithTournamentContract>;

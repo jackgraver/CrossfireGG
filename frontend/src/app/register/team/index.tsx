@@ -40,14 +40,7 @@ function RegisterPage() {
 
     const values = useStore(form.store, (state) => state.values);
     const { canContinue, validateStep } = useStepValidation(values);
-    const {
-        currentStep,
-        canGoBack,
-        canGoNext,
-        goBack,
-        goNext,
-        setStepIndex,
-    } = useStepNavigation({
+    const { currentStep, canGoBack, canGoNext, goBack, goNext, setStepIndex } = useStepNavigation({
         steps: formSteps,
         validateStep: (step) => canContinue(step),
     });

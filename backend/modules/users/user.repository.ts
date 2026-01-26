@@ -55,7 +55,7 @@ export const userRepository = {
     updateRefreshToken: async (
         userId: number,
         refreshToken: string | null,
-        tokenVersion?: number
+        tokenVersion?: number,
     ) => {
         const updated_ata: any = {
             refresh_token: refreshToken,
@@ -77,9 +77,7 @@ export const userRepository = {
             .select({ roleName: roles.name })
             .from(userRoles)
             .innerJoin(roles, eq(userRoles.role_id, roles.id))
-            .where(
-                and(eq(userRoles.user_id, userId.toString()), isNull(userRoles.deleted_at))
-            );
+            .where(and(eq(userRoles.user_id, userId.toString()), isNull(userRoles.deleted_at)));
         return result.map((r) => r.roleName);
     },
 

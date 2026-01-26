@@ -23,9 +23,7 @@ export function SpinnerInput({
     const { isTouched, errors, isValidating: fieldValidating } = field.state.meta;
     const showSpinner = isValidating || fieldValidating;
     const error = isTouched && errors.length > 0 ? String(errors[0]) : undefined;
-    const wrapperClass = [styles.wrapper, error && styles.hasError]
-        .filter(Boolean)
-        .join(" ");
+    const wrapperClass = [styles.wrapper, error && styles.hasError].filter(Boolean).join(" ");
 
     return (
         <div className={wrapperClass}>

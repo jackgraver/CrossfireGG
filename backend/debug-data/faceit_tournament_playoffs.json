@@ -1,78 +1,75 @@
 {
-  "id": "f56331e8-131a-4c50-b7db-eec8b010ff98",
-  "championship_id": "f56331e8-131a-4c50-b7db-eec8b010ff98",
-  "name": "Off Season Shenanigans S8",
-  "cover_image": "",
-  "background_image": "",
-  "avatar": "",
-  "organizer_id": "7cd35f34-806c-4e26-9670-44f61c41d66a",
-  "description": "",
-  "type": "swiss",
-  "status": "cancelled",
-  "game_id": "cs2",
-  "region": "NA",
-  "featured": false,
-  "subscription_start": 1749431400000,
-  "checkin_start": 1749526200000,
-  "checkin_clear": 1749528000000,
-  "subscription_end": 1749529800000,
-  "championship_start": 1749605400000,
-  "slots": 32,
-  "current_subscriptions": 32,
-  "join_checks": {
-    "min_skill_level": 1,
-    "max_skill_level": 10,
-    "whitelist_geo_countries": [],
-    "whitelist_geo_countries_min_players": 0,
-    "blacklist_geo_countries": [],
-    "join_policy": "public",
-    "membership_type": "",
-    "allowed_team_types": [
-      "premade",
-      "mix"
-    ]
-  },
-  "anticheat_required": true,
-  "rules_id": "d8b34378-e239-4fb2-8e51-d72130ae1c3e",
-  "substitution_configuration": {
-    "max_substitutes": 3,
-    "max_substitutions": 100
-  },
-  "full": true,
-  "checkin_enabled": false,
-  "total_rounds": 5,
-  "schedule": {
-    "1": {
-      "date": 1749605400000,
-      "status": "created"
+    "id": "f56331e8-131a-4c50-b7db-eec8b010ff98",
+    "championship_id": "f56331e8-131a-4c50-b7db-eec8b010ff98",
+    "name": "Off Season Shenanigans S8",
+    "cover_image": "",
+    "background_image": "",
+    "avatar": "",
+    "organizer_id": "7cd35f34-806c-4e26-9670-44f61c41d66a",
+    "description": "",
+    "type": "swiss",
+    "status": "cancelled",
+    "game_id": "cs2",
+    "region": "NA",
+    "featured": false,
+    "subscription_start": 1749431400000,
+    "checkin_start": 1749526200000,
+    "checkin_clear": 1749528000000,
+    "subscription_end": 1749529800000,
+    "championship_start": 1749605400000,
+    "slots": 32,
+    "current_subscriptions": 32,
+    "join_checks": {
+        "min_skill_level": 1,
+        "max_skill_level": 10,
+        "whitelist_geo_countries": [],
+        "whitelist_geo_countries_min_players": 0,
+        "blacklist_geo_countries": [],
+        "join_policy": "public",
+        "membership_type": "",
+        "allowed_team_types": ["premade", "mix"]
     },
-    "2": {
-      "date": 1749778200000,
-      "status": "created"
+    "anticheat_required": true,
+    "rules_id": "d8b34378-e239-4fb2-8e51-d72130ae1c3e",
+    "substitution_configuration": {
+        "max_substitutes": 3,
+        "max_substitutions": 100
     },
-    "3": {
-      "date": 1750037400000,
-      "status": "created"
+    "full": true,
+    "checkin_enabled": false,
+    "total_rounds": 5,
+    "schedule": {
+        "1": {
+            "date": 1749605400000,
+            "status": "created"
+        },
+        "2": {
+            "date": 1749778200000,
+            "status": "created"
+        },
+        "3": {
+            "date": 1750037400000,
+            "status": "created"
+        },
+        "4": {
+            "date": 1750815000000,
+            "status": "created"
+        },
+        "5": {
+            "date": 1750987800000,
+            "status": "created"
+        }
     },
-    "4": {
-      "date": 1750815000000,
-      "status": "created"
-    },
-    "5": {
-      "date": 1750987800000,
-      "status": "created"
+    "total_groups": 1,
+    "subscriptions_locked": true,
+    "seeding_strategy": "uniformGroupDistribution",
+    "faceit_url": "https://www.faceit.com/{lang}/championship/f56331e8-131a-4c50-b7db-eec8b010ff98/",
+    "prizes": null,
+    "total_prizes": 0,
+    "stream": {
+        "active": false,
+        "platform": "",
+        "source": "",
+        "title": ""
     }
-  },
-  "total_groups": 1,
-  "subscriptions_locked": true,
-  "seeding_strategy": "uniformGroupDistribution",
-  "faceit_url": "https://www.faceit.com/{lang}/championship/f56331e8-131a-4c50-b7db-eec8b010ff98/",
-  "prizes": null,
-  "total_prizes": 0,
-  "stream": {
-    "active": false,
-    "platform": "",
-    "source": "",
-    "title": ""
-  }
 }

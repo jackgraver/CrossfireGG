@@ -32,10 +32,7 @@ export default function StepStarters({
     const subs = form.state.values.subs;
     const coach = form.state.values.coach;
 
-    const excludedIds = new Set([
-        ...subs.map((player: any) => player.faceitId),
-        coach?.faceitId,
-    ]);
+    const excludedIds = new Set([...subs.map((player: any) => player.faceitId), coach?.faceitId]);
 
     const { data: teamPlayers, isLoading, error } = useTeamPlayers(teamId);
 
@@ -49,8 +46,8 @@ export default function StepStarters({
         const currentName = form.state.values.starters?.[0]?.playerName;
         if (currentName !== captain.nickname) {
             form.setFieldValue("starters[0].playerName", captain.nickname);
-            form.setFieldValue("starters[0].nationality", captain.nationality)
-            form.setFieldValue("starters[0].avatar", captain.avatar)
+            form.setFieldValue("starters[0].nationality", captain.nationality);
+            form.setFieldValue("starters[0].avatar", captain.avatar);
         }
     }, [captain?.nickname, form]);
 
@@ -58,7 +55,9 @@ export default function StepStarters({
         <div className="flex flex-col gap-y-4">
             <div className="flex flex-col gap-y-1">
                 <h1 className="text-2xl font-bold text-white">Select Starters</h1>
-                <p className="text-sm text-gray-400">Choose 5 players to be in your starting lineup.</p>
+                <p className="text-sm text-gray-400">
+                    Choose 5 players to be in your starting lineup.
+                </p>
             </div>
             {error && <div className="text-red-500">Error: {error.message}</div>}
             {isLoading && (
@@ -103,8 +102,7 @@ export default function StepStarters({
                             (player) =>
                                 !excludedIds.has(player.user_id) &&
                                 !starters.some(
-                                    (starter: any) =>
-                                        starter.faceitId === player.user_id,
+                                    (starter: any) => starter.faceitId === player.user_id,
                                 ),
                         )
                         .map((player) => (
@@ -124,7 +122,9 @@ export default function StepStarters({
         <div className="flex flex-col gap-y-6">
             <div className="border-b border-gray-700 pb-4">
                 <h2 className="text-xl font-semibold text-white">Starters Details</h2>
-                <p className="text-sm text-gray-400">Complete the information for each selected starter.</p>
+                <p className="text-sm text-gray-400">
+                    Complete the information for each selected starter.
+                </p>
             </div>
             <div className="flex flex-col gap-y-8">
                 {starters.length === 0 && (
@@ -133,7 +133,10 @@ export default function StepStarters({
                     </div>
                 )}
                 {starters.map((player: any, index: number) => (
-                    <div key={`${index}-${player.faceitId}`} className="rounded-lg bg-secondBg p-4 transition-all duration-200 border border-gray-700/50 hover:border-gray-600/50">
+                    <div
+                        key={`${index}-${player.faceitId}`}
+                        className="rounded-lg  transition-all duration-20"
+                    >
                         <PlayerFormFields
                             form={form}
                             namePrefix={`starters[${index}]`}
@@ -141,12 +144,10 @@ export default function StepStarters({
                             onRemove={
                                 player.faceitId !== userFaceitId
                                     ? () =>
-                                        form.setFieldValue(
-                                            "starters",
-                                            starters.filter(
-                                                (_: any, i: number) => i !== index,
-                                            ),
-                                        )
+                                          form.setFieldValue(
+                                              "starters",
+                                              starters.filter((_: any, i: number) => i !== index),
+                                          )
                                     : undefined
                             }
                         />

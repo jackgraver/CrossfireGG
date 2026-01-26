@@ -29,15 +29,9 @@ export default function MapResults({ maps }: { maps: MatchMap[] }) {
                         <span className="font-semibold">{map.map_name}</span>
                     </div>
                     <span className="flex flex-row gap-x-0.5">
-                        {formatScore(
-                            map.team1_score,
-                            map.team1_score > map.team2_score,
-                        )}
+                        {formatScore(map.team1_score, map.team1_score > map.team2_score)}
                         <p>-</p>
-                        {formatScore(
-                            map.team2_score,
-                            map.team2_score > map.team1_score,
-                        )}
+                        {formatScore(map.team2_score, map.team2_score > map.team1_score)}
                     </span>
                 </div>
             ))}

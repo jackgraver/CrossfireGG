@@ -9,4 +9,3 @@ router.post("/casting/claim", matchController.claimMatch);
 router.post("/casting/unclaim", matchController.unclaimMatch);
 
 export default router;
-

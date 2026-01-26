@@ -1,5 +1,5 @@
 import { betterAuth } from "better-auth";
-import { genericOAuth } from "better-auth/plugins"
+import { genericOAuth } from "better-auth/plugins";
 import { config } from "../config/env";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "../config/database";
@@ -13,7 +13,7 @@ export const auth = betterAuth({
             session,
             account,
             verification,
-        }
+        },
     }),
     trustedOrigins: ["http://localhost:5173"],
     emailAndPassword: {
@@ -28,15 +28,14 @@ export const auth = betterAuth({
                     clientSecret: config.auth.clientSecret!,
                     authorizationUrl: "https://accounts.faceit.com",
                     tokenUrl: "https://api.faceit.com/auth/v1/oauth/token",
-                    userInfoUrl:
-                        "https://api.faceit.com/auth/v1/resources/userinfo",
+                    userInfoUrl: "https://api.faceit.com/auth/v1/resources/userinfo",
                     scopes: ["openid", "profile", "email"],
                     authentication: "basic",
                     pkce: true,
                     redirectURI: `http://localhost:3000`,
                     responseMode: "query",
-                }
-            ]
-        })
+                },
+            ],
+        }),
     ],
 });

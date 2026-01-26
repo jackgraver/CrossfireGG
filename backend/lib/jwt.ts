@@ -14,11 +14,9 @@ export interface RefreshTokenPayload {
 }
 
 const ACCESS_TOKEN_SECRET =
-    process.env.JWT_ACCESS_SECRET ||
-    "your-access-secret-key-change-in-production";
+    process.env.JWT_ACCESS_SECRET || "your-access-secret-key-change-in-production";
 const REFRESH_TOKEN_SECRET =
-    process.env.JWT_REFRESH_SECRET ||
-    "your-refresh-secret-key-change-in-production";
+    process.env.JWT_REFRESH_SECRET || "your-refresh-secret-key-change-in-production";
 const ACCESS_TOKEN_EXPIRY: string = process.env.JWT_ACCESS_EXPIRY || "15m";
 const REFRESH_TOKEN_EXPIRY: string = process.env.JWT_REFRESH_EXPIRY || "7d";
 
@@ -45,10 +43,7 @@ export const jwtUtils = {
 
     verifyRefreshToken: (token: string): RefreshTokenPayload => {
         try {
-            return jwt.verify(
-                token,
-                REFRESH_TOKEN_SECRET
-            ) as RefreshTokenPayload;
+            return jwt.verify(token, REFRESH_TOKEN_SECRET) as RefreshTokenPayload;
         } catch (error) {
             throw new Error("Invalid or expired refresh token");
         }

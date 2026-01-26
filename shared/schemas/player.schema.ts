@@ -19,18 +19,14 @@ export const players = pgTable(
         player_logo: text("player_logo"),
         country: text("country"),
         base_role: text("base_role", { enum: ["starter", "sub", "coach"] }).default("starter"),
-        created_at: timestamp("created_at")
-            .notNull()
-            .defaultNow(),
-        updated_at: timestamp("updated_at")
-            .notNull()
-            .defaultNow(),
+        created_at: timestamp("created_at").notNull().defaultNow(),
+        updated_at: timestamp("updated_at").notNull().defaultNow(),
         deleted_at: timestamp("deleted_at"),
     },
     (table) => [
         index("players_team_id_idx").on(table.team_id),
         index("players_user_id_idx").on(table.user_id),
-    ]
+    ],
 );
 
 export const playerStats = pgTable(
@@ -55,19 +51,15 @@ export const playerStats = pgTable(
         assists: integer("assists").default(0),
         adr: integer("adr").default(0),
         damage: integer("damage").default(0),
-        created_at: timestamp("created_at")
-            .notNull()
-            .defaultNow(),
-        updated_at: timestamp("updated_at")
-            .notNull()
-            .defaultNow(),
+        created_at: timestamp("created_at").notNull().defaultNow(),
+        updated_at: timestamp("updated_at").notNull().defaultNow(),
         deleted_at: timestamp("deleted_at"),
     },
     (table) => [
         index("player_stats_player_id_idx").on(table.player_id),
         index("player_stats_match_id_idx").on(table.match_id),
         index("player_stats_map_id_idx").on(table.map_id),
-    ]
+    ],
 );
 
 // ============================== RELATIONS ============================== //

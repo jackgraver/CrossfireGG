@@ -20,11 +20,8 @@ export function Input({
     children,
 }: InputProps) {
     const { isTouched, errors } = field.state.meta;
-    const error =
-        isTouched && errors.length > 0 ? String(errors[0]) : undefined;
-    const wrapperClass = [styles.wrapper, error && styles.hasError]
-        .filter(Boolean)
-        .join(" ");
+    const error = isTouched && errors.length > 0 ? String(errors[0]) : undefined;
+    const wrapperClass = [styles.wrapper, error && styles.hasError].filter(Boolean).join(" ");
 
     return (
         <div className={wrapperClass}>
@@ -33,9 +30,7 @@ export function Input({
                     {label}
                 </Label.Root>
             )}
-            <div className={styles.errorText}>
-                {error && <span>{error}</span>}
-            </div>
+            <div className={styles.errorText}>{error && <span>{error}</span>}</div>
             <div className={styles.inputContainer}>
                 <input
                     id={field.name}

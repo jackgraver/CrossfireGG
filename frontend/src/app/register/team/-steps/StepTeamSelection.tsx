@@ -28,18 +28,19 @@ export default function StepTeamSelection({
     onNext,
 }: StepTeamSelectionProps) {
     const navigate = useNavigate();
-    const { data: playerFaceitTeams, isLoading, error } =
-        usePlayerFaceitTeams(userFaceitId ?? "");
+    const { data: playerFaceitTeams, isLoading, error } = usePlayerFaceitTeams(userFaceitId ?? "");
 
     const selectedTeam = form.state.values.team;
 
     const left = (
         <div className="flex flex-col gap-y-4">
             <h1 className="text-2xl font-bold">Select Your Team</h1>
-            <p className="text-gray-400">Choose the team you want to register from your Faceit teams.</p>
+            <p className="text-gray-400">
+                Choose the team you want to register from your Faceit teams.
+            </p>
             {error && <div className="text-red-500">Error: {error.message}</div>}
             {isLoading && (
-                <div className="flex items-center gap-x-2 text-gray-400 py-4"> 
+                <div className="flex items-center gap-x-2 text-gray-400 py-4">
                     <Loader className="h-5 w-5 animate-spin" />
                     <span>Loading your teams...</span>
                 </div>
@@ -62,51 +63,53 @@ export default function StepTeamSelection({
                         captainFaceitId: value.leader ?? userFaceitId ?? "",
                         logo: value.avatar ?? "",
                     });
-                    form.setFieldValue(
-                        "starters",
-                        userFaceitId
-                            ? [
-                                {
-                                    faceitId: userFaceitId,
-                                    hltvLink: "",
-                                    discordId: "",
-                                    playerName: "",
-                                    nationality: "",
-                                    avatar: "",
-                                },
-                            ]
-                            : [],
-                    );
-                    form.setFieldValue("subs", []);
-                    form.setFieldValue("coach", {
-                        faceitId: "",
-                        hltvLink: "",
-                        discordId: "",
-                        playerName: "",
-                        nationality: "",
-                        avatar: "",
-                    });
+                    // form.setFieldValue(
+                    //     "starters",
+                    //     userFaceitId
+                    //         ? [
+                    //             {
+                    //                 faceitId: userFaceitId,
+                    //                 hltvLink: "",
+                    //                 discordId: "",
+                    //                 playerName: "",
+                    //                 nationality: "",
+                    //                 avatar: "",
+                    //             },
+                    //         ]
+                    //         : [],
+                    // );
+                    // form.setFieldValue("subs", []);
+                    // form.setFieldValue("coach", {
+                    //     faceitId: "",
+                    //     hltvLink: "",
+                    //     discordId: "",
+                    //     playerName: "",
+                    //     nationality: "",
+                    //     avatar: "",
+                    // });
                 }}
             >
                 {!isLoading &&
-                    playerFaceitTeams?.teams?.map((team) => (
-                        <SelectableCard
-                            key={team.team_id}
-                            element={team}
-                            avatar={team.avatar}
-                            name={team.name}
-                            disabled={team.isRegistered !== null}
-                            disabledAction={{
-                                label: "Team Already Registered",
-                                onClick: () => {
-                                    navigate({
-                                        to: `/team/$team_id`,
-                                        params: { team_id: team.isRegistered!! },
-                                    });
-                                },
-                            }}
-                        />
-                    ))}
+                    playerFaceitTeams?.teams
+                        ?.sort((a: any, b: any) => (a.isRegistered ?? 0) - (b.isRegistered ?? 0))
+                        .map((team) => (
+                            <SelectableCard
+                                key={team.team_id}
+                                element={team}
+                                avatar={team.avatar}
+                                name={team.name}
+                                disabled={team.isRegistered !== null}
+                                disabledAction={{
+                                    label: "Team Already Registered",
+                                    onClick: () => {
+                                        navigate({
+                                            to: `/team/$team_id`,
+                                            params: { team_id: team.isRegistered!! },
+                                        });
+                                    },
+                                }}
+                            />
+                        ))}
             </SelectableCardGroup>
         </div>
     );
@@ -115,9 +118,11 @@ export default function StepTeamSelection({
         <div className="flex flex-col gap-y-6">
             <div className="border-b border-gray-700 pb-4">
                 <h2 className="text-xl font-semibold">Team Details</h2>
-                <p className="text-sm text-gray-400">Provide additional information for your team.</p>
+                <p className="text-sm text-gray-400">
+                    Provide additional information for your team.
+                </p>
             </div>
-            <div className="rounded-lg bg-secondBg p-4 border border-gray-700/50 hover:border-gray-600/50 transition-all duration-200">
+            <div className="rounded-lg transition-all duration-200">
                 <TeamFormFields form={form} />
             </div>
         </div>

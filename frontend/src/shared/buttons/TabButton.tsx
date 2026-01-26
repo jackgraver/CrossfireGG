@@ -54,11 +54,7 @@ export default function TabButton({
             disabled={disabled}
             className={`flex min-w-32 items-center justify-center gap-2 px-6 py-4 text-xl font-bold transition-colors duration-200 ${
                 isActive ? "text-blue-600" : "text-gray-400"
-            } ${
-                disabled
-                    ? "cursor-not-allowed opacity-50"
-                    : "hover:text-blue-500"
-            } ${className}`}
+            } ${disabled ? "cursor-not-allowed opacity-50" : "hover:text-blue-500"} ${className}`}
         >
             {icon && <span className="text-lg">{icon}</span>}
             {label}

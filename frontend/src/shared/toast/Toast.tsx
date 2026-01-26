@@ -72,11 +72,7 @@ export default function Toast({
         >
             <div className="flex items-start gap-3 p-4">
                 <div className="flex-1">
-                    {title && (
-                        <h3 className="mb-1 text-lg leading-snug font-semibold">
-                            {title}
-                        </h3>
-                    )}
+                    {title && <h3 className="mb-1 text-lg leading-snug font-semibold">{title}</h3>}
                     <div className="text-sm leading-relaxed">{body}</div>
                 </div>
                 <button

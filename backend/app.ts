@@ -23,9 +23,9 @@ const burstLimiter = rateLimit({
 
 export const globalLimiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 300,                 // 300 requests per IP per window
-    standardHeaders: true,    // RateLimit-* headers
-    legacyHeaders: false,     // Disable X-RateLimit-* headers
+    max: 300, // 300 requests per IP per window
+    standardHeaders: true, // RateLimit-* headers
+    legacyHeaders: false, // Disable X-RateLimit-* headers
 });
 
 const app = express();
@@ -37,14 +37,16 @@ app.use(morgan("dev"));
 app.use(
     helmet({
         contentSecurityPolicy: false,
-    })
+    }),
 );
-app.use(cors({
-    origin: config.cors.allowedOrigins,
-    credentials: true,
-}));
+app.use(
+    cors({
+        origin: config.cors.allowedOrigins,
+        credentials: true,
+    }),
+);
 
-app.all('/api/auth/{*any}', toNodeHandler(auth));
+app.all("/api/auth/{*any}", toNodeHandler(auth));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

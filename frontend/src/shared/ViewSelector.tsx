@@ -29,8 +29,7 @@ export default function ViewSelector({
 
     useEffect(() => {
         const updateIndicator = () => {
-            const containerLeft =
-                containerRef.current?.getBoundingClientRect().left || 0;
+            const containerLeft = containerRef.current?.getBoundingClientRect().left || 0;
             const buttonRect = activeButtonRef.current?.getBoundingClientRect();
 
             if (buttonRect) {
@@ -65,14 +64,8 @@ export default function ViewSelector({
                     onClick={() => onViewChange(view.key)}
                     disabled={view.disabled}
                     className={`flex min-w-32 items-center justify-center gap-2 px-6 py-4 text-xl font-bold transition-colors duration-200 ${
-                        currentView === view.key
-                            ? "text-blue-500"
-                            : "text-textSecondary"
-                    } ${
-                        view.disabled
-                            ? "cursor-not-allowed opacity-50"
-                            : "hover:text-blue-500"
-                    }`}
+                        currentView === view.key ? "text-blue-500" : "text-textSecondary"
+                    } ${view.disabled ? "cursor-not-allowed opacity-50" : "hover:text-blue-500"}`}
                 >
                     {view.icon && <span className="text-lg">{view.icon}</span>}
                     {view.label}

@@ -25,10 +25,7 @@ export default function ManageUsers() {
             <h1>Manage Users</h1>
             <div className="flex flex-col gap-y-4">
                 {users.map((user) => (
-                    <div
-                        key={user.user_id}
-                        className="bg-firstBg rounded-md p-2"
-                    >
+                    <div key={user.user_id} className="bg-firstBg rounded-md p-2">
                         <div>{user.user_id}</div>
                         <div>{user.email}</div>
                         <div>{user.faceit_id}</div>

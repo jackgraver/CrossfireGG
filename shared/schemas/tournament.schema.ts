@@ -10,12 +10,8 @@ export const tournaments = pgTable("tournaments", {
     prize_pool: integer("prize_pool"),
     start_date: timestamp("start_date"),
     end_date: timestamp("end_date"),
-    created_at: timestamp("created_at")
-        .notNull()
-        .defaultNow(),
-    updated_at: timestamp("updated_at")
-        .notNull()
-        .defaultNow(),
+    created_at: timestamp("created_at").notNull().defaultNow(),
+    updated_at: timestamp("updated_at").notNull().defaultNow(),
     deleted_at: timestamp("deleted_at"),
 });
 

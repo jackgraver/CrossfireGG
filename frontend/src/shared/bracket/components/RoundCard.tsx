@@ -64,12 +64,9 @@ export default function RoundCard({ round, matches }: RoundCardProps) {
             {matches.map((match, i) => (
                 <MatchCard key={i} match={match} />
             ))}
-            {Array.from(
-                { length: numMatchesForRound(round) - matches.length },
-                (_, i) => (
-                    <MatchCard key={i} match={undefined} />
-                ),
-            )}
+            {Array.from({ length: numMatchesForRound(round) - matches.length }, (_, i) => (
+                <MatchCard key={i} match={undefined} />
+            ))}
         </div>
     );
 }

@@ -1,4 +1,3 @@
-
 export default function PlayerCard({
     player,
     isCaptain,

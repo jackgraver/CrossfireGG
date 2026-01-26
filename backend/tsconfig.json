@@ -24,8 +24,5 @@
     },
     "include": ["**/*.ts"],
     "exclude": ["node_modules", "dist"],
-    "references": [
-        { "path": "../shared/schemas" },
-        { "path": "../shared/contracts" }
-    ]
+    "references": [{ "path": "../shared/schemas" }, { "path": "../shared/contracts" }]
 }

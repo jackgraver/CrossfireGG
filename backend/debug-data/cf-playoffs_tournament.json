@@ -1,78 +1,75 @@
 {
-  "id": "4988a83a-1e76-484d-bbcd-f485b3c0fc08",
-  "championship_id": "4988a83a-1e76-484d-bbcd-f485b3c0fc08",
-  "name": "Playoff Stage - Crossfire Season 3",
-  "cover_image": "",
-  "background_image": "",
-  "avatar": "",
-  "organizer_id": "1b5c9ed3-5233-4c58-8761-78f6ef5a0fd9",
-  "description": "",
-  "type": "bracket",
-  "status": "started",
-  "game_id": "cs2",
-  "region": "NA",
-  "featured": false,
-  "subscription_start": 1766365800000,
-  "checkin_start": 1766594700000,
-  "checkin_clear": 1766596500000,
-  "subscription_end": 1766598300000,
-  "championship_start": 1767402000000,
-  "slots": 16,
-  "current_subscriptions": 16,
-  "join_checks": {
-    "min_skill_level": 1,
-    "max_skill_level": 10,
-    "whitelist_geo_countries": [],
-    "whitelist_geo_countries_min_players": 0,
-    "blacklist_geo_countries": [],
-    "join_policy": "public",
-    "membership_type": "",
-    "allowed_team_types": [
-      "premade",
-      "mix"
-    ]
-  },
-  "anticheat_required": true,
-  "rules_id": "",
-  "substitution_configuration": {
-    "max_substitutes": 2,
-    "max_substitutions": 2
-  },
-  "full": true,
-  "checkin_enabled": false,
-  "total_rounds": 5,
-  "schedule": {
-    "1": {
-      "date": 1767402000000,
-      "status": "created"
+    "id": "4988a83a-1e76-484d-bbcd-f485b3c0fc08",
+    "championship_id": "4988a83a-1e76-484d-bbcd-f485b3c0fc08",
+    "name": "Playoff Stage - Crossfire Season 3",
+    "cover_image": "",
+    "background_image": "",
+    "avatar": "",
+    "organizer_id": "1b5c9ed3-5233-4c58-8761-78f6ef5a0fd9",
+    "description": "",
+    "type": "bracket",
+    "status": "started",
+    "game_id": "cs2",
+    "region": "NA",
+    "featured": false,
+    "subscription_start": 1766365800000,
+    "checkin_start": 1766594700000,
+    "checkin_clear": 1766596500000,
+    "subscription_end": 1766598300000,
+    "championship_start": 1767402000000,
+    "slots": 16,
+    "current_subscriptions": 16,
+    "join_checks": {
+        "min_skill_level": 1,
+        "max_skill_level": 10,
+        "whitelist_geo_countries": [],
+        "whitelist_geo_countries_min_players": 0,
+        "blacklist_geo_countries": [],
+        "join_policy": "public",
+        "membership_type": "",
+        "allowed_team_types": ["premade", "mix"]
     },
-    "2": {
-      "date": 1768006800000,
-      "status": "waiting"
+    "anticheat_required": true,
+    "rules_id": "",
+    "substitution_configuration": {
+        "max_substitutes": 2,
+        "max_substitutions": 2
     },
-    "3": {
-      "date": 1768611600000,
-      "status": "waiting"
+    "full": true,
+    "checkin_enabled": false,
+    "total_rounds": 5,
+    "schedule": {
+        "1": {
+            "date": 1767402000000,
+            "status": "created"
+        },
+        "2": {
+            "date": 1768006800000,
+            "status": "waiting"
+        },
+        "3": {
+            "date": 1768611600000,
+            "status": "waiting"
+        },
+        "4": {
+            "date": 1769212800000,
+            "status": "waiting"
+        },
+        "5": {
+            "date": 1769216400000,
+            "status": "waiting"
+        }
     },
-    "4": {
-      "date": 1769212800000,
-      "status": "waiting"
-    },
-    "5": {
-      "date": 1769216400000,
-      "status": "waiting"
+    "total_groups": 1,
+    "subscriptions_locked": true,
+    "seeding_strategy": "uniformGroupDistribution",
+    "faceit_url": "https://www.faceit.com/{lang}/championship/4988a83a-1e76-484d-bbcd-f485b3c0fc08/",
+    "prizes": null,
+    "total_prizes": 0,
+    "stream": {
+        "active": false,
+        "platform": "",
+        "source": "",
+        "title": ""
     }
-  },
-  "total_groups": 1,
-  "subscriptions_locked": true,
-  "seeding_strategy": "uniformGroupDistribution",
-  "faceit_url": "https://www.faceit.com/{lang}/championship/4988a83a-1e76-484d-bbcd-f485b3c0fc08/",
-  "prizes": null,
-  "total_prizes": 0,
-  "stream": {
-    "active": false,
-    "platform": "",
-    "source": "",
-    "title": ""
-  }
 }

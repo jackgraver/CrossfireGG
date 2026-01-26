@@ -26,7 +26,7 @@ export function requestLogger(req: Request, res: Response, next: NextFunction) {
         const time = `${hours}:${minutes}:${seconds}`;
 
         console.log(
-            `[EXPRESS] ${date} - ${time} | ${status} | ${durationMs}ms | ${clientIp} | ${method} "${route}"`
+            `[EXPRESS] ${date} - ${time} | ${status} | ${durationMs}ms | ${clientIp} | ${method} "${route}"`,
         );
     });
 

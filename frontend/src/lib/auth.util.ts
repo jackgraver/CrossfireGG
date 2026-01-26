@@ -9,7 +9,7 @@ export function hasSession(session: any) {
 async function fetchAuthBundle() {
     const [session, user] = await Promise.all([
         authClient.getSession(),
-        api.get("/user/user-role").then(res => res.data),
+        api.get("/user/user-role").then((res) => res.data),
     ]);
 
     return { session, user };

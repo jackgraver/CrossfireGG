@@ -28,7 +28,9 @@ export default function StepReview({
         <div className="flex flex-col gap-y-4">
             <div className="flex flex-col gap-y-1">
                 <h1 className="text-2xl font-bold text-white">Review Registration</h1>
-                <p className="text-sm text-gray-400">Please review your team registration details before submitting.</p>
+                <p className="text-sm text-gray-400">
+                    Please review your team registration details before submitting.
+                </p>
             </div>
         </div>
     );

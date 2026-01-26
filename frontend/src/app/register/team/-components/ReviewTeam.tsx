@@ -17,7 +17,11 @@ export default function ReviewTeam({ teamId, players, subs, coach }: ReviewTeamP
                     <h2 className="text-lg font-bold">Starting 5</h2>
                     <div className="flex flex-col gap-2">
                         {players.map((player) => (
-                            <Card key={player.faceitId} avatar={player.avatar} name={player.playerName} />
+                            <Card
+                                key={player.faceitId}
+                                avatar={player.avatar}
+                                name={player.playerName}
+                            />
                         ))}
                     </div>
                 </>
@@ -44,13 +48,7 @@ export default function ReviewTeam({ teamId, players, subs, coach }: ReviewTeamP
     );
 }
 
-function Card({
-    avatar,
-    name,
-}: {
-    avatar: string;
-    name: string;
-}) {
+function Card({ avatar, name }: { avatar: string; name: string }) {
     return (
         <div className="flex w-full flex-col items-center pr-2">
             <div
@@ -64,5 +62,5 @@ function Card({
                 🇨🇦
             </div>
         </div>
-    )
+    );
 }

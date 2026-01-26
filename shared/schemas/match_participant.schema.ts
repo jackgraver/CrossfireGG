@@ -28,12 +28,8 @@ export const matchParticipants = pgTable(
         position: integer("position").notNull(),
         score: integer("score").default(0),
         winner: boolean("winner").default(false),
-        created_at: timestamp("created_at")
-            .notNull()
-            .defaultNow(),
-        updated_at: timestamp("updated_at")
-            .notNull()
-            .defaultNow(),
+        created_at: timestamp("created_at").notNull().defaultNow(),
+        updated_at: timestamp("updated_at").notNull().defaultNow(),
         deleted_at: timestamp("deleted_at"),
     },
     (table) => [
@@ -41,7 +37,7 @@ export const matchParticipants = pgTable(
         unique().on(table.match_id, table.team_id),
         index("match_participants_match_id_idx").on(table.match_id),
         index("match_participants_team_id_idx").on(table.team_id),
-    ]
+    ],
 );
 
 /**
@@ -53,17 +49,14 @@ export const matchParticipants = pgTable(
  * - Can be the winner of the match
  * - Can be the winner of multiple maps (reverse relationship from maps.winner_id)
  */
-export const matchParticipantsRelations = relations(
-    matchParticipants,
-    ({ one, many }) => ({
-        match: one(matches, {
-            fields: [matchParticipants.match_id],
-            references: [matches.id],
-        }),
-        team: one(stageTeams, {
-            fields: [matchParticipants.team_id],
-            references: [stageTeams.id],
-        }),
-        maps: many(maps),
-    })
-);
+export const matchParticipantsRelations = relations(matchParticipants, ({ one, many }) => ({
+    match: one(matches, {
+        fields: [matchParticipants.match_id],
+        references: [matches.id],
+    }),
+    team: one(stageTeams, {
+        fields: [matchParticipants.team_id],
+        references: [stageTeams.id],
+    }),
+    maps: many(maps),
+}));

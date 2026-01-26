@@ -26,9 +26,7 @@ export function Select({
 }: SelectProps) {
     const { isTouched, errors } = field.state.meta;
     const error = isTouched && errors.length > 0 ? String(errors[0]) : undefined;
-    const wrapperClass = [styles.wrapper, error && styles.hasError]
-        .filter(Boolean)
-        .join(" ");
+    const wrapperClass = [styles.wrapper, error && styles.hasError].filter(Boolean).join(" ");
 
     return (
         <div className={wrapperClass}>
@@ -54,7 +52,11 @@ export function Select({
                     </RadixSelect.Icon>
                 </RadixSelect.Trigger>
                 <RadixSelect.Portal>
-                    <RadixSelect.Content className={styles.content} position="popper" sideOffset={4}>
+                    <RadixSelect.Content
+                        className={styles.content}
+                        position="popper"
+                        sideOffset={4}
+                    >
                         <RadixSelect.Viewport className={styles.viewport}>
                             {options.map((option) => (
                                 <RadixSelect.Item

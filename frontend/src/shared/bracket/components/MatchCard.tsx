@@ -21,10 +21,9 @@ export default function MatchCard({ match, margin }: MatchCardProps) {
 
     return (
         <div
-            className={`group border-border bg-firstBg text-textPrimary relative flex grow flex-col border ${margin
-                    ? "m-2 rounded-md"
-                    : "rounded-tr-md rounded-br-md rounded-bl-md"
-                }`}
+            className={`group border-border bg-firstBg text-textPrimary relative flex grow flex-col border ${
+                margin ? "m-2 rounded-md" : "rounded-tr-md rounded-br-md rounded-bl-md"
+            }`}
         >
             <MatchTeam
                 team={match?.participants![0].team!}

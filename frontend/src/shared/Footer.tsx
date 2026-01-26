@@ -3,9 +3,7 @@ export default function Footer() {
         <footer className="bg-firstBg mt-12 shadow-md">
             <div className="w-full px-4 py-4">
                 <div className="flex items-center justify-between">
-                    <div className="text-textSecondary">
-                        Organized by CrossFireGG
-                    </div>
+                    <div className="text-textSecondary">Organized by CrossFireGG</div>
                     <div className="flex space-x-4">
                         <a
                             href="https://x.com/playcrossfiregg"

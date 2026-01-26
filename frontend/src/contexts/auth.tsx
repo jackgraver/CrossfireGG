@@ -15,7 +15,7 @@ const useUserRole = (hasSession: boolean) => {
         },
         enabled: hasSession,
     });
-}
+};
 
 type AuthContextType = {
     // session: any | null;
@@ -32,11 +32,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // } = authClient.useSession();
     // console.log('session', session);
 
-    const {
-        data: user,
-        isPending: userLoading,
-        refetch: refetchUser,
-    } = useUserRole(true);
+    const { data: user, isPending: userLoading, refetch: refetchUser } = useUserRole(true);
 
     return (
         <AuthContext.Provider
@@ -60,16 +56,14 @@ export function useAuth() {
     return context;
 }
 
-export const fetchSession = createServerFn({ method: "GET" }).handler(
-    async () => {
-        const headers = getRequestHeaders();
+export const fetchSession = createServerFn({ method: "GET" }).handler(async () => {
+    const headers = getRequestHeaders();
 
-        const res = await api.get("/user/user-role", {
-            headers: {
-                cookie: headers.get("cookie") ?? "",
-            },
-        });
+    const res = await api.get("/user/user-role", {
+        headers: {
+            cookie: headers.get("cookie") ?? "",
+        },
+    });
 
-        return res.data as User;
-    }
-);
+    return res.data as User;
+});

@@ -1,11 +1,4 @@
-import {
-    pgTable,
-    serial,
-    integer,
-    text,
-    timestamp,
-    index,
-} from "drizzle-orm/pg-core";
+import { pgTable, serial, integer, text, timestamp, index } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { matches, playerStats } from "@repo/schemas";
 import { matchParticipants } from "./match_participant.schema";
@@ -25,18 +18,14 @@ export const maps = pgTable(
         winner_id: integer("winner_id").references(() => matchParticipants.id, {
             onDelete: "set null",
         }),
-        created_at: timestamp("created_at")
-            .notNull()
-            .defaultNow(),
-        updated_at: timestamp("updated_at")
-            .notNull()
-            .defaultNow(),
+        created_at: timestamp("created_at").notNull().defaultNow(),
+        updated_at: timestamp("updated_at").notNull().defaultNow(),
         deleted_at: timestamp("deleted_at"),
     },
     (table) => [
         index("maps_match_id_idx").on(table.match_id),
         index("maps_winner_id_idx").on(table.winner_id),
-    ]
+    ],
 );
 
 /**

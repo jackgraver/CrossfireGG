@@ -23,8 +23,7 @@ export default function SelectableCard({
     const { toggle, isSelected, canSelectMore, max } = useSelectableCardGroup();
     const selected = isSelected(element);
     const isSingleSelect = max === 1;
-    const isClickable =
-        !disabled && (isSingleSelect || selected || canSelectMore);
+    const isClickable = !disabled && (isSingleSelect || selected || canSelectMore);
 
     const handleClick = () => {
         if (isClickable) {
@@ -36,12 +35,13 @@ export default function SelectableCard({
         <div className="flex w-full flex-col items-center pr-2">
             <div
                 onClick={handleClick}
-                className={`group grid w-full grid-cols-[48px_1fr_32px] items-center rounded-lg border p-2 transition-colors duration-150 ${disabled
-                    ? "cursor-not-allowed bg-gray-700 opacity-50"
-                    : isClickable
-                        ? "cursor-pointer hover:bg-gray-700"
-                        : "cursor-not-allowed opacity-70"
-                    } ${selected ? "border-green-500 bg-gray-700/50" : "border-gray-600"}`}
+                className={`group grid w-full grid-cols-[48px_1fr_32px] items-center rounded-lg border p-2 transition-colors duration-150 ${
+                    disabled
+                        ? "cursor-not-allowed bg-thirdBg opacity-50"
+                        : isClickable
+                          ? "cursor-pointer hover:bg-secondBg"
+                          : "cursor-not-allowed opacity-70"
+                } ${selected ? "border-green-500 bg-secondBg/80" : "border-secondBg"}`}
             >
                 <TeamLogo
                     avatar={avatar ?? "/oss-logo-placeholder.png"}
@@ -58,9 +58,7 @@ export default function SelectableCard({
                                     className={`h-5 w-5 ${disabled ? "text-gray-500" : "text-gray-400"}`}
                                 />
                             )} */}
-                            <Plus
-                                className="h-6 w-6 text-green-500"
-                            />
+                            <Plus className="h-6 w-6 text-green-500" />
                         </>
                     )}
                 </div>

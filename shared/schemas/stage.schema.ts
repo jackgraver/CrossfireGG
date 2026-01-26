@@ -20,24 +20,18 @@ export const stages = pgTable(
             .references(() => stageFormats.id, {
                 onDelete: "restrict",
             }),
-        is_current: boolean("is_current")
-            .notNull()
-            .default(false),
+        is_current: boolean("is_current").notNull().default(false),
         start_date: timestamp("start_date").notNull(),
         end_date: timestamp("end_date").notNull(),
         registration_deadline: timestamp("registration_deadline").notNull(),
-        created_at: timestamp("created_at")
-            .notNull()
-            .defaultNow(),
-        updated_at: timestamp("updated_at")
-            .notNull()
-            .defaultNow(),
+        created_at: timestamp("created_at").notNull().defaultNow(),
+        updated_at: timestamp("updated_at").notNull().defaultNow(),
         deleted_at: timestamp("deleted_at"),
     },
     (table) => [
         index("stages_tournament_id_idx").on(table.tournament_id),
         index("stages_format_id_idx").on(table.format_id),
-    ]
+    ],
 );
 
 /**

@@ -2,18 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMatchesByStage } from "./-queries/tournament.queries";
 import TopLevelBracket from "@/shared/bracket/TopLevelBracket";
 
-export const Route = createFileRoute(
-    "/tournament/$tournamentId/stage/$stageId/",
-)({
+export const Route = createFileRoute("/tournament/$tournamentId/stage/$stageId/")({
     component: StagePage,
 });
 
 function StagePage() {
     const { tournamentId, stageId } = Route.useParams();
 
-    const { data: matchesData, isLoading: matchesLoading } = useMatchesByStage(
-        Number(stageId),
-    );
+    const { data: matchesData, isLoading: matchesLoading } = useMatchesByStage(Number(stageId));
 
     const matches = matchesData?.matches || [];
 

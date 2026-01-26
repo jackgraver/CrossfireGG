@@ -10,4 +10,3 @@ router.get("/user-role", userController.getUserRole);
 router.post("/sign-out", userController.signOut);
 
 export default router;
-

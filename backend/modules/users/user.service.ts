@@ -1,12 +1,7 @@
 import { userRepository } from "./user.repository";
 import { hashing } from "../../lib/hashing";
 import { jwtUtils } from "../../lib/jwt";
-import type {
-    SignUpRequest,
-    SignInRequest,
-    AuthResponse,
-    UserWithRoles,
-} from "./user.types";
+import type { SignUpRequest, SignInRequest, AuthResponse, UserWithRoles } from "./user.types";
 import { playerRepository } from "../players/player.repository";
 
 export const userService = {
@@ -37,11 +32,7 @@ export const userService = {
             tokenVersion,
         });
 
-        await userRepository.updateRefreshToken(
-            Number(newUser.id),
-            refreshToken,
-            tokenVersion
-        );
+        await userRepository.updateRefreshToken(Number(newUser.id), refreshToken, tokenVersion);
 
         return {
             user: {
@@ -71,17 +62,13 @@ export const userService = {
 
         const roles = await userRepository.getUserRoles(Number(user.id));
 
-        const tokenVersion = 1 //(user.token_version || 0) + 1;
+        const tokenVersion = 1; //(user.token_version || 0) + 1;
         const refreshToken = jwtUtils.generateRefreshToken({
             userId: Number(user.id),
             tokenVersion,
         });
 
-        await userRepository.updateRefreshToken(
-            Number(user.id),
-            refreshToken,
-            tokenVersion
-        );
+        await userRepository.updateRefreshToken(Number(user.id), refreshToken, tokenVersion);
 
         const team = await playerRepository.getPlayerByUserId(Number(user.id));
 
@@ -120,11 +107,7 @@ export const userService = {
             tokenVersion: newTokenVersion,
         });
 
-        await userRepository.updateRefreshToken(
-            Number(user.id),
-            newRefreshToken,
-            newTokenVersion
-        );
+        await userRepository.updateRefreshToken(Number(user.id), newRefreshToken, newTokenVersion);
 
         return {
             user: {

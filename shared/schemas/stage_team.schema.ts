@@ -24,12 +24,8 @@ export const stageTeams = pgTable(
         losses: integer("losses").default(0),
         paid: boolean("paid").default(false),
         signed_up: boolean("signed_up").default(false),
-        created_at: timestamp("created_at")
-            .notNull()
-            .defaultNow(),
-        updated_at: timestamp("updated_at")
-            .notNull()
-            .defaultNow(),
+        created_at: timestamp("created_at").notNull().defaultNow(),
+        updated_at: timestamp("updated_at").notNull().defaultNow(),
         deleted_at: timestamp("deleted_at"),
     },
     (table) => [
@@ -37,7 +33,7 @@ export const stageTeams = pgTable(
         index("stage_teams_stage_id_idx").on(table.stage_id),
         index("stage_teams_team_id_idx").on(table.team_id),
         index("stage_teams_group_id_idx").on(table.group_id),
-    ]
+    ],
 );
 
 /**

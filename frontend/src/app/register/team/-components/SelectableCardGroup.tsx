@@ -10,16 +10,12 @@ type SelectableCardContextValue = {
     isValid: boolean;
 };
 
-const SelectableCardContext = createContext<SelectableCardContextValue | null>(
-    null,
-);
+const SelectableCardContext = createContext<SelectableCardContextValue | null>(null);
 
 export function useSelectableCardGroup() {
     const context = useContext(SelectableCardContext);
     if (!context) {
-        throw new Error(
-            "SelectableCard must be used within a SelectableCardGroup",
-        );
+        throw new Error("SelectableCard must be used within a SelectableCardGroup");
     }
     return context;
 }
@@ -55,7 +51,12 @@ export function SelectableCardGroup({
     const isSelected = (element: any) => {
         const elementId = element.user_id || element.faceitId || element.id || element.team_id;
         return selectedElements.some((selected: any) => {
-            const selectedId = selected.faceitId || selected.user_id || selected.id || selected.teamId || selected.team_id;
+            const selectedId =
+                selected.faceitId ||
+                selected.user_id ||
+                selected.id ||
+                selected.teamId ||
+                selected.team_id;
             return selectedId === elementId;
         });
     };

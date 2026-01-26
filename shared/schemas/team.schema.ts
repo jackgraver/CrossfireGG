@@ -9,17 +9,12 @@ export const teams = pgTable("teams", {
     name: text("name").notNull(),
     team_logo: text("team_logo"),
     faceit_id: text("faceit_id"),
-    team_captain_id: integer("team_captain_id")
-        .references((): any => players.id, {
-            onDelete: "restrict",
-        }),
+    team_captain_id: integer("team_captain_id").references((): any => players.id, {
+        onDelete: "restrict",
+    }),
     social_links: text("social_links"),
-    created_at: timestamp("created_at")
-        .notNull()
-        .defaultNow(),
-    updated_at: timestamp("updated_at")
-        .notNull()
-        .defaultNow(),
+    created_at: timestamp("created_at").notNull().defaultNow(),
+    updated_at: timestamp("updated_at").notNull().defaultNow(),
     deleted_at: timestamp("deleted_at"),
 });
 

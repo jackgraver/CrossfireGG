@@ -6,9 +6,7 @@ type NonFinishedMatchesProps = {
     matches: Match[];
 };
 
-export default function NonFinishedMatches({
-    matches,
-}: NonFinishedMatchesProps) {
+export default function NonFinishedMatches({ matches }: NonFinishedMatchesProps) {
     const [startIndex, setStartIndex] = useState(0);
     const [matchesPerPage, setMatchesPerPage] = useState(4);
 
@@ -39,11 +37,7 @@ export default function NonFinishedMatches({
                 return b.scheduled_at - a.scheduled_at; // order by latest first
             });
         const result: Match[] = [];
-        for (
-            let i = 0;
-            i < Math.min(matchesPerPage, validMatches.length);
-            i++
-        ) {
+        for (let i = 0; i < Math.min(matchesPerPage, validMatches.length); i++) {
             const index = (startIndex + i) % validMatches.length;
             result.push(validMatches[index]);
         }
@@ -52,16 +46,12 @@ export default function NonFinishedMatches({
 
     const goToPrevious = () => {
         setStartIndex((prev) =>
-            prev === 0
-                ? Math.max(0, matches.length - matchesPerPage)
-                : Math.max(0, prev - 1),
+            prev === 0 ? Math.max(0, matches.length - matchesPerPage) : Math.max(0, prev - 1),
         );
     };
 
     const goToNext = () => {
-        setStartIndex((prev) =>
-            prev >= matches.length - matchesPerPage ? 0 : prev + 1,
-        );
+        setStartIndex((prev) => (prev >= matches.length - matchesPerPage ? 0 : prev + 1));
     };
 
     if (matches.length === 0) return <EmptyNonFinishedMatches />;
@@ -74,12 +64,7 @@ export default function NonFinishedMatches({
                     className="z-10 mx-2 flex h-8 w-8 items-center justify-center rounded-full bg-gray-800 text-white shadow transition duration-200 hover:bg-gray-700"
                     aria-label="Previous match"
                 >
-                    <svg
-                        className="h-4 w-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                    >
+                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path
                             strokeLinecap="round"
                             strokeLinejoin="round"
@@ -108,12 +93,7 @@ export default function NonFinishedMatches({
                     className="z-10 mx-2 flex h-8 w-8 items-center justify-center rounded-full bg-gray-800 text-white shadow transition duration-200 hover:bg-gray-700"
                     aria-label="Next match"
                 >
-                    <svg
-                        className="h-4 w-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                    >
+                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path
                             strokeLinecap="round"
                             strokeLinejoin="round"
@@ -135,12 +115,7 @@ function EmptyNonFinishedMatches() {
                 className="z-10 mx-2 flex h-8 w-8 items-center justify-center rounded-full bg-gray-800 text-white shadow transition duration-200 hover:bg-gray-700"
                 aria-label="Previous match"
             >
-                <svg
-                    className="h-4 w-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                >
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                         strokeLinecap="round"
                         strokeLinejoin="round"
@@ -167,12 +142,7 @@ function EmptyNonFinishedMatches() {
                 className="z-10 mx-2 flex h-8 w-8 items-center justify-center rounded-full bg-gray-800 text-white shadow transition duration-200 hover:bg-gray-700"
                 aria-label="Next match"
             >
-                <svg
-                    className="h-4 w-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                >
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                         strokeLinecap="round"
                         strokeLinejoin="round"

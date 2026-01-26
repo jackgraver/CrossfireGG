@@ -2,8 +2,8 @@ import z from "zod";
 
 const playerBaseSchema = z.object({
     faceitId: z.string().min(1, "Faceit ID is required"),
-    hltvLink: z.string().optional(),
-    discordId: z.string().optional(),
+    hltvLink: z.string().min(1, "HLTV Link is required"),
+    discordId: z.string().min(1, "Discord ID is required"),
     playerName: z.string().min(2, "Name is required"),
     nationality: z.string().min(2, "Nationality is required"),
 });

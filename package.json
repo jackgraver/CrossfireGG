@@ -5,9 +5,16 @@
         "backend",
         "shared/*"
     ],
+    "scripts": {
+        "fmt": "oxfmt",
+        "fmt:check": "oxfmt --check"
+    },
     "dependencies": {
         "better-auth": "^1.4.17",
         "drizzle-kit": "^0.31.8",
         "morgan": "^1.10.1"
+    },
+    "devDependencies": {
+        "oxfmt": "^0.26.0"
     }
 }

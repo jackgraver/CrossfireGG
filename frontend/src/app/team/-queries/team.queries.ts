@@ -10,10 +10,7 @@ export const useTeam = (teamId: string) => {
     });
 };
 
-export const useTeamMatchesByStage = (
-    teamId: string,
-    stageId: string | null,
-) => {
+export const useTeamMatchesByStage = (teamId: string, stageId: string | null) => {
     return useQuery<unknown[]>({
         queryKey: ["team", teamId, "stage", stageId, "matches"],
         queryFn: () => teamApi.teamMatchesByStage(teamId, stageId!),
@@ -33,8 +30,7 @@ export const useAddPlayerToTeam = (teamId: string) => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (playerId: string) =>
-            teamApi.addPlayerToTeam(teamId, playerId),
+        mutationFn: (playerId: string) => teamApi.addPlayerToTeam(teamId, playerId),
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: ["team", teamId, "players"],
@@ -47,8 +43,7 @@ export const useRemovePlayerFromTeam = (teamId: string) => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (playerId: string) =>
-            teamApi.removePlayerFromTeam(teamId, playerId),
+        mutationFn: (playerId: string) => teamApi.removePlayerFromTeam(teamId, playerId),
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: ["team", teamId, "players"],

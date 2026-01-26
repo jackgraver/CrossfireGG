@@ -23,14 +23,14 @@ export const matchRepository = {
                                 players: {
                                     with: {
                                         player: true,
-                                    }
-                                }
-                            }
+                                    },
+                                },
+                            },
                         },
                     },
                 },
                 maps: true,
-            }
+            },
         });
     },
 
@@ -53,16 +53,25 @@ export const matchRepository = {
     },
 
     upsertCaster: async (matchId: number, casterId: number) => {
-        return await db.insert(matchCasters).values({
-            match_id: matchId,
-            caster_id: casterId.toString(),
-            assigned_at: new Date(),
-        }).returning();
+        return await db
+            .insert(matchCasters)
+            .values({
+                match_id: matchId,
+                caster_id: casterId.toString(),
+                assigned_at: new Date(),
+            })
+            .returning();
     },
 
     deleteCaster: async (matchId: number, casterId: number) => {
-        return await db.delete(matchCasters)
-            .where(and(eq(matchCasters.match_id, matchId), eq(matchCasters.caster_id, casterId.toString())))
+        return await db
+            .delete(matchCasters)
+            .where(
+                and(
+                    eq(matchCasters.match_id, matchId),
+                    eq(matchCasters.caster_id, casterId.toString()),
+                ),
+            )
             .returning();
     },
 
@@ -78,18 +87,14 @@ export const matchRepository = {
                 and(
                     eq(matchParticipants.match_id, matchId),
                     isNull(matchParticipants.deleted_at),
-                    isNull(teams.deleted_at)
-                )
+                    isNull(teams.deleted_at),
+                ),
             )
             .orderBy(matchParticipants.position);
     },
 
     findGroupById: async (groupId: number) => {
-        const result = await db
-            .select()
-            .from(groups)
-            .where(eq(groups.id, groupId))
-            .limit(1);
+        const result = await db.select().from(groups).where(eq(groups.id, groupId)).limit(1);
         return result[0] || null;
     },
 
@@ -119,9 +124,7 @@ export const matchRepository = {
         return await db
             .select()
             .from(players)
-            .where(
-                and(eq(players.team_id, teamId), isNull(players.deleted_at))
-            );
+            .where(and(eq(players.team_id, teamId), isNull(players.deleted_at)));
     },
 
     findMapsByMatchId: async (matchId: number) => {
@@ -135,9 +138,7 @@ export const matchRepository = {
         const result = await db
             .select()
             .from(matches)
-            .where(
-                and(eq(matches.faceit_id, faceitId), isNull(matches.deleted_at))
-            )
+            .where(and(eq(matches.faceit_id, faceitId), isNull(matches.deleted_at)))
             .limit(1);
         return result[0] || null;
     },
@@ -157,12 +158,7 @@ export const matchRepository = {
         const existing = await db
             .select()
             .from(matches)
-            .where(
-                and(
-                    eq(matches.faceit_id, matchData.faceit_id),
-                    isNull(matches.deleted_at)
-                )
-            )
+            .where(and(eq(matches.faceit_id, matchData.faceit_id), isNull(matches.deleted_at)))
             .limit(1);
 
         if (existing.length > 0) {
@@ -210,8 +206,8 @@ export const matchRepository = {
                 and(
                     eq(matchParticipants.match_id, participantData.match_id),
                     eq(matchParticipants.team_id, participantData.team_id),
-                    isNull(matchParticipants.deleted_at)
-                )
+                    isNull(matchParticipants.deleted_at),
+                ),
             )
             .limit(1);
 
@@ -256,8 +252,8 @@ export const matchRepository = {
                 and(
                     eq(maps.match_id, mapData.match_id),
                     eq(maps.map_order, mapData.map_order),
-                    isNull(maps.deleted_at)
-                )
+                    isNull(maps.deleted_at),
+                ),
             )
             .limit(1);
 

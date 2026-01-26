@@ -1,12 +1,4 @@
-import {
-    pgTable,
-    serial,
-    integer,
-    text,
-    timestamp,
-    unique,
-    index,
-} from "drizzle-orm/pg-core";
+import { pgTable, serial, integer, text, timestamp, unique, index } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { players, stageTeams } from "@repo/schemas";
 
@@ -23,19 +15,15 @@ export const stagePlayers = pgTable(
             .notNull()
             .references(() => stageTeams.id, { onDelete: "cascade" }),
         role: text("role", { enum: ["starter", "sub", "coach"] }).notNull(),
-        created_at: timestamp("created_at")
-            .notNull()
-            .defaultNow(),
-        updated_at: timestamp("updated_at")
-            .notNull()
-            .defaultNow(),
+        created_at: timestamp("created_at").notNull().defaultNow(),
+        updated_at: timestamp("updated_at").notNull().defaultNow(),
         deleted_at: timestamp("deleted_at"),
     },
     (table) => [
         unique().on(table.stage_team_id, table.player_id),
         index("stage_players_stage_team_id_idx").on(table.stage_team_id),
         index("stage_players_player_id_idx").on(table.player_id),
-    ]
+    ],
 );
 
 /**

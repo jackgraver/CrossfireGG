@@ -20,9 +20,7 @@ export function PasswordInput({
     const [showPassword, setShowPassword] = useState(false);
     const { isTouched, errors } = field.state.meta;
     const error = isTouched && errors.length > 0 ? String(errors[0]) : undefined;
-    const wrapperClass = [styles.wrapper, error && styles.hasError]
-        .filter(Boolean)
-        .join(" ");
+    const wrapperClass = [styles.wrapper, error && styles.hasError].filter(Boolean).join(" ");
 
     return (
         <div className={wrapperClass}>

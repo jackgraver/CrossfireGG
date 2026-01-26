@@ -4,21 +4,14 @@ import { useForm } from "@tanstack/react-form";
 import { useServerFn } from "@tanstack/react-start";
 import { signUpFn } from "@/lib/server/auth.server";
 import { useAuth } from "@/contexts/auth";
-import {
-    Input,
-    PasswordInput,
-    SpinnerInput,
-    Checkbox,
-    SubmitButton,
-} from "@/shared/form";
+import { Input, PasswordInput, SpinnerInput, Checkbox, SubmitButton } from "@/shared/form";
 import UserForm from "@/shared/UserForm";
 
 export const Route = createFileRoute("/sign-up/")({
     component: SignUp,
 });
 
-const validFaceitLinkRegex =
-    /^https:\/\/www\.faceit\.com\/[^\/]+\/players\/([a-zA-Z0-9_]{3,32})$/;
+const validFaceitLinkRegex = /^https:\/\/www\.faceit\.com\/[^\/]+\/players\/([a-zA-Z0-9_]{3,32})$/;
 
 function extractFaceitUsername(link: string): string {
     const match = link.match(validFaceitLinkRegex);
@@ -29,9 +22,9 @@ function SignUp() {
     const navigate = useNavigate();
     const { refetch } = useAuth();
     const signUp = useServerFn(signUpFn);
-    const [submitStatus, setSubmitStatus] = useState<
-        "idle" | "submitting" | "success" | "error"
-    >("idle");
+    const [submitStatus, setSubmitStatus] = useState<"idle" | "submitting" | "success" | "error">(
+        "idle",
+    );
     const [faceitTeamName, setFaceitTeamName] = useState("");
     const [faceitTeamId, setFaceitTeamId] = useState("");
 
@@ -54,9 +47,7 @@ function SignUp() {
                         email: value.email,
                         name: value.email.split("@")[0],
                         password: value.password,
-                        team_id: faceitTeamId
-                            ? parseInt(faceitTeamId)
-                            : undefined,
+                        team_id: faceitTeamId ? parseInt(faceitTeamId) : undefined,
                     },
                 });
                 if (result?.error) {
@@ -85,15 +76,10 @@ function SignUp() {
 
     return (
         <UserForm>
-            <h1 className="text-textPrimary text-2xl font-bold">
-                Create Account
-            </h1>
+            <h1 className="text-textPrimary text-2xl font-bold">Create Account</h1>
             <p className="text-textSecondary">
                 Already have an account?{" "}
-                <a
-                    href="/sign-in"
-                    className="text-blue-600 hover:text-blue-800"
-                >
+                <a href="/sign-in" className="text-blue-600 hover:text-blue-800">
                     Sign in
                 </a>
             </p>

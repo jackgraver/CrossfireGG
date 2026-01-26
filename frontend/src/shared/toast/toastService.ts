@@ -23,9 +23,7 @@ export type ToastOptions = {
 export type ToastInstance = Required<ToastOptions> & { id: string };
 
 /** Events emitted by the toast service to the provider. */
-type ToastEvent =
-    | { type: "show"; toast: ToastInstance }
-    | { type: "dismiss"; id?: string };
+type ToastEvent = { type: "show"; toast: ToastInstance } | { type: "dismiss"; id?: string };
 
 /** Listener called whenever a toast event occurs. */
 type Listener = (event: ToastEvent) => void;
@@ -84,11 +82,7 @@ export const toastService = {
     },
 
     /** Convenience: success toast. */
-    success(
-        body: React.ReactNode,
-        title?: string,
-        opts?: Partial<ToastOptions>,
-    ) {
+    success(body: React.ReactNode, title?: string, opts?: Partial<ToastOptions>) {
         return this.display({
             body,
             title,

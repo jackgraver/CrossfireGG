@@ -7,10 +7,7 @@ export const hashing = {
         return bcrypt.hash(password, SALT_ROUNDS);
     },
 
-    verifyPassword: async (
-        password: string,
-        hash: string
-    ): Promise<boolean> => {
+    verifyPassword: async (password: string, hash: string): Promise<boolean> => {
         return bcrypt.compare(password, hash);
     },
 };

@@ -20,9 +20,9 @@ export const Route = createFileRoute("/sign-in/")({
 function SignIn() {
     const navigate = useNavigate();
     const login = useServerFn(loginFn);
-    const [submitStatus, setSubmitStatus] = useState<
-        "idle" | "submitting" | "success" | "error"
-    >("idle");
+    const [submitStatus, setSubmitStatus] = useState<"idle" | "submitting" | "success" | "error">(
+        "idle",
+    );
 
     const { refetch } = useAuth();
 
@@ -62,25 +62,34 @@ function SignIn() {
     const isSubmitting = submitStatus === "submitting";
 
     return (
-
         <UserForm>
-            <button className="bg-border text-textSecondary hover:bg-secondBg rounded px-4 py-2" onClick={async () => {
-                await authClient.signIn.email({
-                    email: "test@test.com",
-                    password: "password",
-                    callbackURL: "/",
-                });
-            }}>testing</button>
-            <button className="bg-border text-textSecondary hover:bg-secondBg rounded px-4 py-2" onClick={async () => {
-                await authClient.signOut({
-                    fetchOptions: {
-                        onSuccess: async () => {
-                            await queryClient.refetchQueries({ queryKey: ["user-role"] });
-                            navigate({ to: "/" });
-                        }
-                    }
-                });
-            }}>testing2</button>
+            <button
+                className="bg-border text-textSecondary hover:bg-secondBg rounded px-4 py-2"
+                onClick={async () => {
+                    await authClient.signIn.email({
+                        email: "test@test.com",
+                        password: "password",
+                        callbackURL: "/",
+                    });
+                }}
+            >
+                testing
+            </button>
+            <button
+                className="bg-border text-textSecondary hover:bg-secondBg rounded px-4 py-2"
+                onClick={async () => {
+                    await authClient.signOut({
+                        fetchOptions: {
+                            onSuccess: async () => {
+                                await queryClient.refetchQueries({ queryKey: ["user-role"] });
+                                navigate({ to: "/" });
+                            },
+                        },
+                    });
+                }}
+            >
+                testing2
+            </button>
             <h1 className="mb-2 text-2xl font-bold text-white">Welcome Back</h1>
             <form
                 onSubmit={(e) => {

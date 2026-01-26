@@ -13,9 +13,7 @@ export const teamApi = {
         return response.data;
     },
     teamMatchesByStage: async (teamId: string, stageId: string) => {
-        const response = await api.get<unknown[]>(
-            `/team/${teamId}/stages/${stageId}/matches`,
-        );
+        const response = await api.get<unknown[]>(`/team/${teamId}/stages/${stageId}/matches`);
         return response.data;
     },
     addPlayerToTeam: async (teamId: string, playerId: string) => {
@@ -25,12 +23,16 @@ export const teamApi = {
         return response.data;
     },
     removePlayerFromTeam: async (teamId: string, playerId: string) => {
-        const response = await api.delete<unknown>(
-            `/team/${teamId}/players/${playerId}`,
-        );
+        const response = await api.delete<unknown>(`/team/${teamId}/players/${playerId}`);
         return response.data;
     },
-    registerTeam: async (team: Team, starters: Player[], subs: Player[], coach: Player, tournamentId: string | null) => {
+    registerTeam: async (
+        team: Team,
+        starters: Player[],
+        subs: Player[],
+        coach: Player,
+        tournamentId: string | null,
+    ) => {
         const response = await api.post<{ team_id: number }>(`/team/register`, {
             team,
             starters,

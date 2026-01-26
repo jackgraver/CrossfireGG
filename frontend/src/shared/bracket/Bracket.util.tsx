@@ -16,14 +16,8 @@ export const groupMatchesByRound = (matches: Match[]) => {
 
 export const sortMatchesBySeed = (matches: Match[]) => {
     return matches.sort((a, b) => {
-        const aMinSeed = Math.min(
-            a.teams?.team1?.seed ?? 0,
-            a.teams?.team2?.seed ?? 0,
-        );
-        const bMinSeed = Math.min(
-            b.teams?.team1?.seed ?? 0,
-            b.teams?.team2?.seed ?? 0,
-        );
+        const aMinSeed = Math.min(a.teams?.team1?.seed ?? 0, a.teams?.team2?.seed ?? 0);
+        const bMinSeed = Math.min(b.teams?.team1?.seed ?? 0, b.teams?.team2?.seed ?? 0);
         return aMinSeed - bMinSeed;
     });
 };
@@ -39,15 +33,10 @@ export const groupMatchesByRoundAndSort = (matches: Match[]) => {
     return rounds;
 };
 
-export const filterAndSortMatchesByRound = (
-    matches: Match[],
-    round: string,
-) => {
+export const filterAndSortMatchesByRound = (matches: Match[], round: string) => {
     return matches
         .filter((m) => m.round === round)
-        .sort(
-            (a, b) => (a.teams?.team1?.seed ?? 0) - (b.teams?.team1?.seed ?? 0),
-        );
+        .sort((a, b) => (a.teams?.team1?.seed ?? 0) - (b.teams?.team1?.seed ?? 0));
 };
 
 export const getMatchesByGroup = (matches: Match[]) => {
@@ -73,17 +62,20 @@ export const getMatchesByGroup = (matches: Match[]) => {
     };
 
     // Group matches
-    const grouped = matches.reduce((acc, match) => {
-        const groupId = match.group_id ?? "";
-        if (!acc[groupId]) {
-            acc[groupId] = [];
-        }
-        acc[groupId].push(match);
-        return acc;
-    }, {} as Record<string, Match[]>);
+    const grouped = matches.reduce(
+        (acc, match) => {
+            const groupId = match.group_id ?? "";
+            if (!acc[groupId]) {
+                acc[groupId] = [];
+            }
+            acc[groupId].push(match);
+            return acc;
+        },
+        {} as Record<string, Match[]>,
+    );
 
     // Sort each group's matches by round (asc) then by highest seed (desc)
-    Object.values(grouped).forEach(matchArr => {
+    Object.values(grouped).forEach((matchArr) => {
         matchArr.sort((a, b) => {
             const roundCmp = roundOrder(a, b);
             if (roundCmp !== 0) return roundCmp;

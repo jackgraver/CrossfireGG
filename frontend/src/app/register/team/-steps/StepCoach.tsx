@@ -45,7 +45,8 @@ export default function StepCoach({
             </div>
             {error && <div className="text-red-500">Error: {error.message}</div>}
             {isLoading && (
-                <div className="flex items-center gap-x-2 text-gray-400 py-4"><Loader className="h-5 w-5 animate-spin" />
+                <div className="flex items-center gap-x-2 text-gray-400 py-4">
+                    <Loader className="h-5 w-5 animate-spin" />
                     <span>Loading team players...</span>
                 </div>
             )}
@@ -87,9 +88,11 @@ export default function StepCoach({
         <div className="flex flex-col gap-y-6">
             <div className="border-b border-gray-700 pb-4">
                 <h2 className="text-xl font-semibold text-white">Coach Details</h2>
-                <p className="text-sm text-gray-400">Complete the information for your team coach.</p>
+                <p className="text-sm text-gray-400">
+                    Complete the information for your team coach.
+                </p>
             </div>
-            <div className="rounded-lg bg-gray-800/20 p-4 border border-gray-700/50 hover:border-gray-600/50 transition-all duration-200">
+            <div className="rounded-lg transition-all duration-200">
                 <PlayerFormFields form={form} namePrefix="coach" labelPrefix="Coach" />
             </div>
         </div>

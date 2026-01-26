@@ -8,12 +8,7 @@ type NotificationProps = {
     onClose: () => void;
 };
 
-export default function Notification({
-    title,
-    message,
-    error,
-    onClose,
-}: NotificationProps) {
+export default function Notification({ title, message, error, onClose }: NotificationProps) {
     useEffect(() => {
         const timer = setTimeout(() => {
             onClose();
@@ -30,11 +25,7 @@ export default function Notification({
         >
             <div className="flex items-start justify-between gap-4 text-white">
                 <div className="flex-1">
-                    {title && (
-                        <div className="mb-1 text-xl font-semibold">
-                            {title}
-                        </div>
-                    )}
+                    {title && <div className="mb-1 text-xl font-semibold">{title}</div>}
                     <div className="text-base">{message}</div>
                 </div>
                 <CloseButton onClose={onClose} />

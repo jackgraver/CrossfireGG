@@ -12,17 +12,12 @@ import { eq, and, isNull, inArray, like, or, ne } from "drizzle-orm";
 
 export const teamRepository = {
     findAll: async () => {
-        return await db
-            .select()
-            .from(teams)
-            .where(isNull(teams.deleted_at))
-            .orderBy(teams.name);
+        return await db.select().from(teams).where(isNull(teams.deleted_at)).orderBy(teams.name);
     },
 
     findById: async (teamId: number) => {
         return await db.query.teams.findFirst({
-            where: (t, { eq, and, isNull }) =>
-                and(eq(t.id, teamId), isNull(t.deleted_at)),
+            where: (t, { eq, and, isNull }) => and(eq(t.id, teamId), isNull(t.deleted_at)),
             // with: {
             //     stages: {
             //         with: {
@@ -47,8 +42,8 @@ export const teamRepository = {
                 and(
                     eq(stageTeams.team_id, teamId),
                     eq(stageTeams.stage_id, stageId),
-                    isNull(stageTeams.deleted_at)
-                )
+                    isNull(stageTeams.deleted_at),
+                ),
             )
             .limit(1);
         return result[0];
@@ -60,10 +55,7 @@ export const teamRepository = {
             .select({ match_id: matchParticipants.match_id })
             .from(matchParticipants)
             .where(
-                and(
-                    eq(matchParticipants.team_id, teamId),
-                    isNull(matchParticipants.deleted_at)
-                )
+                and(eq(matchParticipants.team_id, teamId), isNull(matchParticipants.deleted_at)),
             );
 
         const matchIds = teamMatches.map((m) => m.match_id);
@@ -74,9 +66,7 @@ export const teamRepository = {
         return await db
             .select()
             .from(matches)
-            .where(
-                and(inArray(matches.id, matchIds), isNull(matches.deleted_at))
-            );
+            .where(and(inArray(matches.id, matchIds), isNull(matches.deleted_at)));
     },
 
     findMatchesByTeamIdAndStageId: async (teamId: number, stageId: number) => {
@@ -84,10 +74,7 @@ export const teamRepository = {
             .select({ match_id: matchParticipants.match_id })
             .from(matchParticipants)
             .where(
-                and(
-                    eq(matchParticipants.team_id, teamId),
-                    isNull(matchParticipants.deleted_at)
-                )
+                and(eq(matchParticipants.team_id, teamId), isNull(matchParticipants.deleted_at)),
             );
 
         const matchIds = teamMatches.map((m) => m.match_id);
@@ -101,8 +88,8 @@ export const teamRepository = {
                 and(
                     inArray(matches.id, matchIds),
                     eq(matches.stage_id, stageId),
-                    isNull(matches.deleted_at)
-                )
+                    isNull(matches.deleted_at),
+                ),
             );
     },
 
@@ -121,8 +108,8 @@ export const teamRepository = {
                     eq(stageTeams.team_id, teamId),
                     isNull(stageTeams.deleted_at),
                     isNull(stages.deleted_at),
-                    isNull(tournaments.deleted_at)
-                )
+                    isNull(tournaments.deleted_at),
+                ),
             );
     },
 
@@ -138,16 +125,15 @@ export const teamRepository = {
                 and(
                     eq(matchParticipants.match_id, matchId),
                     isNull(matchParticipants.deleted_at),
-                    isNull(teams.deleted_at)
-                )
+                    isNull(teams.deleted_at),
+                ),
             )
             .orderBy(matchParticipants.position);
     },
 
     findPlayersByTeamId: async (teamId: number) => {
         return await db.query.players.findMany({
-            where: (p, { eq, and, isNull }) =>
-                and(eq(p.team_id, teamId), isNull(p.deleted_at)),
+            where: (p, { eq, and, isNull }) => and(eq(p.team_id, teamId), isNull(p.deleted_at)),
         });
     },
 
@@ -161,9 +147,7 @@ export const teamRepository = {
             ? or(isNull(players.team_id), ne(players.team_id, excludeTeamId))
             : undefined;
 
-        const allConditions = teamCondition
-            ? [...baseConditions, teamCondition]
-            : baseConditions;
+        const allConditions = teamCondition ? [...baseConditions, teamCondition] : baseConditions;
 
         return await db
             .select()
@@ -214,12 +198,7 @@ export const teamRepository = {
         const existing = await db
             .select()
             .from(teams)
-            .where(
-                and(
-                    eq(teams.faceit_id, teamData.faceit_id),
-                    isNull(teams.deleted_at)
-                )
-            )
+            .where(and(eq(teams.faceit_id, teamData.faceit_id), isNull(teams.deleted_at)))
             .limit(1);
 
         if (existing.length > 0) {
@@ -260,9 +239,6 @@ export const teamRepository = {
     findByFaceitIds: async (faceitIds: string[]) => {
         if (faceitIds.length === 0) return [];
 
-        return db
-            .select()
-            .from(teams)
-            .where(inArray(teams.faceit_id, faceitIds));
+        return db.select().from(teams).where(inArray(teams.faceit_id, faceitIds));
     },
 };

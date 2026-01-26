@@ -1,6 +1,3 @@
-export function matchesRole(
-    userRoles: string[] = [],
-    ...requiredRoles: string[]
-) {
+export function matchesRole(userRoles: string[] = [], ...requiredRoles: string[]) {
     return requiredRoles.some((role) => userRoles.includes(role));
 }

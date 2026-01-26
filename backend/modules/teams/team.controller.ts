@@ -29,10 +29,7 @@ export const teamController = {
 
             res.json(payload);
         } catch (error: any) {
-            logger.error(
-                `Error in getTeamById for ID ${req.params.teamId}:`,
-                error
-            );
+            logger.error(`Error in getTeamById for ID ${req.params.teamId}:`, error);
             res.status(500).json({ error: "Failed to fetch team details" });
         }
     },
@@ -55,7 +52,7 @@ export const teamController = {
         } catch (error: any) {
             logger.error(
                 `Error in getTeamMatchesByStage for team ID ${req.params.teamId} and stage ID ${req.params.stageId}:`,
-                error
+                error,
             );
             res.status(500).json({ error: "Failed to fetch team matches" });
         }
@@ -63,7 +60,7 @@ export const teamController = {
 
     getTeamPlayers: async (req: Request, res: Response) => {
         try {
-            console.log('getTeamPlayers', req.params.teamId);
+            console.log("getTeamPlayers", req.params.teamId);
             const teamId = parseInt(req.params.teamId);
 
             if (isNaN(teamId)) {
@@ -76,10 +73,7 @@ export const teamController = {
 
             res.json(payload);
         } catch (error: any) {
-            logger.error(
-                `Error in getTeamPlayers for team ID ${req.params.teamId}:`,
-                error
-            );
+            logger.error(`Error in getTeamPlayers for team ID ${req.params.teamId}:`, error);
             res.status(500).json({ error: "Failed to fetch team players" });
         }
     },
@@ -92,15 +86,10 @@ export const teamController = {
                 : undefined;
 
             if (!searchQuery || searchQuery.trim().length === 0) {
-                return res
-                    .status(400)
-                    .json({ error: "Search query is required" });
+                return res.status(400).json({ error: "Search query is required" });
             }
 
-            const players = await teamService.searchPlayers(
-                searchQuery.trim(),
-                excludeTeamId
-            );
+            const players = await teamService.searchPlayers(searchQuery.trim(), excludeTeamId);
             res.json(players);
         } catch (error: any) {
             logger.error("Error in searchPlayers:", error);
@@ -129,10 +118,7 @@ export const teamController = {
 
             res.json(player);
         } catch (error: any) {
-            logger.error(
-                `Error in addPlayerToTeam for team ID ${req.params.teamId}:`,
-                error
-            );
+            logger.error(`Error in addPlayerToTeam for team ID ${req.params.teamId}:`, error);
             res.status(500).json({ error: "Failed to add player to team" });
         }
     },
@@ -158,10 +144,7 @@ export const teamController = {
 
             res.json(player);
         } catch (error: any) {
-            logger.error(
-                `Error in removePlayerFromTeam for team ID ${req.params.teamId}:`,
-                error
-            );
+            logger.error(`Error in removePlayerFromTeam for team ID ${req.params.teamId}:`, error);
             res.status(500).json({
                 error: "Failed to remove player from team",
             });
@@ -170,31 +153,32 @@ export const teamController = {
 
     registerTeam: async (req: Request, res: Response) => {
         try {
-            console.log('registerTeam', req.body);
+            console.log("registerTeam", req.body);
             const validation = RegisterTeamSchema.safeParse(req.body);
             if (!validation.success) {
-                console.log('validation failed', validation.error.issues);
-                return res.status(400).json({ error: "Validation failed", details: validation.error.issues });
+                console.log("validation failed", validation.error.issues);
+                return res
+                    .status(400)
+                    .json({ error: "Validation failed", details: validation.error.issues });
             }
 
             const { team, starters, subs, coach, tournamentId } = validation.data;
 
             const combinedPlayers = [...starters, ...subs, coach];
 
-            const faceitTeam =
-                await faceitFetchUtil.fetchData<FaceitTeamPlayersResponse>(
-                    `/teams/${team.teamId}`,
-                    {
-                        readFileName: `team_players_${team.teamId}.json`,
-                        // writeFileName: `team_players_${team.teamId}.json`,
-                    }
-                );
-
-            const faceitPlayerIds = new Set(
-                faceitTeam.members.map(m => m.user_id)
+            const faceitTeam = await faceitFetchUtil.fetchData<FaceitTeamPlayersResponse>(
+                `/teams/${team.teamId}`,
+                {
+                    readFileName: `team_players_${team.teamId}.json`,
+                    // writeFileName: `team_players_${team.teamId}.json`,
+                },
             );
 
-            const missing = combinedPlayers.filter((player) => !faceitPlayerIds.has(player.faceitId));
+            const faceitPlayerIds = new Set(faceitTeam.members.map((m) => m.user_id));
+
+            const missing = combinedPlayers.filter(
+                (player) => !faceitPlayerIds.has(player.faceitId),
+            );
             if (missing.length > 0) {
                 throw new Error(`Invalid players: ${missing.join(", ")}`);
             }
@@ -207,7 +191,7 @@ export const teamController = {
             });
 
             for (const player of faceitTeam.members) {
-                if (!combinedPlayers.some(p => p.faceitId === player.user_id)) continue;
+                if (!combinedPlayers.some((p) => p.faceitId === player.user_id)) continue;
 
                 const dbPlayer = await playerRepository.upsertPlayerByFaceitId({
                     player_name: player.nickname,
@@ -219,7 +203,7 @@ export const teamController = {
                 });
 
                 if (player.user_id === faceitTeam.leader) {
-                    console.log('update team captain', dbTeam.id, dbPlayer.id);
+                    console.log("update team captain", dbTeam.id, dbPlayer.id);
                     await teamRepository.updateTeamCaptain(dbTeam.id, dbPlayer.id);
                     continue;
                 }
@@ -228,18 +212,20 @@ export const teamController = {
             }
 
             if (tournamentId) {
-                const entryStage = await tournamentRepository.findEntryStage(parseInt(tournamentId));
+                const entryStage = await tournamentRepository.findEntryStage(
+                    parseInt(tournamentId),
+                );
                 if (!entryStage) {
                     throw new Error("Entry stage not found");
                 }
-                console.log('entryStage', entryStage);
+                console.log("entryStage", entryStage);
 
                 const res = await tournamentRepository.upsertStageTeam({
                     stage_id: entryStage.id,
                     team_id: dbTeam.id,
                     group_id: null,
                 });
-                console.log('upsertStageTeam', res);
+                console.log("upsertStageTeam", res);
             }
 
             res.json({ team_id: dbTeam.id });

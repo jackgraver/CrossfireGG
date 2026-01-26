@@ -78,9 +78,7 @@ function SelectTournament() {
 }
 
 function extractFaceitIdFromLink(link: string): string | null {
-    const match = link.match(
-        /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i,
-    );
+    const match = link.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i);
     return match ? match[0] : null;
 }
 
@@ -124,9 +122,7 @@ function ImportStageForm() {
             const result = await api.post("/faceit/import/stage", body);
             setResponse(result);
         } catch (err: any) {
-            setError(
-                err.response?.data?.error || err.message || "An error occurred",
-            );
+            setError(err.response?.data?.error || err.message || "An error occurred");
         } finally {
             setLoading(false);
         }
@@ -199,9 +195,7 @@ function ImportStageForm() {
             {response && (
                 <div className="mt-4 rounded border border-green-500/30 bg-green-900/20 p-3">
                     <h4 className="mb-2 font-semibold">Response:</h4>
-                    <pre className="overflow-auto text-sm">
-                        {JSON.stringify(response, null, 2)}
-                    </pre>
+                    <pre className="overflow-auto text-sm">{JSON.stringify(response, null, 2)}</pre>
                 </div>
             )}
             {error && (
@@ -244,9 +238,7 @@ function ImportMatchesForm() {
             const result = await api.post("/faceit/import/matches", body);
             setResponse(result);
         } catch (err: any) {
-            setError(
-                err.response?.data?.error || err.message || "An error occurred",
-            );
+            setError(err.response?.data?.error || err.message || "An error occurred");
         } finally {
             setLoading(false);
         }
@@ -319,9 +311,7 @@ function ImportMatchesForm() {
             {response && (
                 <div className="mt-4 rounded border border-green-500/30 bg-green-900/20 p-3">
                     <h4 className="mb-2 font-semibold">Response:</h4>
-                    <pre className="overflow-auto text-sm">
-                        {JSON.stringify(response, null, 2)}
-                    </pre>
+                    <pre className="overflow-auto text-sm">{JSON.stringify(response, null, 2)}</pre>
                 </div>
             )}
             {error && (

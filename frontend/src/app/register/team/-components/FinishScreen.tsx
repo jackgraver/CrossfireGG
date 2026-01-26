@@ -15,9 +15,7 @@ export default function FinishScreen({
 }: FinishScreenProps) {
     return (
         <div className="flex flex-col items-center gap-6 py-8">
-            <h1 className="mb-4 text-2xl font-bold">
-                You have been registered successfully!
-            </h1>
+            <h1 className="mb-4 text-2xl font-bold">You have been registered successfully!</h1>
             {tournamentId ? (
                 <button
                     className="w-full max-w-xs rounded bg-blue-500 px-6 py-3 text-lg font-semibold text-white shadow transition-colors hover:bg-blue-600"

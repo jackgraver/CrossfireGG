@@ -12,13 +12,7 @@ type Player = {
     team_id: string;
 };
 
-export default function TeamDisplay({
-    team,
-    players,
-}: {
-    team: Team;
-    players: Player[];
-}) {
+export default function TeamDisplay({ team, players }: { team: Team; players: Player[] }) {
     const navigate = useNavigate();
     return (
         <div className="flex flex-col gap-4">

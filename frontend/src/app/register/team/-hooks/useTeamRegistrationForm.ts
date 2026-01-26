@@ -9,9 +9,7 @@ type UseTeamRegistrationFormOptions = {
     onError?: (error: unknown) => void;
 };
 
-export function useTeamRegistrationForm(
-    options: UseTeamRegistrationFormOptions = {},
-) {
+export function useTeamRegistrationForm(options: UseTeamRegistrationFormOptions = {}) {
     const registerMutation = useRegisterTeam();
 
     const form = useForm({
@@ -25,15 +23,15 @@ export function useTeamRegistrationForm(
             },
             starters: options.userFaceitId
                 ? [
-                    {
-                        faceitId: options.userFaceitId,
-                        hltvLink: "",
-                        discordId: "",
-                        playerName: "",
-                        nationality: "",
-                        avatar: "",
-                    },
-                ]
+                      {
+                          faceitId: options.userFaceitId,
+                          hltvLink: "",
+                          discordId: "",
+                          playerName: "",
+                          nationality: "",
+                          avatar: "",
+                      },
+                  ]
                 : [],
             subs: [],
             coach: {
@@ -50,16 +48,19 @@ export function useTeamRegistrationForm(
             },
         } satisfies RegistrationFormData,
         onSubmit: async ({ value }) => {
-            registerMutation.mutate({
-                team: value.team,
-                starters: value.starters,
-                subs: value.subs,
-                coach: value.coach,
-                tournamentId: options.tournamentId ?? null,
-            }, {
-                onSuccess: options.onSuccess,
-                onError: options.onError,
-            });
+            registerMutation.mutate(
+                {
+                    team: value.team,
+                    starters: value.starters,
+                    subs: value.subs,
+                    coach: value.coach,
+                    tournamentId: options.tournamentId ?? null,
+                },
+                {
+                    onSuccess: options.onSuccess,
+                    onError: options.onError,
+                },
+            );
         },
     });
 

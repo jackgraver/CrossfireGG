@@ -1,27 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
-import {
-    useTournamentById,
-    useStageTeams,
-    useStageBracket,
-} from "./-queries/tournament.queries";
+import { useTournamentById, useStageTeams, useStageBracket } from "./-queries/tournament.queries";
 import OSSTable from "@/shared/OSSTable";
 import { StageTeamDTO, Team } from "@repo/contracts";
 import { StageTeamWithTeam } from "@repo/types";
 
-export const Route = createFileRoute(
-    "/tournament/$tournamentId/stage/$stageId/standings",
-)({
+export const Route = createFileRoute("/tournament/$tournamentId/stage/$stageId/standings")({
     component: StandingsPage,
 });
 
 function StandingsPage() {
     const { tournamentId, stageId } = Route.useParams();
-    const {
-        data: stageTeams,
-        isLoading,
-        error,
-    } = useStageBracket(Number(stageId));
+    const { data: stageTeams, isLoading, error } = useStageBracket(Number(stageId));
 
     if (error) {
         return <div>Error loading standings</div>;
@@ -36,15 +26,11 @@ function StandingsPage() {
     return (
         <div className="bg-firstBg rounded-xl shadow-md">
             <div className="border-border flex flex-col gap-4 border-b p-4 sm:flex-row sm:items-center sm:justify-between">
-                <h2 className="text-textPrimary text-lg font-semibold">
-                    Standings
-                </h2>
+                <h2 className="text-textPrimary text-lg font-semibold">Standings</h2>
             </div>
             <div className="p-4">
                 {isLoading ? (
-                    <div className="text-textSecondary py-8 text-center">
-                        Loading standings...
-                    </div>
+                    <div className="text-textSecondary py-8 text-center">Loading standings...</div>
                 ) : groups.length === 0 ? (
                     <div className="text-textSecondary py-8 text-center">
                         No standings data available for this stage
@@ -65,13 +51,7 @@ function StandingsPage() {
     );
 }
 
-function GroupStandings({
-    groupName,
-    teams,
-}: {
-    groupName: string;
-    teams: StageTeamWithTeam[];
-}) {
+function GroupStandings({ groupName, teams }: { groupName: string; teams: StageTeamWithTeam[] }) {
     const sortedTeams = [...teams].sort((a, b) => {
         if (b.wins !== a.wins) return b.wins - a.wins;
         return a.losses - b.losses;

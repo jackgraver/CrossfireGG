@@ -25,25 +25,25 @@ function MembersPage() {
     return (
         <div className="bg-firstBg rounded-xl shadow-md">
             <div className="border-border flex items-center justify-between border-b p-4">
-                <h2 className="text-textPrimary text-lg font-semibold">
-                    Team Members
-                </h2>
+                <h2 className="text-textPrimary text-lg font-semibold">Team Members</h2>
                 <div className="bg-secondBg flex rounded-lg p-1">
                     <button
                         onClick={() => setViewMode("all")}
-                        className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${viewMode === "all"
-                            ? "bg-thirdBg text-textPrimary"
-                            : "text-textSecondary hover:text-textPrimary"
-                            }`}
+                        className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                            viewMode === "all"
+                                ? "bg-thirdBg text-textPrimary"
+                                : "text-textSecondary hover:text-textPrimary"
+                        }`}
                     >
                         All Players
                     </button>
                     <button
                         onClick={() => setViewMode("by-stage")}
-                        className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${viewMode === "by-stage"
-                            ? "bg-thirdBg text-textPrimary"
-                            : "text-textSecondary hover:text-textPrimary"
-                            }`}
+                        className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+                            viewMode === "by-stage"
+                                ? "bg-thirdBg text-textPrimary"
+                                : "text-textSecondary hover:text-textPrimary"
+                        }`}
                     >
                         By Stage
                     </button>
@@ -51,9 +51,7 @@ function MembersPage() {
             </div>
             <div className="p-4">
                 {isLoading ? (
-                    <div className="text-textSecondary py-8 text-center">
-                        Loading players...
-                    </div>
+                    <div className="text-textSecondary py-8 text-center">Loading players...</div>
                 ) : !players || players.length === 0 ? (
                     <div className="text-textSecondary py-8 text-center">
                         No players on this team
@@ -130,11 +128,7 @@ function ByStageView({
     );
 
     if (stages.length === 0) {
-        return (
-            <div className="text-textSecondary py-8 text-center">
-                No stages available
-            </div>
-        );
+        return <div className="text-textSecondary py-8 text-center">No stages available</div>;
     }
 
     return (
@@ -144,10 +138,11 @@ function ByStageView({
                     <button
                         key={stage.stage_id}
                         onClick={() => setSelectedStageId(stage.stage_id)}
-                        className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${selectedStageId === stage.stage_id
-                            ? "bg-blue-500/20 text-blue-400"
-                            : "bg-secondBg text-textSecondary hover:bg-thirdBg"
-                            }`}
+                        className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+                            selectedStageId === stage.stage_id
+                                ? "bg-blue-500/20 text-blue-400"
+                                : "bg-secondBg text-textSecondary hover:bg-thirdBg"
+                        }`}
                     >
                         {stage.stage_name}
                     </button>

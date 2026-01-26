@@ -3,7 +3,7 @@ import { createFileRoute, redirect, useRouteContext } from "@tanstack/react-rout
 export const Route = createFileRoute("/user/")({
     component: User,
     beforeLoad: async ({ context }) => {
-        console.log('user route context:', context);
+        console.log("user route context:", context);
         if (!context.session) {
             throw redirect({
                 to: "/",
@@ -13,6 +13,5 @@ export const Route = createFileRoute("/user/")({
 });
 
 function User() {
-
     return <div>User</div>;
 }

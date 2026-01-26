@@ -1,12 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import {
-    useStageBracket,
-} from "./-queries/tournament.queries";
+import { useStageBracket } from "./-queries/tournament.queries";
 import TopLevelBracket from "@/shared/bracket/TopLevelBracket";
 
-export const Route = createFileRoute(
-    "/tournament/$tournamentId/stage/$stageId/bracket",
-)({
+export const Route = createFileRoute("/tournament/$tournamentId/stage/$stageId/bracket")({
     component: BracketPage,
 });
 
@@ -30,10 +26,7 @@ function BracketPage() {
     return (
         <div className="bg-firstBg rounded-xl shadow-md">
             <div className="p-4">
-                <TopLevelBracket
-                    stageFormat={data.format}
-                    groups={data.groups}
-                />
+                <TopLevelBracket stageFormat={data.format} groups={data.groups} />
             </div>
         </div>
     );

@@ -1,181 +1,147 @@
 {
-  "team_id": "3523360c-7235-452a-b9d9-e587e97ba4b5",
-  "nickname": "regain",
-  "name": "regain",
-  "description": "sasha\ndvrk \nZucar\nmarekiew\nFuzenko\nhttps://twitter.com/regaincs",
-  "avatar": "https://distribution.faceit-cdn.net/images/8a9441cf-41cb-4b51-91ce-54f9ef0a2c63.jpg",
-  "cover_image": "https://distribution.faceit-cdn.net/images/1cc61e60-5dd5-4701-aa50-5e8d05731948.jpg",
-  "game": "cs2",
-  "team_type": "premade",
-  "members": [
-    {
-      "user_id": "6d10dac4-b0cf-473d-b5a8-a34c53aefade",
-      "nickname": "sasha",
-      "avatar": "https://distribution.faceit-cdn.net/images/a859635a-0f81-4036-b2c9-b1f8145aff18.jpg",
-      "country": "us",
-      "memberships": [
-        "premium",
-        "esea"
-      ],
-      "faceit_url": "https://www.faceit.com/{lang}/players/sasha"
-    },
-    {
-      "user_id": "da7422ec-e62a-4df2-87fd-5f3c29f478b7",
-      "nickname": "1dvrk",
-      "avatar": "https://distribution.faceit-cdn.net/images/fa429887-8bb2-4ada-a876-1c5e46444b8f.jpeg",
-      "country": "us",
-      "memberships": [
-        "premium",
-        "esea"
-      ],
-      "faceit_url": "https://www.faceit.com/{lang}/players/1dvrk"
-    },
-    {
-      "user_id": "9f3440e0-7eea-48c4-9547-03cde24304a4",
-      "nickname": "marekiew",
-      "avatar": "https://distribution.faceit-cdn.net/images/428dc800-1e23-4f14-ba7b-ed224ac4f1ba.jpeg",
-      "country": "us",
-      "memberships": [
-        "premium",
-        "esea"
-      ],
-      "faceit_url": "https://www.faceit.com/{lang}/players/marekiew"
-    },
-    {
-      "user_id": "6131f2e5-fb5e-4d76-966f-8a20f2abf95d",
-      "nickname": "hurtslxrd",
-      "avatar": "https://distribution.faceit-cdn.net/images/6c8fb234-ac03-436f-9ec2-76a6f5766a67.jpeg",
-      "country": "by",
-      "memberships": [
-        "esea"
-      ],
-      "faceit_url": "https://www.faceit.com/{lang}/players/hurtslxrd"
-    },
-    {
-      "user_id": "f10486e8-6197-4bbc-928d-5060e7be9657",
-      "nickname": "fuzenko",
-      "avatar": "https://distribution.faceit-cdn.net/images/6c56bdb1-b04c-4d12-aece-9374539f6eca.jpg",
-      "country": "ua",
-      "memberships": [
-        "esea",
-        "plus"
-      ],
-      "faceit_url": "https://www.faceit.com/{lang}/players/fuzenko"
-    },
-    {
-      "user_id": "6d4fd986-9e20-4493-9439-8e068a66a071",
-      "nickname": "hysssteria",
-      "avatar": "https://distribution.faceit-cdn.net/images/4e15cc0e-67dd-4e96-9404-76121399bd6e.jpg",
-      "country": "us",
-      "memberships": [
-        "esea"
-      ],
-      "faceit_url": "https://www.faceit.com/{lang}/players/hysssteria"
-    },
-    {
-      "user_id": "acbe5716-1090-4fd5-93f7-676ed543e199",
-      "nickname": "m1cks-",
-      "avatar": "https://assets.faceit-cdn.net/avatars/acbe5716-1090-4fd5-93f7-676ed543e199_1559737595114.jpg",
-      "country": "us",
-      "faceit_url": "https://www.faceit.com/{lang}/players/m1cks-"
-    },
-    {
-      "user_id": "6e0abd60-127a-4480-8604-35e342f1b65f",
-      "nickname": "joshy",
-      "avatar": "https://distribution.faceit-cdn.net/images/50d816a0-5b96-4735-ae09-460e7c8ebc3c.jpg",
-      "country": "kr",
-      "faceit_url": "https://www.faceit.com/{lang}/players/joshy"
-    },
-    {
-      "user_id": "622bc5fc-45cb-41a5-9ddd-926f3691df15",
-      "nickname": "spudomatic",
-      "avatar": "https://assets.faceit-cdn.net/avatars/622bc5fc-45cb-41a5-9ddd-926f3691df15_1609015502903.jpg",
-      "country": "us",
-      "memberships": [
-        "super_match_token",
-        "plus"
-      ],
-      "faceit_url": "https://www.faceit.com/{lang}/players/spudomatic"
-    },
-    {
-      "user_id": "101fec20-c366-4946-8c59-d0d83f592c66",
-      "nickname": "taggyy",
-      "avatar": "https://distribution.faceit-cdn.net/images/b1650bdb-5ced-4560-8be7-4ff6ae303f43.jpg",
-      "country": "us",
-      "memberships": [
-        "premium",
-        "esea"
-      ],
-      "faceit_url": "https://www.faceit.com/{lang}/players/taggyy"
-    },
-    {
-      "user_id": "0fd7488d-6f67-4cd5-9290-d52e689049dd",
-      "nickname": "1bitcoin",
-      "avatar": "https://distribution.faceit-cdn.net/images/94576839-abcf-4374-9e1a-15f7ccc48738.jpg",
-      "country": "us",
-      "memberships": [
-        "esea"
-      ],
-      "faceit_url": "https://www.faceit.com/{lang}/players/1bitcoin"
-    },
-    {
-      "user_id": "f2a82236-666b-4c0c-8acc-82368e5a34e3",
-      "nickname": "Quinten---",
-      "avatar": "https://distribution.faceit-cdn.net/images/8730a5f2-d779-4254-88eb-b34d5fb3794f.jpeg",
-      "country": "io",
-      "faceit_url": "https://www.faceit.com/{lang}/players/Quinten---"
-    },
-    {
-      "user_id": "815dca56-ee04-4940-a291-8f562a02c488",
-      "nickname": "tack_shooter",
-      "avatar": "https://distribution.faceit-cdn.net/images/b9bd82df-453d-4f9f-905c-e02877cf213b.jpg",
-      "country": "mh",
-      "memberships": [
-        "premium"
-      ],
-      "faceit_url": "https://www.faceit.com/{lang}/players/tack_shooter"
-    },
-    {
-      "user_id": "01950e33-89f8-40f1-8839-db3771ddd136",
-      "nickname": "Zucar",
-      "avatar": "https://distribution.faceit-cdn.net/images/21b6042a-5197-4101-a7e1-6af671696ad9.jpg",
-      "country": "us",
-      "memberships": [
-        "esea"
-      ],
-      "faceit_url": "https://www.faceit.com/{lang}/players/Zucar"
-    },
-    {
-      "user_id": "7896d6b4-5a88-4672-8a2c-77cc64079bd1",
-      "nickname": "sandri-",
-      "avatar": "https://distribution.faceit-cdn.net/images/b7df0bed-d8bc-4185-affd-0fc8b6371491.jpg",
-      "country": "us",
-      "faceit_url": "https://www.faceit.com/{lang}/players/sandri-"
-    },
-    {
-      "user_id": "c7b709f5-281b-4133-859e-0d545c4c58d0",
-      "nickname": "Halen",
-      "avatar": "https://distribution.faceit-cdn.net/images/a96b11b7-6ff1-49a3-aaa3-7e26c6e739ce.jpg",
-      "country": "lc",
-      "memberships": [
-        "esea",
-        "plus"
-      ],
-      "faceit_url": "https://www.faceit.com/{lang}/players/Halen"
-    },
-    {
-      "user_id": "be86d688-bafd-4d47-a444-73b4a7793a39",
-      "nickname": "DYLAN-",
-      "avatar": "https://distribution.faceit-cdn.net/images/1b30c367-1d82-449b-81e0-bb4f52bbcc45.jpg",
-      "country": "ca",
-      "memberships": [
-        "premium",
-        "esea"
-      ],
-      "faceit_url": "https://www.faceit.com/{lang}/players/DYLAN-"
-    }
-  ],
-  "leader": "6d10dac4-b0cf-473d-b5a8-a34c53aefade",
-  "chat_room_id": "team-3523360c-7235-452a-b9d9-e587e97ba4b5",
-  "faceit_url": "https://www.faceit.com/{lang}/teams/3523360c-7235-452a-b9d9-e587e97ba4b5"
+    "team_id": "3523360c-7235-452a-b9d9-e587e97ba4b5",
+    "nickname": "regain",
+    "name": "regain",
+    "description": "sasha\ndvrk \nZucar\nmarekiew\nFuzenko\nhttps://twitter.com/regaincs",
+    "avatar": "https://distribution.faceit-cdn.net/images/8a9441cf-41cb-4b51-91ce-54f9ef0a2c63.jpg",
+    "cover_image": "https://distribution.faceit-cdn.net/images/1cc61e60-5dd5-4701-aa50-5e8d05731948.jpg",
+    "game": "cs2",
+    "team_type": "premade",
+    "members": [
+        {
+            "user_id": "6d10dac4-b0cf-473d-b5a8-a34c53aefade",
+            "nickname": "sasha",
+            "avatar": "https://distribution.faceit-cdn.net/images/a859635a-0f81-4036-b2c9-b1f8145aff18.jpg",
+            "country": "us",
+            "memberships": ["premium", "esea"],
+            "faceit_url": "https://www.faceit.com/{lang}/players/sasha"
+        },
+        {
+            "user_id": "da7422ec-e62a-4df2-87fd-5f3c29f478b7",
+            "nickname": "1dvrk",
+            "avatar": "https://distribution.faceit-cdn.net/images/fa429887-8bb2-4ada-a876-1c5e46444b8f.jpeg",
+            "country": "us",
+            "memberships": ["premium", "esea"],
+            "faceit_url": "https://www.faceit.com/{lang}/players/1dvrk"
+        },
+        {
+            "user_id": "9f3440e0-7eea-48c4-9547-03cde24304a4",
+            "nickname": "marekiew",
+            "avatar": "https://distribution.faceit-cdn.net/images/428dc800-1e23-4f14-ba7b-ed224ac4f1ba.jpeg",
+            "country": "us",
+            "memberships": ["premium", "esea"],
+            "faceit_url": "https://www.faceit.com/{lang}/players/marekiew"
+        },
+        {
+            "user_id": "6131f2e5-fb5e-4d76-966f-8a20f2abf95d",
+            "nickname": "hurtslxrd",
+            "avatar": "https://distribution.faceit-cdn.net/images/6c8fb234-ac03-436f-9ec2-76a6f5766a67.jpeg",
+            "country": "by",
+            "memberships": ["esea"],
+            "faceit_url": "https://www.faceit.com/{lang}/players/hurtslxrd"
+        },
+        {
+            "user_id": "f10486e8-6197-4bbc-928d-5060e7be9657",
+            "nickname": "fuzenko",
+            "avatar": "https://distribution.faceit-cdn.net/images/6c56bdb1-b04c-4d12-aece-9374539f6eca.jpg",
+            "country": "ua",
+            "memberships": ["esea", "plus"],
+            "faceit_url": "https://www.faceit.com/{lang}/players/fuzenko"
+        },
+        {
+            "user_id": "6d4fd986-9e20-4493-9439-8e068a66a071",
+            "nickname": "hysssteria",
+            "avatar": "https://distribution.faceit-cdn.net/images/4e15cc0e-67dd-4e96-9404-76121399bd6e.jpg",
+            "country": "us",
+            "memberships": ["esea"],
+            "faceit_url": "https://www.faceit.com/{lang}/players/hysssteria"
+        },
+        {
+            "user_id": "acbe5716-1090-4fd5-93f7-676ed543e199",
+            "nickname": "m1cks-",
+            "avatar": "https://assets.faceit-cdn.net/avatars/acbe5716-1090-4fd5-93f7-676ed543e199_1559737595114.jpg",
+            "country": "us",
+            "faceit_url": "https://www.faceit.com/{lang}/players/m1cks-"
+        },
+        {
+            "user_id": "6e0abd60-127a-4480-8604-35e342f1b65f",
+            "nickname": "joshy",
+            "avatar": "https://distribution.faceit-cdn.net/images/50d816a0-5b96-4735-ae09-460e7c8ebc3c.jpg",
+            "country": "kr",
+            "faceit_url": "https://www.faceit.com/{lang}/players/joshy"
+        },
+        {
+            "user_id": "622bc5fc-45cb-41a5-9ddd-926f3691df15",
+            "nickname": "spudomatic",
+            "avatar": "https://assets.faceit-cdn.net/avatars/622bc5fc-45cb-41a5-9ddd-926f3691df15_1609015502903.jpg",
+            "country": "us",
+            "memberships": ["super_match_token", "plus"],
+            "faceit_url": "https://www.faceit.com/{lang}/players/spudomatic"
+        },
+        {
+            "user_id": "101fec20-c366-4946-8c59-d0d83f592c66",
+            "nickname": "taggyy",
+            "avatar": "https://distribution.faceit-cdn.net/images/b1650bdb-5ced-4560-8be7-4ff6ae303f43.jpg",
+            "country": "us",
+            "memberships": ["premium", "esea"],
+            "faceit_url": "https://www.faceit.com/{lang}/players/taggyy"
+        },
+        {
+            "user_id": "0fd7488d-6f67-4cd5-9290-d52e689049dd",
+            "nickname": "1bitcoin",
+            "avatar": "https://distribution.faceit-cdn.net/images/94576839-abcf-4374-9e1a-15f7ccc48738.jpg",
+            "country": "us",
+            "memberships": ["esea"],
+            "faceit_url": "https://www.faceit.com/{lang}/players/1bitcoin"
+        },
+        {
+            "user_id": "f2a82236-666b-4c0c-8acc-82368e5a34e3",
+            "nickname": "Quinten---",
+            "avatar": "https://distribution.faceit-cdn.net/images/8730a5f2-d779-4254-88eb-b34d5fb3794f.jpeg",
+            "country": "io",
+            "faceit_url": "https://www.faceit.com/{lang}/players/Quinten---"
+        },
+        {
+            "user_id": "815dca56-ee04-4940-a291-8f562a02c488",
+            "nickname": "tack_shooter",
+            "avatar": "https://distribution.faceit-cdn.net/images/b9bd82df-453d-4f9f-905c-e02877cf213b.jpg",
+            "country": "mh",
+            "memberships": ["premium"],
+            "faceit_url": "https://www.faceit.com/{lang}/players/tack_shooter"
+        },
+        {
+            "user_id": "01950e33-89f8-40f1-8839-db3771ddd136",
+            "nickname": "Zucar",
+            "avatar": "https://distribution.faceit-cdn.net/images/21b6042a-5197-4101-a7e1-6af671696ad9.jpg",
+            "country": "us",
+            "memberships": ["esea"],
+            "faceit_url": "https://www.faceit.com/{lang}/players/Zucar"
+        },
+        {
+            "user_id": "7896d6b4-5a88-4672-8a2c-77cc64079bd1",
+            "nickname": "sandri-",
+            "avatar": "https://distribution.faceit-cdn.net/images/b7df0bed-d8bc-4185-affd-0fc8b6371491.jpg",
+            "country": "us",
+            "faceit_url": "https://www.faceit.com/{lang}/players/sandri-"
+        },
+        {
+            "user_id": "c7b709f5-281b-4133-859e-0d545c4c58d0",
+            "nickname": "Halen",
+            "avatar": "https://distribution.faceit-cdn.net/images/a96b11b7-6ff1-49a3-aaa3-7e26c6e739ce.jpg",
+            "country": "lc",
+            "memberships": ["esea", "plus"],
+            "faceit_url": "https://www.faceit.com/{lang}/players/Halen"
+        },
+        {
+            "user_id": "be86d688-bafd-4d47-a444-73b4a7793a39",
+            "nickname": "DYLAN-",
+            "avatar": "https://distribution.faceit-cdn.net/images/1b30c367-1d82-449b-81e0-bb4f52bbcc45.jpg",
+            "country": "ca",
+            "memberships": ["premium", "esea"],
+            "faceit_url": "https://www.faceit.com/{lang}/players/DYLAN-"
+        }
+    ],
+    "leader": "6d10dac4-b0cf-473d-b5a8-a34c53aefade",
+    "chat_room_id": "team-3523360c-7235-452a-b9d9-e587e97ba4b5",
+    "faceit_url": "https://www.faceit.com/{lang}/teams/3523360c-7235-452a-b9d9-e587e97ba4b5"
 }

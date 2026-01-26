@@ -20,4 +20,4 @@ export const RegisterTeamSchema = z.object({
     subs: z.array(PlayerSchema).min(0).max(3),
     coach: PlayerSchema,
     tournamentId: z.string().optional().nullable(),
-})
+});

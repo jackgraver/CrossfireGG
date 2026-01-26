@@ -13,12 +13,8 @@ interface TeamPlayerManagementProps {
     team: Team;
 }
 
-export default function TeamPlayerManagement({
-    team_id,
-    team,
-}: TeamPlayerManagementProps) {
-    const { data: players, isLoading: playersLoading } =
-        useTeamPlayers(team_id);
+export default function TeamPlayerManagement({ team_id, team }: TeamPlayerManagementProps) {
+    const { data: players, isLoading: playersLoading } = useTeamPlayers(team_id);
     const [searchQuery, setSearchQuery] = useState("");
     const [showAutocomplete, setShowAutocomplete] = useState(false);
     const autocompleteRef = useRef<HTMLDivElement>(null);
@@ -71,11 +67,7 @@ export default function TeamPlayerManagement({
             alert("Cannot remove the team captain from the team.");
             return;
         }
-        if (
-            confirm(
-                "Are you sure you want to remove this player from the team?",
-            )
-        ) {
+        if (confirm("Are you sure you want to remove this player from the team?")) {
             try {
                 await removePlayerMutation.mutateAsync(playerId);
             } catch (error) {
@@ -119,9 +111,7 @@ export default function TeamPlayerManagement({
                                         onClick={() => handleAddPlayer(player)}
                                         className="text-textPrimary hover:bg-thirdBg cursor-pointer px-4 py-2 transition-colors"
                                     >
-                                        <div className="font-semibold">
-                                            {player.player_name}
-                                        </div>
+                                        <div className="font-semibold">{player.player_name}</div>
                                         {player.faceit_id && (
                                             <div className="text-textSecondary text-sm">
                                                 Faceit: {player.faceit_id}
@@ -139,17 +129,13 @@ export default function TeamPlayerManagement({
                                 ref={autocompleteRef}
                                 className="border-border bg-secondBg absolute z-10 mt-1 w-full rounded-lg border px-4 py-2 shadow-lg"
                             >
-                                <div className="text-textSecondary">
-                                    No players found
-                                </div>
+                                <div className="text-textSecondary">No players found</div>
                             </div>
                         )}
                 </div>
             </div>
             {playersLoading ? (
-                <div className="text-textSecondary py-4 text-center">
-                    Loading players...
-                </div>
+                <div className="text-textSecondary py-4 text-center">Loading players...</div>
             ) : players && players.length > 0 ? (
                 <div className="flex flex-col gap-3">
                     {players.map((player) => (
@@ -177,17 +163,14 @@ export default function TeamPlayerManagement({
                                 </div>
                             </div>
                             <button
-                                onClick={() =>
-                                    handleRemovePlayer(player.player_id)
-                                }
+                                onClick={() => handleRemovePlayer(player.player_id)}
                                 disabled={
                                     removePlayerMutation.isPending ||
                                     addPlayerMutation.isPending ||
                                     !!(
                                         player.player_id &&
                                         team.team_captain_id &&
-                                        player.player_id ===
-                                            team.team_captain_id
+                                        player.player_id === team.team_captain_id
                                     )
                                 }
                                 className="rounded bg-red-600 px-4 py-2 text-white transition-colors hover:bg-red-700 disabled:bg-gray-500"

@@ -1,11 +1,4 @@
-import {
-    pgTable,
-    serial,
-    integer,
-    text,
-    timestamp,
-    index,
-} from "drizzle-orm/pg-core";
+import { pgTable, serial, integer, text, timestamp, index } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { users, teams, playerStats } from "@repo/schemas";
 import { groups } from "./group.schema";
@@ -32,18 +25,14 @@ export const matches = pgTable(
         stream_url: text("stream_url"),
         scheduled_at: timestamp("scheduled_at"),
         faceit_url: text("faceit_url"),
-        created_at: timestamp("created_at")
-            .notNull()
-            .defaultNow(),
-        updated_at: timestamp("updated_at")
-            .notNull()
-            .defaultNow(),
+        created_at: timestamp("created_at").notNull().defaultNow(),
+        updated_at: timestamp("updated_at").notNull().defaultNow(),
         deleted_at: timestamp("deleted_at"),
     },
     (table) => [
         index("matches_group_id_idx").on(table.group_id),
         index("matches_stage_id_idx").on(table.stage_id),
-    ]
+    ],
 );
 
 /**

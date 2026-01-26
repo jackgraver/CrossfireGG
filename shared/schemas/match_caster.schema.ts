@@ -1,11 +1,4 @@
-import {
-    pgTable,
-    serial,
-    integer,
-    timestamp,
-    index,
-    text,
-} from "drizzle-orm/pg-core";
+import { pgTable, serial, integer, timestamp, index, text } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { users, matches } from "@repo/schemas";
 
@@ -22,18 +15,14 @@ export const matchCasters = pgTable(
                 onDelete: "cascade",
             }),
         assigned_at: timestamp("assigned_at").defaultNow(),
-        created_at: timestamp("created_at")
-            .notNull()
-            .defaultNow(),
-        updated_at: timestamp("updated_at")
-            .notNull()
-            .defaultNow(),
+        created_at: timestamp("created_at").notNull().defaultNow(),
+        updated_at: timestamp("updated_at").notNull().defaultNow(),
         deleted_at: timestamp("deleted_at"),
     },
     (table) => [
         index("match_casters_match_id_idx").on(table.match_id),
         index("match_casters_caster_id_idx").on(table.caster_id),
-    ]
+    ],
 );
 
 /**

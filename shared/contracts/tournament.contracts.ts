@@ -17,18 +17,14 @@ export const TournamentWithStagesContract = TournamentContract.extend({
     stages: z.array(
         StageContract.extend({
             teams_count: z.number(),
-        })
+        }),
     ),
 });
 
-export type TournamentWithStagesDTO = z.infer<
-    typeof TournamentWithStagesContract
->;
+export type TournamentWithStagesDTO = z.infer<typeof TournamentWithStagesContract>;
 
 export const TournamentWithMinimalStagesContract = TournamentContract.extend({
     stages: z.array(MinimalStageContract),
 });
 
-export type TournamentWithMinimalStagesDTO = z.infer<
-    typeof TournamentWithMinimalStagesContract
->;
+export type TournamentWithMinimalStagesDTO = z.infer<typeof TournamentWithMinimalStagesContract>;

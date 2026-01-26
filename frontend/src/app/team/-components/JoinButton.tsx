@@ -19,14 +19,11 @@ export default function JoinButton() {
                             toastService.dismiss(toastId);
 
                             try {
-                                const res = await api.post(
-                                    `/team/joined/${0}`,
-                                    {
-                                        joined: 2,
-                                        tournament_id: 0,
-                                        stage: 0,
-                                    },
-                                );
+                                const res = await api.post(`/team/joined/${0}`, {
+                                    joined: 2,
+                                    tournament_id: 0,
+                                    stage: 0,
+                                });
                                 if (
                                     res &&
                                     typeof res === "object" &&
@@ -34,10 +31,7 @@ export default function JoinButton() {
                                     res.success
                                 ) {
                                     toastService.success(
-                                        <p>
-                                            Updated joined status, waiting for
-                                            confirmation
-                                        </p>,
+                                        <p>Updated joined status, waiting for confirmation</p>,
                                         "Team Marked Paid",
                                         {
                                             durationMs: 3000,
@@ -51,13 +45,9 @@ export default function JoinButton() {
                                         typeof res.message === "string"
                                             ? res.message
                                             : "Unknown error";
-                                    toastService.error(
-                                        <p>{message}</p>,
-                                        "Update failed",
-                                        {
-                                            durationMs: 3000,
-                                        },
-                                    );
+                                    toastService.error(<p>{message}</p>, "Update failed", {
+                                        durationMs: 3000,
+                                    });
                                 }
                             } catch (error) {
                                 toastService.error(

@@ -16,30 +16,26 @@ export const playerRepository = {
         const result = await db
             .select()
             .from(players)
-            .where(
-                and(eq(players.faceit_id, faceitId), isNull(players.deleted_at))
-            )
+            .where(and(eq(players.faceit_id, faceitId), isNull(players.deleted_at)))
             .limit(1);
         return result[0];
     },
 
-    upsertPlayerByFaceitId: async (playerData: {
-        player_name: string;
-        faceit_id: string;
-        player_logo: string | null;
-        country: string | null;
-        team_id?: number | null;
-        base_role?: "starter" | "sub" | "coach";
-    }, dbOrTx = db) => {
+    upsertPlayerByFaceitId: async (
+        playerData: {
+            player_name: string;
+            faceit_id: string;
+            player_logo: string | null;
+            country: string | null;
+            team_id?: number | null;
+            base_role?: "starter" | "sub" | "coach";
+        },
+        dbOrTx = db,
+    ) => {
         const existing = await dbOrTx
             .select()
             .from(players)
-            .where(
-                and(
-                    eq(players.faceit_id, playerData.faceit_id),
-                    isNull(players.deleted_at)
-                )
-            )
+            .where(and(eq(players.faceit_id, playerData.faceit_id), isNull(players.deleted_at)))
             .limit(1);
 
         if (existing.length > 0) {
@@ -51,9 +47,7 @@ export const playerRepository = {
                     country: playerData.country,
                     base_role: playerData.base_role,
                     team_id:
-                        playerData.team_id !== undefined
-                            ? playerData.team_id
-                            : existing[0].team_id,
+                        playerData.team_id !== undefined ? playerData.team_id : existing[0].team_id,
                     updated_at: new Date(),
                 })
                 .where(eq(players.id, existing[0].id))
@@ -96,9 +90,6 @@ export const playerRepository = {
     findByFaceitIds: async (faceitIds: string[]) => {
         if (faceitIds.length === 0) return [];
 
-        return db
-            .select()
-            .from(players)
-            .where(inArray(players.faceit_id, faceitIds));
+        return db.select().from(players).where(inArray(players.faceit_id, faceitIds));
     },
 };

@@ -18,9 +18,7 @@ export const tournamentApi = {
         return response.data;
     },
     matchesByStageId: async (stageId: string) => {
-        const response = await api.get<any>(
-            `/tournament/stage/${stageId}/matches`,
-        );
+        const response = await api.get<any>(`/tournament/stage/${stageId}/matches`);
         return response.data;
     },
     stageTeams: async (stageId: number) => {
@@ -48,10 +46,7 @@ export const tournamentApi = {
             };
         },
     ) => {
-        const response = await api.post(
-            `/tournament/${tournamentId}/register`,
-            payload,
-        );
+        const response = await api.post(`/tournament/${tournamentId}/register`, payload);
         return response.data;
     },
 };

@@ -6,4 +6,3 @@ export function timestampToUnix(timestamp: Date | null): number | null {
 export function unixToTimestamp(unix: number): Date {
     return new Date(unix * 1000);
 }
-

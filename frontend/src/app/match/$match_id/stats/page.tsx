@@ -149,16 +149,9 @@ function MatchStats() {
             }>(`/stats/${match_id}`),
     });
 
-    const {
-        match,
-        team1,
-        team2,
-        maps,
-        t1_players,
-        t2_players,
-        t1_stats,
-        t2_stats,
-    } = data ? data : {};
+    const { match, team1, team2, maps, t1_players, t2_players, t1_stats, t2_stats } = data
+        ? data
+        : {};
 
     useEffect(() => {
         if (maps && maps.length > 0) setCurrentMapIds([maps[0].map_id]);
@@ -168,16 +161,8 @@ function MatchStats() {
     if (error) return <div>Error: {error.message}</div>;
     if (!data) return <div>No data</div>;
 
-    const t1_display_stats_array = aggregateStatsByPlayer(
-        t1_stats,
-        t1_players,
-        currentMapIds,
-    );
-    const t2_display_stats_array = aggregateStatsByPlayer(
-        t2_stats,
-        t2_players,
-        currentMapIds,
-    );
+    const t1_display_stats_array = aggregateStatsByPlayer(t1_stats, t1_players, currentMapIds);
+    const t2_display_stats_array = aggregateStatsByPlayer(t2_stats, t2_players, currentMapIds);
 
     return (
         <div className="flex flex-col items-center gap-y-8">
@@ -205,22 +190,18 @@ function MatchStats() {
                     {maps?.map((map) => (
                         <div
                             key={map.map_id}
-                            className={`bg-firstBg hover:bg-secondBg flex min-w-64 flex-row items-center gap-x-4 rounded-lg px-4 py-2 transition-colors ${currentMapIds?.includes(map.map_id)
+                            className={`bg-firstBg hover:bg-secondBg flex min-w-64 flex-row items-center gap-x-4 rounded-lg px-4 py-2 transition-colors ${
+                                currentMapIds?.includes(map.map_id)
                                     ? "bg-secondBg text-textPrimary"
                                     : "text-textSecondary"
-                                }`}
+                            }`}
                             onClick={() => {
                                 if (currentMapIds.includes(map.map_id)) {
                                     setCurrentMapIds(
-                                        currentMapIds.filter(
-                                            (id) => id !== map.map_id,
-                                        ),
+                                        currentMapIds.filter((id) => id !== map.map_id),
                                     );
                                 } else {
-                                    setCurrentMapIds([
-                                        ...currentMapIds,
-                                        map.map_id,
-                                    ]);
+                                    setCurrentMapIds([...currentMapIds, map.map_id]);
                                 }
                             }}
                         >
@@ -230,8 +211,7 @@ function MatchStats() {
                                 alt={map.map_name}
                                 className="h-8 w-8 shrink-0 rounded object-cover"
                                 onError={(e) => {
-                                    e.currentTarget.src =
-                                        "/map_icons/default.png";
+                                    e.currentTarget.src = "/map_icons/default.png";
                                 }}
                             />
 
@@ -242,21 +222,13 @@ function MatchStats() {
 
                             {/* Score */}
                             <span className="flex flex-row items-end gap-1">
-                                {formatScore(
-                                    map.team1_score,
-                                    map.team1_score > map.team2_score,
-                                )}
+                                {formatScore(map.team1_score, map.team1_score > map.team2_score)}
                                 <p className="text-textSecondary"> - </p>
-                                {formatScore(
-                                    map.team2_score,
-                                    map.team2_score > map.team1_score,
-                                )}
+                                {formatScore(map.team2_score, map.team2_score > map.team1_score)}
                             </span>
                         </div>
                     ))}
-                    {currentMapIds.length === 0 && (
-                        <div className="text-center">Select a Map</div>
-                    )}
+                    {currentMapIds.length === 0 && <div className="text-center">Select a Map</div>}
                 </div>
 
                 <div className="flex flex-col">

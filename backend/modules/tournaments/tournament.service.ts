@@ -6,14 +6,12 @@ export const tournamentService = {
 
         const tournamentsWithStages = await Promise.all(
             allTournaments.map(async (tournament) => {
-                const tournamentStages =
-                    await tournamentRepository.findStagesByTournamentId(
-                        tournament.id
-                    );
+                const tournamentStages = await tournamentRepository.findStagesByTournamentId(
+                    tournament.id,
+                );
 
                 const stageIds = tournamentStages.map((s: any) => s.id);
-                const teamsCountsMap =
-                    await tournamentRepository.countTeamsByStageIds(stageIds);
+                const teamsCountsMap = await tournamentRepository.countTeamsByStageIds(stageIds);
 
                 const stagesWithCounts = tournamentStages.map((stage: any) => ({
                     ...stage,
@@ -24,38 +22,30 @@ export const tournamentService = {
                     ...tournament,
                     stages: stagesWithCounts,
                 };
-            })
+            }),
         );
 
         return tournamentsWithStages;
     },
 
     getTournamentById: async (tournamentId: number) => {
-        const tournament = await tournamentRepository.findTournamentById(
-            tournamentId
-        );
+        const tournament = await tournamentRepository.findTournamentById(tournamentId);
 
         const stagesWithCounts =
-            await tournamentRepository.findStageMatchCountsByTournamentId(
-                tournamentId
-            );
+            await tournamentRepository.findStageMatchCountsByTournamentId(tournamentId);
         console.log("stagesWithCounts:", stagesWithCounts.length);
 
         return {
             ...tournament,
             stages: tournament?.stages.map((s) => ({
                 ...s,
-                teams_count:
-                    stagesWithCounts.find((sc) => sc.stageId === s.id)
-                        ?.teamsCount || 0,
+                teams_count: stagesWithCounts.find((sc) => sc.stageId === s.id)?.teamsCount || 0,
             })),
         };
     },
 
     getMatchesByStageId: async (stageId: number) => {
-        const matches = await tournamentRepository.findMatchesByStageId(
-            stageId
-        );
+        const matches = await tournamentRepository.findMatchesByStageId(stageId);
         return matches;
     },
 
@@ -152,8 +142,7 @@ export const tournamentService = {
     },
 
     getUpcomingTournament: async () => {
-        const upcomingTournament =
-            await tournamentRepository.findUpcomingTournament();
+        const upcomingTournament = await tournamentRepository.findUpcomingTournament();
         if (!upcomingTournament) {
             throw new Error("No upcoming tournament found");
         }
@@ -162,9 +151,7 @@ export const tournamentService = {
     },
 
     getEntryStage: async (tournamentId: number) => {
-        const entryStage = await tournamentRepository.findEntryStage(
-            tournamentId
-        );
+        const entryStage = await tournamentRepository.findEntryStage(tournamentId);
         if (!entryStage) {
             throw new Error("No entry stage found");
         }

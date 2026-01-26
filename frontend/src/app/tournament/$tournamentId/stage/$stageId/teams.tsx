@@ -6,9 +6,7 @@ import { MoveUpRight } from "lucide-react";
 import { StageTeamWithTeamDTO } from "@repo/contracts";
 import { cn } from "@/utils/cn";
 
-export const Route = createFileRoute(
-    "/tournament/$tournamentId/stage/$stageId/teams",
-)({
+export const Route = createFileRoute("/tournament/$tournamentId/stage/$stageId/teams")({
     component: TeamsPage,
 });
 
@@ -17,15 +15,13 @@ function TeamsPage() {
 
     const { data: teams, isLoading } = useStageTeams(Number(stageId));
 
-    const sortedTeams = [...teams || []].sort((a, b) => a.seed - b.seed);
+    const sortedTeams = [...(teams || [])].sort((a, b) => a.seed - b.seed);
 
     return (
         <div className="rounded-xl shadow-md">
             <div className="py-4">
                 {isLoading ? (
-                    <div className="text-textSecondary py-8 text-center">
-                        Loading teams...
-                    </div>
+                    <div className="text-textSecondary py-8 text-center">Loading teams...</div>
                 ) : teams?.length === 0 ? (
                     <div className="text-textSecondary py-8 text-center">
                         No teams registered for this stage
@@ -58,17 +54,11 @@ function TeamCard({ team }: { team: StageTeamWithTeamDTO }) {
                 styling="h-12 w-12 rounded-full object-cover"
             />
             <div className="min-w-0 flex-1">
-                <div className="text-textPrimary truncate font-semibold">
-                    {team.team.name}
-                </div>
+                <div className="text-textPrimary truncate font-semibold">{team.team.name}</div>
                 <div className="text-textSecondary mt-0.5 flex gap-3 text-sm">
-                    <span className="font-bold text-green-500">
-                        {team.wins}W
-                    </span>
+                    <span className="font-bold text-green-500">{team.wins}W</span>
                     {"-"}
-                    <span className="font-bold text-red-500">
-                        {team.losses}L
-                    </span>
+                    <span className="font-bold text-red-500">{team.losses}L</span>
                     {team.seed !== undefined && <span>Seed #{team.seed}</span>}
                 </div>
             </div>
@@ -76,12 +66,10 @@ function TeamCard({ team }: { team: StageTeamWithTeamDTO }) {
                 className={cn(
                     "group rounded-md p-2 transition-all duration-300 ease-out",
                     isHovering ? "opacity-100" : "opacity-0",
-                    "hover:bg-thirdBg"
+                    "hover:bg-thirdBg",
                 )}
             >
-                <MoveUpRight
-                    className="h-6 w-6 text-textSecondary transition-colors group-hover:text-textPrimary"
-                />
+                <MoveUpRight className="h-6 w-6 text-textSecondary transition-colors group-hover:text-textPrimary" />
             </div>
         </Link>
     );

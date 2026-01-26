@@ -22,10 +22,6 @@ export default function TopLevelBracket({
         case "swiss":
             return <RegularSeasonBracket matches={groups.flatMap((group) => group.matches)} />;
         default:
-            return (
-                <div className="text-xl text-red-500">
-                    Warning: Stage format not supported
-                </div>
-            );
+            return <div className="text-xl text-red-500">Warning: Stage format not supported</div>;
     }
 }

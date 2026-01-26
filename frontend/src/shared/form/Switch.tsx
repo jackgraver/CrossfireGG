@@ -35,4 +35,3 @@ export function Switch({ field, label, disabled }: SwitchProps) {
         </div>
     );
 }
-

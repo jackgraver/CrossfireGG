@@ -41,12 +41,10 @@ async function authenticateUser(data: SignInCredentials) {
     return response.data;
 }
 
-export const fetchSession = createServerFn({ method: "GET" }).handler(
-    async () => {
-        const session = await useAppSession();
-        return session.data;
-    },
-);
+export const fetchSession = createServerFn({ method: "GET" }).handler(async () => {
+    const session = await useAppSession();
+    return session.data;
+});
 
 export const loginFn = createServerFn({ method: "POST" })
     .inputValidator((data: SignInCredentials) => data)
@@ -141,28 +139,26 @@ export const logoutFn = createServerFn({ method: "POST" }).handler(async () => {
     }
 });
 
-export const getCurrentUserFn = createServerFn({ method: "GET" }).handler(
-    async () => {
-        try {
-            const request = getRequest();
-            const cookieHeader = request.headers.get("cookie") || "";
-            const response = await fetch(`${API_BASE_URL}/user/user-role`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    Cookie: cookieHeader,
-                },
-                credentials: "include",
-            });
+export const getCurrentUserFn = createServerFn({ method: "GET" }).handler(async () => {
+    try {
+        const request = getRequest();
+        const cookieHeader = request.headers.get("cookie") || "";
+        const response = await fetch(`${API_BASE_URL}/user/user-role`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Cookie: cookieHeader,
+            },
+            credentials: "include",
+        });
 
-            if (response.status === 401 || !response.ok) {
-                return null;
-            }
-
-            const data = await response.json();
-            return data as User;
-        } catch (error) {
+        if (response.status === 401 || !response.ok) {
             return null;
         }
-    },
-);
+
+        const data = await response.json();
+        return data as User;
+    } catch (error) {
+        return null;
+    }
+});

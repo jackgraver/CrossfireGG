@@ -8,8 +8,5 @@ export const TournamentParamsSchema = z.object({
 });
 
 export const StageParamsSchema = z.object({
-    stageId: z
-        .string()
-        .regex(/^\d+$/, "Stage ID must be a valid number")
-        .transform(Number),
+    stageId: z.string().regex(/^\d+$/, "Stage ID must be a valid number").transform(Number),
 });

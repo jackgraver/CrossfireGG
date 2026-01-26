@@ -42,7 +42,9 @@ export default function StepSubs({
         <div className="flex flex-col gap-y-4">
             <div className="flex flex-col gap-y-1">
                 <h1 className="text-2xl font-bold text-white">Select Subs</h1>
-                <p className="text-sm text-gray-400">Choose up to 3 substitute players (optional).</p>
+                <p className="text-sm text-gray-400">
+                    Choose up to 3 substitute players (optional).
+                </p>
             </div>
             {error && <div className="text-red-500">Error: {error.message}</div>}
             {isLoading && (
@@ -84,10 +86,7 @@ export default function StepSubs({
                         ?.filter(
                             (player) =>
                                 !excludedIds.has(player.user_id) &&
-                                !subs.some(
-                                    (sub: any) =>
-                                        sub.faceitId === player.user_id,
-                                ),
+                                !subs.some((sub: any) => sub.faceitId === player.user_id),
                         )
                         .map((player) => (
                             <SelectableCard
@@ -106,7 +105,9 @@ export default function StepSubs({
         <div className="flex flex-col gap-y-6">
             <div className="border-b border-gray-700 pb-4">
                 <h2 className="text-xl font-semibold text-white">Subs Details</h2>
-                <p className="text-sm text-gray-400">Complete the information for each selected substitute.</p>
+                <p className="text-sm text-gray-400">
+                    Complete the information for each selected substitute.
+                </p>
             </div>
             <div className="flex flex-col gap-y-8">
                 {subs.length === 0 && (
@@ -115,7 +116,10 @@ export default function StepSubs({
                     </div>
                 )}
                 {subs.map((player: any, index: number) => (
-                    <div key={`${index}-${player.faceitId}`} className="rounded-lg bg-gray-800/20 p-4 transition-all duration-200 border border-gray-700/50 hover:border-gray-600/50">
+                    <div
+                        key={`${index}-${player.faceitId}`}
+                        className="rounded-lg bg-gray-800/20 p-4 transition-all duration-200 border border-gray-700/50 hover:border-gray-600/50"
+                    >
                         <PlayerFormFields
                             form={form}
                             namePrefix={`subs[${index}]`}
@@ -123,12 +127,10 @@ export default function StepSubs({
                             onRemove={
                                 player.faceitId !== userFaceitId
                                     ? () =>
-                                        form.setFieldValue(
-                                            "subs",
-                                            subs.filter(
-                                                (_: any, i: number) => i !== index,
-                                            ),
-                                        )
+                                          form.setFieldValue(
+                                              "subs",
+                                              subs.filter((_: any, i: number) => i !== index),
+                                          )
                                     : undefined
                             }
                         />

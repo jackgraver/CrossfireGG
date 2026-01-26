@@ -8,7 +8,7 @@ type UseStepNavigationOptions = {
 
 export function useStepNavigation(options: UseStepNavigationOptions = {}) {
     const steps: readonly FormStep[] = options.steps ?? formSteps;
-    const [stepIndex, setStepIndex] = useState(4);
+    const [stepIndex, setStepIndex] = useState(0);
     const currentStep = steps[stepIndex];
 
     const canGoBack = stepIndex > 0;

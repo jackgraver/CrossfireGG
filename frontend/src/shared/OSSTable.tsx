@@ -36,8 +36,7 @@ export default function OSSTable<T>({
         if (!sortColumn) return data;
 
         const col = columns.find((c) => {
-            const key =
-                typeof c.accessor === "function" ? c.header : c.accessor;
+            const key = typeof c.accessor === "function" ? c.header : c.accessor;
             return key === sortColumn;
         });
 
@@ -50,14 +49,8 @@ export default function OSSTable<T>({
         } else {
             // Default value-based sort
             sorted.sort((a, b) => {
-                const aVal =
-                    typeof col.accessor === "function"
-                        ? col.accessor(a)
-                        : a[col.accessor];
-                const bVal =
-                    typeof col.accessor === "function"
-                        ? col.accessor(b)
-                        : b[col.accessor];
+                const aVal = typeof col.accessor === "function" ? col.accessor(a) : a[col.accessor];
+                const bVal = typeof col.accessor === "function" ? col.accessor(b) : b[col.accessor];
 
                 if (aVal === bVal) return 0;
                 return aVal > bVal ? 1 : -1;
@@ -70,10 +63,7 @@ export default function OSSTable<T>({
     const handleSort = (column: ColumnDef<T>) => {
         if (column.notSortable) return;
 
-        const columnKey =
-            typeof column.accessor === "function"
-                ? column.header
-                : column.accessor;
+        const columnKey = typeof column.accessor === "function" ? column.header : column.accessor;
 
         if (sortColumn === columnKey) {
             const newAscending = !sortAscending;
@@ -85,10 +75,7 @@ export default function OSSTable<T>({
     };
 
     const getSortIcon = (column: ColumnDef<T>) => {
-        const columnKey =
-            typeof column.accessor === "function"
-                ? column.header
-                : column.accessor;
+        const columnKey = typeof column.accessor === "function" ? column.header : column.accessor;
 
         if (sortColumn === columnKey) {
             return sortAscending ? " ↑" : " ↓";
@@ -104,9 +91,7 @@ export default function OSSTable<T>({
                         {columns.map((col, i) => (
                             <th
                                 key={i}
-                                className={`px-4 py-2 font-medium ${
-                                    col.className || ""
-                                } ${
+                                className={`px-4 py-2 font-medium ${col.className || ""} ${
                                     !col.notSortable
                                         ? "hover:bg-firstbg-thirdBg cursor-pointer"
                                         : ""
@@ -145,9 +130,7 @@ export default function OSSTable<T>({
                                 key={rowKey?.(row) ?? rowIndex}
                                 className={`hover:bg-firstbg-thirdBg border-border border-t ${
                                     rowClassName?.(row) ||
-                                    (rowIndex % 2 === 1
-                                        ? "bg-secondBg"
-                                        : "bg-firstBg")
+                                    (rowIndex % 2 === 1 ? "bg-secondBg" : "bg-firstBg")
                                 } `}
                             >
                                 {columns.map((col, colIndex) => {
@@ -159,9 +142,7 @@ export default function OSSTable<T>({
                                     return (
                                         <td
                                             key={colIndex}
-                                            className={`px-4 py-3 text-sm ${
-                                                col.className || ""
-                                            }`}
+                                            className={`px-4 py-3 text-sm ${col.className || ""}`}
                                         >
                                             {col.cell ? col.cell(row) : raw}
                                         </td>

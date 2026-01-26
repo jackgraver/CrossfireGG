@@ -73,7 +73,7 @@ export const userController = {
 
             const refreshToken = jwtUtils.generateRefreshToken({
                 userId: authResponse.user.id,
-                tokenVersion: 0 //userFromDb.token_version || 0,
+                tokenVersion: 0, //userFromDb.token_version || 0,
             });
 
             const isProduction = process.env.NODE_ENV === "production";
@@ -104,9 +104,7 @@ export const userController = {
         try {
             const refreshToken = req.cookies.refreshToken;
             if (!refreshToken) {
-                return res
-                    .status(401)
-                    .json({ error: "Refresh token required" });
+                return res.status(401).json({ error: "Refresh token required" });
             }
 
             const authResponse = await userService.refreshToken(refreshToken);
@@ -146,7 +144,7 @@ export const userController = {
     getUserRole: async (req: Request, res: Response) => {
         try {
             const session = await auth.api.getSession({
-                headers: fromNodeHeaders(req.headers)
+                headers: fromNodeHeaders(req.headers),
             });
 
             if (!session?.user.id) {
@@ -159,7 +157,7 @@ export const userController = {
                 faceitId: userInfo?.faceit_id,
                 teamId: userInfo?.team_id,
                 roles: ["admin"],
-            })
+            });
         } catch (error: any) {
             res.status(500).json({ error: error.message });
         }

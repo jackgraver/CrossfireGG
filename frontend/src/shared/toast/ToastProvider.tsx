@@ -28,10 +28,7 @@ export default function ToastProvider() {
             if (event.type === "show") {
                 setToasts((prev) => [...prev, event.toast]);
                 if (event.toast.durationMs && event.toast.durationMs > 0) {
-                    const handle = setTimeout(
-                        () => remove(event.toast.id),
-                        event.toast.durationMs,
-                    );
+                    const handle = setTimeout(() => remove(event.toast.id), event.toast.durationMs);
                     timeouts.current.set(event.toast.id, handle);
                 }
             } else if (event.type === "dismiss") {
@@ -48,10 +45,7 @@ export default function ToastProvider() {
         [toasts],
     );
     /** Centered toasts (only most recent is rendered). */
-    const centerToasts = useMemo(
-        () => toasts.filter((t) => t.variant === "center"),
-        [toasts],
-    );
+    const centerToasts = useMemo(() => toasts.filter((t) => t.variant === "center"), [toasts]);
 
     return (
         <>
@@ -75,9 +69,7 @@ export default function ToastProvider() {
                     title={centerToasts[centerToasts.length - 1].title}
                     body={centerToasts[centerToasts.length - 1].body}
                     status={centerToasts[centerToasts.length - 1].status}
-                    onClose={() =>
-                        remove(centerToasts[centerToasts.length - 1].id)
-                    }
+                    onClose={() => remove(centerToasts[centerToasts.length - 1].id)}
                 />
             )}
         </>

@@ -1,11 +1,4 @@
-export const formSteps = [
-    "team",
-    "starters",
-    "subs",
-    "coach",
-    "review",
-    "finished",
-] as const;
+export const formSteps = ["team", "starters", "subs", "coach", "review", "finished"] as const;
 
 export type FormStep = (typeof formSteps)[number];
 
@@ -37,9 +30,7 @@ export type RegistrationFormData = {
     };
 };
 
-export type StepValidationErrors = Partial<
-    Record<keyof RegistrationFormData | string, string[]>
->;
+export type StepValidationErrors = Partial<Record<keyof RegistrationFormData | string, string[]>>;
 
 export type StepValidationResult = {
     isValid: boolean;

@@ -51,7 +51,7 @@ export const userRoles = pgTable(
         unique().on(table.user_id, table.role_id),
         index("user_roles_user_id_idx").on(table.user_id),
         index("user_roles_role_id_idx").on(table.role_id),
-    ]
+    ],
 );
 
 // ============================== RELATIONS ============================== //
@@ -103,9 +103,6 @@ export const userRolesRelations = relations(userRoles, ({ one }) => ({
         references: [roles.id],
     }),
 }));
-
-
-
 
 export const session = pgTable(
     "session",
