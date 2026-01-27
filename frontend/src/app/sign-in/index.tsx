@@ -4,7 +4,7 @@ import { useForm } from "@tanstack/react-form";
 import { useServerFn } from "@tanstack/react-start";
 import { loginFn } from "@/lib/server/auth.server";
 import { signInSchema } from "@/schemas/auth";
-import { Input, PasswordInput, SubmitButton } from "@/shared/form";
+import { Checkbox, Input, PasswordInput, SubmitButton } from "@/shared/form";
 import UserForm from "@/shared/UserForm";
 import { authClient } from "@/lib/auth-client";
 import { toastService } from "@/shared/toast/toastService";
@@ -30,6 +30,7 @@ function SignIn() {
         defaultValues: {
             email: "",
             password: "",
+            rememberMe: false,
         },
         validators: {
             onBlur: signInSchema,
@@ -63,33 +64,6 @@ function SignIn() {
 
     return (
         <UserForm>
-            <button
-                className="bg-border text-textSecondary hover:bg-secondBg rounded px-4 py-2"
-                onClick={async () => {
-                    await authClient.signIn.email({
-                        email: "test@test.com",
-                        password: "password",
-                        callbackURL: "/",
-                    });
-                }}
-            >
-                testing
-            </button>
-            <button
-                className="bg-border text-textSecondary hover:bg-secondBg rounded px-4 py-2"
-                onClick={async () => {
-                    await authClient.signOut({
-                        fetchOptions: {
-                            onSuccess: async () => {
-                                await queryClient.refetchQueries({ queryKey: ["user-role"] });
-                                navigate({ to: "/" });
-                            },
-                        },
-                    });
-                }}
-            >
-                testing2
-            </button>
             <h1 className="mb-2 text-2xl font-bold text-white">Welcome Back</h1>
             <form
                 onSubmit={(e) => {
@@ -113,6 +87,15 @@ function SignIn() {
                         <PasswordInput
                             field={field}
                             placeholder="Password"
+                            disabled={isSubmitting}
+                        />
+                    )}
+                </form.Field>
+                <form.Field name="rememberMe">                    
+                    {(field) => (
+                        <Checkbox
+                            field={field}
+                            label="Remember me"
                             disabled={isSubmitting}
                         />
                     )}

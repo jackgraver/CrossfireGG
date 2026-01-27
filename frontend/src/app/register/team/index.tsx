@@ -45,9 +45,6 @@ function RegisterPage() {
         validateStep: (step) => canContinue(step),
     });
 
-    // For debugging/UI work: manually set step index if needed
-    // useEffect(() => { setStepIndex(1); }, []);
-
     const isLoggedIn = !!user;
 
     if (!isLoggedIn) {
@@ -161,8 +158,9 @@ function RegisterPage() {
             onJoinTournament={() => {
                 if (!tournamentId) return;
                 navigate({
-                    to: "/register/tournament/$tournamentId",
-                    params: { tournamentId },
+                    to: "/"
+                    // to: "/register/tournament/$tournamentId",
+                    // params: { tournamentId },
                 });
             }}
             onBrowseTournaments={() =>

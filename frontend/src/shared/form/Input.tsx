@@ -30,7 +30,6 @@ export function Input({
                     {label}
                 </Label.Root>
             )}
-            <div className={styles.errorText}>{error && <span>{error}</span>}</div>
             <div className={styles.inputContainer}>
                 <input
                     id={field.name}
@@ -44,6 +43,7 @@ export function Input({
                 />
                 {children}
             </div>
+            <div className={styles.errorText}>{error && <span>{error}</span>}</div>
         </div>
     );
 }

@@ -34,11 +34,10 @@ const buildErrors = (issues: { path: (string | number)[]; message: string }[]) =
 export function useStepValidation(values: RegistrationFormData) {
     const canContinue = useCallback(
         (step: FormStep) => {
-            console.log("starters", values.starters);
-            if (step === "team") return Boolean(values.team.teamId);
-            if (step === "starters") return values.starters.length === 5;
-            if (step === "subs") return values.subs.length >= 0 && values.subs.length <= 3;
-            if (step === "coach") return true;
+            if (step === "team") return Boolean(values.team.teamId) && validateStep(step).isValid;
+            if (step === "starters") return values.starters.length === 5 && validateStep(step).isValid;
+            if (step === "subs") return values.subs.length >= 0 && values.subs.length <= 3 && validateStep(step).isValid;
+            if (step === "coach") return validateStep(step).isValid;
             if (step === "review") return true;
             return false;
         },

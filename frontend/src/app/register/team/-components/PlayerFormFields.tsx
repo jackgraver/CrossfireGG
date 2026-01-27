@@ -1,3 +1,4 @@
+import { Checkbox, Select } from "@/shared/form";
 import { Trash } from "lucide-react";
 
 type PlayerFormFieldsProps = {
@@ -14,12 +15,12 @@ export default function PlayerFormFields({
     onRemove,
 }: PlayerFormFieldsProps) {
     const inputClasses = (isInvalid: boolean) => `
-        w-full rounded-md border p-2 bg-thirdBg text-white transition-colors
-        ${isInvalid ? "border-red-500 focus:ring-red-500" : "border-gray-400 focus:border-orange-500 focus:ring-orange-500"}
+        w-full rounded-md border p-2 bg-secondBg text-text-primary transition-colors
+        ${isInvalid ? "border-red-500 focus:ring-red-500" : "border-border focus:border-orange-500 focus:ring-orange-500"}
         disabled:opacity-50 disabled:cursor-not-allowed
     `;
 
-    const renderField = (name: string, label: string, type: string = "text") => (
+    const renderField = (name: string, label: string, placeholder: string = "") => (
         <form.Field
             name={`${namePrefix}.${name}`}
             validators={{
@@ -36,22 +37,24 @@ export default function PlayerFormFields({
                         <div className="flex flex-1 flex-col gap-1.5">
                             <label
                                 htmlFor={field.name}
-                                className="font-medium text-gray-400 uppercase text-xs tracking-wider"
+                                className="font-medium text-textSecondary uppercase text-xs tracking-wider"
                             >
                                 {label}
                             </label>
                             <input
                                 id={field.name}
                                 className={inputClasses(isInvalid)}
-                                type={type}
+                                type={"text"}
                                 value={field.state.value}
+                                placeholder={placeholder}
                                 onChange={(e) => field.handleChange(e.target.value)}
                                 onBlur={field.handleBlur}
                                 disabled={name === "playerName" ? true : false}
+                                title={name === "playerName" ? "Cannot change player name" : ""}
                             />
                         </div>
                         {!field.state.meta.isValid && (
-                            <em role="alert" className="text-sm font-medium text-red-500">
+                            <em role="alert" className="text-sm font-medium text-red-500 pl-1">
                                 {field.state.meta.errors.join(", ")}
                             </em>
                         )}
@@ -65,7 +68,7 @@ export default function PlayerFormFields({
         <div className="flex items-start gap-4">
             <div className="flex flex-1 flex-row gap-4">
                 {renderField("playerName", "Name")}
-                {renderField("nationality", "Nationality")}
+                {renderField("nationality", "Nationality", "American, Canadian, etc.")}
                 {renderField("hltvLink", "HLTV")}
                 {renderField("discordId", "Discord")}
             </div>

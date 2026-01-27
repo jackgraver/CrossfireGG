@@ -44,12 +44,12 @@ export default function StepContainer({
                 </div>
                 <div className="flex flex-col gap-8 lg:flex-row">
                     <div className="flex w-full flex-col lg:sticky lg:top-[120px] lg:w-1/3">
-                        <div className="flex h-full flex-col gap-y-4 rounded-lg bg-firstBg p-6 shadow-lg border border-gray-700/50">
+                        <div className="flex h-full flex-col gap-y-4 rounded-lg bg-firstBg p-6 shadow-lg border border-secondBg">
                             <div className="flex-1 overflow-y-auto pr-2">{left}</div>
                         </div>
                     </div>
                     <div className="flex w-full flex-col lg:w-2/3">
-                        <div className="flex flex-col gap-y-6 rounded-lg bg-firstBg p-6 shadow-lg border border-gray-700/50">
+                        <div className="flex flex-col gap-y-6 rounded-lg bg-firstBg p-6 shadow-lg border border-secondBg">
                             {right}
                         </div>
                     </div>

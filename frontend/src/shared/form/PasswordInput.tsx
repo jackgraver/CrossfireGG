@@ -1,7 +1,7 @@
 import { useState } from "react";
 import type { AnyFieldApi } from "@tanstack/react-form";
 import * as Label from "@radix-ui/react-label";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, LockIcon } from "lucide-react";
 import styles from "./PasswordInput.module.css";
 
 type PasswordInputProps = {
@@ -30,7 +30,8 @@ export function PasswordInput({
                 </Label.Root>
             )}
             <div className={styles.errorText}>{error && <span>{error}</span>}</div>
-            <div className={styles.inputContainer}>
+            <div className={styles.inputContainer}>{/* TODO: nicer icon support for inputs */}
+                <LockIcon className={styles.icon} /> 
                 <input
                     id={field.name}
                     type={showPassword ? "text" : "password"}
