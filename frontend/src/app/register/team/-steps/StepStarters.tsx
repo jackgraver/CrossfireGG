@@ -80,7 +80,6 @@ export default function StepStarters({
                             starters.filter((_: any, i: number) => i !== existingIndex),
                         );
                     } else {
-                        console.log(value);
                         form.setFieldValue("starters", [
                             ...starters,
                             {
@@ -92,7 +91,6 @@ export default function StepStarters({
                                 avatar: value.avatar,
                             },
                         ]);
-                        console.log(form.state.values.starters);
                     }
                 }}
             >

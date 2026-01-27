@@ -30,8 +30,9 @@ export function PasswordInput({
                 </Label.Root>
             )}
             <div className={styles.errorText}>{error && <span>{error}</span>}</div>
-            <div className={styles.inputContainer}>{/* TODO: nicer icon support for inputs */}
-                <LockIcon className={styles.icon} /> 
+            <div className={styles.inputContainer}>
+                {/* TODO: nicer icon support for inputs */}
+                <LockIcon className={styles.icon} />
                 <input
                     id={field.name}
                     type={showPassword ? "text" : "password"}

@@ -5,7 +5,7 @@ import { stages } from "./stage.schema";
 export const tournaments = pgTable("tournaments", {
     id: serial("id").primaryKey(),
     name: text("name").notNull(),
-    status: text("status").default("draft"),
+    status: text("status").default("upcoming"),
     description: text("description"),
     prize_pool: integer("prize_pool"),
     start_date: timestamp("start_date"),

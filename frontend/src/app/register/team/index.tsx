@@ -158,7 +158,7 @@ function RegisterPage() {
             onJoinTournament={() => {
                 if (!tournamentId) return;
                 navigate({
-                    to: "/"
+                    to: "/",
                     // to: "/register/tournament/$tournamentId",
                     // params: { tournamentId },
                 });

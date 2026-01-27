@@ -91,13 +91,9 @@ function SignIn() {
                         />
                     )}
                 </form.Field>
-                <form.Field name="rememberMe">                    
+                <form.Field name="rememberMe">
                     {(field) => (
-                        <Checkbox
-                            field={field}
-                            label="Remember me"
-                            disabled={isSubmitting}
-                        />
+                        <Checkbox field={field} label="Remember me" disabled={isSubmitting} />
                     )}
                 </form.Field>
                 <div className="mt-6 flex flex-row gap-4">
