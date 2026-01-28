@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCreateTournamentForm } from "./-hooks/useCreateTournamentForm";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, SaveIcon, Trash2 } from "lucide-react";
 import { useStore } from "@tanstack/react-form";
 
 export const Route = createFileRoute("/admin/")({
@@ -14,14 +14,14 @@ const createStage = () => {
     return {
         __id: id,
         name: "",
-        faceitId: "",
+        faceit_id: "",
         faceitLink: "",
-        maxTeams: "",
-        formatId: "",
-        isCurrent: false,
-        startDate: today,
-        endDate: today,
-        registrationDeadline: today,
+        max_teams: "",
+        format_id: "",
+        is_current: false,
+        start_date: today,
+        end_date: today,
+        registration_deadline: today,
     };
 };
 
@@ -50,7 +50,7 @@ function FieldInput({
                 value={field.state.value ?? ""}
                 onChange={(e) => field.handleChange(e.target.value)}
                 onBlur={field.handleBlur}
-                className="w-full rounded-md border border-secondBg bg-secondBg px-3 py-2 text-textPrimary outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-md border border-secondBg bg-secondBg px-3 py-2 text-textPrimary outline-none focus:ring-2"
             />
         </div>
     );
@@ -77,7 +77,7 @@ function FieldTextarea({
                 onChange={(e) => field.handleChange(e.target.value)}
                 onBlur={field.handleBlur}
                 rows={4}
-                className="w-full resize-y rounded-md border border-secondBg bg-secondBg px-3 py-2 text-textPrimary outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full resize-y rounded-md border border-secondBg bg-secondBg px-3 py-2 text-textPrimary outline-none focus:ring-2 "
             />
         </div>
     );
@@ -86,7 +86,7 @@ function FieldTextarea({
 function Admin() {
     const { form } = useCreateTournamentForm();
     const stages = useStore(form.store, (state: any) => state.values.stages) ?? [];
-    const prizePool = useStore(form.store, (state: any) => state.values.prizePool);
+    const prizePool = useStore(form.store, (state: any) => state.values.prize_pool);
 
     const addStage = () => {
         form.setFieldValue("stages", [...stages, createStage()]);
@@ -108,19 +108,31 @@ function Admin() {
                         Basic tournament setup (no validation/submission yet).
                     </p>
                 </header>
-
                 <form
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                    }}
+                    // onSubmit={(e) => {
+                    //     e.preventDefault();
+                    //     form.handleSubmit();
+                    //     console.log("form meta", form.state);
+                    // }}
                     className="grid gap-6 lg:grid-cols-2"
                 >
                     <section className="rounded-lg border border-secondBg bg-firstBg p-6 shadow-lg">
-                        <div className="mb-4">
-                            <h2 className="text-lg font-semibold">Tournament details</h2>
-                            <p className="text-sm text-gray-400">
-                                Fill out the basics for the tournament.
-                            </p>
+                        <div className="flex items-center justify-between gap-4">
+                            <div className="mb-4">
+                                <h2 className="text-lg font-semibold">Tournament details</h2>
+                                <p className="text-sm text-gray-400">
+                                    Fill out the basics for the tournament.
+                                </p>
+                            </div>
+                            <button
+                                // type="submit"
+                                onClick={(e) => { e.preventDefault();
+                                    form.handleSubmit();}}
+                                className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-500"
+                            >
+                                <SaveIcon className="h-4 w-4" />
+                                Create tournament
+                            </button>
                         </div>
                         <div className="grid gap-4">
                             <form.Field name="name">
@@ -142,7 +154,7 @@ function Admin() {
                                 )}
                             </form.Field>
                             <div className="grid gap-4 sm:grid-cols-2">
-                                <form.Field name="prizePool">
+                                <form.Field name="prize_pool">
                                     {(field: any) => (
                                         <FieldInput
                                             field={field}
@@ -162,12 +174,12 @@ function Admin() {
                                 </div>
                             </div>
                             <div className="grid gap-4 sm:grid-cols-2">
-                                <form.Field name="startDate">
+                                <form.Field name="start_date">
                                     {(field: any) => (
                                         <FieldInput field={field} label="Start date" type="date" />
                                     )}
                                 </form.Field>
-                                <form.Field name="endDate">
+                                <form.Field name="end_date">
                                     {(field: any) => (
                                         <FieldInput field={field} label="End date" type="date" />
                                     )}
@@ -265,7 +277,7 @@ function Admin() {
                                                 )}
                                             </form.Field>
 
-                                            <form.Field name={`stages[${index}].maxTeams`}>
+                                            <form.Field name={`stages[${index}].max_teams`}>
                                                 {(field: any) => (
                                                     <FieldInput
                                                         field={field}
@@ -276,7 +288,7 @@ function Admin() {
                                                 )}
                                             </form.Field>
 
-                                            <form.Field name={`stages[${index}].formatId`}>
+                                            <form.Field name={`stages[${index}].format_id`}>
                                                 {(field: any) => (
                                                     <FieldInput
                                                         field={field}
@@ -287,7 +299,7 @@ function Admin() {
                                                 )}
                                             </form.Field>
 
-                                            <form.Field name={`stages[${index}].startDate`}>
+                                            <form.Field name={`stages[${index}].start_date`}>
                                                 {(field: any) => (
                                                     <FieldInput
                                                         field={field}
@@ -297,7 +309,7 @@ function Admin() {
                                                 )}
                                             </form.Field>
 
-                                            <form.Field name={`stages[${index}].endDate`}>
+                                            <form.Field name={`stages[${index}].end_date`}>
                                                 {(field: any) => (
                                                     <FieldInput
                                                         field={field}
@@ -308,7 +320,7 @@ function Admin() {
                                             </form.Field>
 
                                             <form.Field
-                                                name={`stages[${index}].registrationDeadline`}
+                                                name={`stages[${index}].registration_deadline`}
                                             >
                                                 {(field: any) => (
                                                     <FieldInput
@@ -320,7 +332,7 @@ function Admin() {
                                                 )}
                                             </form.Field>
 
-                                            <form.Field name={`stages[${index}].isCurrent`}>
+                                            <form.Field name={`stages[${index}].is_current`}>
                                                 {(field: any) => (
                                                     <div className="md:col-span-2">
                                                         <label className="mb-1 block text-sm font-medium text-gray-200">

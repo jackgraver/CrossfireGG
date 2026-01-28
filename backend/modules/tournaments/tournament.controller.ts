@@ -306,4 +306,21 @@ export const tournamentController = {
             });
         }
     },
+    createTournament: async (req: Request, res: Response) => {
+        // try {
+        //     const validation = CreateTournamentSchema.safeParse(req.body);
+        //     if (!validation.success) {
+        //         return res.status(400).json({
+        //             error: "Validation failed",
+        //         });
+        //     }
+        // }
+        // catch (error: any) {
+        //     logger.error("Error creating tournament:", error);
+        //     res.status(500).json({
+        //         error: "Failed to create tournament",
+        //         details: error.message,
+        //     });
+        // }
+    },
 };

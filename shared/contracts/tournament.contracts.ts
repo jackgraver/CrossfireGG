@@ -28,3 +28,13 @@ export const TournamentWithMinimalStagesContract = TournamentContract.extend({
 });
 
 export type TournamentWithMinimalStagesDTO = z.infer<typeof TournamentWithMinimalStagesContract>;
+
+export const CreateTournamentContract = z.object({
+    name: z.string().min(2, "Tournament name is required"),
+    description: z.string().optional(),
+    prize_pool: z.number().optional(),
+    start_date: z.date().min(new Date()),
+    end_date: z.date().min(new Date()),
+});
+
+export type CreateTournamentDTO = z.infer<typeof CreateTournamentContract>;

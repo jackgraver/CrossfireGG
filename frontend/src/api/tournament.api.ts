@@ -49,4 +49,8 @@ export const tournamentApi = {
         const response = await api.post(`/tournament/${tournamentId}/register`, payload);
         return response.data;
     },
+    createTournament: async (payload: any) => {
+        const response = await api.post("/tournament/create", payload);
+        return response.data;
+    },
 };

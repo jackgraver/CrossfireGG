@@ -3,6 +3,7 @@ import { tournamentController } from "./tournament.controller";
 
 const router = Router();
 
+router.post("/create", tournamentController.createTournament);
 router.get("/all", tournamentController.getAllTournaments);
 router.get("/:tournamentId", tournamentController.getTournamentById);
 router.get("/stage/:stageId/matches", tournamentController.getMatchesByStageId);
