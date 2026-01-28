@@ -1,12 +1,12 @@
-import type { Match, Round } from "../../../types/Types";
 import MatchCard from "./MatchCard";
+import { MatchWithParticipantsDTO } from "@repo/contracts";
 
 type RoundCardProps = {
-    round: Round;
-    matches: Match[] | undefined;
+    round: string;
+    matches: MatchWithParticipantsDTO[] | undefined;
 };
 
-const numMatchesForRound = (round: Round): number => {
+const numMatchesForRound = (round: string): number => {
     switch (round) {
         case "0-0":
             return 8;
@@ -34,7 +34,7 @@ const numMatchesForRound = (round: Round): number => {
     }
 };
 
-const getDisplayRound = (round: Round): string => {
+const getDisplayRound = (round: string): string => {
     switch (round) {
         case "QF":
             return "QUARTER FINALS";

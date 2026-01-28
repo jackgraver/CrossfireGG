@@ -100,10 +100,8 @@ export const tournamentController = {
             }
             const groups = await tournamentService.getStageBracket(validation.data.stageId);
 
-            const payload = GroupWithMatchesAndFormatContract.parse({
-                format: groups?.stageFormat,
-                groups: groups?.groups,
-            });
+            // res.json(groups);
+            const payload = GroupWithMatchesAndFormatContract.parse(groups);
 
             res.json(payload);
         } catch (error) {

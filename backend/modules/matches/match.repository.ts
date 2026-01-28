@@ -18,7 +18,7 @@ export const matchRepository = {
             with: {
                 participants: {
                     with: {
-                        team: {
+                        stageTeam: {
                             with: {
                                 players: {
                                     with: {

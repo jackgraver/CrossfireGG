@@ -1,10 +1,10 @@
-import type { Match } from "../../../types/Types";
 import RoundCard from "../components/RoundCard";
 import RoundSection from "../components/RoundSection";
 import { filterAndSortMatchesByRound } from "../Bracket.util";
+import { MatchWithParticipantsDTO } from "@repo/contracts";
 
 type PlayoffBracketProps = {
-    matches: Match[];
+    matches: MatchWithParticipantsDTO[];
 };
 
 export default function PlayoffBracket({ matches }: PlayoffBracketProps) {

@@ -294,7 +294,11 @@ export const tournamentRepository = {
                             with: {
                                 participants: {
                                     with: {
-                                        team: true,
+                                        stageTeam: {
+                                            with: {
+                                                team: true,
+                                            },
+                                        },
                                     },
                                 },
                             },

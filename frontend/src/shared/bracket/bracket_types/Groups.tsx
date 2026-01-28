@@ -13,29 +13,28 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import TeamLogo from "../atoms/TeamLogo";
 import { Link } from "@tanstack/react-router";
 
-function TeamStandingsRow({ team, rank }: { team: MatchParticipantWithTeamDTO; rank: number }) {
+function TeamStandingsRow({ team }: { team: MatchParticipantWithTeamDTO; }) {
     return (
         <Link
             to="/team/$team_id"
             params={{ team_id: team.id.toString() }}
             className="border-border hover:bg-thirdBg flex items-center gap-3 border-b py-2 transition-all duration-300 ease-out last:border-b-0"
         >
-            <span className="text-textSecondary w-6 text-center text-sm font-medium">{rank}</span>
             <TeamLogo
                 team={{
                     team_id: team.id.toString(),
-                    name: team.team.name,
-                    team_logo: team.team.team_logo,
-                    faceit_id: team.team.faceit_id || "",
-                    team_captain_id: team.team.team_captain_id,
+                    name: team.stageTeam.team.name,
+                    team_logo: team.stageTeam.team.team_logo,
+                    faceit_id: team.stageTeam.team.faceit_id || "",
+                    team_captain_id: team.stageTeam.team.team_captain_id,
                 }}
                 styling="h-6 w-6 rounded-full object-cover"
             />
             <span className="text-textPrimary flex-1 truncate text-sm font-medium">
-                {team.team.name}
+                {team.stageTeam.team.name}
             </span>
             <span className="text-textSecondary pr-2 text-sm">
-                {team.wins}-{team.losses}
+                {team.stageTeam.wins}-{team.stageTeam.losses}
             </span>
         </Link>
     );
@@ -94,14 +93,14 @@ function GroupCard({
 }) {
     const groupTeams = Array.from(
         new Map(matches.flatMap((m) => m.participants).map((p) => [p.team_id, p])).values(),
-    );
+    ).sort((a, b) => b.stageTeam.wins - a.stageTeam.wins);
 
     return (
         <div className="border-border bg-firstBg flex min-w-[300px] flex-col rounded-lg border p-4">
             <h2 className="text-textPrimary mb-3 text-lg font-semibold">{group.name}</h2>
             <div className="flex flex-col">
                 {groupTeams.map((team, index) => (
-                    <TeamStandingsRow key={team.id} team={team} rank={0} />
+                    <TeamStandingsRow key={team.id} team={team} />
                 ))}
             </div>
             {matches.length > 0 && <MatchesDropdown matches={matches} />}

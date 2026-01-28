@@ -10,6 +10,7 @@ function BracketPage() {
     const { tournamentId, stageId } = Route.useParams();
 
     const { data, isLoading, error } = useStageBracket(Number(stageId));
+    console.log("data", data);
 
     if (error) {
         return <div>Error loading standings</div>;
@@ -24,10 +25,6 @@ function BracketPage() {
     }
 
     return (
-        <div className="bg-firstBg rounded-xl shadow-md">
-            <div className="p-4">
-                <TopLevelBracket stageFormat={data.format} groups={data.groups} />
-            </div>
-        </div>
+        <TopLevelBracket stageFormat={data.format} groups={data.groups} />
     );
 }

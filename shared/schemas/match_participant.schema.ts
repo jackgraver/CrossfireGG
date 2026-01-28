@@ -9,7 +9,7 @@ import {
     index,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import { matches, stagePlayers } from "@repo/schemas";
+import { matches, stagePlayers, teams } from "@repo/schemas";
 import { stageTeams } from "./stage_team.schema";
 import { maps } from "./map.schema";
 
@@ -54,9 +54,13 @@ export const matchParticipantsRelations = relations(matchParticipants, ({ one, m
         fields: [matchParticipants.match_id],
         references: [matches.id],
     }),
-    team: one(stageTeams, {
+    stageTeam: one(stageTeams, {
         fields: [matchParticipants.team_id],
         references: [stageTeams.id],
+    }),
+    team: one(teams, {
+        fields: [matchParticipants.team_id],
+        references: [teams.id],
     }),
     maps: many(maps),
 }));

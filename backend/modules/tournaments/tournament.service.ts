@@ -50,7 +50,12 @@ export const tournamentService = {
     },
 
     getStageBracket: async (stageId: number) => {
-        return await tournamentRepository.findStageStandings(stageId);
+        const stage = await tournamentRepository.findStageStandings(stageId);
+        
+        return {
+            format: stage?.stageFormat,
+            groups: stage?.groups,
+        };
 
         // const stageStandings = await tournamentRepository.findStageStandings(
         //     stageId

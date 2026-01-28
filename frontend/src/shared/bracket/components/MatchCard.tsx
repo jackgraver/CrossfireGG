@@ -1,10 +1,10 @@
 import { useNavigate } from "@tanstack/react-router";
-import type { Match } from "../../../types/Types";
 import { MatchTeam } from "./MatchTeam";
 import { openInNewTab } from "@/lib/NewTab";
+import { MatchWithParticipantsDTO } from "@repo/contracts";
 
 type MatchCardProps = {
-    match: Match | undefined;
+    match: MatchWithParticipantsDTO | undefined;
     margin?: boolean;
 };
 
@@ -26,12 +26,12 @@ export default function MatchCard({ match, margin }: MatchCardProps) {
             }`}
         >
             <MatchTeam
-                team={match?.participants![0].team!}
+                team={match?.participants![0].stageTeam.team!}
                 winner={match?.participants![0].winner}
                 score={match?.participants![0].score}
             />
             <MatchTeam
-                team={match?.participants![1].team}
+                team={match?.participants![1].stageTeam.team}
                 winner={match?.participants![1].winner}
                 score={match?.participants![1].score}
             />
