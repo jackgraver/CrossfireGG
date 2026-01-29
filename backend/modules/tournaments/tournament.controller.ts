@@ -14,11 +14,24 @@ import {
     TournamentWithMinimalStagesContract,
     TournamentWithStagesContract,
 } from "@repo/contracts";
+import { fromNodeHeaders } from "better-auth/node";
+import { auth } from "../../lib/auth";
+import { userRepository } from "../users/user.repository";
 
 export const tournamentController = {
-    getAllTournaments: async (_: Request, res: Response) => {
+    getAllTournaments: async (req: Request, res: Response) => {
         try {
-            const tournaments = await tournamentService.getAllTournaments();
+            const session = await auth.api.getSession({
+                headers: fromNodeHeaders(req.headers),
+            });
+
+            let teamId = 0;
+            if (session?.user.id) {
+                const userInfo = await userRepository.userPlayerInfo(session.user.id);
+                teamId = userInfo?.team_id || 0;
+            }
+
+            const tournaments = await tournamentService.getAllTournaments(teamId);
 
             const payload = TournamentWithStagesContract.array().parse(tournaments);
 

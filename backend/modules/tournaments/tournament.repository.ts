@@ -134,6 +134,23 @@ export const tournamentRepository = {
         return countsMap;
     },
 
+    isTeamRegistered: async (teamId: number, tournamentId: number) => {
+        const result = await db
+            .select({ id: stageTeams.id })
+            .from(stageTeams)
+            .innerJoin(stages, eq(stageTeams.stage_id, stages.id))
+            .where(
+                and(
+                    eq(stageTeams.team_id, teamId),
+                    eq(stages.tournament_id, tournamentId),
+                    isNull(stageTeams.deleted_at),
+                    isNull(stages.deleted_at),
+                ),
+            )
+            .limit(1);
+        return result.length > 0;
+    },
+
     findStageByFaceitId: async (faceitId: string) => {
         const result = await db
             .select()

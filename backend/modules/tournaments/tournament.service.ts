@@ -1,7 +1,7 @@
 import { tournamentRepository } from "./tournament.repository";
 
 export const tournamentService = {
-    getAllTournaments: async (): Promise<any> => {
+    getAllTournaments: async (teamId: number): Promise<any> => {
         const allTournaments = await tournamentRepository.findAll();
 
         const tournamentsWithStages = await Promise.all(
@@ -18,9 +18,12 @@ export const tournamentService = {
                     teams_count: teamsCountsMap.get(stage.id) || 0,
                 }));
 
+                const isRegistered = teamId && teamId > 0 ? await tournamentRepository.isTeamRegistered(teamId, tournament.id) : false;
+
                 return {
                     ...tournament,
                     stages: stagesWithCounts,
+                    isRegistered: isRegistered,
                 };
             }),
         );

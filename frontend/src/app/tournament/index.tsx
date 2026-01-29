@@ -117,7 +117,7 @@ function RouteComponent() {
                                             </h2>
                                         </div>
                                         <div className="text-cfRed flex-start flex gap-2">
-                                            <SignUpButton user={user} />
+                                            <SignUpButton user={user} isRegistered={tournament.isRegistered} />
                                         </div>
                                     </div>
                                     {tournament.stages && tournament.stages.length > 0 && (

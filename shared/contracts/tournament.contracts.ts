@@ -19,6 +19,7 @@ export const TournamentWithStagesContract = TournamentContract.extend({
             teams_count: z.number(),
         }),
     ),
+    isRegistered: z.boolean(),
 });
 
 export type TournamentWithStagesDTO = z.infer<typeof TournamentWithStagesContract>;
