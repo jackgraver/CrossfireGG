@@ -2,7 +2,13 @@ import { User } from "@/lib/server/auth.server";
 import { Link } from "@tanstack/react-router";
 import { MoveUpRight } from "lucide-react";
 
-export default function SignUpButton({ user, isRegistered }: { user: User | null, isRegistered: boolean }) {
+export default function SignUpButton({
+    user,
+    isRegistered,
+}: {
+    user: User | null;
+    isRegistered: boolean;
+}) {
     const activeClass =
         "flex-start flex w-full items-center justify-center rounded-lg bg-cfRed px-4 py-2 text-xs font-black tracking-widest text-white uppercase shadow-sm transition-all hover:bg-cfRedDark gap-2";
 

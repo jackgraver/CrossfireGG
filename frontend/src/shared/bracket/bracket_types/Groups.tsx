@@ -9,18 +9,18 @@ import { ChevronDown, ChevronUp, Trophy, Calendar, Users } from "lucide-react";
 import TeamLogo from "../atoms/TeamLogo";
 import { Link } from "@tanstack/react-router";
 
-function TeamStandingsRow({ 
-    team, 
-    index, 
-    totalTeams 
-}: { 
-    team: MatchParticipantWithTeamDTO; 
+function TeamStandingsRow({
+    team,
+    index,
+    totalTeams,
+}: {
+    team: MatchParticipantWithTeamDTO;
     index: number;
     totalTeams: number;
 }) {
     // Determine if team is in the "Qualification Zone" (top 2 for now, could be dynamic)
     const isQualifying = index < 2;
-    
+
     return (
         <Link
             to="/team/$team_id"
@@ -68,17 +68,21 @@ function TeamStandingsRow({
 function MatchesDropdown({ matches }: { matches: MatchWithParticipantsDTO[] }) {
     const [isOpen, setIsOpen] = useState(false);
 
-    const matchesByRound = useMemo(() => matches.reduce(
-        (acc, match) => {
-            const round = match.round || "TBD";
-            if (!acc[round]) {
-                acc[round] = [];
-            }
-            acc[round].push(match);
-            return acc;
-        },
-        {} as Record<string, MatchWithParticipantsDTO[]>,
-    ), [matches]);
+    const matchesByRound = useMemo(
+        () =>
+            matches.reduce(
+                (acc, match) => {
+                    const round = match.round || "TBD";
+                    if (!acc[round]) {
+                        acc[round] = [];
+                    }
+                    acc[round].push(match);
+                    return acc;
+                },
+                {} as Record<string, MatchWithParticipantsDTO[]>,
+            ),
+        [matches],
+    );
 
     return (
         <div className="mt-2">
@@ -96,7 +100,7 @@ function MatchesDropdown({ matches }: { matches: MatchWithParticipantsDTO[] }) {
                 </div>
                 {isOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
             </button>
-            
+
             {isOpen && (
                 <div className="mt-2 space-y-6 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-300">
                     {Object.entries(matchesByRound).map(([round, roundMatches]) => (
@@ -110,7 +114,10 @@ function MatchesDropdown({ matches }: { matches: MatchWithParticipantsDTO[] }) {
                             </div>
                             <div className="grid grid-cols-1 gap-3">
                                 {roundMatches.map((match, mIndex) => (
-                                    <div key={mIndex} className="transform transition-transform hover:scale-[1.01]">
+                                    <div
+                                        key={mIndex}
+                                        className="transform transition-transform hover:scale-[1.01]"
+                                    >
                                         <MatchCard match={match} margin={false} />
                                     </div>
                                 ))}
@@ -132,8 +139,8 @@ function GroupCard({
 }) {
     const groupTeams = useMemo(() => {
         const teamMap = new Map<number, MatchParticipantWithTeamDTO>();
-        matches.forEach(m => {
-            m.participants?.forEach(p => {
+        matches.forEach((m) => {
+            m.participants?.forEach((p) => {
                 if (!teamMap.has(p.stageTeam.team.id)) {
                     teamMap.set(p.stageTeam.team.id, p);
                 }
@@ -146,9 +153,10 @@ function GroupCard({
         <div className="group/card border-border/60 bg-firstBg/50 flex flex-col rounded-xl border p-5 backdrop-blur-sm transition-all duration-300 hover:border-white/20 hover:shadow-2xl hover:shadow-black/40">
             <div className="mb-6 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                        <h2 className="text-textPrimary text-xl font-black tracking-tight uppercase">{group.name}</h2>
+                    <h2 className="text-textPrimary text-xl font-black tracking-tight uppercase">
+                        {group.name}
+                    </h2>
                 </div>
-              
             </div>
 
             <div className="mb-4 flex flex-col rounded-lg bg-black/20 p-1">
@@ -158,11 +166,11 @@ function GroupCard({
                     <span>Record</span>
                 </div>
                 {groupTeams.map((team, index) => (
-                    <TeamStandingsRow 
-                        key={team.id} 
-                        team={team} 
-                        index={index} 
-                        totalTeams={groupTeams.length} 
+                    <TeamStandingsRow
+                        key={team.id}
+                        team={team}
+                        index={index}
+                        totalTeams={groupTeams.length}
                     />
                 ))}
             </div>
@@ -178,7 +186,9 @@ export default function Groups({ groups }: { groups: GroupWithMatchesDTO[] }) {
             <div className="flex min-h-[400px] w-full flex-col items-center justify-center rounded-xl border border-dashed border-border bg-firstBg/20 text-center">
                 <Trophy className="mb-4 h-12 w-12 opacity-20" />
                 <h3 className="text-lg font-bold text-textPrimary">No Groups Found</h3>
-                <p className="text-sm text-textSecondary">Groups haven't been generated for this stage yet.</p>
+                <p className="text-sm text-textSecondary">
+                    Groups haven't been generated for this stage yet.
+                </p>
             </div>
         );
     }

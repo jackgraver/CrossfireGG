@@ -24,7 +24,5 @@ function BracketPage() {
         return <div>No matches found for this stage</div>;
     }
 
-    return (
-        <TopLevelBracket stageFormat={data.format} groups={data.groups} />
-    );
+    return <TopLevelBracket stageFormat={data.format} groups={data.groups} />;
 }

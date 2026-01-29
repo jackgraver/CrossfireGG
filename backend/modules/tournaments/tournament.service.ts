@@ -18,7 +18,10 @@ export const tournamentService = {
                     teams_count: teamsCountsMap.get(stage.id) || 0,
                 }));
 
-                const isRegistered = teamId && teamId > 0 ? await tournamentRepository.isTeamRegistered(teamId, tournament.id) : false;
+                const isRegistered =
+                    teamId && teamId > 0
+                        ? await tournamentRepository.isTeamRegistered(teamId, tournament.id)
+                        : false;
 
                 return {
                     ...tournament,
@@ -54,7 +57,7 @@ export const tournamentService = {
 
     getStageBracket: async (stageId: number) => {
         const stage = await tournamentRepository.findStageStandings(stageId);
-        
+
         return {
             format: stage?.stageFormat,
             groups: stage?.groups,

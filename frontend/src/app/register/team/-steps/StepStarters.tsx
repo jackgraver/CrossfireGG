@@ -124,38 +124,34 @@ export default function StepStarters({
                     Complete the information for each selected starter.
                 </p>
             </div>
-            {!isLoading && (
-                <div className="flex flex-col gap-y-8">
-                    {starters.length === 0 && (
-                        <div className="flex h-32 items-center justify-center rounded-lg border-2 border-dashed border-gray-700 text-gray-500">
-                            Select players from the list to see their details
-                        </div>
-                    )}
-                    {starters.map((player: any, index: number) => (
-                        <div
-                            key={`${index}-${player.faceitId}`}
-                            className="rounded-lg  transition-all duration-20"
-                        >
-                            <PlayerFormFields
-                                form={form}
-                                namePrefix={`starters[${index}]`}
-                                labelPrefix={`Player ${index + 1}`}
-                                onRemove={
-                                    player.faceitId !== userFaceitId
-                                        ? () =>
-                                              form.setFieldValue(
-                                                  "starters",
-                                                  starters.filter(
-                                                      (_: any, i: number) => i !== index,
-                                                  ),
-                                              )
-                                        : undefined
-                                }
-                            />
-                        </div>
-                    ))}
-                </div>
-            )}
+            <div className="flex flex-col gap-y-8">
+                {starters.length === 0 && (
+                    <div className="flex h-32 items-center justify-center rounded-lg border-2 border-dashed border-gray-700 text-gray-500">
+                        Select players from the list to see their details
+                    </div>
+                )}
+                {starters.map((player: any, index: number) => (
+                    <div
+                        key={`${index}-${player.faceitId}`}
+                        className="rounded-lg  transition-all duration-20"
+                    >
+                        <PlayerFormFields
+                            form={form}
+                            namePrefix={`starters[${index}]`}
+                            labelPrefix={`Player ${index + 1}`}
+                            onRemove={
+                                player.faceitId !== userFaceitId
+                                    ? () =>
+                                          form.setFieldValue(
+                                              "starters",
+                                              starters.filter((_: any, i: number) => i !== index),
+                                          )
+                                    : undefined
+                            }
+                        />
+                    </div>
+                ))}
+            </div>
         </div>
     );
 

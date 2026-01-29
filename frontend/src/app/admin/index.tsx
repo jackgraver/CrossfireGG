@@ -126,8 +126,10 @@ function Admin() {
                             </div>
                             <button
                                 // type="submit"
-                                onClick={(e) => { e.preventDefault();
-                                    form.handleSubmit();}}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    form.handleSubmit();
+                                }}
                                 className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-500"
                             >
                                 <SaveIcon className="h-4 w-4" />

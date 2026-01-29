@@ -63,13 +63,12 @@ export default function RoundCard({ round, matches }: RoundCardProps) {
 
             <div className="flex flex-col items-center justify-center gap-4">
                 {matches.map((match, i) => (
-                <MatchCard key={i} match={match} />
-            ))}
-            {Array.from({ length: numMatchesForRound(round) - matches.length }, (_, i) => (
-                <MatchCard key={i} match={undefined} />
-            ))}
+                    <MatchCard key={i} match={match} />
+                ))}
+                {Array.from({ length: numMatchesForRound(round) - matches.length }, (_, i) => (
+                    <MatchCard key={i} match={undefined} />
+                ))}
             </div>
-            
         </div>
     );
 }
