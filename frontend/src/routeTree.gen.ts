@@ -8,553 +8,554 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from "./app/__root";
-import { Route as NotFoundRouteImport } from "./app/not-found";
-import { Route as ErrorRouteImport } from "./app/error";
-import { Route as IndexRouteImport } from "./app/index";
-import { Route as UserIndexRouteImport } from "./app/user/index";
-import { Route as TournamentIndexRouteImport } from "./app/tournament/index";
-import { Route as SignUpIndexRouteImport } from "./app/sign-up/index";
-import { Route as SignInIndexRouteImport } from "./app/sign-in/index";
-import { Route as ManageTeamsIndexRouteImport } from "./app/manage-teams/index";
-import { Route as CastingIndexRouteImport } from "./app/casting/index";
-import { Route as AdminIndexRouteImport } from "./app/admin/index";
-import { Route as TeamTeam_idRouteRouteImport } from "./app/team/$team_id/route";
-import { Route as TeamTeam_idIndexRouteImport } from "./app/team/$team_id/index";
-import { Route as StatsMatch_idIndexRouteImport } from "./app/stats/$match_id/index";
-import { Route as RegisterTeamIndexRouteImport } from "./app/register/team/index";
-import { Route as MatchMatch_idIndexRouteImport } from "./app/match/$match_id/index";
-import { Route as TeamTeam_idMembersRouteImport } from "./app/team/$team_id/members";
-import { Route as TeamTeam_idMatchesRouteImport } from "./app/team/$team_id/matches";
-import { Route as MatchMatch_idStatsPageRouteImport } from "./app/match/$match_id/stats/page";
-import { Route as TournamentTournamentIdStageStageIdRouteRouteImport } from "./app/tournament/$tournamentId/stage/$stageId/route";
-import { Route as TournamentTournamentIdStageStageIdIndexRouteImport } from "./app/tournament/$tournamentId/stage/$stageId/index";
-import { Route as TournamentTournamentIdStageStageIdTeamsRouteImport } from "./app/tournament/$tournamentId/stage/$stageId/teams";
-import { Route as TournamentTournamentIdStageStageIdStandingsRouteImport } from "./app/tournament/$tournamentId/stage/$stageId/standings";
-import { Route as TournamentTournamentIdStageStageIdBracketRouteImport } from "./app/tournament/$tournamentId/stage/$stageId/bracket";
+import { Route as rootRouteImport } from './app/__root'
+import { Route as NotFoundRouteImport } from './app/not-found'
+import { Route as ErrorRouteImport } from './app/error'
+import { Route as IndexRouteImport } from './app/index'
+import { Route as UserIndexRouteImport } from './app/user/index'
+import { Route as TournamentIndexRouteImport } from './app/tournament/index'
+import { Route as SignUpIndexRouteImport } from './app/sign-up/index'
+import { Route as SignInIndexRouteImport } from './app/sign-in/index'
+import { Route as ManageTeamsIndexRouteImport } from './app/manage-teams/index'
+import { Route as CastingIndexRouteImport } from './app/casting/index'
+import { Route as AdminIndexRouteImport } from './app/admin/index'
+import { Route as TeamTeam_idRouteRouteImport } from './app/team/$team_id/route'
+import { Route as TeamTeam_idIndexRouteImport } from './app/team/$team_id/index'
+import { Route as StatsMatch_idIndexRouteImport } from './app/stats/$match_id/index'
+import { Route as RegisterTeamIndexRouteImport } from './app/register/team/index'
+import { Route as MatchMatch_idIndexRouteImport } from './app/match/$match_id/index'
+import { Route as TeamTeam_idMembersRouteImport } from './app/team/$team_id/members'
+import { Route as TeamTeam_idMatchesRouteImport } from './app/team/$team_id/matches'
+import { Route as MatchMatch_idStatsPageRouteImport } from './app/match/$match_id/stats/page'
+import { Route as TournamentTournamentIdStageStageIdRouteRouteImport } from './app/tournament/$tournamentId/stage/$stageId/route'
+import { Route as TournamentTournamentIdStageStageIdIndexRouteImport } from './app/tournament/$tournamentId/stage/$stageId/index'
+import { Route as TournamentTournamentIdStageStageIdTeamsRouteImport } from './app/tournament/$tournamentId/stage/$stageId/teams'
+import { Route as TournamentTournamentIdStageStageIdStandingsRouteImport } from './app/tournament/$tournamentId/stage/$stageId/standings'
+import { Route as TournamentTournamentIdStageStageIdBracketRouteImport } from './app/tournament/$tournamentId/stage/$stageId/bracket'
 
 const NotFoundRoute = NotFoundRouteImport.update({
-    id: "/not-found",
-    path: "/not-found",
-    getParentRoute: () => rootRouteImport,
-} as any);
+  id: '/not-found',
+  path: '/not-found',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ErrorRoute = ErrorRouteImport.update({
-    id: "/error",
-    path: "/error",
-    getParentRoute: () => rootRouteImport,
-} as any);
+  id: '/error',
+  path: '/error',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
-    id: "/",
-    path: "/",
-    getParentRoute: () => rootRouteImport,
-} as any);
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const UserIndexRoute = UserIndexRouteImport.update({
-    id: "/user/",
-    path: "/user/",
-    getParentRoute: () => rootRouteImport,
-} as any);
+  id: '/user/',
+  path: '/user/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TournamentIndexRoute = TournamentIndexRouteImport.update({
-    id: "/tournament/",
-    path: "/tournament/",
-    getParentRoute: () => rootRouteImport,
-} as any);
+  id: '/tournament/',
+  path: '/tournament/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SignUpIndexRoute = SignUpIndexRouteImport.update({
-    id: "/sign-up/",
-    path: "/sign-up/",
-    getParentRoute: () => rootRouteImport,
-} as any);
+  id: '/sign-up/',
+  path: '/sign-up/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SignInIndexRoute = SignInIndexRouteImport.update({
-    id: "/sign-in/",
-    path: "/sign-in/",
-    getParentRoute: () => rootRouteImport,
-} as any);
+  id: '/sign-in/',
+  path: '/sign-in/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ManageTeamsIndexRoute = ManageTeamsIndexRouteImport.update({
-    id: "/manage-teams/",
-    path: "/manage-teams/",
-    getParentRoute: () => rootRouteImport,
-} as any);
+  id: '/manage-teams/',
+  path: '/manage-teams/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CastingIndexRoute = CastingIndexRouteImport.update({
-    id: "/casting/",
-    path: "/casting/",
-    getParentRoute: () => rootRouteImport,
-} as any);
+  id: '/casting/',
+  path: '/casting/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
-    id: "/admin/",
-    path: "/admin/",
-    getParentRoute: () => rootRouteImport,
-} as any);
+  id: '/admin/',
+  path: '/admin/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TeamTeam_idRouteRoute = TeamTeam_idRouteRouteImport.update({
-    id: "/team/$team_id",
-    path: "/team/$team_id",
-    getParentRoute: () => rootRouteImport,
-} as any);
+  id: '/team/$team_id',
+  path: '/team/$team_id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TeamTeam_idIndexRoute = TeamTeam_idIndexRouteImport.update({
-    id: "/",
-    path: "/",
-    getParentRoute: () => TeamTeam_idRouteRoute,
-} as any);
+  id: '/',
+  path: '/',
+  getParentRoute: () => TeamTeam_idRouteRoute,
+} as any)
 const StatsMatch_idIndexRoute = StatsMatch_idIndexRouteImport.update({
-    id: "/stats/$match_id/",
-    path: "/stats/$match_id/",
-    getParentRoute: () => rootRouteImport,
-} as any);
+  id: '/stats/$match_id/',
+  path: '/stats/$match_id/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RegisterTeamIndexRoute = RegisterTeamIndexRouteImport.update({
-    id: "/register/team/",
-    path: "/register/team/",
-    getParentRoute: () => rootRouteImport,
-} as any);
+  id: '/register/team/',
+  path: '/register/team/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MatchMatch_idIndexRoute = MatchMatch_idIndexRouteImport.update({
-    id: "/match/$match_id/",
-    path: "/match/$match_id/",
-    getParentRoute: () => rootRouteImport,
-} as any);
+  id: '/match/$match_id/',
+  path: '/match/$match_id/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TeamTeam_idMembersRoute = TeamTeam_idMembersRouteImport.update({
-    id: "/members",
-    path: "/members",
-    getParentRoute: () => TeamTeam_idRouteRoute,
-} as any);
+  id: '/members',
+  path: '/members',
+  getParentRoute: () => TeamTeam_idRouteRoute,
+} as any)
 const TeamTeam_idMatchesRoute = TeamTeam_idMatchesRouteImport.update({
-    id: "/matches",
-    path: "/matches",
-    getParentRoute: () => TeamTeam_idRouteRoute,
-} as any);
+  id: '/matches',
+  path: '/matches',
+  getParentRoute: () => TeamTeam_idRouteRoute,
+} as any)
 const MatchMatch_idStatsPageRoute = MatchMatch_idStatsPageRouteImport.update({
-    id: "/match/$match_id/stats/page",
-    path: "/match/$match_id/stats/page",
-    getParentRoute: () => rootRouteImport,
-} as any);
+  id: '/match/$match_id/stats/page',
+  path: '/match/$match_id/stats/page',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TournamentTournamentIdStageStageIdRouteRoute =
-    TournamentTournamentIdStageStageIdRouteRouteImport.update({
-        id: "/tournament/$tournamentId/stage/$stageId",
-        path: "/tournament/$tournamentId/stage/$stageId",
-        getParentRoute: () => rootRouteImport,
-    } as any);
+  TournamentTournamentIdStageStageIdRouteRouteImport.update({
+    id: '/tournament/$tournamentId/stage/$stageId',
+    path: '/tournament/$tournamentId/stage/$stageId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const TournamentTournamentIdStageStageIdIndexRoute =
-    TournamentTournamentIdStageStageIdIndexRouteImport.update({
-        id: "/",
-        path: "/",
-        getParentRoute: () => TournamentTournamentIdStageStageIdRouteRoute,
-    } as any);
+  TournamentTournamentIdStageStageIdIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => TournamentTournamentIdStageStageIdRouteRoute,
+  } as any)
 const TournamentTournamentIdStageStageIdTeamsRoute =
-    TournamentTournamentIdStageStageIdTeamsRouteImport.update({
-        id: "/teams",
-        path: "/teams",
-        getParentRoute: () => TournamentTournamentIdStageStageIdRouteRoute,
-    } as any);
+  TournamentTournamentIdStageStageIdTeamsRouteImport.update({
+    id: '/teams',
+    path: '/teams',
+    getParentRoute: () => TournamentTournamentIdStageStageIdRouteRoute,
+  } as any)
 const TournamentTournamentIdStageStageIdStandingsRoute =
-    TournamentTournamentIdStageStageIdStandingsRouteImport.update({
-        id: "/standings",
-        path: "/standings",
-        getParentRoute: () => TournamentTournamentIdStageStageIdRouteRoute,
-    } as any);
+  TournamentTournamentIdStageStageIdStandingsRouteImport.update({
+    id: '/standings',
+    path: '/standings',
+    getParentRoute: () => TournamentTournamentIdStageStageIdRouteRoute,
+  } as any)
 const TournamentTournamentIdStageStageIdBracketRoute =
-    TournamentTournamentIdStageStageIdBracketRouteImport.update({
-        id: "/bracket",
-        path: "/bracket",
-        getParentRoute: () => TournamentTournamentIdStageStageIdRouteRoute,
-    } as any);
+  TournamentTournamentIdStageStageIdBracketRouteImport.update({
+    id: '/bracket',
+    path: '/bracket',
+    getParentRoute: () => TournamentTournamentIdStageStageIdRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
-    "/": typeof IndexRoute;
-    "/error": typeof ErrorRoute;
-    "/not-found": typeof NotFoundRoute;
-    "/team/$team_id": typeof TeamTeam_idRouteRouteWithChildren;
-    "/admin": typeof AdminIndexRoute;
-    "/casting": typeof CastingIndexRoute;
-    "/manage-teams": typeof ManageTeamsIndexRoute;
-    "/sign-in": typeof SignInIndexRoute;
-    "/sign-up": typeof SignUpIndexRoute;
-    "/tournament": typeof TournamentIndexRoute;
-    "/user": typeof UserIndexRoute;
-    "/team/$team_id/matches": typeof TeamTeam_idMatchesRoute;
-    "/team/$team_id/members": typeof TeamTeam_idMembersRoute;
-    "/match/$match_id": typeof MatchMatch_idIndexRoute;
-    "/register/team": typeof RegisterTeamIndexRoute;
-    "/stats/$match_id": typeof StatsMatch_idIndexRoute;
-    "/team/$team_id/": typeof TeamTeam_idIndexRoute;
-    "/tournament/$tournamentId/stage/$stageId": typeof TournamentTournamentIdStageStageIdRouteRouteWithChildren;
-    "/match/$match_id/stats/page": typeof MatchMatch_idStatsPageRoute;
-    "/tournament/$tournamentId/stage/$stageId/bracket": typeof TournamentTournamentIdStageStageIdBracketRoute;
-    "/tournament/$tournamentId/stage/$stageId/standings": typeof TournamentTournamentIdStageStageIdStandingsRoute;
-    "/tournament/$tournamentId/stage/$stageId/teams": typeof TournamentTournamentIdStageStageIdTeamsRoute;
-    "/tournament/$tournamentId/stage/$stageId/": typeof TournamentTournamentIdStageStageIdIndexRoute;
+  '/': typeof IndexRoute
+  '/error': typeof ErrorRoute
+  '/not-found': typeof NotFoundRoute
+  '/team/$team_id': typeof TeamTeam_idRouteRouteWithChildren
+  '/admin': typeof AdminIndexRoute
+  '/casting': typeof CastingIndexRoute
+  '/manage-teams': typeof ManageTeamsIndexRoute
+  '/sign-in': typeof SignInIndexRoute
+  '/sign-up': typeof SignUpIndexRoute
+  '/tournament': typeof TournamentIndexRoute
+  '/user': typeof UserIndexRoute
+  '/team/$team_id/matches': typeof TeamTeam_idMatchesRoute
+  '/team/$team_id/members': typeof TeamTeam_idMembersRoute
+  '/match/$match_id': typeof MatchMatch_idIndexRoute
+  '/register/team': typeof RegisterTeamIndexRoute
+  '/stats/$match_id': typeof StatsMatch_idIndexRoute
+  '/team/$team_id/': typeof TeamTeam_idIndexRoute
+  '/tournament/$tournamentId/stage/$stageId': typeof TournamentTournamentIdStageStageIdRouteRouteWithChildren
+  '/match/$match_id/stats/page': typeof MatchMatch_idStatsPageRoute
+  '/tournament/$tournamentId/stage/$stageId/bracket': typeof TournamentTournamentIdStageStageIdBracketRoute
+  '/tournament/$tournamentId/stage/$stageId/standings': typeof TournamentTournamentIdStageStageIdStandingsRoute
+  '/tournament/$tournamentId/stage/$stageId/teams': typeof TournamentTournamentIdStageStageIdTeamsRoute
+  '/tournament/$tournamentId/stage/$stageId/': typeof TournamentTournamentIdStageStageIdIndexRoute
 }
 export interface FileRoutesByTo {
-    "/": typeof IndexRoute;
-    "/error": typeof ErrorRoute;
-    "/not-found": typeof NotFoundRoute;
-    "/admin": typeof AdminIndexRoute;
-    "/casting": typeof CastingIndexRoute;
-    "/manage-teams": typeof ManageTeamsIndexRoute;
-    "/sign-in": typeof SignInIndexRoute;
-    "/sign-up": typeof SignUpIndexRoute;
-    "/tournament": typeof TournamentIndexRoute;
-    "/user": typeof UserIndexRoute;
-    "/team/$team_id/matches": typeof TeamTeam_idMatchesRoute;
-    "/team/$team_id/members": typeof TeamTeam_idMembersRoute;
-    "/match/$match_id": typeof MatchMatch_idIndexRoute;
-    "/register/team": typeof RegisterTeamIndexRoute;
-    "/stats/$match_id": typeof StatsMatch_idIndexRoute;
-    "/team/$team_id": typeof TeamTeam_idIndexRoute;
-    "/match/$match_id/stats/page": typeof MatchMatch_idStatsPageRoute;
-    "/tournament/$tournamentId/stage/$stageId/bracket": typeof TournamentTournamentIdStageStageIdBracketRoute;
-    "/tournament/$tournamentId/stage/$stageId/standings": typeof TournamentTournamentIdStageStageIdStandingsRoute;
-    "/tournament/$tournamentId/stage/$stageId/teams": typeof TournamentTournamentIdStageStageIdTeamsRoute;
-    "/tournament/$tournamentId/stage/$stageId": typeof TournamentTournamentIdStageStageIdIndexRoute;
+  '/': typeof IndexRoute
+  '/error': typeof ErrorRoute
+  '/not-found': typeof NotFoundRoute
+  '/admin': typeof AdminIndexRoute
+  '/casting': typeof CastingIndexRoute
+  '/manage-teams': typeof ManageTeamsIndexRoute
+  '/sign-in': typeof SignInIndexRoute
+  '/sign-up': typeof SignUpIndexRoute
+  '/tournament': typeof TournamentIndexRoute
+  '/user': typeof UserIndexRoute
+  '/team/$team_id/matches': typeof TeamTeam_idMatchesRoute
+  '/team/$team_id/members': typeof TeamTeam_idMembersRoute
+  '/match/$match_id': typeof MatchMatch_idIndexRoute
+  '/register/team': typeof RegisterTeamIndexRoute
+  '/stats/$match_id': typeof StatsMatch_idIndexRoute
+  '/team/$team_id': typeof TeamTeam_idIndexRoute
+  '/match/$match_id/stats/page': typeof MatchMatch_idStatsPageRoute
+  '/tournament/$tournamentId/stage/$stageId/bracket': typeof TournamentTournamentIdStageStageIdBracketRoute
+  '/tournament/$tournamentId/stage/$stageId/standings': typeof TournamentTournamentIdStageStageIdStandingsRoute
+  '/tournament/$tournamentId/stage/$stageId/teams': typeof TournamentTournamentIdStageStageIdTeamsRoute
+  '/tournament/$tournamentId/stage/$stageId': typeof TournamentTournamentIdStageStageIdIndexRoute
 }
 export interface FileRoutesById {
-    __root__: typeof rootRouteImport;
-    "/": typeof IndexRoute;
-    "/error": typeof ErrorRoute;
-    "/not-found": typeof NotFoundRoute;
-    "/team/$team_id": typeof TeamTeam_idRouteRouteWithChildren;
-    "/admin/": typeof AdminIndexRoute;
-    "/casting/": typeof CastingIndexRoute;
-    "/manage-teams/": typeof ManageTeamsIndexRoute;
-    "/sign-in/": typeof SignInIndexRoute;
-    "/sign-up/": typeof SignUpIndexRoute;
-    "/tournament/": typeof TournamentIndexRoute;
-    "/user/": typeof UserIndexRoute;
-    "/team/$team_id/matches": typeof TeamTeam_idMatchesRoute;
-    "/team/$team_id/members": typeof TeamTeam_idMembersRoute;
-    "/match/$match_id/": typeof MatchMatch_idIndexRoute;
-    "/register/team/": typeof RegisterTeamIndexRoute;
-    "/stats/$match_id/": typeof StatsMatch_idIndexRoute;
-    "/team/$team_id/": typeof TeamTeam_idIndexRoute;
-    "/tournament/$tournamentId/stage/$stageId": typeof TournamentTournamentIdStageStageIdRouteRouteWithChildren;
-    "/match/$match_id/stats/page": typeof MatchMatch_idStatsPageRoute;
-    "/tournament/$tournamentId/stage/$stageId/bracket": typeof TournamentTournamentIdStageStageIdBracketRoute;
-    "/tournament/$tournamentId/stage/$stageId/standings": typeof TournamentTournamentIdStageStageIdStandingsRoute;
-    "/tournament/$tournamentId/stage/$stageId/teams": typeof TournamentTournamentIdStageStageIdTeamsRoute;
-    "/tournament/$tournamentId/stage/$stageId/": typeof TournamentTournamentIdStageStageIdIndexRoute;
+  __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
+  '/error': typeof ErrorRoute
+  '/not-found': typeof NotFoundRoute
+  '/team/$team_id': typeof TeamTeam_idRouteRouteWithChildren
+  '/admin/': typeof AdminIndexRoute
+  '/casting/': typeof CastingIndexRoute
+  '/manage-teams/': typeof ManageTeamsIndexRoute
+  '/sign-in/': typeof SignInIndexRoute
+  '/sign-up/': typeof SignUpIndexRoute
+  '/tournament/': typeof TournamentIndexRoute
+  '/user/': typeof UserIndexRoute
+  '/team/$team_id/matches': typeof TeamTeam_idMatchesRoute
+  '/team/$team_id/members': typeof TeamTeam_idMembersRoute
+  '/match/$match_id/': typeof MatchMatch_idIndexRoute
+  '/register/team/': typeof RegisterTeamIndexRoute
+  '/stats/$match_id/': typeof StatsMatch_idIndexRoute
+  '/team/$team_id/': typeof TeamTeam_idIndexRoute
+  '/tournament/$tournamentId/stage/$stageId': typeof TournamentTournamentIdStageStageIdRouteRouteWithChildren
+  '/match/$match_id/stats/page': typeof MatchMatch_idStatsPageRoute
+  '/tournament/$tournamentId/stage/$stageId/bracket': typeof TournamentTournamentIdStageStageIdBracketRoute
+  '/tournament/$tournamentId/stage/$stageId/standings': typeof TournamentTournamentIdStageStageIdStandingsRoute
+  '/tournament/$tournamentId/stage/$stageId/teams': typeof TournamentTournamentIdStageStageIdTeamsRoute
+  '/tournament/$tournamentId/stage/$stageId/': typeof TournamentTournamentIdStageStageIdIndexRoute
 }
 export interface FileRouteTypes {
-    fileRoutesByFullPath: FileRoutesByFullPath;
-    fullPaths:
-        | "/"
-        | "/error"
-        | "/not-found"
-        | "/team/$team_id"
-        | "/admin"
-        | "/casting"
-        | "/manage-teams"
-        | "/sign-in"
-        | "/sign-up"
-        | "/tournament"
-        | "/user"
-        | "/team/$team_id/matches"
-        | "/team/$team_id/members"
-        | "/match/$match_id"
-        | "/register/team"
-        | "/stats/$match_id"
-        | "/team/$team_id/"
-        | "/tournament/$tournamentId/stage/$stageId"
-        | "/match/$match_id/stats/page"
-        | "/tournament/$tournamentId/stage/$stageId/bracket"
-        | "/tournament/$tournamentId/stage/$stageId/standings"
-        | "/tournament/$tournamentId/stage/$stageId/teams"
-        | "/tournament/$tournamentId/stage/$stageId/";
-    fileRoutesByTo: FileRoutesByTo;
-    to:
-        | "/"
-        | "/error"
-        | "/not-found"
-        | "/admin"
-        | "/casting"
-        | "/manage-teams"
-        | "/sign-in"
-        | "/sign-up"
-        | "/tournament"
-        | "/user"
-        | "/team/$team_id/matches"
-        | "/team/$team_id/members"
-        | "/match/$match_id"
-        | "/register/team"
-        | "/stats/$match_id"
-        | "/team/$team_id"
-        | "/match/$match_id/stats/page"
-        | "/tournament/$tournamentId/stage/$stageId/bracket"
-        | "/tournament/$tournamentId/stage/$stageId/standings"
-        | "/tournament/$tournamentId/stage/$stageId/teams"
-        | "/tournament/$tournamentId/stage/$stageId";
-    id:
-        | "__root__"
-        | "/"
-        | "/error"
-        | "/not-found"
-        | "/team/$team_id"
-        | "/admin/"
-        | "/casting/"
-        | "/manage-teams/"
-        | "/sign-in/"
-        | "/sign-up/"
-        | "/tournament/"
-        | "/user/"
-        | "/team/$team_id/matches"
-        | "/team/$team_id/members"
-        | "/match/$match_id/"
-        | "/register/team/"
-        | "/stats/$match_id/"
-        | "/team/$team_id/"
-        | "/tournament/$tournamentId/stage/$stageId"
-        | "/match/$match_id/stats/page"
-        | "/tournament/$tournamentId/stage/$stageId/bracket"
-        | "/tournament/$tournamentId/stage/$stageId/standings"
-        | "/tournament/$tournamentId/stage/$stageId/teams"
-        | "/tournament/$tournamentId/stage/$stageId/";
-    fileRoutesById: FileRoutesById;
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths:
+    | '/'
+    | '/error'
+    | '/not-found'
+    | '/team/$team_id'
+    | '/admin'
+    | '/casting'
+    | '/manage-teams'
+    | '/sign-in'
+    | '/sign-up'
+    | '/tournament'
+    | '/user'
+    | '/team/$team_id/matches'
+    | '/team/$team_id/members'
+    | '/match/$match_id'
+    | '/register/team'
+    | '/stats/$match_id'
+    | '/team/$team_id/'
+    | '/tournament/$tournamentId/stage/$stageId'
+    | '/match/$match_id/stats/page'
+    | '/tournament/$tournamentId/stage/$stageId/bracket'
+    | '/tournament/$tournamentId/stage/$stageId/standings'
+    | '/tournament/$tournamentId/stage/$stageId/teams'
+    | '/tournament/$tournamentId/stage/$stageId/'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/'
+    | '/error'
+    | '/not-found'
+    | '/admin'
+    | '/casting'
+    | '/manage-teams'
+    | '/sign-in'
+    | '/sign-up'
+    | '/tournament'
+    | '/user'
+    | '/team/$team_id/matches'
+    | '/team/$team_id/members'
+    | '/match/$match_id'
+    | '/register/team'
+    | '/stats/$match_id'
+    | '/team/$team_id'
+    | '/match/$match_id/stats/page'
+    | '/tournament/$tournamentId/stage/$stageId/bracket'
+    | '/tournament/$tournamentId/stage/$stageId/standings'
+    | '/tournament/$tournamentId/stage/$stageId/teams'
+    | '/tournament/$tournamentId/stage/$stageId'
+  id:
+    | '__root__'
+    | '/'
+    | '/error'
+    | '/not-found'
+    | '/team/$team_id'
+    | '/admin/'
+    | '/casting/'
+    | '/manage-teams/'
+    | '/sign-in/'
+    | '/sign-up/'
+    | '/tournament/'
+    | '/user/'
+    | '/team/$team_id/matches'
+    | '/team/$team_id/members'
+    | '/match/$match_id/'
+    | '/register/team/'
+    | '/stats/$match_id/'
+    | '/team/$team_id/'
+    | '/tournament/$tournamentId/stage/$stageId'
+    | '/match/$match_id/stats/page'
+    | '/tournament/$tournamentId/stage/$stageId/bracket'
+    | '/tournament/$tournamentId/stage/$stageId/standings'
+    | '/tournament/$tournamentId/stage/$stageId/teams'
+    | '/tournament/$tournamentId/stage/$stageId/'
+  fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-    IndexRoute: typeof IndexRoute;
-    ErrorRoute: typeof ErrorRoute;
-    NotFoundRoute: typeof NotFoundRoute;
-    TeamTeam_idRouteRoute: typeof TeamTeam_idRouteRouteWithChildren;
-    AdminIndexRoute: typeof AdminIndexRoute;
-    CastingIndexRoute: typeof CastingIndexRoute;
-    ManageTeamsIndexRoute: typeof ManageTeamsIndexRoute;
-    SignInIndexRoute: typeof SignInIndexRoute;
-    SignUpIndexRoute: typeof SignUpIndexRoute;
-    TournamentIndexRoute: typeof TournamentIndexRoute;
-    UserIndexRoute: typeof UserIndexRoute;
-    MatchMatch_idIndexRoute: typeof MatchMatch_idIndexRoute;
-    RegisterTeamIndexRoute: typeof RegisterTeamIndexRoute;
-    StatsMatch_idIndexRoute: typeof StatsMatch_idIndexRoute;
-    TournamentTournamentIdStageStageIdRouteRoute: typeof TournamentTournamentIdStageStageIdRouteRouteWithChildren;
-    MatchMatch_idStatsPageRoute: typeof MatchMatch_idStatsPageRoute;
+  IndexRoute: typeof IndexRoute
+  ErrorRoute: typeof ErrorRoute
+  NotFoundRoute: typeof NotFoundRoute
+  TeamTeam_idRouteRoute: typeof TeamTeam_idRouteRouteWithChildren
+  AdminIndexRoute: typeof AdminIndexRoute
+  CastingIndexRoute: typeof CastingIndexRoute
+  ManageTeamsIndexRoute: typeof ManageTeamsIndexRoute
+  SignInIndexRoute: typeof SignInIndexRoute
+  SignUpIndexRoute: typeof SignUpIndexRoute
+  TournamentIndexRoute: typeof TournamentIndexRoute
+  UserIndexRoute: typeof UserIndexRoute
+  MatchMatch_idIndexRoute: typeof MatchMatch_idIndexRoute
+  RegisterTeamIndexRoute: typeof RegisterTeamIndexRoute
+  StatsMatch_idIndexRoute: typeof StatsMatch_idIndexRoute
+  TournamentTournamentIdStageStageIdRouteRoute: typeof TournamentTournamentIdStageStageIdRouteRouteWithChildren
+  MatchMatch_idStatsPageRoute: typeof MatchMatch_idStatsPageRoute
 }
 
-declare module "@tanstack/react-router" {
-    interface FileRoutesByPath {
-        "/not-found": {
-            id: "/not-found";
-            path: "/not-found";
-            fullPath: "/not-found";
-            preLoaderRoute: typeof NotFoundRouteImport;
-            parentRoute: typeof rootRouteImport;
-        };
-        "/error": {
-            id: "/error";
-            path: "/error";
-            fullPath: "/error";
-            preLoaderRoute: typeof ErrorRouteImport;
-            parentRoute: typeof rootRouteImport;
-        };
-        "/": {
-            id: "/";
-            path: "/";
-            fullPath: "/";
-            preLoaderRoute: typeof IndexRouteImport;
-            parentRoute: typeof rootRouteImport;
-        };
-        "/user/": {
-            id: "/user/";
-            path: "/user";
-            fullPath: "/user";
-            preLoaderRoute: typeof UserIndexRouteImport;
-            parentRoute: typeof rootRouteImport;
-        };
-        "/tournament/": {
-            id: "/tournament/";
-            path: "/tournament";
-            fullPath: "/tournament";
-            preLoaderRoute: typeof TournamentIndexRouteImport;
-            parentRoute: typeof rootRouteImport;
-        };
-        "/sign-up/": {
-            id: "/sign-up/";
-            path: "/sign-up";
-            fullPath: "/sign-up";
-            preLoaderRoute: typeof SignUpIndexRouteImport;
-            parentRoute: typeof rootRouteImport;
-        };
-        "/sign-in/": {
-            id: "/sign-in/";
-            path: "/sign-in";
-            fullPath: "/sign-in";
-            preLoaderRoute: typeof SignInIndexRouteImport;
-            parentRoute: typeof rootRouteImport;
-        };
-        "/manage-teams/": {
-            id: "/manage-teams/";
-            path: "/manage-teams";
-            fullPath: "/manage-teams";
-            preLoaderRoute: typeof ManageTeamsIndexRouteImport;
-            parentRoute: typeof rootRouteImport;
-        };
-        "/casting/": {
-            id: "/casting/";
-            path: "/casting";
-            fullPath: "/casting";
-            preLoaderRoute: typeof CastingIndexRouteImport;
-            parentRoute: typeof rootRouteImport;
-        };
-        "/admin/": {
-            id: "/admin/";
-            path: "/admin";
-            fullPath: "/admin";
-            preLoaderRoute: typeof AdminIndexRouteImport;
-            parentRoute: typeof rootRouteImport;
-        };
-        "/team/$team_id": {
-            id: "/team/$team_id";
-            path: "/team/$team_id";
-            fullPath: "/team/$team_id";
-            preLoaderRoute: typeof TeamTeam_idRouteRouteImport;
-            parentRoute: typeof rootRouteImport;
-        };
-        "/team/$team_id/": {
-            id: "/team/$team_id/";
-            path: "/";
-            fullPath: "/team/$team_id/";
-            preLoaderRoute: typeof TeamTeam_idIndexRouteImport;
-            parentRoute: typeof TeamTeam_idRouteRoute;
-        };
-        "/stats/$match_id/": {
-            id: "/stats/$match_id/";
-            path: "/stats/$match_id";
-            fullPath: "/stats/$match_id";
-            preLoaderRoute: typeof StatsMatch_idIndexRouteImport;
-            parentRoute: typeof rootRouteImport;
-        };
-        "/register/team/": {
-            id: "/register/team/";
-            path: "/register/team";
-            fullPath: "/register/team";
-            preLoaderRoute: typeof RegisterTeamIndexRouteImport;
-            parentRoute: typeof rootRouteImport;
-        };
-        "/match/$match_id/": {
-            id: "/match/$match_id/";
-            path: "/match/$match_id";
-            fullPath: "/match/$match_id";
-            preLoaderRoute: typeof MatchMatch_idIndexRouteImport;
-            parentRoute: typeof rootRouteImport;
-        };
-        "/team/$team_id/members": {
-            id: "/team/$team_id/members";
-            path: "/members";
-            fullPath: "/team/$team_id/members";
-            preLoaderRoute: typeof TeamTeam_idMembersRouteImport;
-            parentRoute: typeof TeamTeam_idRouteRoute;
-        };
-        "/team/$team_id/matches": {
-            id: "/team/$team_id/matches";
-            path: "/matches";
-            fullPath: "/team/$team_id/matches";
-            preLoaderRoute: typeof TeamTeam_idMatchesRouteImport;
-            parentRoute: typeof TeamTeam_idRouteRoute;
-        };
-        "/match/$match_id/stats/page": {
-            id: "/match/$match_id/stats/page";
-            path: "/match/$match_id/stats/page";
-            fullPath: "/match/$match_id/stats/page";
-            preLoaderRoute: typeof MatchMatch_idStatsPageRouteImport;
-            parentRoute: typeof rootRouteImport;
-        };
-        "/tournament/$tournamentId/stage/$stageId": {
-            id: "/tournament/$tournamentId/stage/$stageId";
-            path: "/tournament/$tournamentId/stage/$stageId";
-            fullPath: "/tournament/$tournamentId/stage/$stageId";
-            preLoaderRoute: typeof TournamentTournamentIdStageStageIdRouteRouteImport;
-            parentRoute: typeof rootRouteImport;
-        };
-        "/tournament/$tournamentId/stage/$stageId/": {
-            id: "/tournament/$tournamentId/stage/$stageId/";
-            path: "/";
-            fullPath: "/tournament/$tournamentId/stage/$stageId/";
-            preLoaderRoute: typeof TournamentTournamentIdStageStageIdIndexRouteImport;
-            parentRoute: typeof TournamentTournamentIdStageStageIdRouteRoute;
-        };
-        "/tournament/$tournamentId/stage/$stageId/teams": {
-            id: "/tournament/$tournamentId/stage/$stageId/teams";
-            path: "/teams";
-            fullPath: "/tournament/$tournamentId/stage/$stageId/teams";
-            preLoaderRoute: typeof TournamentTournamentIdStageStageIdTeamsRouteImport;
-            parentRoute: typeof TournamentTournamentIdStageStageIdRouteRoute;
-        };
-        "/tournament/$tournamentId/stage/$stageId/standings": {
-            id: "/tournament/$tournamentId/stage/$stageId/standings";
-            path: "/standings";
-            fullPath: "/tournament/$tournamentId/stage/$stageId/standings";
-            preLoaderRoute: typeof TournamentTournamentIdStageStageIdStandingsRouteImport;
-            parentRoute: typeof TournamentTournamentIdStageStageIdRouteRoute;
-        };
-        "/tournament/$tournamentId/stage/$stageId/bracket": {
-            id: "/tournament/$tournamentId/stage/$stageId/bracket";
-            path: "/bracket";
-            fullPath: "/tournament/$tournamentId/stage/$stageId/bracket";
-            preLoaderRoute: typeof TournamentTournamentIdStageStageIdBracketRouteImport;
-            parentRoute: typeof TournamentTournamentIdStageStageIdRouteRoute;
-        };
+declare module '@tanstack/react-router' {
+  interface FileRoutesByPath {
+    '/not-found': {
+      id: '/not-found'
+      path: '/not-found'
+      fullPath: '/not-found'
+      preLoaderRoute: typeof NotFoundRouteImport
+      parentRoute: typeof rootRouteImport
     }
+    '/error': {
+      id: '/error'
+      path: '/error'
+      fullPath: '/error'
+      preLoaderRoute: typeof ErrorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/user/': {
+      id: '/user/'
+      path: '/user'
+      fullPath: '/user'
+      preLoaderRoute: typeof UserIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tournament/': {
+      id: '/tournament/'
+      path: '/tournament'
+      fullPath: '/tournament'
+      preLoaderRoute: typeof TournamentIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sign-up/': {
+      id: '/sign-up/'
+      path: '/sign-up'
+      fullPath: '/sign-up'
+      preLoaderRoute: typeof SignUpIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sign-in/': {
+      id: '/sign-in/'
+      path: '/sign-in'
+      fullPath: '/sign-in'
+      preLoaderRoute: typeof SignInIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/manage-teams/': {
+      id: '/manage-teams/'
+      path: '/manage-teams'
+      fullPath: '/manage-teams'
+      preLoaderRoute: typeof ManageTeamsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/casting/': {
+      id: '/casting/'
+      path: '/casting'
+      fullPath: '/casting'
+      preLoaderRoute: typeof CastingIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/team/$team_id': {
+      id: '/team/$team_id'
+      path: '/team/$team_id'
+      fullPath: '/team/$team_id'
+      preLoaderRoute: typeof TeamTeam_idRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/team/$team_id/': {
+      id: '/team/$team_id/'
+      path: '/'
+      fullPath: '/team/$team_id/'
+      preLoaderRoute: typeof TeamTeam_idIndexRouteImport
+      parentRoute: typeof TeamTeam_idRouteRoute
+    }
+    '/stats/$match_id/': {
+      id: '/stats/$match_id/'
+      path: '/stats/$match_id'
+      fullPath: '/stats/$match_id'
+      preLoaderRoute: typeof StatsMatch_idIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/register/team/': {
+      id: '/register/team/'
+      path: '/register/team'
+      fullPath: '/register/team'
+      preLoaderRoute: typeof RegisterTeamIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/match/$match_id/': {
+      id: '/match/$match_id/'
+      path: '/match/$match_id'
+      fullPath: '/match/$match_id'
+      preLoaderRoute: typeof MatchMatch_idIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/team/$team_id/members': {
+      id: '/team/$team_id/members'
+      path: '/members'
+      fullPath: '/team/$team_id/members'
+      preLoaderRoute: typeof TeamTeam_idMembersRouteImport
+      parentRoute: typeof TeamTeam_idRouteRoute
+    }
+    '/team/$team_id/matches': {
+      id: '/team/$team_id/matches'
+      path: '/matches'
+      fullPath: '/team/$team_id/matches'
+      preLoaderRoute: typeof TeamTeam_idMatchesRouteImport
+      parentRoute: typeof TeamTeam_idRouteRoute
+    }
+    '/match/$match_id/stats/page': {
+      id: '/match/$match_id/stats/page'
+      path: '/match/$match_id/stats/page'
+      fullPath: '/match/$match_id/stats/page'
+      preLoaderRoute: typeof MatchMatch_idStatsPageRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tournament/$tournamentId/stage/$stageId': {
+      id: '/tournament/$tournamentId/stage/$stageId'
+      path: '/tournament/$tournamentId/stage/$stageId'
+      fullPath: '/tournament/$tournamentId/stage/$stageId'
+      preLoaderRoute: typeof TournamentTournamentIdStageStageIdRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tournament/$tournamentId/stage/$stageId/': {
+      id: '/tournament/$tournamentId/stage/$stageId/'
+      path: '/'
+      fullPath: '/tournament/$tournamentId/stage/$stageId/'
+      preLoaderRoute: typeof TournamentTournamentIdStageStageIdIndexRouteImport
+      parentRoute: typeof TournamentTournamentIdStageStageIdRouteRoute
+    }
+    '/tournament/$tournamentId/stage/$stageId/teams': {
+      id: '/tournament/$tournamentId/stage/$stageId/teams'
+      path: '/teams'
+      fullPath: '/tournament/$tournamentId/stage/$stageId/teams'
+      preLoaderRoute: typeof TournamentTournamentIdStageStageIdTeamsRouteImport
+      parentRoute: typeof TournamentTournamentIdStageStageIdRouteRoute
+    }
+    '/tournament/$tournamentId/stage/$stageId/standings': {
+      id: '/tournament/$tournamentId/stage/$stageId/standings'
+      path: '/standings'
+      fullPath: '/tournament/$tournamentId/stage/$stageId/standings'
+      preLoaderRoute: typeof TournamentTournamentIdStageStageIdStandingsRouteImport
+      parentRoute: typeof TournamentTournamentIdStageStageIdRouteRoute
+    }
+    '/tournament/$tournamentId/stage/$stageId/bracket': {
+      id: '/tournament/$tournamentId/stage/$stageId/bracket'
+      path: '/bracket'
+      fullPath: '/tournament/$tournamentId/stage/$stageId/bracket'
+      preLoaderRoute: typeof TournamentTournamentIdStageStageIdBracketRouteImport
+      parentRoute: typeof TournamentTournamentIdStageStageIdRouteRoute
+    }
+  }
 }
 
 interface TeamTeam_idRouteRouteChildren {
-    TeamTeam_idMatchesRoute: typeof TeamTeam_idMatchesRoute;
-    TeamTeam_idMembersRoute: typeof TeamTeam_idMembersRoute;
-    TeamTeam_idIndexRoute: typeof TeamTeam_idIndexRoute;
+  TeamTeam_idMatchesRoute: typeof TeamTeam_idMatchesRoute
+  TeamTeam_idMembersRoute: typeof TeamTeam_idMembersRoute
+  TeamTeam_idIndexRoute: typeof TeamTeam_idIndexRoute
 }
 
 const TeamTeam_idRouteRouteChildren: TeamTeam_idRouteRouteChildren = {
-    TeamTeam_idMatchesRoute: TeamTeam_idMatchesRoute,
-    TeamTeam_idMembersRoute: TeamTeam_idMembersRoute,
-    TeamTeam_idIndexRoute: TeamTeam_idIndexRoute,
-};
+  TeamTeam_idMatchesRoute: TeamTeam_idMatchesRoute,
+  TeamTeam_idMembersRoute: TeamTeam_idMembersRoute,
+  TeamTeam_idIndexRoute: TeamTeam_idIndexRoute,
+}
 
-const TeamTeam_idRouteRouteWithChildren = TeamTeam_idRouteRoute._addFileChildren(
-    TeamTeam_idRouteRouteChildren,
-);
+const TeamTeam_idRouteRouteWithChildren =
+  TeamTeam_idRouteRoute._addFileChildren(TeamTeam_idRouteRouteChildren)
 
 interface TournamentTournamentIdStageStageIdRouteRouteChildren {
-    TournamentTournamentIdStageStageIdBracketRoute: typeof TournamentTournamentIdStageStageIdBracketRoute;
-    TournamentTournamentIdStageStageIdStandingsRoute: typeof TournamentTournamentIdStageStageIdStandingsRoute;
-    TournamentTournamentIdStageStageIdTeamsRoute: typeof TournamentTournamentIdStageStageIdTeamsRoute;
-    TournamentTournamentIdStageStageIdIndexRoute: typeof TournamentTournamentIdStageStageIdIndexRoute;
+  TournamentTournamentIdStageStageIdBracketRoute: typeof TournamentTournamentIdStageStageIdBracketRoute
+  TournamentTournamentIdStageStageIdStandingsRoute: typeof TournamentTournamentIdStageStageIdStandingsRoute
+  TournamentTournamentIdStageStageIdTeamsRoute: typeof TournamentTournamentIdStageStageIdTeamsRoute
+  TournamentTournamentIdStageStageIdIndexRoute: typeof TournamentTournamentIdStageStageIdIndexRoute
 }
 
 const TournamentTournamentIdStageStageIdRouteRouteChildren: TournamentTournamentIdStageStageIdRouteRouteChildren =
-    {
-        TournamentTournamentIdStageStageIdBracketRoute:
-            TournamentTournamentIdStageStageIdBracketRoute,
-        TournamentTournamentIdStageStageIdStandingsRoute:
-            TournamentTournamentIdStageStageIdStandingsRoute,
-        TournamentTournamentIdStageStageIdTeamsRoute: TournamentTournamentIdStageStageIdTeamsRoute,
-        TournamentTournamentIdStageStageIdIndexRoute: TournamentTournamentIdStageStageIdIndexRoute,
-    };
+  {
+    TournamentTournamentIdStageStageIdBracketRoute:
+      TournamentTournamentIdStageStageIdBracketRoute,
+    TournamentTournamentIdStageStageIdStandingsRoute:
+      TournamentTournamentIdStageStageIdStandingsRoute,
+    TournamentTournamentIdStageStageIdTeamsRoute:
+      TournamentTournamentIdStageStageIdTeamsRoute,
+    TournamentTournamentIdStageStageIdIndexRoute:
+      TournamentTournamentIdStageStageIdIndexRoute,
+  }
 
 const TournamentTournamentIdStageStageIdRouteRouteWithChildren =
-    TournamentTournamentIdStageStageIdRouteRoute._addFileChildren(
-        TournamentTournamentIdStageStageIdRouteRouteChildren,
-    );
+  TournamentTournamentIdStageStageIdRouteRoute._addFileChildren(
+    TournamentTournamentIdStageStageIdRouteRouteChildren,
+  )
 
 const rootRouteChildren: RootRouteChildren = {
-    IndexRoute: IndexRoute,
-    ErrorRoute: ErrorRoute,
-    NotFoundRoute: NotFoundRoute,
-    TeamTeam_idRouteRoute: TeamTeam_idRouteRouteWithChildren,
-    AdminIndexRoute: AdminIndexRoute,
-    CastingIndexRoute: CastingIndexRoute,
-    ManageTeamsIndexRoute: ManageTeamsIndexRoute,
-    SignInIndexRoute: SignInIndexRoute,
-    SignUpIndexRoute: SignUpIndexRoute,
-    TournamentIndexRoute: TournamentIndexRoute,
-    UserIndexRoute: UserIndexRoute,
-    MatchMatch_idIndexRoute: MatchMatch_idIndexRoute,
-    RegisterTeamIndexRoute: RegisterTeamIndexRoute,
-    StatsMatch_idIndexRoute: StatsMatch_idIndexRoute,
-    TournamentTournamentIdStageStageIdRouteRoute:
-        TournamentTournamentIdStageStageIdRouteRouteWithChildren,
-    MatchMatch_idStatsPageRoute: MatchMatch_idStatsPageRoute,
-};
+  IndexRoute: IndexRoute,
+  ErrorRoute: ErrorRoute,
+  NotFoundRoute: NotFoundRoute,
+  TeamTeam_idRouteRoute: TeamTeam_idRouteRouteWithChildren,
+  AdminIndexRoute: AdminIndexRoute,
+  CastingIndexRoute: CastingIndexRoute,
+  ManageTeamsIndexRoute: ManageTeamsIndexRoute,
+  SignInIndexRoute: SignInIndexRoute,
+  SignUpIndexRoute: SignUpIndexRoute,
+  TournamentIndexRoute: TournamentIndexRoute,
+  UserIndexRoute: UserIndexRoute,
+  MatchMatch_idIndexRoute: MatchMatch_idIndexRoute,
+  RegisterTeamIndexRoute: RegisterTeamIndexRoute,
+  StatsMatch_idIndexRoute: StatsMatch_idIndexRoute,
+  TournamentTournamentIdStageStageIdRouteRoute:
+    TournamentTournamentIdStageStageIdRouteRouteWithChildren,
+  MatchMatch_idStatsPageRoute: MatchMatch_idStatsPageRoute,
+}
 export const routeTree = rootRouteImport
-    ._addFileChildren(rootRouteChildren)
-    ._addFileTypes<FileRouteTypes>();
+  ._addFileChildren(rootRouteChildren)
+  ._addFileTypes<FileRouteTypes>()
 
-import type { getRouter } from "./router.tsx";
-import type { createStart } from "@tanstack/react-start";
-declare module "@tanstack/react-start" {
-    interface Register {
-        ssr: true;
-        router: Awaited<ReturnType<typeof getRouter>>;
-    }
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
 }

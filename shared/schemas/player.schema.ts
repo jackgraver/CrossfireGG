@@ -1,4 +1,4 @@
-import { pgTable, serial, integer, text, timestamp, index } from "drizzle-orm/pg-core";
+import { pgTable, serial, integer, text, timestamp, index, boolean } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { teams, users, matches } from "@repo/schemas";
 import { maps } from "./map.schema";
@@ -19,6 +19,10 @@ export const players = pgTable(
         player_logo: text("player_logo"),
         country: text("country"),
         base_role: text("base_role", { enum: ["starter", "sub", "coach"] }).default("starter"),
+        hltv_id: text("hltv_id"),
+        hltv_verified: boolean("hltv_verified").default(false),
+        discord_id: text("discord_id"),
+        discord_verified: boolean("discord_verified").default(false),
         created_at: timestamp("created_at").notNull().defaultNow(),
         updated_at: timestamp("updated_at").notNull().defaultNow(),
         deleted_at: timestamp("deleted_at"),

@@ -7,7 +7,8 @@
     ],
     "scripts": {
         "fmt": "oxfmt",
-        "fmt:check": "oxfmt --check"
+        "fmt:check": "oxfmt --check",
+        "db:push": "drizzle-kit push"
     },
     "dependencies": {
         "better-auth": "^1.4.17",

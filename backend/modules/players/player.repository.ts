@@ -24,6 +24,7 @@ export const playerRepository = {
     upsertPlayerByFaceitId: async (
         playerData: {
             player_name: string;
+            user_id?: string | null;
             faceit_id: string;
             player_logo: string | null;
             country: string | null;
@@ -43,6 +44,7 @@ export const playerRepository = {
                 .update(players)
                 .set({
                     player_name: playerData.player_name,
+                    user_id: playerData.user_id || null,
                     player_logo: playerData.player_logo,
                     country: playerData.country,
                     base_role: playerData.base_role,

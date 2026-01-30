@@ -64,7 +64,28 @@ function SignIn() {
 
     return (
         <UserForm>
-            <h1 className="mb-2 text-2xl font-bold text-white">Welcome Back</h1>
+            <h1 className="mb-2 text-2xl font-bold text-white">
+                Welcome Back
+                <button
+                    className="bg-border text-textSecondary hover:bg-secondBg flex-1 rounded px-4 py-2"
+                    onClick={() => {
+                        authClient.signUp.email(
+                            {
+                                email: "test@test2.com",
+                                password: "password",
+                                name: "test",
+                            },
+                            {
+                                onError: (error) => {
+                                    console.error(error);
+                                },
+                            },
+                        );
+                    }}
+                >
+                    test
+                </button>
+            </h1>
             <form
                 onSubmit={(e) => {
                     e.preventDefault();

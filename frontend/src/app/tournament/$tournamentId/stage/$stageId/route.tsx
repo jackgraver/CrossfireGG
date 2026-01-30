@@ -3,6 +3,7 @@ import { useTournamentById } from "./-queries/tournament.queries";
 import { formatDateOnly, toUnixTimestamp } from "@/lib/dateUtils";
 import { Calendar, Clock, LayoutDashboard, Trophy, Users } from "lucide-react";
 import { cn } from "@/utils/cn";
+import SignUpButton from "@/app/tournament/-components/SignUpButton";
 
 const InfoTile = ({
     icon: Icon,
@@ -105,7 +106,7 @@ function RouteComponent() {
                         <h1 className="text-textPrimary mb-2 pt-2 text-5xl font-black tracking-tight md:text-6xl">
                             {tournament.name}
                         </h1>
-
+                        {tournament.status === "upcoming" && <SignUpButton />}
                         <div className="flex flex-wrap items-center gap-x-12 gap-y-6 pt-4">
                             <InfoTile
                                 icon={Calendar}

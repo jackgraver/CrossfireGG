@@ -25,7 +25,7 @@ export const Route = createFileRoute("/register/team/")({
 function RegisterPage() {
     const navigate = useNavigate();
     const { tournamentId } = Route.useSearch();
-    const { user } = useAuth();
+    const { user, isLoading } = useAuth();
     const [registeredTeamId, setRegisteredTeamId] = useState<number>(0);
     const [stepErrors, setStepErrors] = useState<StepValidationErrors>({});
 
@@ -47,7 +47,11 @@ function RegisterPage() {
 
     const isLoggedIn = !!user;
 
-    if (!isLoggedIn) {
+    if (isLoading) {
+        return null;
+    }
+
+    if (!isLoggedIn && !isLoading) {
         return (
             <UserForm>
                 <button className="rounded bg-orange-500 p-2 font-semibold text-white hover:bg-orange-600 disabled:opacity-50">
@@ -56,6 +60,7 @@ function RegisterPage() {
             </UserForm>
         );
     }
+
     const handleBack = () => {
         setStepErrors({});
         goBack();
