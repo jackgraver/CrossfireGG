@@ -46,6 +46,12 @@ app.use(
     }),
 );
 
+app.use((req, res, next) => {
+    setTimeout(() => {
+        next();
+    }, 1000);
+});
+
 app.all("/api/auth/{*any}", toNodeHandler(auth));
 
 app.use(express.json());

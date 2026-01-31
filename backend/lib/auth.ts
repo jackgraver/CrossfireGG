@@ -23,7 +23,7 @@ export const auth = betterAuth({
     },
     hooks: {
         after: createAuthMiddleware(async (ctx) => {
-            const returned = ctx.context.returned as { token: string, user: { id: string } };
+            const returned = ctx.context.returned as { token: string; user: { id: string } };
             if (ctx.path.startsWith("/sign-up/email") && ctx.method === "POST" && returned.token) {
                 //TODO: switch to OAUTH
                 //TODO: fetch player information from faceit with OAUTH info?

@@ -52,7 +52,7 @@ export default function TeamFormFields({ form }: TeamFormFieldsProps) {
     return (
         <div className="flex flex-row gap-4">
             {renderField("team.name", "Team Name")}
-            {renderField("team.twitter", "Twitter / X")}
+            {renderField("team.twitter", "Twitter / X (Optional)")}
         </div>
     );
 }

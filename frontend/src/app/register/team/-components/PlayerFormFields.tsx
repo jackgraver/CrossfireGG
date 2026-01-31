@@ -1,4 +1,5 @@
 import { Checkbox, Select } from "@/shared/form";
+import { cn } from "@/utils/cn";
 import { Trash } from "lucide-react";
 
 type PlayerFormFieldsProps = {
@@ -53,11 +54,15 @@ export default function PlayerFormFields({
                                 title={name === "playerName" ? "Cannot change player name" : ""}
                             />
                         </div>
-                        {!field.state.meta.isValid && (
-                            <em role="alert" className="text-sm font-medium text-red-500 pl-1">
-                                {field.state.meta.errors.join(", ")}
-                            </em>
-                        )}
+                        <em
+                            role="alert"
+                            className={cn(
+                                "text-sm font-medium pl-1 min-h-5",
+                                field.state.meta.isValid ? "invisible" : "text-red-500 visible",
+                            )}
+                        >
+                            {field.state.meta.errors.join(", ")}
+                        </em>
                     </div>
                 );
             }}

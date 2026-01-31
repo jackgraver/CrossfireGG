@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useForm } from "@tanstack/react-form";
 import { useServerFn } from "@tanstack/react-start";
@@ -79,11 +79,25 @@ function SignIn() {
                                 onError: (error) => {
                                     console.error(error);
                                 },
+                                onSuccess: () => {
+                                    console.log("success");
+                                    refetch(); //TODO: this is necessary to update the user role, make sure it exists in proper setup
+                                    navigate({ to: "/" });
+                                },
                             },
                         );
                     }}
                 >
                     test
+                </button>
+                <button
+                    onClick={() => {
+                        authClient.signOut().catch((error) => {
+                            console.error(error);
+                        });
+                    }}
+                >
+                    out
                 </button>
             </h1>
             <form

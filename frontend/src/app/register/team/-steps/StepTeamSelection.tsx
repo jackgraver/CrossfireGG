@@ -63,30 +63,30 @@ export default function StepTeamSelection({
                         captainFaceitId: value.leader ?? userFaceitId ?? "",
                         logo: value.avatar ?? "",
                     });
-                    // form.setFieldValue(
-                    //     "starters",
-                    //     userFaceitId
-                    //         ? [
-                    //             {
-                    //                 faceitId: userFaceitId,
-                    //                 hltvLink: "",
-                    //                 discordId: "",
-                    //                 playerName: "",
-                    //                 nationality: "",
-                    //                 avatar: "",
-                    //             },
-                    //         ]
-                    //         : [],
-                    // );
-                    // form.setFieldValue("subs", []);
-                    // form.setFieldValue("coach", {
-                    //     faceitId: "",
-                    //     hltvLink: "",
-                    //     discordId: "",
-                    //     playerName: "",
-                    //     nationality: "",
-                    //     avatar: "",
-                    // });
+                    form.setFieldValue(
+                        "starters",
+                        userFaceitId
+                            ? [
+                                  {
+                                      faceitId: userFaceitId,
+                                      hltvLink: "",
+                                      discordId: "",
+                                      playerName: "",
+                                      nationality: "",
+                                      avatar: "",
+                                  },
+                              ]
+                            : [],
+                    );
+                    form.setFieldValue("subs", []);
+                    form.setFieldValue("coach", {
+                        faceitId: "",
+                        hltvLink: "",
+                        discordId: "",
+                        playerName: "",
+                        nationality: "",
+                        avatar: "",
+                    });
                 }}
             >
                 {!isLoading &&

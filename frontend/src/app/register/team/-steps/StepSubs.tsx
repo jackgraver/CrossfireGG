@@ -109,7 +109,7 @@ export default function StepSubs({
                     Complete the information for each selected substitute.
                 </p>
             </div>
-            <div className="flex flex-col gap-y-8">
+            <div className="flex flex-col gap-y-4">
                 {subs.length === 0 && (
                     <div className="flex h-32 items-center justify-center rounded-lg border-2 border-dashed border-gray-700 text-gray-500">
                         Select players from the list to see their details (optional)
@@ -118,7 +118,7 @@ export default function StepSubs({
                 {subs.map((player: any, index: number) => (
                     <div
                         key={`${index}-${player.faceitId}`}
-                        className="rounded-lg bg-gray-800/20 p-4 transition-all duration-200 border border-gray-700/50 hover:border-gray-600/50"
+                        className="rounded-lg  transition-all duration-200 "
                     >
                         <PlayerFormFields
                             form={form}
