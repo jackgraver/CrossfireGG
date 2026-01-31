@@ -14,7 +14,6 @@ type InputProps = {
     disabled?: boolean;
     children?: React.ReactNode;
     className?: string;
-    inputClassName?: string;
     title?: string;
 };
 
@@ -30,10 +29,9 @@ export function Input({
     disabled,
     children,
     className,
-    inputClassName,
     title,
 }: InputProps) {
-    const isInvalid =  errors && errors.length > 0 ? String(errors[0]) : undefined;
+    const isInvalid = errors && errors.length > 0 ? String(errors[0]) : undefined;
 
     const firstError = errors && errors.length > 0 ? String(errors[0]) : undefined;
     const extraErrors = errors && errors.length > 1 ? errors.slice(1).join(", ") : undefined;
@@ -69,7 +67,6 @@ export function Input({
                                 ? "border-red-500 focus:ring-red-500"
                                 : "border-gray-400 focus:border-orange-500 focus:ring-orange-500",
                             "disabled:opacity-50 disabled:cursor-not-allowed",
-                            inputClassName,
                         )}
                     />
                     {children}
@@ -79,12 +76,14 @@ export function Input({
                 role="alert"
                 className={cn(
                     styles.errorText,
-                    "text-sm font-medium min-h-5",
+                    "text-sm font-medium min-h-5 mt-[0.5px]",
                     isInvalid ? "text-red-500 visible" : "invisible",
                 )}
             >
                 {firstError}
-                {extraErrors && <span title={extraErrors}> {"+" + (errors && errors.length - 1)}</span>}
+                {extraErrors && (
+                    <span title={extraErrors}> {"+" + (errors && errors.length - 1)}</span>
+                )}
             </em>
         </div>
     );

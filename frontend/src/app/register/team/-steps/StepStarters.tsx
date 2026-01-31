@@ -124,7 +124,7 @@ export default function StepStarters({
                     Complete the information for each selected starter.
                 </p>
             </div>
-            <div className="flex flex-col gap-y-8">
+            <div className="flex flex-col gap-y-2">
                 {starters.length === 0 && (
                     <div className="flex h-32 items-center justify-center rounded-lg border-2 border-dashed border-gray-700 text-gray-500">
                         Select players from the list to see their details

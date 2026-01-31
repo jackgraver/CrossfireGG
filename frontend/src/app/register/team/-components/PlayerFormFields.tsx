@@ -8,11 +8,7 @@ type PlayerFormFieldsProps = {
     onRemove?: () => void;
 };
 
-export default function PlayerFormFields({
-    form,
-    namePrefix,
-    onRemove,
-}: PlayerFormFieldsProps) {
+export default function PlayerFormFields({ form, namePrefix, onRemove }: PlayerFormFieldsProps) {
     const renderField = (name: string, label: string, placeholder: string = "") => (
         <form.Field
             name={`${namePrefix}.${name}`}
@@ -31,7 +27,6 @@ export default function PlayerFormFields({
                     placeholder={placeholder}
                     disabled={name === "playerName"}
                     title={name === "playerName" ? "Cannot change player name" : ""}
-                    inputClassName="bg-secondBg border-border"
                 />
             )}
         />
