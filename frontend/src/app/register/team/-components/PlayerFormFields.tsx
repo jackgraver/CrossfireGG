@@ -1,5 +1,4 @@
-import { Checkbox, Select } from "@/shared/form";
-import { cn } from "@/utils/cn";
+import { Input } from "@/shared/form";
 import { Trash } from "lucide-react";
 
 type PlayerFormFieldsProps = {
@@ -12,60 +11,29 @@ type PlayerFormFieldsProps = {
 export default function PlayerFormFields({
     form,
     namePrefix,
-    labelPrefix,
     onRemove,
 }: PlayerFormFieldsProps) {
-    const inputClasses = (isInvalid: boolean) => `
-        w-full rounded-md border p-2 bg-secondBg text-text-primary transition-colors
-        ${isInvalid ? "border-red-500 focus:ring-red-500" : "border-border focus:border-orange-500 focus:ring-orange-500"}
-        disabled:opacity-50 disabled:cursor-not-allowed
-    `;
-
     const renderField = (name: string, label: string, placeholder: string = "") => (
         <form.Field
             name={`${namePrefix}.${name}`}
             validators={{
-                onChange: ({ value }: any) =>
-                    value.length < 1 ? `${label} is required` : undefined,
-                onMount: ({ value }: any) =>
-                    value.length < 1 ? `${label} is required` : undefined,
+                onChange: ({ value }: any) => (!value ? `${label} is required` : undefined),
+                onMount: ({ value }: any) => (!value ? `${label} is required` : undefined),
             }}
-            children={(field: any) => {
-                const isInvalid =
-                    field.state.meta.touchedErrors && field.state.meta.touchedErrors.length > 0;
-                return (
-                    <div className="flex flex-1 flex-col">
-                        <div className="flex flex-1 flex-col gap-1.5">
-                            <label
-                                htmlFor={field.name}
-                                className="font-medium text-textSecondary uppercase text-xs tracking-wider"
-                            >
-                                {label}
-                            </label>
-                            <input
-                                id={field.name}
-                                className={inputClasses(isInvalid)}
-                                type={"text"}
-                                value={field.state.value}
-                                placeholder={placeholder}
-                                onChange={(e) => field.handleChange(e.target.value)}
-                                onBlur={field.handleBlur}
-                                disabled={name === "playerName" ? true : false}
-                                title={name === "playerName" ? "Cannot change player name" : ""}
-                            />
-                        </div>
-                        <em
-                            role="alert"
-                            className={cn(
-                                "text-sm font-medium pl-1 min-h-5",
-                                field.state.meta.isValid ? "invisible" : "text-red-500 visible",
-                            )}
-                        >
-                            {field.state.meta.errors.join(", ")}
-                        </em>
-                    </div>
-                );
-            }}
+            children={(field: any) => (
+                <Input
+                    name={field.name}
+                    value={field.state.value}
+                    onChange={field.handleChange}
+                    onBlur={field.handleBlur}
+                    errors={field.state.meta.errors}
+                    label={label}
+                    placeholder={placeholder}
+                    disabled={name === "playerName"}
+                    title={name === "playerName" ? "Cannot change player name" : ""}
+                    inputClassName="bg-secondBg border-border"
+                />
+            )}
         />
     );
 
