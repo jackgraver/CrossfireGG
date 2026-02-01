@@ -41,7 +41,9 @@ export default function StepCoach({
         <div className="flex flex-col gap-y-4">
             <div className="flex flex-col gap-y-1">
                 <h1 className="text-2xl font-bold text-white">Select Coach</h1>
-                <p className="text-sm text-gray-400">Choose a coach for your team.</p>
+                <p className="text-sm text-gray-400">
+                    Choose a coach for your team (optional).
+                </p>
             </div>
             {error && <div className="text-red-500">Error: {error.message}</div>}
             {isLoading && (
@@ -51,11 +53,12 @@ export default function StepCoach({
                 </div>
             )}
             <SelectableCardGroup
-                min={1}
+                min={0}
                 max={1}
-                selectedElements={coach.faceitId ? [coach] : []}
+                selectedElements={coach ? [coach] : []}
                 onChange={(value: any) => {
-                    if (coach.faceitId === value.user_id) {
+                    if (coach?.faceitId === value.user_id) {
+                        form.setFieldValue("coach", null);
                         return;
                     }
                     form.setFieldValue("coach", {
@@ -92,9 +95,20 @@ export default function StepCoach({
                     Complete the information for your team coach.
                 </p>
             </div>
-            <div className="rounded-lg transition-all duration-200">
-                <PlayerFormFields form={form} namePrefix="coach" labelPrefix="Coach" />
-            </div>
+            {!coach?.faceitId ? (
+                <div className="flex h-32 items-center justify-center rounded-lg border-2 border-dashed border-gray-700 text-gray-500">
+                    Select a coach from the list to see their details (optional)
+                </div>
+            ) : (
+                <div className="rounded-lg transition-all duration-200">
+                    <PlayerFormFields
+                        form={form}
+                        namePrefix="coach"
+                        labelPrefix="Coach"
+                        onRemove={() => form.setFieldValue("coach", null)}
+                    />
+                </div>
+            )}
         </div>
     );
 

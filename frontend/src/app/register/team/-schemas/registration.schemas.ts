@@ -10,6 +10,8 @@ const playerBaseSchema = z.object({
 
 export const playerSchema = playerBaseSchema;
 
+export type Player = z.infer<typeof playerSchema>;
+
 export const teamSchema = z.object({
     teamId: z.string().trim().min(1, "Team is required"),
     name: z.string().trim().min(2, "Team name is required"),
@@ -20,6 +22,8 @@ export const teamSchema = z.object({
 
 export const coachSchema = playerBaseSchema;
 
+export type Coach = z.infer<typeof coachSchema>;
+
 export const teamStepSchema = z.object({
     team: teamSchema,
 });
@@ -29,9 +33,9 @@ export const startersStepSchema = z.object({
 });
 
 export const subsStepSchema = z.object({
-    subs: z.array(playerSchema).max(3, "Max 3 substitutes"),
+    subs: z.array(playerSchema).max(3, "Max 3 substitutes").min(0),
 });
 
 export const coachStepSchema = z.object({
-    coach: coachSchema,
+    coach: coachSchema.optional().nullable(),
 });

@@ -31,6 +31,12 @@ export default function StepReview({
                 <p className="text-sm text-gray-400">
                     Please review your team registration details before submitting.
                 </p>
+                <button
+                    className="text-sm bg-green-600 text-white px-4 py-2 rounded-md"
+                    onClick={() => form.handleSubmit()}
+                >
+                    Finish Registration
+                </button>
             </div>
         </div>
     );

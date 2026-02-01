@@ -29,12 +29,7 @@ export default function SignUpButton() {
                 openDialog({
                     title: "Sign Up Team",
                     content: (
-                        <div>
-                            <p>
-                                You are already signed up for a team. Do you want to sign up for
-                                another team?
-                            </p>
-                        </div>
+                        <TeamSignUpDialog teamId={user?.teamId} />
                     ),
                     onConfirm: () => {
                         console.log("confirm");
@@ -61,3 +56,13 @@ export default function SignUpButton() {
         </Link>
     );
 }
+
+
+const TeamSignUpDialog = ({ teamId }: { teamId: number }) => {
+    return (
+        <div>
+            <h1>Confirm Lineup</h1>
+            <p>!!! To be implemented, will show lineup !!!</p>
+        </div>
+    );
+};

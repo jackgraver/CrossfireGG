@@ -2,7 +2,7 @@
 
 @theme {
     --color-cfRed: hsl(0, 100%, 49%);
-    --color-cfRedDark: hsl(0, 100%, 42%);
+    --color-cfRedDark: hsl(0, 100%, 35%);
     --color-mainBg: var(--color-main-bg);
     --color-mainBgTransparent: var(--color-main-bg-transparent);
     --color-firstBg: var(--color-first-bg);

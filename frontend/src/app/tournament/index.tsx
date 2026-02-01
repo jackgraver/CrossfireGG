@@ -31,7 +31,7 @@ function RouteComponent() {
     const tournaments = data || [];
 
     return (
-        <div className="mx-auto min-h-screen max-w-[1400px] p-6">
+        <div className="mx-auto min-h-screen max-w-[1600px] p-6">
             <header className="border-border/40 border-b pb-4">
                 <h1 className="text-textPrimary text-5xl font-black tracking-tight md:text-6xl">
                     Tournaments

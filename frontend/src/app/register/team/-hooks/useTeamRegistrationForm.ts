@@ -1,6 +1,6 @@
 import { useForm } from "@tanstack/react-form";
 import { useRegisterTeam } from "../-queries/registerTeam.queries";
-import { RegistrationFormData } from "../-types/registration.types";
+import { Player, RegistrationFormData } from "../-types/registration.types";
 
 type UseTeamRegistrationFormOptions = {
     userFaceitId?: string | null;
@@ -33,21 +33,15 @@ export function useTeamRegistrationForm(options: UseTeamRegistrationFormOptions 
                       },
                   ]
                 : [],
-            subs: [],
-            coach: {
-                faceitId: "",
-                hltvLink: "",
-                discordId: "",
-                playerName: "",
-                nationality: "",
-                avatar: "",
-            },
+            subs: [] as Player[],
+            coach: null as Player | null,
             agreements: {
                 rulesAndGuidelines: false,
                 discordConfirmation: false,
             },
         } satisfies RegistrationFormData,
         onSubmit: async ({ value }) => {
+            console.log("submit", value);
             registerMutation.mutate(
                 {
                     team: value.team,

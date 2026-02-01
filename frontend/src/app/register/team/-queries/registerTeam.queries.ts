@@ -46,10 +46,10 @@ export const useRegisterTeam = () => {
             team: Team;
             starters: Player[];
             subs: Player[];
-            coach: Player;
+            coach: Player | null;
             tournamentId: string | null;
         }) => {
-            return teamApi.registerTeam(team, starters, subs, coach, tournamentId);
+            return teamApi.registerTeam(team, starters, subs, coach as Player, tournamentId);
         },
     });
 };

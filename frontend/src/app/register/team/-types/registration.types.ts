@@ -23,7 +23,7 @@ export type RegistrationFormData = {
     team: Team;
     starters: Player[];
     subs: Player[];
-    coach: Player;
+    coach: Player | null;
     agreements: {
         rulesAndGuidelines: boolean;
         discordConfirmation: boolean;

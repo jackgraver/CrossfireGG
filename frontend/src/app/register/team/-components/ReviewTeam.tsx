@@ -6,7 +6,7 @@ type ReviewTeamProps = {
     teamId: string;
     players: Player[];
     subs: Player[];
-    coach: Player;
+    coach: Player | null;
 };
 
 export default function ReviewTeam({ teamId, players, subs, coach }: ReviewTeamProps) {
@@ -36,7 +36,7 @@ export default function ReviewTeam({ teamId, players, subs, coach }: ReviewTeamP
                     </div>
                 </>
             )}
-            {coach.faceitId && (
+            {coach && (
                 <>
                     <h2 className="text-lg font-bold">Coach</h2>
                     <div className="flex flex-col gap-2">
