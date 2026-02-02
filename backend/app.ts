@@ -46,17 +46,15 @@ app.use(
     }),
 );
 
-app.use((req, res, next) => {
-    setTimeout(() => {
-        next();
-    }, 1000);
-});
-
 app.all("/api/auth/{*any}", toNodeHandler(auth));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+app.use("/api/health", (_, res) => {
+    res.status(200).json({ message: "OK" });
+});
 
 app.use("/user", userRoutes);
 app.use("/tournament", tournamentRoutes);
