@@ -1,6 +1,4 @@
 import { z } from "zod";
-import { MatchWithParticipantsContract } from "./match.contracts";
-import { GroupWithMatchesContract } from "./group.contracts";
 
 export const StageFormatContract = z.object({
     id: z.number(),

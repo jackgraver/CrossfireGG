@@ -9,7 +9,9 @@ import {
     index,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import { matches, stagePlayers, teams } from "@repo/schemas";
+import { matches } from "./match.schema";
+import { stagePlayers } from "./stage_player.schema";
+import { teams } from "./team.schema";
 import { stageTeams } from "./stage_team.schema";
 import { maps } from "./map.schema";
 
@@ -49,18 +51,21 @@ export const matchParticipants = pgTable(
  * - Can be the winner of the match
  * - Can be the winner of multiple maps (reverse relationship from maps.winner_id)
  */
-export const matchParticipantsRelations = relations(matchParticipants, ({ one, many }) => ({
-    match: one(matches, {
-        fields: [matchParticipants.match_id],
-        references: [matches.id],
+export const matchParticipantsRelations = relations(
+    matchParticipants,
+    ({ one, many }) => ({
+        match: one(matches, {
+            fields: [matchParticipants.match_id],
+            references: [matches.id],
+        }),
+        stageTeam: one(stageTeams, {
+            fields: [matchParticipants.team_id],
+            references: [stageTeams.id],
+        }),
+        team: one(teams, {
+            fields: [matchParticipants.team_id],
+            references: [teams.id],
+        }),
+        maps: many(maps),
     }),
-    stageTeam: one(stageTeams, {
-        fields: [matchParticipants.team_id],
-        references: [stageTeams.id],
-    }),
-    team: one(teams, {
-        fields: [matchParticipants.team_id],
-        references: [teams.id],
-    }),
-    maps: many(maps),
-}));
+);

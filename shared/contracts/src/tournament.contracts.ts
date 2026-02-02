@@ -22,13 +22,17 @@ export const TournamentWithStagesContract = TournamentContract.extend({
     isRegistered: z.boolean(),
 });
 
-export type TournamentWithStagesDTO = z.infer<typeof TournamentWithStagesContract>;
+export type TournamentWithStagesDTO = z.infer<
+    typeof TournamentWithStagesContract
+>;
 
 export const TournamentWithMinimalStagesContract = TournamentContract.extend({
     stages: z.array(MinimalStageContract),
 });
 
-export type TournamentWithMinimalStagesDTO = z.infer<typeof TournamentWithMinimalStagesContract>;
+export type TournamentWithMinimalStagesDTO = z.infer<
+    typeof TournamentWithMinimalStagesContract
+>;
 
 export const CreateTournamentContract = z.object({
     name: z.string().min(2, "Tournament name is required"),

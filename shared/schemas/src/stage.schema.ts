@@ -1,6 +1,15 @@
-import { pgTable, serial, integer, text, timestamp, boolean, index } from "drizzle-orm/pg-core";
+import {
+    pgTable,
+    serial,
+    integer,
+    text,
+    timestamp,
+    boolean,
+    index,
+} from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import { matches, tournaments } from "@repo/schemas";
+import { matches } from "./match.schema";
+import { tournaments } from "./tournament.schema";
 import { groups } from "./group.schema";
 import { stageTeams } from "./stage_team.schema";
 import { stagePlayers } from "./stage_player.schema";

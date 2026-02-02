@@ -1,0 +1,17 @@
+node_modules
+.output
+.next
+dist
+*.log
+.env*
+.git
+.cursor
+agent-tools
+terminals
+mcps
+frontend/node_modules
+backend/node_modules
+shared/contracts/dist
+shared/schemas/dist
+shared/contracts/node_modules
+shared/schemas/node_modules

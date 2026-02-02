@@ -1,6 +1,16 @@
-import { pgTable, serial, integer, text, timestamp, index, boolean } from "drizzle-orm/pg-core";
+import {
+    pgTable,
+    serial,
+    integer,
+    text,
+    timestamp,
+    index,
+    boolean,
+} from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import { teams, users, matches } from "@repo/schemas";
+import { teams } from "./team.schema";
+import { users } from "./user.schemas";
+import { matches } from "./match.schema";
 import { maps } from "./map.schema";
 
 //TODO: have way to differentiate between players and subs and coach
@@ -18,7 +28,9 @@ export const players = pgTable(
         }),
         player_logo: text("player_logo"),
         country: text("country"),
-        base_role: text("base_role", { enum: ["starter", "sub", "coach"] }).default("starter"),
+        base_role: text("base_role", {
+            enum: ["starter", "sub", "coach"],
+        }).default("starter"),
         hltv_id: text("hltv_id"),
         hltv_verified: boolean("hltv_verified").default(false),
         discord_id: text("discord_id"),

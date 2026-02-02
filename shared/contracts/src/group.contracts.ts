@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { MatchWithParticipantsContract } from "./match.contracts";
-import { StageFormatContract } from "./stage.contracts";
+import { MatchWithParticipantsContract } from "@repo/contracts";
+import { StageFormatContract } from "@repo/contracts";
 
 export const GroupContract = z.object({
     id: z.number(),
@@ -21,4 +21,6 @@ export const GroupWithMatchesAndFormatContract = z.object({
     groups: GroupWithMatchesContract.array(),
 });
 
-export type GroupWithMatchesAndFormatDTO = z.infer<typeof GroupWithMatchesAndFormatContract>;
+export type GroupWithMatchesAndFormatDTO = z.infer<
+    typeof GroupWithMatchesAndFormatContract
+>;

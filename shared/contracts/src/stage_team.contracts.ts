@@ -25,12 +25,14 @@ export const StageTeamSignUpContract = z.object({
     timestamp: z.date(),
     team_name: z.string(),
     team_faceit_id: z.string(),
-    players: z.array(z.object({
-        name: z.string(),
-        faceit_id: z.string(),
-        hltv_id: z.string(),
-        discord_id: z.string(),
-    })),
-})
+    players: z.array(
+        z.object({
+            name: z.string(),
+            faceit_id: z.string(),
+            hltv_id: z.string(),
+            discord_id: z.string(),
+        }),
+    ),
+});
 
 export type StageTeamSignUpDTO = z.infer<typeof StageTeamSignUpContract>;

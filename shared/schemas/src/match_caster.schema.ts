@@ -1,6 +1,14 @@
-import { pgTable, serial, integer, timestamp, index, text } from "drizzle-orm/pg-core";
+import {
+    pgTable,
+    serial,
+    integer,
+    timestamp,
+    index,
+    text,
+} from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import { users, matches } from "@repo/schemas";
+import { users } from "./user.schemas";
+import { matches } from "./match.schema";
 
 export const matchCasters = pgTable(
     "match_casters",

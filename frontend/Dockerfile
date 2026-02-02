@@ -1,42 +1,47 @@
-# 1. Base image for dependencies and build
-FROM node:20-alpine AS deps
-WORKDIR /app
+# Build from repo root:
+# docker build -t frontend -f frontend/Dockerfile .
 
-# Install required tools
+FROM node:20-alpine AS base
+WORKDIR /app
 RUN apk add --no-cache libc6-compat
 
-# Copy package files and install only deps
-COPY package.json package-lock.json* pnpm-lock.yaml* ./
-RUN npm install --frozen-lockfile
+# ---------------------
+# Dependencies
+# ---------------------
+FROM base AS deps
+COPY package.json package-lock.json ./
+COPY frontend/package.json frontend/
+COPY shared/contracts/package.json shared/contracts/
+COPY shared/schemas/package.json shared/schemas/
+RUN npm install
 
-# 2. Build layer with source code
-FROM node:20-alpine AS builder
-WORKDIR /app
-
-# Copy installed deps from previous stage
+# ---------------------
+# Build
+# ---------------------
+FROM base AS builder
 COPY --from=deps /app/node_modules ./node_modules
+COPY package.json package-lock.json ./
+COPY frontend frontend
+COPY shared shared
 
-# Copy the rest of the app
-COPY . .
+ARG VITE_API_BASE_URL
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 
-# Generate a production build
-RUN npm run build
+# Build shared packages first
+RUN npm run build -w @repo/contracts
 
-# 3. Production runner
-FROM node:20-alpine AS runner
+# Build the frontend
+RUN npm run build -w frontend
+
+# ---------------------
+# Runtime
+# ---------------------
+FROM base AS runner
 WORKDIR /app
+ENV NODE_ENV=production
+ENV PORT=3000
 
-# Next.js needs this for standalone mode
-ENV NODE_ENV production
+COPY --from=builder /app/frontend/.output .output
 
-# Copy only essential build files from previous stage
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
-
-# Expose Next.js default port
 EXPOSE 3000
-
-# Start the Next.js app
-CMD ["npm", "start"]
+CMD ["node", ".output/server/index.mjs"]

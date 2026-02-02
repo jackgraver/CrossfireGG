@@ -9,7 +9,8 @@ import {
     index,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import { players, teams } from "@repo/schemas";
+import { players } from "./player.schema";
+import { teams } from "./team.schema";
 import { matchCasters } from "./match_caster.schema";
 
 export const users = pgTable("users", {

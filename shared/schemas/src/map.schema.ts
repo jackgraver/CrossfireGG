@@ -1,7 +1,15 @@
-import { pgTable, serial, integer, text, timestamp, index } from "drizzle-orm/pg-core";
+import {
+    pgTable,
+    serial,
+    integer,
+    text,
+    timestamp,
+    index,
+} from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
-import { matches, playerStats } from "@repo/schemas";
+import { matches } from "./match.schema";
 import { matchParticipants } from "./match_participant.schema";
+import { playerStats } from "./player.schema";
 
 export const maps = pgTable(
     "maps",

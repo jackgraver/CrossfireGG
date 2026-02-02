@@ -22,7 +22,9 @@ export const MatchWithParticipantsContract = MatchContract.extend({
     participants: MatchParticipantWithTeamContract.array(),
 });
 
-export type MatchWithParticipantsDTO = z.infer<typeof MatchWithParticipantsContract>;
+export type MatchWithParticipantsDTO = z.infer<
+    typeof MatchWithParticipantsContract
+>;
 
 export const MatchWithCastersContract = MatchWithParticipantsContract.extend({
     casters: MatchCasterContract.array(),
@@ -35,4 +37,6 @@ export const ClaimedAndUnclaimedMatchesContract = z.object({
     unclaimed: MatchWithParticipantsContract.array(),
 });
 
-export type ClaimedAndUnclaimedMatchesDTO = z.infer<typeof ClaimedAndUnclaimedMatchesContract>;
+export type ClaimedAndUnclaimedMatchesDTO = z.infer<
+    typeof ClaimedAndUnclaimedMatchesContract
+>;
