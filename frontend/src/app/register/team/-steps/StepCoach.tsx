@@ -41,9 +41,7 @@ export default function StepCoach({
         <div className="flex flex-col gap-y-4">
             <div className="flex flex-col gap-y-1">
                 <h1 className="text-2xl font-bold text-white">Select Coach</h1>
-                <p className="text-sm text-gray-400">
-                    Choose a coach for your team (optional).
-                </p>
+                <p className="text-sm text-gray-400">Choose a coach for your team (optional).</p>
             </div>
             {error && <div className="text-red-500">Error: {error.message}</div>}
             {isLoading && (

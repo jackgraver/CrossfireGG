@@ -2,7 +2,7 @@ import { SquareArrowOutUpRight } from "lucide-react";
 import ManagingButton from "./ManagingButton";
 import { openInNewTab } from "@/lib/NewTab";
 import { toastService } from "@/shared/toast/toastService";
-import { api } from "@/lib/api";
+import { api } from "@/api/client";
 
 export default function PayButton() {
     const handlePay = async () => {
@@ -11,7 +11,7 @@ export default function PayButton() {
             body: (
                 <div className="flex justify-center">
                     <button
-                        className="rounded-md bg-blue-500 px-3 py-1 text-sm font-medium text-textPrimary hover:bg-blue-400"
+                        className="text-textPrimary rounded-md bg-blue-500 px-3 py-1 text-sm font-medium hover:bg-blue-400"
                         onClick={async () => {
                             openInNewTab(
                                 "https://www.paypal.com/paypalme/OSSCSL/75?currencyCode=USD",
@@ -31,7 +31,10 @@ export default function PayButton() {
                                     res.success
                                 ) {
                                     toastService.success(
-                                        <p>Updated paid status, waiting for confirmation</p>,
+                                        <p>
+                                            Updated paid status, waiting for
+                                            confirmation
+                                        </p>,
                                         "Team Marked Paid",
                                         {
                                             durationMs: 3000,
@@ -45,9 +48,13 @@ export default function PayButton() {
                                         typeof res.message === "string"
                                             ? res.message
                                             : "Unknown error";
-                                    toastService.error(<p>{message}</p>, "Update failed", {
-                                        durationMs: 3000,
-                                    });
+                                    toastService.error(
+                                        <p>{message}</p>,
+                                        "Update failed",
+                                        {
+                                            durationMs: 3000,
+                                        },
+                                    );
                                 }
                             } catch (error) {
                                 toastService.error(

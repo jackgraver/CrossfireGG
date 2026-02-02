@@ -9,6 +9,10 @@ export const PlayerContract = z.object({
     player_logo: z.string().nullable().optional(),
     country: z.string().nullable().optional(),
     base_role: z.enum(["starter", "sub", "coach"]).nullable().optional(),
+    hltv_id: z.string().nullable().optional(),
+    hltv_verified: z.boolean().nullable().optional(),
+    discord_id: z.string().nullable().optional(),
+    discord_verified: z.boolean().nullable().optional(),
 });
 
 export type PlayerDTO = z.infer<typeof PlayerContract>;

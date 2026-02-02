@@ -1,8 +1,7 @@
-import { api } from "@/lib/api";
-import { PromiseReturn } from "@/types/Types";
 import { X } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
+import { api } from "@/api/client";
 
 type ReRegisterModalProps = {
     setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -10,16 +9,21 @@ type ReRegisterModalProps = {
 };
 
 function extractFaceitIdFromLink(link: string): string | null {
-    const match = link.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i);
+    const match = link.match(
+        /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i,
+    );
     return match ? match[0] : null;
 }
 
-export default function ReRegisterModal({ setShowModal, title }: ReRegisterModalProps) {
+export default function ReRegisterModal({
+    setShowModal,
+    title,
+}: ReRegisterModalProps) {
     const navigate = useNavigate();
 
     const [teamName, setTeamName] = useState("");
 
-    const handleSubmit = async (e: React.FormEvent): Promise<PromiseReturn> => {
+    const handleSubmit = async (e: React.FormEvent): Promise<any> => {
         e.preventDefault();
 
         try {
@@ -59,7 +63,9 @@ export default function ReRegisterModal({ setShowModal, title }: ReRegisterModal
                         width={32}
                     />
                 </div>
-                <h2 className="text-textPrimary text-xl font-bold">Confirm Team Link</h2>
+                <h2 className="text-textPrimary text-xl font-bold">
+                    Confirm Team Link
+                </h2>
                 {/* <OSSForm
                     onSubmit={handleSubmit}
                     onSuccess={(id) => {

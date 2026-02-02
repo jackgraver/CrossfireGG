@@ -28,12 +28,10 @@ export default function SignUpButton() {
             onClick: () =>
                 openDialog({
                     title: "Sign Up Team",
-                    content: (
-                        <TeamSignUpDialog teamId={user?.teamId} />
-                    ),
+                    content: <TeamSignUpDialog teamId={user?.teamId} />,
                     onConfirm: () => {
                         console.log("confirm");
-                    }
+                    },
                 }),
         };
     };
@@ -56,7 +54,6 @@ export default function SignUpButton() {
         </Link>
     );
 }
-
 
 const TeamSignUpDialog = ({ teamId }: { teamId: number }) => {
     return (

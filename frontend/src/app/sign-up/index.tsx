@@ -2,16 +2,23 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useForm } from "@tanstack/react-form";
 import { useServerFn } from "@tanstack/react-start";
-import { signUpFn } from "@/lib/server/auth.server";
 import { useAuth } from "@/contexts/auth";
-import { Input, PasswordInput, SpinnerInput, Checkbox, SubmitButton } from "@/shared/form";
+import {
+    Input,
+    PasswordInput,
+    SpinnerInput,
+    Checkbox,
+    SubmitButton,
+} from "@/shared/form";
 import UserForm from "@/shared/UserForm";
+import { api } from "@/api/client";
 
 export const Route = createFileRoute("/sign-up/")({
     component: SignUp,
 });
 
-const validFaceitLinkRegex = /^https:\/\/www\.faceit\.com\/[^\/]+\/players\/([a-zA-Z0-9_]{3,32})$/;
+const validFaceitLinkRegex =
+    /^https:\/\/www\.faceit\.com\/[^\/]+\/players\/([a-zA-Z0-9_]{3,32})$/;
 
 function extractFaceitUsername(link: string): string {
     const match = link.match(validFaceitLinkRegex);
@@ -21,10 +28,9 @@ function extractFaceitUsername(link: string): string {
 function SignUp() {
     const navigate = useNavigate();
     const { refetch } = useAuth();
-    const signUp = useServerFn(signUpFn);
-    const [submitStatus, setSubmitStatus] = useState<"idle" | "submitting" | "success" | "error">(
-        "idle",
-    );
+    const [submitStatus, setSubmitStatus] = useState<
+        "idle" | "submitting" | "success" | "error"
+    >("idle");
     const [faceitTeamName, setFaceitTeamName] = useState("");
     const [faceitTeamId, setFaceitTeamId] = useState("");
 
@@ -41,34 +47,34 @@ function SignUp() {
         // },
         onSubmit: async ({ value }) => {
             setSubmitStatus("submitting");
-            try {
-                const result = await signUp({
-                    data: {
-                        email: value.email,
-                        name: value.email.split("@")[0],
-                        password: value.password,
-                        team_id: faceitTeamId ? parseInt(faceitTeamId) : undefined,
-                    },
-                });
-                if (result?.error) {
-                    form.setFieldMeta("email", (prev) => ({
-                        ...prev,
-                        errors: [result.error],
-                    }));
-                    setSubmitStatus("error");
-                    return;
-                }
-                setSubmitStatus("success");
-                await refetch();
-                setTimeout(() => navigate({ to: "/" }), 1500);
-            } catch (error: any) {
-                if (error.to) throw error;
-                form.setFieldMeta("email", (prev) => ({
-                    ...prev,
-                    errors: [error.message || "Sign up failed"],
-                }));
-                setSubmitStatus("error");
-            }
+            // try {
+            //     const result = await signUp({
+            //         data: {
+            //             email: value.email,
+            //             name: value.email.split("@")[0],
+            //             password: value.password,
+            //             team_id: faceitTeamId ? parseInt(faceitTeamId) : undefined,
+            //         },
+            //     });
+            //     if (result?.error) {
+            //         form.setFieldMeta("email", (prev) => ({
+            //             ...prev,
+            //             errors: [result.error],
+            //         }));
+            //         setSubmitStatus("error");
+            //         return;
+            //     }
+            //     setSubmitStatus("success");
+            //     await refetch();
+            //     setTimeout(() => navigate({ to: "/" }), 1500);
+            // } catch (error: any) {
+            //     if (error.to) throw error;
+            //     form.setFieldMeta("email", (prev) => ({
+            //         ...prev,
+            //         errors: [error.message || "Sign up failed"],
+            //     }));
+            //     setSubmitStatus("error");
+            // }
         },
     });
 
@@ -76,10 +82,15 @@ function SignUp() {
 
     return (
         <UserForm>
-            <h1 className="text-textPrimary text-2xl font-bold">Create Account</h1>
+            <h1 className="text-textPrimary text-2xl font-bold">
+                Create Account
+            </h1>
             <p className="text-textSecondary">
                 Already have an account?{" "}
-                <a href="/sign-in" className="text-blue-600 hover:text-blue-800">
+                <a
+                    href="/sign-in"
+                    className="text-blue-600 hover:text-blue-800"
+                >
                     Sign in
                 </a>
             </p>
@@ -93,10 +104,12 @@ function SignUp() {
                 <form.Field name="email">
                     {(field) => (
                         <Input
-                            field={field}
+                            value={field.state.value}
+                            onChange={field.handleChange}
                             type="email"
                             placeholder="Email address"
                             disabled={isSubmitting}
+                            name={""}
                         />
                     )}
                 </form.Field>
@@ -114,30 +127,30 @@ function SignUp() {
                                 setFaceitTeamId("");
                                 return "Please match format - https://www.faceit.com/en/players/XXX";
                             }
-                            const username = extractFaceitUsername(value);
-                            try {
-                                const response = await api.get<any>(
-                                    `/test_faceit_link/${username}`,
-                                );
-                                if (response.player) {
-                                    if (response.team) {
-                                        setFaceitTeamName(response.team.name);
-                                        setFaceitTeamId(response.team.id);
-                                    } else {
-                                        setFaceitTeamName("No Team Found");
-                                        setFaceitTeamId("");
-                                    }
-                                    return undefined;
-                                } else {
-                                    setFaceitTeamName("");
-                                    setFaceitTeamId("");
-                                    return "Player not found";
-                                }
-                            } catch {
-                                setFaceitTeamName("");
-                                setFaceitTeamId("");
-                                return "Error validating Faceit link";
-                            }
+                            // const username = extractFaceitUsername(value);
+                            // try {
+                            //     const response = await api.get<any>(
+                            //         `/test_faceit_link/${username}`,
+                            //     );
+                            //     if (response.player) {
+                            //         if (response.team) {
+                            //             setFaceitTeamName(response.team.name);
+                            //             setFaceitTeamId(response.team.id);
+                            //         } else {
+                            //             setFaceitTeamName("No Team Found");
+                            //             setFaceitTeamId("");
+                            //         }
+                            //         return undefined;
+                            //     } else {
+                            //         setFaceitTeamName("");
+                            //         setFaceitTeamId("");
+                            //         return "Player not found";
+                            //     }
+                            // } catch {
+                            //     setFaceitTeamName("");
+                            //     setFaceitTeamId("");
+                            //     return "Error validating Faceit link";
+                            // }
                         },
                         onChangeAsyncDebounceMs: 500,
                     }}

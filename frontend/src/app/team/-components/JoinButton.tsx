@@ -2,7 +2,7 @@ import ManagingButton from "./ManagingButton";
 import { SquareArrowOutUpRight } from "lucide-react";
 import { openInNewTab } from "@/lib/NewTab";
 import { toastService } from "@/shared/toast/toastService";
-import { api } from "@/lib/api";
+import { api } from "@/api/client";
 
 export default function JoinButton() {
     const handleJoined = async () => {
@@ -11,7 +11,7 @@ export default function JoinButton() {
             body: (
                 <div className="flex justify-center">
                     <button
-                        className="rounded-md bg-blue-500 px-3 py-1 text-sm font-medium text-textPrimary hover:bg-blue-400"
+                        className="text-textPrimary rounded-md bg-blue-500 px-3 py-1 text-sm font-medium hover:bg-blue-400"
                         onClick={async () => {
                             openInNewTab(
                                 "https://www.faceit.com/en/championship/f56331e8-131a-4c50-b7db-eec8b010ff98/Off%20Season%20Shenanigans%20S8",
@@ -19,11 +19,14 @@ export default function JoinButton() {
                             toastService.dismiss(toastId);
 
                             try {
-                                const res = await api.post(`/team/joined/${0}`, {
-                                    joined: 2,
-                                    tournament_id: 0,
-                                    stage: 0,
-                                });
+                                const res = await api.post(
+                                    `/team/joined/${0}`,
+                                    {
+                                        joined: 2,
+                                        tournament_id: 0,
+                                        stage: 0,
+                                    },
+                                );
                                 if (
                                     res &&
                                     typeof res === "object" &&
@@ -31,7 +34,10 @@ export default function JoinButton() {
                                     res.success
                                 ) {
                                     toastService.success(
-                                        <p>Updated joined status, waiting for confirmation</p>,
+                                        <p>
+                                            Updated joined status, waiting for
+                                            confirmation
+                                        </p>,
                                         "Team Marked Paid",
                                         {
                                             durationMs: 3000,
@@ -45,9 +51,13 @@ export default function JoinButton() {
                                         typeof res.message === "string"
                                             ? res.message
                                             : "Unknown error";
-                                    toastService.error(<p>{message}</p>, "Update failed", {
-                                        durationMs: 3000,
-                                    });
+                                    toastService.error(
+                                        <p>{message}</p>,
+                                        "Update failed",
+                                        {
+                                            durationMs: 3000,
+                                        },
+                                    );
                                 }
                             } catch (error) {
                                 toastService.error(

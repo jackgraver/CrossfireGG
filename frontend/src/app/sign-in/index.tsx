@@ -1,17 +1,9 @@
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useForm } from "@tanstack/react-form";
-import { useServerFn } from "@tanstack/react-start";
-import { loginFn } from "@/lib/server/auth.server";
-import { signInSchema } from "@/schemas/auth";
 import { Checkbox, Input, PasswordInput, SubmitButton } from "@/shared/form";
 import UserForm from "@/shared/UserForm";
-import { authClient } from "@/lib/auth-client";
-import { toastService } from "@/shared/toast/toastService";
-import { useAllTournaments } from "../tournament/-queries/tournamentsQueries";
-import { api } from "@/api/client";
 import { useAuth } from "@/contexts/auth";
-import { queryClient } from "@/lib/queryClient";
 
 export const Route = createFileRoute("/sign-in/")({
     component: SignIn,
@@ -19,10 +11,9 @@ export const Route = createFileRoute("/sign-in/")({
 
 function SignIn() {
     const navigate = useNavigate();
-    const login = useServerFn(loginFn);
-    const [submitStatus, setSubmitStatus] = useState<"idle" | "submitting" | "success" | "error">(
-        "idle",
-    );
+    const [submitStatus, setSubmitStatus] = useState<
+        "idle" | "submitting" | "success" | "error"
+    >("idle");
 
     const { refetch } = useAuth();
 
@@ -32,31 +23,31 @@ function SignIn() {
             password: "",
             rememberMe: false,
         },
-        validators: {
-            onBlur: signInSchema,
-        },
+        // validators: {
+        //     onBlur: signInSchema,
+        // },
         onSubmit: async ({ value }) => {
             setSubmitStatus("submitting");
-            try {
-                const result = await login({ data: value });
-                if (result?.error) {
-                    form.setFieldMeta("email", (prev) => ({
-                        ...prev,
-                        errors: [result.error],
-                    }));
-                    setSubmitStatus("error");
-                    return;
-                }
-                setSubmitStatus("success");
-                setTimeout(() => navigate({ to: "/" }), 1500);
-            } catch (error: any) {
-                if (error.to) throw error;
-                form.setFieldMeta("email", (prev) => ({
-                    ...prev,
-                    errors: [error.message || "Login failed"],
-                }));
-                setSubmitStatus("error");
-            }
+            // try {
+            //     const result = await login({ data: value });
+            //     if (result?.error) {
+            //         form.setFieldMeta("email", (prev) => ({
+            //             ...prev,
+            //             errors: [result.error],
+            //         }));
+            //         setSubmitStatus("error");
+            //         return;
+            //     }
+            //     setSubmitStatus("success");
+            //     setTimeout(() => navigate({ to: "/" }), 1500);
+            // } catch (error: any) {
+            //     if (error.to) throw error;
+            //     form.setFieldMeta("email", (prev) => ({
+            //         ...prev,
+            //         errors: [error.message || "Login failed"],
+            //     }));
+            //     setSubmitStatus("error");
+            // }
         },
     });
 
@@ -69,32 +60,32 @@ function SignIn() {
                 <button
                     className="bg-border text-textSecondary hover:bg-secondBg flex-1 rounded px-4 py-2"
                     onClick={() => {
-                        authClient.signUp.email(
-                            {
-                                email: "test@test2.com",
-                                password: "password",
-                                name: "test",
-                            },
-                            {
-                                onError: (error) => {
-                                    console.error(error);
-                                },
-                                onSuccess: () => {
-                                    console.log("success");
-                                    refetch(); //TODO: this is necessary to update the user role, make sure it exists in proper setup
-                                    navigate({ to: "/" });
-                                },
-                            },
-                        );
+                        // authClient.signUp.email(
+                        //     {
+                        //         email: "test@test2.com",
+                        //         password: "password",
+                        //         name: "test",
+                        //     },
+                        //     {
+                        //         onError: (error) => {
+                        //             console.error(error);
+                        //         },
+                        //         onSuccess: () => {
+                        //             console.log("success");
+                        //             refetch(); //TODO: this is necessary to update the user role, make sure it exists in proper setup
+                        //             navigate({ to: "/" });
+                        //         },
+                        //     },
+                        // );
                     }}
                 >
                     test
                 </button>
                 <button
                     onClick={() => {
-                        authClient.signOut().catch((error) => {
-                            console.error(error);
-                        });
+                        // authClient.signOut().catch((error) => {
+                        //     console.error(error);
+                        // });
                     }}
                 >
                     out
@@ -110,10 +101,12 @@ function SignIn() {
                 <form.Field name="email">
                     {(field) => (
                         <Input
-                            field={field}
+                            value={field.state.value}
+                            onChange={field.handleChange}
                             type="email"
                             placeholder="Email address"
                             disabled={isSubmitting}
+                            name={""}
                         />
                     )}
                 </form.Field>
@@ -128,7 +121,11 @@ function SignIn() {
                 </form.Field>
                 <form.Field name="rememberMe">
                     {(field) => (
-                        <Checkbox field={field} label="Remember me" disabled={isSubmitting} />
+                        <Checkbox
+                            field={field}
+                            label="Remember me"
+                            disabled={isSubmitting}
+                        />
                     )}
                 </form.Field>
                 <div className="mt-6 flex flex-row gap-4">

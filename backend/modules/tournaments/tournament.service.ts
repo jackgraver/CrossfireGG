@@ -39,7 +39,6 @@ export const tournamentService = {
 
         const stagesWithCounts =
             await tournamentRepository.findStageMatchCountsByTournamentId(tournamentId);
-        console.log("stagesWithCounts:", stagesWithCounts.length);
 
         return {
             ...tournament,
@@ -48,6 +47,24 @@ export const tournamentService = {
                 teams_count: stagesWithCounts.find((sc) => sc.stageId === s.id)?.teamsCount || 0,
             })),
         };
+    },
+
+    getTeamsByTournamentId: async (tournamentId: number) => {
+        const teams = await tournamentRepository.findTeamsByTournamentId(tournamentId);
+
+        const res = teams.map((team) => ({
+            timestamp: team.created_at,
+            team_name: team.team.name,
+            team_faceit_id: team.team.faceit_id,
+            players: team.team.players.map((player) => ({
+                name: player.player_name,
+                faceit_id: player.faceit_id,
+                hltv_id: player.hltv_id,
+                discord_id: player.discord_id,
+            })),
+        }));
+
+        return res;
     },
 
     getMatchesByStageId: async (stageId: number) => {

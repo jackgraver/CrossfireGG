@@ -18,8 +18,5 @@
     },
     "devDependencies": {
         "oxfmt": "^0.26.0"
-    },
-    "overrides": {
-        "zod": "^4.3.5"
     }
 }

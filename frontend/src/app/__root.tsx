@@ -11,12 +11,9 @@ import {
     createRootRoute,
     HeadContent,
     Scripts,
-    createRootRouteWithContext,
 } from "@tanstack/react-router";
-import { fetchSession } from "@/lib/server/auth.server";
-import { authClient } from "@/lib/auth-client";
 
-export const Route = createRootRouteWithContext<{ session: any }>()({
+export const Route = createRootRoute({
     head: () => ({
         meta: [
             { charSet: "utf-8" },

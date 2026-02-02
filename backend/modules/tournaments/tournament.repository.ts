@@ -82,6 +82,31 @@ export const tournamentRepository = {
         });
     },
 
+    findTeamsByTournamentId: async (tournamentId: number) => {
+        const stageIds = await db.query.stages.findMany({
+            columns: {
+                id: true,
+            },
+            where: (s, { eq, and, isNull }) =>
+                and(eq(s.tournament_id, tournamentId), isNull(s.deleted_at)),
+        });
+
+        const ids = stageIds.map((s) => s.id);
+        if (ids.length === 0) return [];
+
+        return await db.query.stageTeams.findMany({
+            where: (st, { inArray, and, isNull }) =>
+                and(inArray(st.stage_id, ids), isNull(st.deleted_at)),
+            with: {
+                team: {
+                    with: {
+                        players: true,
+                    },
+                },
+            },
+        });
+    },
+
     findMatchesByGroupId: async (groupId: number) => {
         return await db.query.matches.findMany({
             where: (m, { eq, and, isNull }) => and(eq(m.group_id, groupId), isNull(m.deleted_at)),

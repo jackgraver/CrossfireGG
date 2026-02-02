@@ -36,9 +36,10 @@ export const matchController = {
         try {
             const matches = await matchService.getAllMatchCasting();
 
-            const payload = ClaimedAndUnclaimedMatchesContract.parse(matches);
+            res.json(matches);
+            // const payload = ClaimedAndUnclaimedMatchesContract.parse(matches);
 
-            res.json(payload);
+            // res.json(payload);
         } catch (error: any) {
             logger.error("Error fetching casting matches:", error);
             res.status(500).json({ error: "Failed to fetch casting matches" });

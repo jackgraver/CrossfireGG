@@ -11,6 +11,7 @@ import { tournamentRepository } from "./tournament.repository";
 import {
     GroupWithMatchesAndFormatContract,
     StageTeamWithTeamContract,
+    StageTeamSignUpContract,
     TournamentWithMinimalStagesContract,
     TournamentWithStagesContract,
 } from "@repo/contracts";
@@ -71,6 +72,30 @@ export const tournamentController = {
             logger.error("Error fetching tournament:", error);
             res.status(500).json({
                 error: "Failed to fetch tournament",
+                details: error,
+            });
+        }
+    },
+
+    getTeamsByTournamentId: async (req: Request, res: Response) => {
+        try {
+            const validation = TournamentParamsSchema.safeParse(req.params);
+            if (!validation.success) {
+                return res.status(400).json({
+                    error: "Validation failed",
+                });
+            }
+            const teams = await tournamentService.getTeamsByTournamentId(
+                validation.data.tournamentId,
+            );
+
+            const payload = StageTeamSignUpContract.array().parse(teams);
+
+            res.json(teams);
+        } catch (error) {
+            logger.error("Error fetching teams by tournament id:", error);
+            res.status(500).json({
+                error: "Failed to fetch teams",
                 details: error,
             });
         }

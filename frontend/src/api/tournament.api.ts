@@ -1,6 +1,7 @@
 import { api } from "./client";
 import {
     GroupWithMatchesAndFormatDTO,
+    StageTeamSignUpDTO,
     StageTeamWithTeamDTO,
     TournamentWithMinimalStagesDTO,
     TournamentWithStagesDTO,
@@ -51,6 +52,10 @@ export const tournamentApi = {
     },
     createTournament: async (payload: any) => {
         const response = await api.post("/tournament/create", payload);
+        return response.data;
+    },
+    tournamentTeams: async (tournamentId: string) => {
+        const response = await api.get<StageTeamSignUpDTO[]>(`/tournament/${tournamentId}/teams`);
         return response.data;
     },
 };

@@ -99,3 +99,5 @@ backend/tmp/
 MD/
 
 .cursor/rules/
+
+frontend/.output/*

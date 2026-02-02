@@ -1,5 +1,4 @@
-import { api } from "@/lib/api";
-import { Tournament } from "@/types/TournamentModel";
+import { api } from "@/api/client";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
@@ -20,7 +19,7 @@ export default function TournamentSelector({
         queryKey: ["tournaments"],
         queryFn: () =>
             api.get<{
-                tournaments: Tournament[];
+                tournaments: any[];
             }>("/tournament/all"),
     });
 
@@ -31,22 +30,22 @@ export default function TournamentSelector({
         return <div>Loading tournaments...</div>;
     }
 
-    const tournaments = tournamentData?.tournaments || [];
+    // const tournaments = tournamentData?.tournaments || [];
 
-    return (
-        <div className="flex flex-col items-center gap-2">
-            <select
-                id="tournament-select"
-                value={selectedTournament || ""}
-                onChange={(e) => onTournamentChange(e.target.value || "")}
-                className="text-text-primary rounded-lg bg-secondBg px-4 py-2 shadow-sm focus:border-thirdBg focus:outline-none"
-            >
-                {tournaments.map((tournament) => (
-                    <option key={tournament.t_id} value={tournament.t_id}>
-                        {tournament.t_name}
-                    </option>
-                ))}
-            </select>
-        </div>
-    );
+    // return (
+    //     <div className="flex flex-col items-center gap-2">
+    //         <select
+    //             id="tournament-select"
+    //             value={selectedTournament || ""}
+    //             onChange={(e) => onTournamentChange(e.target.value || "")}
+    //             className="text-text-primary bg-secondBg focus:border-thirdBg rounded-lg px-4 py-2 shadow-sm focus:outline-none"
+    //         >
+    //             {tournaments.map((tournament) => (
+    //                 <option key={tournament.t_id} value={tournament.t_id}>
+    //                     {tournament.t_name}
+    //                 </option>
+    //             ))}
+    //         </select>
+    //     </div>
+    // );
 }
