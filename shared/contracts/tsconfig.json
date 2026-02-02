@@ -9,18 +9,18 @@
         "esModuleInterop": true,
         "moduleResolution": "node",
         "target": "ES2022",
-        "module": "ESNext",
+        "module": "CommonJS",
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
         "resolveJsonModule": true
     },
     "include": [
-        "*.ts",
-        "match.contracts.ts",
-        "player.contracts.ts",
-        "team.contracts.ts",
-        "tournament.contracts.ts",
-        "index.ts"
+        "./*.ts",
+        "./match.contracts.ts",
+        "./player.contracts.ts",
+        "./team.contracts.ts",
+        "./tournament.contracts.ts",
+        "./index.ts"
     ],
     "exclude": ["node_modules", "dist"]
 }
