@@ -7,10 +7,14 @@ const useUserRole = (hasSession: boolean) => {
     return useQuery({
         queryKey: ["user-role"],
         queryFn: async () => {
-            const res = await api.get<User>("/user/user-role");
+            const res = await api.get<User>("/user/me");
             return res.data;
         },
         enabled: hasSession,
+        staleTime: 1000 * 60 * 5,
+        refetchOnWindowFocus: false,
+        refetchOnMount: true,
+        refetchOnReconnect: true,
     });
 };
 

@@ -13,13 +13,11 @@ export const userRepository = {
         return result[0];
     },
 
-    findById: async (userId: number) => {
+    findById: async (userId: string | number) => {
         const result = await db
             .select()
             .from(users)
-            .where(
-                and(eq(users.id, userId.toString()), isNull(users.deleted_at)),
-            )
+            .where(and(eq(users.id, String(userId)), isNull(users.deleted_at)))
             .limit(1);
         return result[0];
     },
@@ -76,14 +74,14 @@ export const userRepository = {
         return Array.isArray(result) ? result[0] : undefined;
     },
 
-    getUserRoles: async (userId: number): Promise<string[]> => {
+    getUserRoles: async (userId: string | number): Promise<string[]> => {
         const result = await db
             .select({ roleName: roles.name })
             .from(userRoles)
             .innerJoin(roles, eq(userRoles.role_id, roles.id))
             .where(
                 and(
-                    eq(userRoles.user_id, userId.toString()),
+                    eq(userRoles.user_id, String(userId)),
                     isNull(userRoles.deleted_at),
                 ),
             );
