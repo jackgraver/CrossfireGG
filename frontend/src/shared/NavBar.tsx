@@ -3,7 +3,16 @@ import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { logoutFn } from "@/lib/server/auth.server";
 import { matchesRole } from "@/lib/role.util";
-import { Trophy, Users, Video, Settings, User, LogIn, LogOut, Moon } from "lucide-react";
+import {
+    Trophy,
+    Users,
+    Video,
+    Settings,
+    User,
+    LogIn,
+    LogOut,
+    Moon,
+} from "lucide-react";
 import { useAuth } from "@/contexts/auth";
 
 function toggleDarkMode() {
@@ -27,7 +36,14 @@ interface NavItemProps {
     onMouseEnter?: () => void;
 }
 
-const NavItem = ({ to, params, icon, label, onClick, onMouseEnter }: NavItemProps) => {
+const NavItem = ({
+    to,
+    params,
+    icon,
+    label,
+    onClick,
+    onMouseEnter,
+}: NavItemProps) => {
     const baseClasses =
         "flex items-center gap-2 px-3 py-2 rounded-lg text-textSecondary hover:text-textPrimary hover:bg-white/5 transition-all duration-200 text-sm font-medium";
 
@@ -47,7 +63,11 @@ const NavItem = ({ to, params, icon, label, onClick, onMouseEnter }: NavItemProp
     }
 
     return (
-        <button className={baseClasses} onClick={onClick} onMouseEnter={onMouseEnter}>
+        <button
+            className={baseClasses}
+            onClick={onClick}
+            onMouseEnter={onMouseEnter}
+        >
             {icon}
             <span className="hidden sm:inline">{label}</span>
         </button>
@@ -72,10 +92,18 @@ export default function NavBar() {
             <div className="w-full px-4 pl-0">
                 <div className="flex h-14 items-center justify-between">
                     <Link to="/" className="shrink-0">
-                        <img src="/crossfire.png" className="h-14 w-14" alt="Crossfire" />
+                        <img
+                            src="/crossfire.png"
+                            className="h-14 w-14"
+                            alt="Crossfire"
+                        />
                     </Link>
                     <div className="flex items-center gap-1">
-                        <NavItem to="/tournament" icon={<Trophy size={18} />} label="Tournaments" />
+                        <NavItem
+                            to="/tournament"
+                            icon={<Trophy size={18} />}
+                            label="Tournaments"
+                        />
                         {user?.teamId && (
                             <NavItem
                                 to="/team/$team_id"
@@ -91,11 +119,24 @@ export default function NavBar() {
                                 label="Manage Teams"
                             />
                         )}
-                        {matchesRole(user?.roles, "ADMIN", "PRODUCTION_LEAD", "PRODUCTION") && (
-                            <NavItem to="/casting" icon={<Video size={18} />} label="Casting" />
+                        {matchesRole(
+                            user?.roles,
+                            "ADMIN",
+                            "PRODUCTION_LEAD",
+                            "PRODUCTION",
+                        ) && (
+                            <NavItem
+                                to="/casting"
+                                icon={<Video size={18} />}
+                                label="Casting"
+                            />
                         )}
                         {matchesRole(user?.roles, "ADMIN") && (
-                            <NavItem to="/admin" icon={<Settings size={18} />} label="Admin" />
+                            <NavItem
+                                to="/admin"
+                                icon={<Settings size={18} />}
+                                label="Admin"
+                            />
                         )}
                         <NavItem
                             icon={<Moon size={18} />}
@@ -104,7 +145,11 @@ export default function NavBar() {
                         />
                         {user ? (
                             <>
-                                <NavItem to="/user" icon={<User size={18} />} label={user?.name} />
+                                <NavItem
+                                    to="/user"
+                                    icon={<User size={18} />}
+                                    label={user?.name}
+                                />
                                 <NavItem
                                     to="/"
                                     icon={<LogOut size={18} />}
@@ -113,7 +158,9 @@ export default function NavBar() {
                                         e.preventDefault();
                                         logout();
                                     }}
-                                    onMouseEnter={() => preloadImage("/bg-city.png")}
+                                    onMouseEnter={() =>
+                                        preloadImage("/bg-city.png")
+                                    }
                                 />
                             </>
                         ) : (
@@ -121,7 +168,9 @@ export default function NavBar() {
                                 to="/sign-in"
                                 icon={<LogIn size={18} />}
                                 label="Sign In"
-                                onMouseEnter={() => preloadImage("/bg-city.png")}
+                                onMouseEnter={() =>
+                                    preloadImage("/bg-city.png")
+                                }
                             />
                         )}
                     </div>

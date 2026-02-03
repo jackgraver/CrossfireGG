@@ -3,7 +3,13 @@ import { useAllTournaments } from "./-queries/tournamentsQueries";
 import { formatDateOnly, toUnixTimestamp } from "@/lib/dateUtils";
 import SignUpButton from "./-components/SignUpButton";
 import { openInNewTab } from "@/lib/NewTab";
-import { Trophy, Users, ExternalLink, Calendar, DollarSign } from "lucide-react";
+import {
+    Trophy,
+    Users,
+    ExternalLink,
+    Calendar,
+    DollarSign,
+} from "lucide-react";
 import { TournamentWithStagesDTO } from "@repo/contracts";
 import { useAuth } from "@/contexts/auth";
 
@@ -22,7 +28,9 @@ function RouteComponent() {
                     <h2 className="mb-2 text-xl font-bold text-red-500">
                         Error Loading Tournaments
                     </h2>
-                    <p className="text-textSecondary text-sm">{error.message}</p>
+                    <p className="text-textSecondary text-sm">
+                        {error.message}
+                    </p>
                 </div>
             </div>
         );
@@ -32,14 +40,6 @@ function RouteComponent() {
 
     return (
         <div className="mx-auto min-h-screen max-w-[1600px] p-6">
-            <header className="border-border/40 border-b pb-4">
-                <h1 className="text-textPrimary text-5xl font-black tracking-tight md:text-6xl">
-                    Tournaments
-                </h1>
-                <p className="text-textSecondary mt-4 text-sm font-bold tracking-widest uppercase opacity-60">
-                    Browse and compete in upcoming seasons
-                </p>
-            </header>
             {isLoading ? (
                 <div className="flex min-h-screen justify-center pt-24">
                     <div className="text-textPrimary flex animate-pulse flex-col items-center gap-4">
@@ -60,74 +60,93 @@ function RouteComponent() {
                         </div>
                     ) : (
                         <div className="mt-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                            {tournaments.map((tournament: TournamentWithStagesDTO) => (
-                                <section
-                                    key={tournament.id}
-                                    className="bg-firstBg border-border/10 flex flex-col rounded-2xl border p-6 transition-all hover:border-cfRed/30"
-                                >
-                                    <div className="flex-1 space-y-4">
-                                        <div className="flex items-center justify-between">
-                                            <span
-                                                className={`rounded-full px-3 py-1 text-[10px] font-black tracking-widest text-white uppercase ${
-                                                    tournament.status === "live"
-                                                        ? "bg-green-500"
-                                                        : "bg-blue-500"
-                                                }`}
-                                            >
-                                                {tournament.status}
-                                            </span>
-                                            <div className="flex items-center gap-4">
-                                                {tournament.prize_pool != null && (
-                                                    <span className="text-textSecondary flex items-center gap-1 text-xs font-bold">
-                                                        <DollarSign
-                                                            size={14}
-                                                            className="text-cfRed opacity-70"
-                                                        />
-                                                        {tournament.prize_pool.toLocaleString()}
-                                                    </span>
-                                                )}
-                                                <span className="text-textSecondary flex items-center gap-1 text-xs font-bold">
-                                                    <Users size={12} />
-                                                    {tournament?.stages[0]?.max_teams} Teams
+                            {tournaments.map(
+                                (tournament: TournamentWithStagesDTO) => (
+                                    <section
+                                        key={tournament.id}
+                                        className="bg-firstBg border-border/10 hover:border-cfRed/30 flex flex-col rounded-2xl border p-6 transition-all"
+                                    >
+                                        <div className="flex-1 space-y-4">
+                                            <div className="flex items-center justify-between">
+                                                <span
+                                                    className={`rounded-full px-3 py-1 text-[10px] font-black tracking-widest text-white uppercase ${
+                                                        tournament.status ===
+                                                        "live"
+                                                            ? "bg-green-500"
+                                                            : "bg-blue-500"
+                                                    }`}
+                                                >
+                                                    {tournament.status}
                                                 </span>
+                                                <div className="flex items-center gap-4">
+                                                    {tournament.prize_pool !=
+                                                        null && (
+                                                        <span className="text-textSecondary flex items-center gap-1 text-xs font-bold">
+                                                            <DollarSign
+                                                                size={14}
+                                                                className="text-cfRed opacity-70"
+                                                            />
+                                                            {tournament.prize_pool.toLocaleString()}
+                                                        </span>
+                                                    )}
+                                                    <span className="text-textSecondary flex items-center gap-1 text-xs font-bold">
+                                                        <Users size={12} />
+                                                        {
+                                                            tournament
+                                                                ?.stages[0]
+                                                                ?.max_teams
+                                                        }{" "}
+                                                        Teams
+                                                    </span>
+                                                </div>
                                             </div>
+                                            <h2 className="text-textPrimary line-clamp-2 text-2xl font-black tracking-tight">
+                                                {tournament.name}
+                                            </h2>
+                                            {tournament.start_date && (
+                                                <div className="text-textSecondary flex items-center gap-1.5 text-xs font-medium opacity-60">
+                                                    <Calendar size={14} />
+                                                    {formatDateOnly(
+                                                        toUnixTimestamp(
+                                                            tournament.start_date,
+                                                        )!,
+                                                    )}
+                                                    {tournament.end_date && (
+                                                        <>
+                                                            {" - "}
+                                                            {formatDateOnly(
+                                                                toUnixTimestamp(
+                                                                    tournament.end_date,
+                                                                )!,
+                                                            )}
+                                                        </>
+                                                    )}
+                                                </div>
+                                            )}
                                         </div>
-                                        <h2 className="text-textPrimary line-clamp-2 text-2xl font-black tracking-tight">
-                                            {tournament.name}
-                                        </h2>
-                                        {tournament.start_date && (
-                                            <div className="text-textSecondary flex items-center gap-1.5 text-xs font-medium opacity-60">
-                                                <Calendar size={14} />
-                                                {formatDateOnly(
-                                                    toUnixTimestamp(tournament.start_date)!,
+                                        <div className="mt-4 flex flex-row gap-2">
+                                            <Link
+                                                to={
+                                                    "/tournament/$tournamentId/stage/$stageId/bracket"
+                                                }
+                                                params={{
+                                                    tournamentId:
+                                                        tournament.id.toString(),
+                                                    stageId:
+                                                        tournament.stages[0]?.id.toString(),
+                                                }}
+                                                className="bg-secondBg text-textPrimary hover:bg-secondBg/80 flex w-full items-center justify-center gap-2 rounded-lg py-2 text-xs font-black tracking-widest uppercase transition-all"
+                                            >
+                                                View Tournament
+                                            </Link>
+                                            {tournament.status === "upcoming" &&
+                                                !tournament.isRegistered && (
+                                                    <SignUpButton />
                                                 )}
-                                                {tournament.end_date && (
-                                                    <>
-                                                        {" - "}
-                                                        {formatDateOnly(
-                                                            toUnixTimestamp(tournament.end_date)!,
-                                                        )}
-                                                    </>
-                                                )}
-                                            </div>
-                                        )}
-                                    </div>
-                                    <div className="mt-4 flex flex-row gap-2">
-                                        <Link
-                                            to={"/tournament/$tournamentId/stage/$stageId/bracket"}
-                                            params={{
-                                                tournamentId: tournament.id.toString(),
-                                                stageId: tournament.stages[0]?.id.toString(),
-                                            }}
-                                            className="bg-secondBg text-textPrimary hover:bg-secondBg/80 flex w-full items-center justify-center gap-2 rounded-lg py-2 text-xs font-black tracking-widest uppercase transition-all"
-                                        >
-                                            View Tournament
-                                        </Link>
-                                        {tournament.status === "upcoming" &&
-                                            !tournament.isRegistered && <SignUpButton />}
-                                    </div>
-                                </section>
-                            ))}
+                                        </div>
+                                    </section>
+                                ),
+                            )}
                         </div>
                     )}
                 </>

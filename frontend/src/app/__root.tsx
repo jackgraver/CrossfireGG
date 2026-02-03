@@ -50,13 +50,17 @@ function RootLayout() {
                 />
                 <HeadContent />
             </head>
-            <body className="flex min-h-screen flex-col">
+            <body className="min-h-screen font-sans antialiased">
                 <Providers>
-                    <NavBar />
-                    <main className="flex-1">
-                        <Outlet />
-                    </main>
-                    <Footer />
+                    <div className="flex min-h-screen flex-col">
+                        <NavBar />
+                        <div className="mx-auto w-full max-w-8/12 flex-1">
+                            <main>
+                                <Outlet />
+                            </main>
+                        </div>
+                        <Footer />
+                    </div>
                 </Providers>
                 <Scripts />
             </body>
