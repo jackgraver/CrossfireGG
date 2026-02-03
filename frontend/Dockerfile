@@ -12,7 +12,6 @@ FROM base AS deps
 COPY package.json package-lock.json ./
 COPY frontend/package.json frontend/
 COPY shared/contracts/package.json shared/contracts/
-COPY shared/schemas/package.json shared/schemas/
 RUN npm install
 
 # ---------------------
@@ -28,7 +27,7 @@ ARG VITE_API_BASE_URL
 ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 
 # Build shared packages first
-RUN npm run build -w @repo/contracts
+RUN npx tsc -b shared/contracts --clean && npx tsc -b shared/contracts
 
 # Build the frontend
 RUN npm run build -w frontend

@@ -4,10 +4,9 @@
     "description": "CrossFire Backend API",
     "license": "ISC",
     "author": "",
-    "type": "module",
     "main": "dist/index.js",
     "scripts": {
-        "build": "tsc",
+        "build": "tsc -b",
         "start": "node dist/index.js",
         "dev": "nodemon",
         "db:generate": "drizzle-kit generate",
@@ -20,7 +19,6 @@
     "dependencies": {
         "@faker-js/faker": "^9.3.0",
         "@repo/contracts": "*",
-        "@repo/schemas": "*",
         "@types/better-sqlite3": "^7.6.13",
         "bcrypt": "^6.0.0",
         "better-sqlite3": "^12.5.0",

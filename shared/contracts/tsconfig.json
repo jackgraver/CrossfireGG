@@ -1,15 +1,15 @@
 {
     "compilerOptions": {
-        "composite": true,
+        "module": "CommonJS",
+        "target": "ES2022",
+        "strict": true,
         "declaration": true,
-        "declarationMap": true,
+        "composite": true,
         "outDir": "dist",
         "rootDir": "src",
-        "module": "ESNext",
-        "target": "ES2020",
         "moduleResolution": "Node",
-        "strict": true
-    },
-    "include": ["src"],
-    "exclude": ["dist", "node_modules"]
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "forceConsistentCasingInFileNames": true
+    }
 }

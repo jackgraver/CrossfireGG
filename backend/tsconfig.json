@@ -2,8 +2,7 @@
     "compilerOptions": {
         "composite": true,
         "target": "ES2022",
-        "module": "ESNext",
-        "moduleResolution": "Bundler",
+        "module": "CommonJS",
         "lib": ["ES2022"],
         "outDir": "dist",
         "rootDir": ".",
@@ -11,17 +10,14 @@
         "esModuleInterop": true,
         "skipLibCheck": true,
         "resolveJsonModule": true,
+        "moduleResolution": "Node",
         "declaration": true,
         "sourceMap": true,
         "paths": {
-            "@repo/schemas": ["../shared/schemas/src"],
             "@repo/contracts": ["../shared/contracts/src"]
         }
     },
     "include": ["."],
     "exclude": ["node_modules", "dist"],
-    "references": [
-        { "path": "../shared/schemas" },
-        { "path": "../shared/contracts" }
-    ]
+    "references": [{ "path": "../shared/contracts" }]
 }

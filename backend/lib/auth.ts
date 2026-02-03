@@ -4,7 +4,7 @@ import { createAuthMiddleware } from "better-auth/api";
 import { config } from "../config/env";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "../config/database";
-import { users, session, account, verification } from "@repo/schemas";
+import { users, session, account, verification } from "../schemas";
 import { playerRepository } from "../modules/players/player.repository";
 
 export const auth = betterAuth({
@@ -23,8 +23,15 @@ export const auth = betterAuth({
     },
     hooks: {
         after: createAuthMiddleware(async (ctx) => {
-            const returned = ctx.context.returned as { token: string; user: { id: string } };
-            if (ctx.path.startsWith("/sign-up/email") && ctx.method === "POST" && returned.token) {
+            const returned = ctx.context.returned as {
+                token: string;
+                user: { id: string };
+            };
+            if (
+                ctx.path.startsWith("/sign-up/email") &&
+                ctx.method === "POST" &&
+                returned.token
+            ) {
                 //TODO: switch to OAUTH
                 //TODO: fetch player information from faceit with OAUTH info?
                 const res = await playerRepository.upsertPlayerByFaceitId({
@@ -48,7 +55,8 @@ export const auth = betterAuth({
                     clientSecret: config.auth.clientSecret!,
                     authorizationUrl: "https://accounts.faceit.com",
                     tokenUrl: "https://api.faceit.com/auth/v1/oauth/token",
-                    userInfoUrl: "https://api.faceit.com/auth/v1/resources/userinfo",
+                    userInfoUrl:
+                        "https://api.faceit.com/auth/v1/resources/userinfo",
                     scopes: ["openid", "profile", "email"],
                     authentication: "basic",
                     pkce: true,

@@ -12,7 +12,6 @@ FROM base AS deps
 COPY package.json package-lock.json ./
 COPY backend/package.json backend/
 COPY shared/contracts/package.json shared/contracts/
-COPY shared/schemas/package.json shared/schemas/
 RUN npm install
 
 # ---------------------
@@ -25,23 +24,25 @@ COPY backend backend
 COPY shared shared
 
 # Build shared packages first
-RUN npm run build -w @repo/contracts
-RUN npm run build -w @repo/schemas
+RUN npx tsc -b shared/contracts --clean && npx tsc -b shared/contracts
 
 # Now build backend
-RUN npm run build -w cf-backend
+# RUN npx tsc -b backend --clean && npx tsc -b backend
+RUN npm run build -w backend
 
-# ---------------------
-# Runtime
-# ---------------------
+# 4. Runtime
 FROM base AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=8080
 
-COPY --from=builder /app/backend/dist backend/dist
-COPY --from=builder /app/backend/package.json backend/package.json
-COPY --from=builder /app/node_modules node_modules
+# Copy the built backend, shared packages, and node_modules
+COPY --from=builder /app/backend/dist ./backend/dist
+COPY --from=builder /app/backend/package.json ./backend/package.json
+COPY --from=builder /app/shared ./shared
+COPY --from=builder /app/node_modules ./node_modules
 
 EXPOSE 8080
+
+# Start the backend server
 CMD ["node", "backend/dist/index.js"]

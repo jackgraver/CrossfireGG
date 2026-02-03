@@ -1,5 +1,5 @@
 import { InferSelectModel } from "drizzle-orm";
-import { teams, stageTeams, matches, matchParticipants } from "@repo/schemas";
+import { teams, stageTeams, matches, matchParticipants } from "../../schemas";
 
 export type TeamSchema = InferSelectModel<typeof teams>;
 export type StageTeamSchema = InferSelectModel<typeof stageTeams>;

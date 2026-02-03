@@ -1,5 +1,5 @@
 import { db } from "../../config/database";
-import { users, userRoles, roles, players } from "@repo/schemas";
+import { users, userRoles, roles, players } from "../../schemas";
 import { eq, and, isNull } from "drizzle-orm";
 import { uuidv4 } from "zod";
 
@@ -17,7 +17,9 @@ export const userRepository = {
         const result = await db
             .select()
             .from(users)
-            .where(and(eq(users.id, userId.toString()), isNull(users.deleted_at)))
+            .where(
+                and(eq(users.id, userId.toString()), isNull(users.deleted_at)),
+            )
             .limit(1);
         return result[0];
     },
@@ -67,7 +69,9 @@ export const userRepository = {
         const result = await db
             .update(users)
             .set(updated_ata)
-            .where(and(eq(users.id, userId.toString()), isNull(users.deleted_at)))
+            .where(
+                and(eq(users.id, userId.toString()), isNull(users.deleted_at)),
+            )
             .returning();
         return Array.isArray(result) ? result[0] : undefined;
     },
@@ -77,7 +81,12 @@ export const userRepository = {
             .select({ roleName: roles.name })
             .from(userRoles)
             .innerJoin(roles, eq(userRoles.role_id, roles.id))
-            .where(and(eq(userRoles.user_id, userId.toString()), isNull(userRoles.deleted_at)));
+            .where(
+                and(
+                    eq(userRoles.user_id, userId.toString()),
+                    isNull(userRoles.deleted_at),
+                ),
+            );
         return result.map((r) => r.roleName);
     },
 
@@ -87,7 +96,9 @@ export const userRepository = {
             .set({
                 updatedAt: new Date(),
             })
-            .where(and(eq(users.id, userId.toString()), isNull(users.deleted_at)))
+            .where(
+                and(eq(users.id, userId.toString()), isNull(users.deleted_at)),
+            )
             .returning();
         return Array.isArray(result) ? result[0] : undefined;
     },

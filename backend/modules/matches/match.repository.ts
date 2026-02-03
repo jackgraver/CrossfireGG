@@ -8,7 +8,7 @@ import {
     groups,
     stages,
     matchCasters,
-} from "@repo/schemas";
+} from "../../schemas";
 import { eq, and, isNull } from "drizzle-orm";
 
 export const matchRepository = {
@@ -94,7 +94,11 @@ export const matchRepository = {
     },
 
     findGroupById: async (groupId: number) => {
-        const result = await db.select().from(groups).where(eq(groups.id, groupId)).limit(1);
+        const result = await db
+            .select()
+            .from(groups)
+            .where(eq(groups.id, groupId))
+            .limit(1);
         return result[0] || null;
     },
 
@@ -124,7 +128,9 @@ export const matchRepository = {
         return await db
             .select()
             .from(players)
-            .where(and(eq(players.team_id, teamId), isNull(players.deleted_at)));
+            .where(
+                and(eq(players.team_id, teamId), isNull(players.deleted_at)),
+            );
     },
 
     findMapsByMatchId: async (matchId: number) => {
@@ -138,7 +144,12 @@ export const matchRepository = {
         const result = await db
             .select()
             .from(matches)
-            .where(and(eq(matches.faceit_id, faceitId), isNull(matches.deleted_at)))
+            .where(
+                and(
+                    eq(matches.faceit_id, faceitId),
+                    isNull(matches.deleted_at),
+                ),
+            )
             .limit(1);
         return result[0] || null;
     },
@@ -158,7 +169,12 @@ export const matchRepository = {
         const existing = await db
             .select()
             .from(matches)
-            .where(and(eq(matches.faceit_id, matchData.faceit_id), isNull(matches.deleted_at)))
+            .where(
+                and(
+                    eq(matches.faceit_id, matchData.faceit_id),
+                    isNull(matches.deleted_at),
+                ),
+            )
             .limit(1);
 
         if (existing.length > 0) {

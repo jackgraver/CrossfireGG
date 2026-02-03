@@ -3,9 +3,7 @@ export const config = {
     nodeEnv: process.env.NODE_ENV || "development",
     database: {
         path: process.env.DATABASE_PATH || "./cf.db",
-        url:
-            process.env.DATABASE_URL ??
-            "postgresql://app_user:app_password@localhost:5432/cf-db",
+        url: process.env.DATABASE_URL,
     },
     cors: {
         allowedOrigins: ["http://localhost:5173", "http://localhost:3000"],

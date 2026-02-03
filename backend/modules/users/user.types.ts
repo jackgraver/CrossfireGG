@@ -1,5 +1,5 @@
 import { InferSelectModel } from "drizzle-orm";
-import { users, userRoles, roles } from "@repo/schemas";
+import { users, userRoles, roles } from "../../schemas";
 
 export type UserSchema = InferSelectModel<typeof users>;
 export type UserRoleSchema = InferSelectModel<typeof userRoles>;
