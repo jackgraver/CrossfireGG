@@ -5,12 +5,15 @@ import {
     TournamentWithMinimalStagesDTO,
 } from "@repo/contracts";
 
-import { tournamentApi } from "@/api/tournament.api";
+import { apiGET } from "@/api/client";
 
 export const useTournamentById = (tournamentId: string) => {
     return useQuery<TournamentWithMinimalStagesDTO>({
         queryKey: ["tournament", tournamentId],
-        queryFn: () => tournamentApi.tournamentById(tournamentId),
+        queryFn: () =>
+            apiGET<TournamentWithMinimalStagesDTO>(
+                `/tournament/${tournamentId}`,
+            ),
         enabled: !!tournamentId,
     });
 };
@@ -18,7 +21,7 @@ export const useTournamentById = (tournamentId: string) => {
 export const useMatchesByStage = (stageId: number | null) => {
     return useQuery<any>({
         queryKey: ["matches", "stage", stageId],
-        queryFn: () => tournamentApi.matchesByStageId(stageId!.toString()),
+        queryFn: () => apiGET<any>(`/tournament/stage/${stageId}/matches`),
         enabled: !!stageId,
     });
 };
@@ -26,7 +29,10 @@ export const useMatchesByStage = (stageId: number | null) => {
 export const useStageTeams = (stageId: number) => {
     return useQuery<StageTeamWithTeamDTO[]>({
         queryKey: ["stageTeams", stageId],
-        queryFn: () => tournamentApi.stageTeams(stageId),
+        queryFn: () =>
+            apiGET<StageTeamWithTeamDTO[]>(
+                `/tournament/stage/${stageId}/teams`,
+            ),
         enabled: !!stageId,
     });
 };
@@ -34,7 +40,10 @@ export const useStageTeams = (stageId: number) => {
 export const useStageBracket = (stageId: number | null) => {
     return useQuery<GroupWithMatchesAndFormatDTO>({
         queryKey: ["stageStandings", stageId],
-        queryFn: () => tournamentApi.stageBracket(stageId!.toString()),
+        queryFn: () =>
+            apiGET<GroupWithMatchesAndFormatDTO>(
+                `/tournament/stage/${stageId}/bracket`,
+            ),
         enabled: !!stageId,
     });
 };

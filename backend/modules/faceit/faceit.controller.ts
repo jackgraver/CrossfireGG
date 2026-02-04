@@ -9,10 +9,25 @@ import {
 import { faceitImportService } from "./faceit.service";
 import { faceitFetchUtil } from "../../utils/faceitFetch.util";
 import { teamRepository } from "../teams/team.repository";
-import { FaceitPlayerTeamsResponse, FaceitTeamPlayersResponse } from "./faceit.types";
+import {
+    FaceitPlayerTeamsResponse,
+    FaceitTeamPlayersResponse,
+} from "./faceit.types";
 import { playerRepository } from "../players/player.repository";
 
 export const faceitController = {
+    test: async (req: Request, res: Response) => {
+        try {
+            const test = await faceitFetchUtil.fetchData<any>(
+                "/matches/1-3eda1154-09fd-4274-a40c-54f676c2632f/stats",
+            );
+            res.json(test);
+        } catch (error: any) {
+            logger.error("Error testing Faceit:", error);
+            res.status(500).json({ error: "Failed to test Faceit" });
+        }
+    },
+
     importFaceitStage: async (req: Request, res: Response) => {
         try {
             const validation = ImportFaceitStageSchema.safeParse(req.body);
@@ -26,16 +41,29 @@ export const faceitController = {
                 });
             }
 
-            const { tournamentId, championshipId, readFileName, writeFileName } = validation.data;
+            const {
+                tournamentId,
+                championshipId,
+                readFileName,
+                writeFileName,
+            } = validation.data;
 
-            logger.info(`Importing Faceit stage for championship ${championshipId}`);
+            logger.info(
+                `Importing Faceit stage for championship ${championshipId}`,
+            );
 
-            const championshipData = await faceitFetchUtil.fetchStageData(championshipId, {
-                readFileName: readFileName,
-                writeFileName: writeFileName,
-            });
+            const championshipData = await faceitFetchUtil.fetchStageData(
+                championshipId,
+                {
+                    readFileName: readFileName,
+                    writeFileName: writeFileName,
+                },
+            );
 
-            const stage = await faceitImportService.importStage(championshipData, tournamentId);
+            const stage = await faceitImportService.importStage(
+                championshipData,
+                tournamentId,
+            );
 
             res.json({
                 success: true,
@@ -64,18 +92,25 @@ export const faceitController = {
                 });
             }
 
-            const { stageId, championshipId, readFileName, writeFileName } = validation.data;
+            const { stageId, championshipId, readFileName, writeFileName } =
+                validation.data;
 
             logger.info(
                 `Importing Faceit matches for championship ${championshipId} into stage ${stageId}`,
             );
 
-            const matchesData = await faceitFetchUtil.fetchMatchesData(championshipId, {
-                readFileName: readFileName,
-                writeFileName: writeFileName,
-            });
+            const matchesData = await faceitFetchUtil.fetchMatchesData(
+                championshipId,
+                {
+                    readFileName: readFileName,
+                    writeFileName: writeFileName,
+                },
+            );
 
-            const result = await faceitImportService.importMatches(matchesData, stageId);
+            const result = await faceitImportService.importMatches(
+                matchesData,
+                stageId,
+            );
 
             res.json({
                 success: result.success,
@@ -94,7 +129,9 @@ export const faceitController = {
 
     getFaceitPlayerTeams: async (req: Request, res: Response) => {
         try {
-            const validation = VerifyFaceitPlayerTeamsSchema.safeParse(req.params);
+            const validation = VerifyFaceitPlayerTeamsSchema.safeParse(
+                req.params,
+            );
             if (!validation.success) {
                 return res.status(400).json({
                     error: "Validation failed",
@@ -107,15 +144,18 @@ export const faceitController = {
 
             const { playerId } = validation.data;
 
-            const response = await faceitFetchUtil.fetchData<FaceitPlayerTeamsResponse>(
-                `/players/${playerId}/teams`,
-                {
-                    readFileName: `player_teams_${playerId}.json`,
-                    // writeFileName: `player_teams_${playerId}.json`,
-                },
-            );
+            const response =
+                await faceitFetchUtil.fetchData<FaceitPlayerTeamsResponse>(
+                    `/players/${playerId}/teams`,
+                    {
+                        readFileName: `player_teams_${playerId}.json`,
+                        // writeFileName: `player_teams_${playerId}.json`,
+                    },
+                );
 
-            const ledTeams = response.items.filter((team) => team.leader === playerId);
+            const ledTeams = response.items.filter(
+                (team) => team.leader === playerId,
+            );
 
             if (ledTeams.length === 0) {
                 res.status(200).json({ teams: [] });
@@ -126,14 +166,18 @@ export const faceitController = {
                 ledTeams.map((team) => team.team_id),
             );
 
-            const existingTeamsByFaceitId = new Map(existingTeams.map((t) => [t.faceit_id!, t]));
+            const existingTeamsByFaceitId = new Map(
+                existingTeams.map((t) => [t.faceit_id!, t]),
+            );
 
             const result = ledTeams.map((team) => ({
                 team_id: team.team_id,
                 name: team.name,
                 avatar: team.avatar,
                 leader: team.leader,
-                isRegistered: existingTeamsByFaceitId.get(team.team_id)?.id?.toString() ?? null,
+                isRegistered:
+                    existingTeamsByFaceitId.get(team.team_id)?.id?.toString() ??
+                    null,
             }));
 
             res.json({ teams: result });
@@ -161,17 +205,19 @@ export const faceitController = {
 
             const { teamId } = validation.data;
 
-            const players = await faceitFetchUtil.fetchData<FaceitTeamPlayersResponse>(
-                `/teams/${teamId}`,
-                {
-                    readFileName: `team_players_${teamId}.json`,
-                    // writeFileName: `team_players_${teamId}.json`,
-                },
-            );
+            const players =
+                await faceitFetchUtil.fetchData<FaceitTeamPlayersResponse>(
+                    `/teams/${teamId}`,
+                    {
+                        readFileName: `team_players_${teamId}.json`,
+                        // writeFileName: `team_players_${teamId}.json`,
+                    },
+                );
 
-            const existingPlayersByFaceitId = await playerRepository.findByFaceitIds(
-                players.members.map((member) => member.user_id),
-            );
+            const existingPlayersByFaceitId =
+                await playerRepository.findByFaceitIds(
+                    players.members.map((member) => member.user_id),
+                );
 
             if (existingPlayersByFaceitId.length === 0) {
                 res.status(200).json({ players: [] });

@@ -8,8 +8,9 @@ import {
     groups,
     stages,
     matchCasters,
+    playerStats,
 } from "../../schemas";
-import { eq, and, isNull } from "drizzle-orm";
+import { eq, and, isNull, desc, asc } from "drizzle-orm";
 
 export const matchRepository = {
     findById: async (matchId: number) => {
@@ -18,18 +19,19 @@ export const matchRepository = {
             with: {
                 participants: {
                     with: {
-                        stageTeam: {
-                            with: {
-                                players: {
-                                    with: {
-                                        player: true,
-                                    },
-                                },
-                            },
-                        },
+                        team: true,
                     },
                 },
-                maps: true,
+                // maps: {
+                //     with: {
+                //         playerStats: {
+                //             orderBy: [
+                //                 desc(playerStats.kills),
+                //                 desc(playerStats.deaths),
+                //             ],
+                //         },
+                //     },
+                // },
             },
         });
     },
@@ -137,7 +139,36 @@ export const matchRepository = {
         return await db
             .select()
             .from(maps)
-            .where(and(eq(maps.match_id, matchId), isNull(maps.deleted_at)));
+            .where(and(eq(maps.match_id, matchId), isNull(maps.deleted_at)))
+            .orderBy(asc(maps.map_order));
+    },
+
+    findPlayerStatsByMatchId: async (matchId: number) => {
+        return await db
+            .select({
+                stat: playerStats,
+                player_name: players.player_name,
+                team_id: teams.id,
+                team_name: teams.name,
+            })
+            .from(playerStats)
+            .innerJoin(players, eq(playerStats.player_id, players.id))
+            .leftJoin(
+                teams,
+                and(eq(players.team_id, teams.id), isNull(teams.deleted_at)),
+            )
+            .where(
+                and(
+                    eq(playerStats.match_id, matchId),
+                    isNull(playerStats.deleted_at),
+                    isNull(players.deleted_at),
+                ),
+            )
+            .orderBy(
+                asc(playerStats.map_id),
+                desc(playerStats.kills),
+                desc(playerStats.adr),
+            );
     },
 
     findMatchByFaceitId: async (faceitId: string) => {

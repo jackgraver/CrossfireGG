@@ -1,7 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { faceitApi } from "@/api/faceit.api";
-import { teamApi } from "@/api/team.api";
 import { Player, Team } from "../-types/registration.types";
+import { apiGET, apiPOST } from "@/api/client";
 
 export const usePlayerFaceitTeams = (playerId: string) => {
     return useQuery<{
@@ -14,7 +13,16 @@ export const usePlayerFaceitTeams = (playerId: string) => {
         }[];
     }>({
         queryKey: ["player-faceit-teams", playerId],
-        queryFn: () => faceitApi.playerFaceitTeams(playerId),
+        queryFn: () =>
+            apiGET<{
+                teams: {
+                    team_id: string;
+                    name: string;
+                    avatar: string;
+                    leader: string;
+                    isRegistered: string | null;
+                }[];
+            }>(`/faceit/player/${playerId}/teams`),
         enabled: !!playerId,
     });
 };
@@ -29,7 +37,15 @@ export const useTeamPlayers = (teamId: string) => {
         }[];
     }>({
         queryKey: ["team-players", teamId],
-        queryFn: () => faceitApi.teamFaceitPlayers(teamId),
+        queryFn: () =>
+            apiGET<{
+                players: {
+                    user_id: string;
+                    nickname: string;
+                    avatar: string;
+                    nationality: string;
+                }[];
+            }>(`/faceit/team/${teamId}/players`),
         enabled: !!teamId,
     });
 };
@@ -49,7 +65,13 @@ export const useRegisterTeam = () => {
             coach: Player | null;
             tournamentId: string | null;
         }) => {
-            return teamApi.registerTeam(team, starters, subs, coach as Player, tournamentId);
+            return apiPOST<{ team_id: number }>(`/team/register`, {
+                team,
+                starters,
+                subs,
+                coach: coach as Player,
+                tournamentId,
+            });
         },
     });
 };

@@ -1,8 +1,14 @@
 import TeamLogo from "@/shared/bracket/atoms/TeamLogo";
-import { createFileRoute, Link, Outlet, useMatchRoute } from "@tanstack/react-router";
+import {
+    createFileRoute,
+    Link,
+    Outlet,
+    useMatchRoute,
+} from "@tanstack/react-router";
 import { useTeam } from "../-queries/team.queries";
-import { teamApi } from "@/api/team.api";
 import { queryClient } from "@/lib/queryClient";
+import { apiGET } from "@/api/client";
+import { TeamDTO } from "@repo/contracts";
 
 export const Route = createFileRoute("/team/$team_id")({
     component: RouteComponent,
@@ -17,7 +23,7 @@ export const Route = createFileRoute("/team/$team_id")({
         // };
         await queryClient.prefetchQuery({
             queryKey: ["team", params.team_id],
-            queryFn: () => teamApi.teamById(params.team_id),
+            queryFn: () => apiGET<TeamDTO>(`/team/${params.team_id}`),
         });
     },
 });
@@ -39,7 +45,9 @@ function RouteComponent() {
         return (
             <div className="flex min-h-screen items-center justify-center">
                 <div className="bg-firstBg rounded-xl p-8 text-center shadow-md">
-                    <h1 className="text-textPrimary mb-4 text-2xl font-bold">Team Not Found</h1>
+                    <h1 className="text-textPrimary mb-4 text-2xl font-bold">
+                        Team Not Found
+                    </h1>
                     <Link to="/" className="text-blue-400 hover:text-blue-300">
                         Return Home
                     </Link>
@@ -70,7 +78,9 @@ function RouteComponent() {
                         styling="h-24 w-24 rounded-lg border-2 border-border object-cover"
                     />
                     <div className="flex flex-col gap-1">
-                        <h1 className="text-textPrimary text-3xl font-bold">{team.name}</h1>
+                        <h1 className="text-textPrimary text-3xl font-bold">
+                            {team.name}
+                        </h1>
                         {team.faceit_id && (
                             <a
                                 href={`https://www.faceit.com/en/teams/${team.faceit_id}`}

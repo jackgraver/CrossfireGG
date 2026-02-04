@@ -1,10 +1,11 @@
-import { tournamentApi } from "@/api/tournament.api";
 import { queryClient } from "@/lib/queryClient";
 import { useMutation } from "@tanstack/react-query";
+import { apiPOST } from "@/api/client";
 
 export const useCreateTournament = () => {
     return useMutation({
-        mutationFn: (payload: any) => tournamentApi.createTournament(payload),
+        mutationFn: (payload: any) =>
+            apiPOST<any>(`/tournament/create`, payload),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["tournaments"] });
         },

@@ -3,6 +3,8 @@ import { faceitController } from "./faceit.controller";
 
 const router = Router();
 
+router.get("/test", faceitController.test);
+
 router.post("/import/stage", faceitController.importFaceitStage);
 router.post("/import/matches", faceitController.importFaceitMatches);
 router.get("/player/:playerId/teams", faceitController.getFaceitPlayerTeams);

@@ -8,32 +8,6 @@ import {
 } from "@repo/contracts";
 
 export const tournamentApi = {
-    allTournaments: async () => {
-        const response = await api.get<TournamentWithStagesDTO[]>("/tournament/all");
-        return response.data;
-    },
-    tournamentById: async (tournamentId: string) => {
-        const response = await api.get<TournamentWithMinimalStagesDTO>(
-            `/tournament/${tournamentId}`,
-        );
-        return response.data;
-    },
-    matchesByStageId: async (stageId: string) => {
-        const response = await api.get<any>(`/tournament/stage/${stageId}/matches`);
-        return response.data;
-    },
-    stageTeams: async (stageId: number) => {
-        const response = await api.get<StageTeamWithTeamDTO[]>(
-            `/tournament/stage/${stageId}/teams`,
-        );
-        return response.data;
-    },
-    stageBracket: async (stageId: string) => {
-        const response = await api.get<GroupWithMatchesAndFormatDTO>(
-            `/tournament/stage/${stageId}/bracket`,
-        );
-        return response.data;
-    },
     registerForTournament: async (
         tournamentId: string,
         payload: {
@@ -47,15 +21,10 @@ export const tournamentApi = {
             };
         },
     ) => {
-        const response = await api.post(`/tournament/${tournamentId}/register`, payload);
-        return response.data;
-    },
-    createTournament: async (payload: any) => {
-        const response = await api.post("/tournament/create", payload);
-        return response.data;
-    },
-    tournamentTeams: async (tournamentId: string) => {
-        const response = await api.get<StageTeamSignUpDTO[]>(`/tournament/${tournamentId}/teams`);
+        const response = await api.post(
+            `/tournament/${tournamentId}/register`,
+            payload,
+        );
         return response.data;
     },
 };
