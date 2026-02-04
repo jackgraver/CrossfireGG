@@ -4,6 +4,7 @@ import { fromNodeHeaders } from "better-auth/node";
 import { userRepository } from "../../modules/users/user.repository";
 
 export interface AuthRequest extends Request {
+    session?: any;
     user?: {
         id: string;
         name: string;
@@ -17,22 +18,25 @@ export interface AuthRequest extends Request {
     roles?: string[];
 }
 
-export const authMiddleware: RequestHandler = async (req, res, next) => {
+export const fetchSession: RequestHandler = async (req, res, next) => {
     try {
         const session = await auth.api.getSession({
             headers: fromNodeHeaders(req.headers),
         });
 
         if (!session?.user.id) {
-            return res.status(401).json({ error: "Unauthorized" });
+            (req as AuthRequest).session = null;
+            return next();
         }
 
         const user = await userRepository.findById(session.user.id);
         if (!user) {
-            return res.status(401).json({ error: "Unauthorized" });
+            (req as AuthRequest).session = null;
+            return next();
         }
 
         const authReq = req as AuthRequest;
+        authReq.session = session;
         authReq.user = {
             id: user.id,
             name: user.name ?? session.user.name,
@@ -45,9 +49,22 @@ export const authMiddleware: RequestHandler = async (req, res, next) => {
 
         next();
     } catch (error: any) {
-        res.status(500).json({ error: error.message });
+        // Even if session fetch fails, we might want to continue as anonymous
+        // but log it for debugging
+        (req as AuthRequest).session = null;
+        next();
     }
 };
+
+export const requireSession: RequestHandler = (req, res, next) => {
+    const authReq = req as AuthRequest;
+    if (!authReq.session?.user?.id) {
+        return res.status(401).json({ error: "Unauthorized" });
+    }
+    next();
+};
+
+export const authMiddleware = [fetchSession, requireSession];
 
 export const requireRoles =
     (...requiredRoles: string[]): RequestHandler =>

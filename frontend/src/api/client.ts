@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosResponse } from "axios";
+import axios from "axios";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -25,22 +25,6 @@ export const apiDELETE = async <T = any>(url: string): Promise<T> => {
     const response = await api.delete<T>(url);
     return response.data as T;
 };
-
-// api.interceptors.response.use(
-//     (response) => {
-//         console.log("response", response.data);
-//         return response.data;
-//     },
-//     (error) => Promise.reject(error),
-// );
-
-// api.interceptors.request.use((config) => {
-//     const token = "temp"; //TODO: create token based access in backend
-//     if (token) {
-//         config.headers.Authorization = `Bearer ${token}`;
-//     }
-//     return config;
-// });
 
 api.interceptors.response.use(
     (response) => response,
