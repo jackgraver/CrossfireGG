@@ -6,7 +6,7 @@ type ReviewTeamProps = {
     teamId: string;
     players: Player[];
     subs: Player[];
-    coach: Player | null;
+    coach: Player[];
 };
 
 export default function ReviewTeam({ teamId, players, subs, coach }: ReviewTeamProps) {
@@ -36,11 +36,13 @@ export default function ReviewTeam({ teamId, players, subs, coach }: ReviewTeamP
                     </div>
                 </>
             )}
-            {coach && (
+            {coach.length > 0 && (
                 <>
                     <h2 className="text-lg font-bold">Coach</h2>
                     <div className="flex flex-col gap-2">
-                        <Card key={coach.faceitId} avatar={coach.avatar} name={coach.playerName} />
+                        {coach.map((c) => (
+                            <Card key={c.faceitId} avatar={c.avatar} name={c.playerName} />
+                        ))}
                     </div>
                 </>
             )}

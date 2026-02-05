@@ -12,7 +12,7 @@ export const RegisterTeamSchema = z.object({
     team: z.object({
         teamId: z.string().min(1),
         name: z.string().min(1),
-        twitter: z.string().min(1),
+        twitter: z.string().optional().nullable().or(z.string().min(1)),
         captainFaceitId: z.string().min(1),
         logo: z.string().min(1),
     }),

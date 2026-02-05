@@ -1,9 +1,9 @@
 import { Response } from "express";
 import { z } from "zod";
 
-export function sendContract<T extends z.ZodTypeAny>(
+export function sendContract(
     res: Response,
-    contract: T,
+    contract: z.ZodTypeAny,
     data: unknown,
     status = 200,
 ) {

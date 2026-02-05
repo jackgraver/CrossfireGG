@@ -23,11 +23,16 @@ export const stepConfig: StepConfig[] = [
     },
     {
         id: formSteps[4],
+        title: "Agreements",
+        description: "Rules and guidelines.",
+    },
+    {
+        id: formSteps[5],
         title: "Review",
         description: "Review your registration details.",
     },
     {
-        id: formSteps[5],
+        id: formSteps[6],
         title: "Finished",
         description: "Registration complete.",
     },

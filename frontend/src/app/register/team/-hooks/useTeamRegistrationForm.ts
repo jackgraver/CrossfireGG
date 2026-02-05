@@ -9,7 +9,9 @@ type UseTeamRegistrationFormOptions = {
     onError?: (error: unknown) => void;
 };
 
-export function useTeamRegistrationForm(options: UseTeamRegistrationFormOptions = {}) {
+export function useTeamRegistrationForm(
+    options: UseTeamRegistrationFormOptions = {},
+) {
     const registerMutation = useRegisterTeam();
 
     const form = useForm({
@@ -34,14 +36,13 @@ export function useTeamRegistrationForm(options: UseTeamRegistrationFormOptions 
                   ]
                 : [],
             subs: [] as Player[],
-            coach: null as Player | null,
+            coach: [] as Player[],
             agreements: {
                 rulesAndGuidelines: false,
                 discordConfirmation: false,
             },
         } satisfies RegistrationFormData,
-        onSubmit: async ({ value }) => {
-            console.log("submit", value);
+        onSubmit: ({ value }) => {
             registerMutation.mutate(
                 {
                     team: value.team,

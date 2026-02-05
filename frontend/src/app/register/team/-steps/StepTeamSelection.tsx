@@ -79,14 +79,7 @@ export default function StepTeamSelection({
                             : [],
                     );
                     form.setFieldValue("subs", []);
-                    form.setFieldValue("coach", {
-                        faceitId: "",
-                        hltvLink: "",
-                        discordId: "",
-                        playerName: "",
-                        nationality: "",
-                        avatar: "",
-                    });
+                    form.setFieldValue("coach", []);
                 }}
             >
                 {!isLoading &&

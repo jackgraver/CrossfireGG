@@ -53,25 +53,38 @@ export default function StepCoach({
             <SelectableCardGroup
                 min={0}
                 max={1}
-                selectedElements={coach ? [coach] : []}
+                selectedElements={coach}
                 onChange={(value: any) => {
-                    if (coach?.faceitId === value.user_id) {
-                        form.setFieldValue("coach", null);
-                        return;
+                    const existingIndex = coach.findIndex(
+                        (player: any) => player.faceitId === value.user_id,
+                    );
+                    if (existingIndex >= 0) {
+                        form.setFieldValue(
+                            "coach",
+                            coach.filter((_: any, i: number) => i !== existingIndex),
+                        );
+                    } else {
+                        const nextCoach = [
+                            {
+                                faceitId: value.user_id,
+                                hltvLink: "",
+                                discordId: "",
+                                playerName: value.nickname,
+                                nationality: value.nationality,
+                                avatar: value.avatar,
+                            },
+                        ];
+                        form.setFieldValue("coach", coach.length >= 1 ? nextCoach : [...coach, ...nextCoach]);
                     }
-                    form.setFieldValue("coach", {
-                        faceitId: value.user_id,
-                        hltvLink: "",
-                        discordId: "",
-                        playerName: value.nickname,
-                        nationality: value.nationality,
-                        avatar: value.avatar,
-                    });
                 }}
             >
                 {!isLoading &&
                     teamPlayers?.players
-                        ?.filter((player) => !excludedIds.has(player.user_id))
+                        ?.filter(
+                            (player) =>
+                                !excludedIds.has(player.user_id) &&
+                                !coach.some((c: any) => c.faceitId === player.user_id),
+                        )
                         .map((player) => (
                             <SelectableCard
                                 key={player.user_id}
@@ -93,20 +106,26 @@ export default function StepCoach({
                     Complete the information for your team coach.
                 </p>
             </div>
-            {!coach?.faceitId ? (
+            {coach.length === 0 && (
                 <div className="flex h-32 items-center justify-center rounded-lg border-2 border-dashed border-gray-700 text-gray-500">
                     Select a coach from the list to see their details (optional)
                 </div>
-            ) : (
-                <div className="rounded-lg transition-all duration-200">
+            )}
+            {coach.map((player: any, index: number) => (
+                <div key={`${index}-${player.faceitId}`} className="rounded-lg transition-all duration-200">
                     <PlayerFormFields
                         form={form}
-                        namePrefix="coach"
+                        namePrefix={`coach[${index}]`}
                         labelPrefix="Coach"
-                        onRemove={() => form.setFieldValue("coach", null)}
+                        onRemove={() =>
+                            form.setFieldValue(
+                                "coach",
+                                coach.filter((_: any, i: number) => i !== index),
+                            )
+                        }
                     />
                 </div>
-            )}
+            ))}
         </div>
     );
 

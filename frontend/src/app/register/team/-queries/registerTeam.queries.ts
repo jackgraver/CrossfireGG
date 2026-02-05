@@ -62,14 +62,14 @@ export const useRegisterTeam = () => {
             team: Team;
             starters: Player[];
             subs: Player[];
-            coach: Player | null;
+            coach: Player[];
             tournamentId: string | null;
         }) => {
             return apiPOST<{ team_id: number }>(`/team/register`, {
                 team,
                 starters,
                 subs,
-                coach: coach as Player,
+                coach: coach[0] ?? null,
                 tournamentId,
             });
         },

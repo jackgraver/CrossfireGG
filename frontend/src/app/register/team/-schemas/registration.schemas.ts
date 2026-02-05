@@ -1,14 +1,12 @@
 import z from "zod";
 
-const playerBaseSchema = z.object({
+const playerSchema = z.object({
     faceitId: z.string().trim().min(1, "Faceit ID is required"),
     hltvLink: z.string().trim().min(1, "HLTV Link is required"),
     discordId: z.string().trim().min(1, "Discord ID is required"),
     playerName: z.string().trim().min(2, "Name is required"),
     nationality: z.string().trim().min(2, "Nationality is required"),
 });
-
-export const playerSchema = playerBaseSchema;
 
 export type Player = z.infer<typeof playerSchema>;
 
@@ -20,9 +18,7 @@ export const teamSchema = z.object({
     logo: z.string().trim().optional(),
 });
 
-export const coachSchema = playerBaseSchema;
-
-export type Coach = z.infer<typeof coachSchema>;
+export type Coach = z.infer<typeof playerSchema>;
 
 export const teamStepSchema = z.object({
     team: teamSchema,
@@ -37,5 +33,16 @@ export const subsStepSchema = z.object({
 });
 
 export const coachStepSchema = z.object({
-    coach: coachSchema.optional().nullable(),
+    coach: z.array(playerSchema).max(1, "Max 1 coach").min(0),
+});
+
+export const agreementsStepSchema = z.object({
+    agreements: z.object({
+        rulesAndGuidelines: z.literal(true, {
+            message: "You must agree to the rules and guidelines",
+        }),
+        discordConfirmation: z.literal(true, {
+            message: "You must confirm that all members are in the Discord",
+        }),
+    }),
 });

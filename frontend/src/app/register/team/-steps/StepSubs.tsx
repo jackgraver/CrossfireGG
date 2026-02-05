@@ -33,7 +33,7 @@ export default function StepSubs({
 
     const excludedIds = new Set([
         ...starters.map((player: any) => player.faceitId),
-        coach?.faceitId,
+        ...coach.map((player: any) => player.faceitId),
     ]);
 
     const { data: teamPlayers, isLoading, error } = useTeamPlayers(teamId);

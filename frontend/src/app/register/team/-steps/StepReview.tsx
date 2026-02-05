@@ -27,13 +27,16 @@ export default function StepReview({
     const left = (
         <div className="flex flex-col gap-y-4">
             <div className="flex flex-col gap-y-1">
-                <h1 className="text-2xl font-bold text-white">Review Registration</h1>
+                <h1 className="text-2xl font-bold text-white">
+                    Review Registration
+                </h1>
                 <p className="text-sm text-gray-400">
-                    Please review your team registration details before submitting.
+                    Please review your team registration details before
+                    submitting.
                 </p>
                 <button
-                    className="text-sm bg-green-600 text-white px-4 py-2 rounded-md"
-                    onClick={() => form.handleSubmit()}
+                    className="rounded-md bg-green-600 px-4 py-2 text-sm text-white"
+                    onClick={onFinish}
                 >
                     Finish Registration
                 </button>
@@ -44,10 +47,14 @@ export default function StepReview({
     const right = (
         <div className="flex flex-col gap-y-6">
             <div className="border-b border-gray-700 pb-4">
-                <h2 className="text-xl font-semibold text-white">Registration Summary</h2>
-                <p className="text-sm text-gray-400">Verify that all information is correct.</p>
+                <h2 className="text-xl font-semibold text-white">
+                    Registration Summary
+                </h2>
+                <p className="text-sm text-gray-400">
+                    Verify that all information is correct.
+                </p>
             </div>
-            <div className="rounded-lg ">
+            <div className="rounded-lg">
                 <ReviewTeam
                     teamId={form.state.values.team.teamId}
                     players={form.state.values.starters}

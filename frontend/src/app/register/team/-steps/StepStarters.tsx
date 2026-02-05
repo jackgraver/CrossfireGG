@@ -32,7 +32,10 @@ export default function StepStarters({
     const subs = form.state.values.subs;
     const coach = form.state.values.coach;
 
-    const excludedIds = new Set([...subs.map((player: any) => player.faceitId), coach?.faceitId]);
+    const excludedIds = new Set([
+        ...subs.map((player: any) => player.faceitId),
+        ...coach.map((player: any) => player.faceitId),
+    ]);
 
     const { data: teamPlayers, isLoading, error } = useTeamPlayers(teamId);
 

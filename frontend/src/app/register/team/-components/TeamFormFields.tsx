@@ -10,7 +10,8 @@ export default function TeamFormFields({ form }: TeamFormFieldsProps) {
             <form.Field
                 name="team.name"
                 validators={{
-                    onChange: ({ value }: any) => (!value ? "Team Name is required" : undefined),
+                    onChange: ({ value }: any) =>
+                        !value ? "Team Name is required" : undefined,
                 }}
                 children={(field: any) => (
                     <Input
@@ -26,10 +27,6 @@ export default function TeamFormFields({ form }: TeamFormFieldsProps) {
             />
             <form.Field
                 name="team.twitter"
-                validators={{
-                    onChange: ({ value }: any) =>
-                        !value ? "Twitter / X (Optional) is required" : undefined,
-                }}
                 children={(field: any) => (
                     <Input
                         name={field.name}

@@ -29,7 +29,10 @@ export const teamController = {
 
             res.json(payload);
         } catch (error: any) {
-            logger.error(`Error in getTeamById for ID ${req.params.teamId}:`, error);
+            logger.error(
+                `Error in getTeamById for ID ${req.params.teamId}:`,
+                error,
+            );
             res.status(500).json({ error: "Failed to fetch team details" });
         }
     },
@@ -47,7 +50,10 @@ export const teamController = {
                 return res.status(400).json({ error: "Invalid stage ID" });
             }
 
-            const matches = await teamService.getTeamMatchesByStage(teamId, stageId);
+            const matches = await teamService.getTeamMatchesByStage(
+                teamId,
+                stageId,
+            );
             res.json(matches);
         } catch (error: any) {
             logger.error(
@@ -73,7 +79,10 @@ export const teamController = {
 
             res.json(payload);
         } catch (error: any) {
-            logger.error(`Error in getTeamPlayers for team ID ${req.params.teamId}:`, error);
+            logger.error(
+                `Error in getTeamPlayers for team ID ${req.params.teamId}:`,
+                error,
+            );
             res.status(500).json({ error: "Failed to fetch team players" });
         }
     },
@@ -86,10 +95,15 @@ export const teamController = {
                 : undefined;
 
             if (!searchQuery || searchQuery.trim().length === 0) {
-                return res.status(400).json({ error: "Search query is required" });
+                return res
+                    .status(400)
+                    .json({ error: "Search query is required" });
             }
 
-            const players = await teamService.searchPlayers(searchQuery.trim(), excludeTeamId);
+            const players = await teamService.searchPlayers(
+                searchQuery.trim(),
+                excludeTeamId,
+            );
             res.json(players);
         } catch (error: any) {
             logger.error("Error in searchPlayers:", error);
@@ -118,7 +132,10 @@ export const teamController = {
 
             res.json(player);
         } catch (error: any) {
-            logger.error(`Error in addPlayerToTeam for team ID ${req.params.teamId}:`, error);
+            logger.error(
+                `Error in addPlayerToTeam for team ID ${req.params.teamId}:`,
+                error,
+            );
             res.status(500).json({ error: "Failed to add player to team" });
         }
     },
@@ -144,7 +161,10 @@ export const teamController = {
 
             res.json(player);
         } catch (error: any) {
-            logger.error(`Error in removePlayerFromTeam for team ID ${req.params.teamId}:`, error);
+            logger.error(
+                `Error in removePlayerFromTeam for team ID ${req.params.teamId}:`,
+                error,
+            );
             res.status(500).json({
                 error: "Failed to remove player from team",
             });
@@ -159,22 +179,29 @@ export const teamController = {
                 console.log("validation failed", validation.error.issues);
                 return res
                     .status(400)
-                    .json({ error: "Validation failed", details: validation.error.issues });
+                    .json({
+                        error: "Validation failed",
+                        details: validation.error.issues,
+                    });
             }
 
-            const { team, starters, subs, coach, tournamentId } = validation.data;
+            const { team, starters, subs, coach, tournamentId } =
+                validation.data;
 
             const combinedPlayers = [...starters, ...subs, coach];
 
-            const faceitTeam = await faceitFetchUtil.fetchData<FaceitTeamPlayersResponse>(
-                `/teams/${team.teamId}`,
-                {
-                    readFileName: `team_players_${team.teamId}.json`,
-                    // writeFileName: `team_players_${team.teamId}.json`,
-                },
-            );
+            const faceitTeam =
+                await faceitFetchUtil.fetchData<FaceitTeamPlayersResponse>(
+                    `/teams/${team.teamId}`,
+                    {
+                        readFileName: `team_players_${team.teamId}.json`,
+                        // writeFileName: `team_players_${team.teamId}.json`,
+                    },
+                );
 
-            const faceitPlayerIds = new Set(faceitTeam.members.map((m) => m.user_id));
+            const faceitPlayerIds = new Set(
+                faceitTeam.members.map((m) => m.user_id),
+            );
 
             const missing = combinedPlayers.filter(
                 (player) => !faceitPlayerIds.has(player.faceitId),
@@ -191,7 +218,8 @@ export const teamController = {
             });
 
             for (const player of faceitTeam.members) {
-                if (!combinedPlayers.some((p) => p.faceitId === player.user_id)) continue;
+                if (!combinedPlayers.some((p) => p.faceitId === player.user_id))
+                    continue;
 
                 const dbPlayer = await playerRepository.upsertPlayerByFaceitId({
                     player_name: player.nickname,
@@ -204,7 +232,10 @@ export const teamController = {
 
                 if (player.user_id === faceitTeam.leader) {
                     console.log("update team captain", dbTeam.id, dbPlayer.id);
-                    await teamRepository.updateTeamCaptain(dbTeam.id, dbPlayer.id);
+                    await teamRepository.updateTeamCaptain(
+                        dbTeam.id,
+                        dbPlayer.id,
+                    );
                     continue;
                 }
 

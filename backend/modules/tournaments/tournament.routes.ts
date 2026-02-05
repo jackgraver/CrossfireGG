@@ -1,15 +1,26 @@
 import { Router } from "express";
 import { tournamentController } from "./tournament.controller";
+import { fetchSession } from "../../core/middleware/auth.middleware";
+import { asyncHandler } from "../../core/asyncHandler";
 
 const router = Router();
 
 router.post("/create", tournamentController.createTournament);
-router.get("/all", tournamentController.getAllTournaments);
+
+router.get(
+    "/all",
+    fetchSession,
+    asyncHandler(tournamentController.getAllTournaments),
+);
+
 router.get("/:tournamentId", tournamentController.getTournamentById);
 router.get("/:tournamentId/teams", tournamentController.getTeamsByTournamentId);
 router.get("/stage/:stageId/matches", tournamentController.getMatchesByStageId);
 router.get("/stage/:stageId/teams", tournamentController.getStageTeams);
 router.get("/stage/:stageId/bracket", tournamentController.getStageBracket);
-router.post("/:tournamentId/register", tournamentController.registerForTournament);
+router.post(
+    "/:tournamentId/register",
+    tournamentController.registerForTournament,
+);
 
 export default router;

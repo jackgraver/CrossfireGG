@@ -1,4 +1,12 @@
-export const formSteps = ["team", "starters", "subs", "coach", "review", "finished"] as const;
+export const formSteps = [
+    "team",
+    "starters",
+    "subs",
+    "coach",
+    "agreements",
+    "review",
+    "finished",
+] as const;
 
 export type FormStep = (typeof formSteps)[number];
 
@@ -23,14 +31,16 @@ export type RegistrationFormData = {
     team: Team;
     starters: Player[];
     subs: Player[];
-    coach: Player | null;
+    coach: Player[];
     agreements: {
         rulesAndGuidelines: boolean;
         discordConfirmation: boolean;
     };
 };
 
-export type StepValidationErrors = Partial<Record<keyof RegistrationFormData | string, string[]>>;
+export type StepValidationErrors = Partial<
+    Record<keyof RegistrationFormData | string, string[]>
+>;
 
 export type StepValidationResult = {
     isValid: boolean;

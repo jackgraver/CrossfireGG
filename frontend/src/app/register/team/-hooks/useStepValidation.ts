@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import {
+    agreementsStepSchema,
     coachStepSchema,
     startersStepSchema,
     subsStepSchema,
@@ -17,6 +18,7 @@ const schemaByStep: Record<FormStep, any> = {
     starters: startersStepSchema,
     subs: subsStepSchema,
     coach: coachStepSchema,
+    agreements: agreementsStepSchema,
     review: null,
     finished: null,
 };
@@ -41,7 +43,9 @@ export function useStepValidation(values: RegistrationFormData) {
                 return (
                     values.subs.length >= 0 && values.subs.length <= 3 && validateStep(step).isValid
                 );
-            if (step === "coach") return validateStep(step).isValid;
+            if (step === "coach")
+                return values.coach.length >= 0 && values.coach.length <= 1 && validateStep(step).isValid;
+            if (step === "agreements") return validateStep(step).isValid;
             if (step === "review") return true;
             return false;
         },

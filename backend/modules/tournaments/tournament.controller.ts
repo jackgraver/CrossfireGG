@@ -1,7 +1,10 @@
 import { Request, Response } from "express";
 import { tournamentService } from "./tournament.service";
 import { logger } from "../../core/logger";
-import { TournamentParamsSchema, StageParamsSchema } from "./tournament.validation";
+import {
+    TournamentParamsSchema,
+    StageParamsSchema,
+} from "./tournament.validation";
 import { RegisterForTournamentSchema } from "../faceit/faceit.validation";
 import { faceitFetchUtil } from "../../utils/faceitFetch.util";
 import { FaceitTeamPlayersResponse } from "../faceit/faceit.types";
@@ -18,32 +21,16 @@ import {
 import { fromNodeHeaders } from "better-auth/node";
 import { auth } from "../../lib/auth";
 import { userRepository } from "../users/user.repository";
+import { AuthRequest } from "../../core/middleware/auth.middleware";
+import { sendContract } from "../../core/sendContract";
 
 export const tournamentController = {
     getAllTournaments: async (req: Request, res: Response) => {
-        try {
-            const session = await auth.api.getSession({
-                headers: fromNodeHeaders(req.headers),
-            });
+        const authReq = req as AuthRequest;
+        const teamId = authReq.playerInfo?.team_id || 0;
 
-            let teamId = 0;
-            if (session?.user.id) {
-                const userInfo = await userRepository.userPlayerInfo(session.user.id);
-                teamId = userInfo?.team_id || 0;
-            }
-
-            const tournaments = await tournamentService.getAllTournaments(teamId);
-
-            const payload = TournamentWithStagesContract.array().parse(tournaments);
-
-            res.json(payload);
-        } catch (error) {
-            logger.error("Error fetching tournaments:", error);
-            res.status(500).json({
-                error: "Failed to fetch tournaments",
-                details: error,
-            });
-        }
+        const tournaments = await tournamentService.getAllTournaments(teamId);
+        sendContract(res, TournamentWithStagesContract.array(), tournaments);
     },
 
     getTournamentById: async (req: Request, res: Response) => {
@@ -62,7 +49,8 @@ export const tournamentController = {
                 validation.data.tournamentId,
             );
 
-            const payload = TournamentWithMinimalStagesContract.parse(tournament);
+            const payload =
+                TournamentWithMinimalStagesContract.parse(tournament);
 
             res.json(payload);
         } catch (error: any) {
@@ -113,7 +101,9 @@ export const tournamentController = {
                     })),
                 });
             }
-            const matches = await tournamentService.getMatchesByStageId(validation.data.stageId);
+            const matches = await tournamentService.getMatchesByStageId(
+                validation.data.stageId,
+            );
             res.json({ matches });
         } catch (error) {
             logger.error("Error fetching matches by stage:", error);
@@ -136,7 +126,9 @@ export const tournamentController = {
                     })),
                 });
             }
-            const groups = await tournamentService.getStageBracket(validation.data.stageId);
+            const groups = await tournamentService.getStageBracket(
+                validation.data.stageId,
+            );
 
             // res.json(groups);
             const payload = GroupWithMatchesAndFormatContract.parse(groups);
@@ -159,7 +151,9 @@ export const tournamentController = {
                     error: "Validation failed",
                 });
             }
-            const teams = await tournamentService.getStageTeams(validation.data.stageId);
+            const teams = await tournamentService.getStageTeams(
+                validation.data.stageId,
+            );
 
             const payload = StageTeamWithTeamContract.array().parse(teams);
 
@@ -186,34 +180,45 @@ export const tournamentController = {
                 });
             }
 
-            const { teamId, playerIds, subIds, coachId, agreements } = validation.data;
+            const { teamId, playerIds, subIds, coachId, agreements } =
+                validation.data;
 
-            const currentTournament = await tournamentService.getUpcomingTournament();
+            const currentTournament =
+                await tournamentService.getUpcomingTournament();
             if (!currentTournament) {
                 return res.status(404).json({
                     error: "No active tournament found for registration",
                 });
             }
-            const entryStage = await tournamentService.getEntryStage(currentTournament.id);
+            const entryStage = await tournamentService.getEntryStage(
+                currentTournament.id,
+            );
             if (!entryStage) {
                 return res.status(404).json({
                     error: "No entry stage found for registration",
                 });
             }
 
-            const teamInfoAndPlayers = await faceitFetchUtil.fetchData<FaceitTeamPlayersResponse>(
-                `/teams/${teamId}`,
-                {
-                    readFileName: `me.json`,
-                    // writeFileName: `team_players_${teamId}.json`,
-                },
-            );
+            const teamInfoAndPlayers =
+                await faceitFetchUtil.fetchData<FaceitTeamPlayersResponse>(
+                    `/teams/${teamId}`,
+                    {
+                        readFileName: `me.json`,
+                        // writeFileName: `team_players_${teamId}.json`,
+                    },
+                );
 
             // Combine all player IDs that need to be registered
-            const allPlayerIds = [...playerIds, ...subIds, ...(coachId ? [coachId] : [])];
+            const allPlayerIds = [
+                ...playerIds,
+                ...subIds,
+                ...(coachId ? [coachId] : []),
+            ];
 
             // Validate all player IDs exist in the team members
-            const memberMap = new Map(teamInfoAndPlayers.members.map((m) => [m.user_id, m]));
+            const memberMap = new Map(
+                teamInfoAndPlayers.members.map((m) => [m.user_id, m]),
+            );
 
             for (const playerId of allPlayerIds) {
                 if (!memberMap.has(playerId)) {
@@ -274,7 +279,10 @@ export const tournamentController = {
             );
 
             // Check if team is already registered for this stage
-            const existingStageTeam = await teamRepository.findStageTeam(team.id, entryStage.id);
+            const existingStageTeam = await teamRepository.findStageTeam(
+                team.id,
+                entryStage.id,
+            );
 
             if (existingStageTeam) {
                 return res.status(400).json({
@@ -311,7 +319,9 @@ export const tournamentController = {
 
             await Promise.all(
                 rosterEntries.map((entry) => {
-                    const player = createdPlayers.find((p: any) => p.faceit_id === entry.playerId);
+                    const player = createdPlayers.find(
+                        (p: any) => p.faceit_id === entry.playerId,
+                    );
                     if (!player) return Promise.resolve();
 
                     return tournamentRepository.upsertStageRoster({
