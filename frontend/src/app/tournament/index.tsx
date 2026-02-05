@@ -141,7 +141,9 @@ function RouteComponent() {
                                             </Link>
                                             {tournament.status === "upcoming" &&
                                                 !tournament.isRegistered && (
-                                                    <SignUpButton />
+                                                    <SignUpButton
+                                                        tournamentId={tournament.id.toString()}
+                                                    />
                                                 )}
                                         </div>
                                     </section>

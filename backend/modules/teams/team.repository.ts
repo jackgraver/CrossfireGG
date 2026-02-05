@@ -210,6 +210,7 @@ export const teamRepository = {
         team_logo: string | null;
         faceit_id: string;
         team_captain_id: number | null;
+        social_links?: string | null;
     }) => {
         const existing = await db
             .select()
@@ -229,6 +230,10 @@ export const teamRepository = {
                     name: teamData.name,
                     team_logo: teamData.team_logo,
                     team_captain_id: teamData.team_captain_id,
+                    social_links:
+                        teamData.social_links !== undefined
+                            ? teamData.social_links
+                            : existing[0].social_links,
                     updated_at: new Date(),
                 })
                 .where(eq(teams.id, existing[0].id))

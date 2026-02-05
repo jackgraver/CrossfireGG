@@ -2,13 +2,11 @@ import { Request, Response } from "express";
 import { teamService } from "./team.service";
 import { logger } from "../../core/logger";
 import { RegisterTeamSchema } from "./team.validation";
-import { faceitImportService } from "../faceit/faceit.service";
 import { faceitFetchUtil } from "../../utils/faceitFetch.util";
 import { FaceitTeamPlayersResponse } from "../faceit/faceit.types";
 import { teamRepository } from "./team.repository";
 import { playerRepository } from "../players/player.repository";
 import { PlayerContract, TeamContract } from "@repo/contracts";
-import { tournamentRepository } from "../tournaments/tournament.repository";
 
 export const teamController = {
     getTeamById: async (req: Request, res: Response) => {
@@ -173,96 +171,164 @@ export const teamController = {
 
     registerTeam: async (req: Request, res: Response) => {
         try {
-            console.log("registerTeam", req.body);
             const validation = RegisterTeamSchema.safeParse(req.body);
             if (!validation.success) {
-                console.log("validation failed", validation.error.issues);
-                return res
-                    .status(400)
-                    .json({
-                        error: "Validation failed",
-                        details: validation.error.issues,
-                    });
+                return res.status(400).json({
+                    error: "Validation failed",
+                    details: validation.error.issues.map((err) => ({
+                        path: err.path.join("."),
+                        message: err.message,
+                    })),
+                });
             }
 
-            const { team, starters, subs, coach, tournamentId } =
+            const { team, starters, subs, coach, agreements } =
                 validation.data;
 
-            const combinedPlayers = [...starters, ...subs, coach];
-
-            const faceitTeam =
+            const teamInfoAndPlayers =
                 await faceitFetchUtil.fetchData<FaceitTeamPlayersResponse>(
                     `/teams/${team.teamId}`,
                     {
-                        readFileName: `team_players_${team.teamId}.json`,
-                        // writeFileName: `team_players_${team.teamId}.json`,
+                        readFileName: `me.json`,
+                        // writeFileName: `team_players_${teamId}.json`,
                     },
                 );
 
-            const faceitPlayerIds = new Set(
-                faceitTeam.members.map((m) => m.user_id),
-            );
+            const norm = (s: string) => s.trim().toLowerCase();
 
-            const missing = combinedPlayers.filter(
-                (player) => !faceitPlayerIds.has(player.faceitId),
-            );
-            if (missing.length > 0) {
-                throw new Error(`Invalid players: ${missing.join(", ")}`);
+            if (teamInfoAndPlayers.team_id !== team.teamId) {
+                return res.status(400).json({
+                    error: "Faceit team ID mismatch",
+                });
             }
 
-            const dbTeam = await teamRepository.upsertTeamByFaceitId({
-                name: faceitTeam.name,
-                team_logo: faceitTeam.avatar,
-                faceit_id: team.teamId,
-                team_captain_id: null,
+            if (norm(teamInfoAndPlayers.name) !== norm(team.name)) {
+                return res.status(400).json({
+                    error: "Team name does not match Faceit",
+                });
+            }
+
+            if (teamInfoAndPlayers.avatar !== team.logo) {
+                return res.status(400).json({
+                    error: "Team logo does not match Faceit",
+                });
+            }
+
+            if (teamInfoAndPlayers.leader !== team.captainFaceitId) {
+                return res.status(400).json({
+                    error: "Captain does not match Faceit team leader",
+                });
+            }
+
+            const memberMap = new Map(
+                teamInfoAndPlayers.members.map((m) => [m.user_id, m]),
+            );
+
+            const requestedPlayers = [
+                ...starters.map((p) => ({ ...p, base_role: "starter" as const })),
+                ...subs.map((p) => ({ ...p, base_role: "sub" as const })),
+                { ...coach, base_role: "coach" as const },
+            ];
+
+            const faceitIds = requestedPlayers.map((p) => p.faceitId);
+            const uniqueIds = new Set(faceitIds);
+            if (uniqueIds.size !== faceitIds.length) {
+                return res.status(400).json({
+                    error: "Duplicate player Faceit IDs found",
+                });
+            }
+
+            const captainRequest = requestedPlayers.find(
+                (p) => p.faceitId === team.captainFaceitId,
+            );
+            if (!captainRequest) {
+                return res.status(400).json({
+                    error: "Captain must be included in submitted players",
+                });
+            }
+
+            for (const p of requestedPlayers) {
+                const member = memberMap.get(p.faceitId);
+                if (!member) {
+                    return res.status(400).json({
+                        error: `Player ${p.faceitId} is not a member of Faceit team ${team.teamId}`,
+                    });
+                }
+
+                if (norm(member.nickname) !== norm(p.playerName)) {
+                    return res.status(400).json({
+                        error: `Player name mismatch for ${p.faceitId}`,
+                    });
+                }
+
+                if (norm(member.country) !== norm(p.nationality)) {
+                    return res.status(400).json({
+                        error: `Player nationality mismatch for ${p.faceitId}`,
+                    });
+                }
+            }
+
+            const captainMember = memberMap.get(team.captainFaceitId);
+            if (!captainMember) {
+                return res.status(400).json({
+                    error: "Captain not found in Faceit members list",
+                });
+            }
+
+            const captainPlayer = await playerRepository.upsertPlayerByFaceitId({
+                player_name: captainMember.nickname,
+                faceit_id: captainMember.user_id,
+                player_logo: captainMember.avatar,
+                country: captainMember.country,
+                base_role: captainRequest.base_role,
+                hltv_id: captainRequest.hltvLink,
+                discord_id: captainRequest.discordId,
             });
 
-            for (const player of faceitTeam.members) {
-                if (!combinedPlayers.some((p) => p.faceitId === player.user_id))
-                    continue;
+            const social_links =
+                team.twitter && team.twitter.trim().length > 0
+                    ? JSON.stringify({ twitter: team.twitter.trim() })
+                    : null;
 
-                const dbPlayer = await playerRepository.upsertPlayerByFaceitId({
-                    player_name: player.nickname,
-                    faceit_id: player.user_id,
-                    player_logo: player.avatar,
-                    country: player.country,
-                    team_id: dbTeam.id,
-                    base_role: "starter",
-                });
+            const upsertedTeam = await teamRepository.upsertTeamByFaceitId({
+                name: teamInfoAndPlayers.name,
+                team_logo: teamInfoAndPlayers.avatar,
+                faceit_id: teamInfoAndPlayers.team_id,
+                team_captain_id: captainPlayer.id,
+                social_links,
+            });
 
-                if (player.user_id === faceitTeam.leader) {
-                    console.log("update team captain", dbTeam.id, dbPlayer.id);
-                    await teamRepository.updateTeamCaptain(
-                        dbTeam.id,
-                        dbPlayer.id,
-                    );
-                    continue;
-                }
+            const createdPlayers = await Promise.all(
+                requestedPlayers.map((p) => {
+                    const member = memberMap.get(p.faceitId)!;
+                    return playerRepository.upsertPlayerByFaceitId({
+                        player_name: member.nickname,
+                        faceit_id: member.user_id,
+                        player_logo: member.avatar,
+                        country: member.country,
+                        team_id: upsertedTeam.id,
+                        base_role: p.base_role,
+                        hltv_id: p.hltvLink,
+                        discord_id: p.discordId,
+                    });
+                }),
+            );
 
-                await teamRepository.addPlayerToTeam(dbPlayer.id, dbTeam.id);
-            }
-
-            if (tournamentId) {
-                const entryStage = await tournamentRepository.findEntryStage(
-                    parseInt(tournamentId),
-                );
-                if (!entryStage) {
-                    throw new Error("Entry stage not found");
-                }
-                console.log("entryStage", entryStage);
-
-                const res = await tournamentRepository.upsertStageTeam({
-                    stage_id: entryStage.id,
-                    team_id: dbTeam.id,
-                    group_id: null,
-                });
-                console.log("upsertStageTeam", res);
-            }
-
-            res.json({ team_id: dbTeam.id });
+            res.json({
+                success: true,
+                message: "Team registered successfully",
+                team: {
+                    teamId: upsertedTeam.id,
+                    faceitTeamId: upsertedTeam.faceit_id,
+                    players: createdPlayers.length,
+                },
+            });
         } catch (error: any) {
-            logger.error(`Error in registerTeam:`, error);
-            res.status(500).json({ error: "Failed to register team" });
+            logger.error("Error registering team:", error);
+            res.status(500).json({
+                error: "Failed to register team",
+                details: error.message,
+            });
         }
     },
 };

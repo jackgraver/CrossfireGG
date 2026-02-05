@@ -13,3 +13,10 @@ export const StageParamsSchema = z.object({
         .regex(/^\d+$/, "Stage ID must be a valid number")
         .transform(Number),
 });
+
+export const RegisterForTournamentBodySchema = z.object({
+    teamId: z.coerce.number().int().positive(),
+    starters: z.array(z.coerce.number().int().positive()).min(5).max(5),
+    subs: z.array(z.coerce.number().int().positive()).min(0).max(3),
+    coach: z.array(z.coerce.number().int().positive()).min(0).max(1),
+});

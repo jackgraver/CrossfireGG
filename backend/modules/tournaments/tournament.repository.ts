@@ -6,6 +6,7 @@ import {
     matches,
     stageTeams,
     stageFormats,
+    stagePlayers,
 } from "../../schemas";
 import { eq, and, isNull, count, inArray, desc } from "drizzle-orm";
 import { TournamentListItem } from "./tournament.types";
@@ -437,18 +438,16 @@ export const tournamentRepository = {
     },
 
     upsertStageRoster: async (rosterData: {
-        stage_id: number;
+        stage_team_id: number;
         player_id: number;
         role: "starter" | "sub" | "coach";
     }) => {
-        const { stagePlayers } = await import("../../schemas");
-
         const existing = await db
             .select()
             .from(stagePlayers)
             .where(
                 and(
-                    // eq(stagePlayers.stage_id, rosterData.stage_id),
+                    eq(stagePlayers.stage_team_id, rosterData.stage_team_id),
                     eq(stagePlayers.player_id, rosterData.player_id),
                     isNull(stagePlayers.deleted_at),
                 ),
@@ -470,7 +469,6 @@ export const tournamentRepository = {
                 .insert(stagePlayers)
                 .values({
                     ...rosterData,
-                    stage_team_id: 0,
                     created_at: new Date(),
                     updated_at: new Date(),
                 })

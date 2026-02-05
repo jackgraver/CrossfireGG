@@ -4,10 +4,8 @@ import { logger } from "../../core/logger";
 import {
     TournamentParamsSchema,
     StageParamsSchema,
+    RegisterForTournamentBodySchema,
 } from "./tournament.validation";
-import { RegisterForTournamentSchema } from "../faceit/faceit.validation";
-import { faceitFetchUtil } from "../../utils/faceitFetch.util";
-import { FaceitTeamPlayersResponse } from "../faceit/faceit.types";
 import { teamRepository } from "../teams/team.repository";
 import { playerRepository } from "../players/player.repository";
 import { tournamentRepository } from "./tournament.repository";
@@ -169,118 +167,90 @@ export const tournamentController = {
 
     registerForTournament: async (req: Request, res: Response) => {
         try {
-            const validation = RegisterForTournamentSchema.safeParse(req.body);
-            if (!validation.success) {
+            const paramsValidation = TournamentParamsSchema.safeParse(
+                req.params,
+            );
+            if (!paramsValidation.success) {
                 return res.status(400).json({
                     error: "Validation failed",
-                    details: validation.error.issues.map((err) => ({
+                    details: paramsValidation.error.issues.map((err) => ({
                         path: err.path.join("."),
                         message: err.message,
                     })),
                 });
             }
 
-            const { teamId, playerIds, subIds, coachId, agreements } =
-                validation.data;
+            const bodyValidation = RegisterForTournamentBodySchema.safeParse(
+                req.body,
+            );
+            if (!bodyValidation.success) {
+                return res.status(400).json({
+                    error: "Validation failed",
+                    details: bodyValidation.error.issues.map((err) => ({
+                        path: err.path.join("."),
+                        message: err.message,
+                    })),
+                });
+            }
 
-            const currentTournament =
-                await tournamentService.getUpcomingTournament();
-            if (!currentTournament) {
+            const tournamentId = paramsValidation.data.tournamentId;
+            const { teamId, starters, subs, coach } = bodyValidation.data;
+
+            const allIds = [...starters, ...subs, ...coach];
+            const uniqueIds = new Set(allIds);
+            if (uniqueIds.size !== allIds.length) {
+                return res.status(400).json({
+                    error: "Duplicate player IDs provided",
+                });
+            }
+
+            const tournament =
+                await tournamentRepository.findById(tournamentId);
+            if (!tournament) {
                 return res.status(404).json({
-                    error: "No active tournament found for registration",
+                    error: "Tournament not found",
                 });
             }
-            const entryStage = await tournamentService.getEntryStage(
-                currentTournament.id,
-            );
-            if (!entryStage) {
+
+            const team = await teamRepository.findById(teamId);
+            if (!team) {
                 return res.status(404).json({
-                    error: "No entry stage found for registration",
+                    error: "Team not found",
                 });
             }
 
-            const teamInfoAndPlayers =
-                await faceitFetchUtil.fetchData<FaceitTeamPlayersResponse>(
-                    `/teams/${teamId}`,
-                    {
-                        readFileName: `me.json`,
-                        // writeFileName: `team_players_${teamId}.json`,
-                    },
-                );
+            let entryStage;
+            try {
+                entryStage =
+                    await tournamentService.getEntryStage(tournamentId);
+            } catch (e: any) {
+                return res.status(404).json({
+                    error: e?.message || "No entry stage found",
+                });
+            }
 
-            // Combine all player IDs that need to be registered
-            const allPlayerIds = [
-                ...playerIds,
-                ...subIds,
-                ...(coachId ? [coachId] : []),
-            ];
+            if (allIds.length === 0) {
+                return res.status(400).json({
+                    error: "At least starters must be provided",
+                });
+            }
 
-            // Validate all player IDs exist in the team members
-            const memberMap = new Map(
-                teamInfoAndPlayers.members.map((m) => [m.user_id, m]),
+            const players = await playerRepository.findByIdsAndTeamId(
+                allIds,
+                teamId,
             );
-
-            for (const playerId of allPlayerIds) {
-                if (!memberMap.has(playerId)) {
-                    return res.status(400).json({
-                        error: `Player ${playerId} is not a member of team ${teamId}`,
-                    });
-                }
-            }
-
-            // Validate player counts
-            if (playerIds.length !== 5) {
+            if (players.length !== allIds.length) {
+                const foundIds = new Set(players.map((p) => p.id));
+                const missingIds = allIds.filter((id) => !foundIds.has(id));
                 return res.status(400).json({
-                    error: "Exactly 5 main players are required",
+                    error: "Invalid player IDs for this team",
+                    missingIds,
                 });
             }
-
-            if (subIds.length > 3) {
-                return res.status(400).json({
-                    error: "Maximum 3 substitutes allowed",
-                });
-            }
-
-            // Find/create the team leader first (needed for team captain)
-            const leaderData = memberMap.get(teamInfoAndPlayers.leader);
-            if (!leaderData) {
-                return res.status(400).json({
-                    error: "Team leader not found in members list",
-                });
-            }
-
-            const leaderPlayer = await playerRepository.upsertPlayerByFaceitId({
-                player_name: leaderData.nickname,
-                faceit_id: leaderData.user_id,
-                player_logo: leaderData.avatar,
-                country: leaderData.country,
-            });
-
-            // Upsert the team
-            const team = await teamRepository.upsertTeamByFaceitId({
-                name: teamInfoAndPlayers.name,
-                team_logo: teamInfoAndPlayers.avatar,
-                faceit_id: teamInfoAndPlayers.team_id,
-                team_captain_id: leaderPlayer.id,
-            });
-
-            // Upsert all players with the team_id
-            const createdPlayers = await Promise.all(
-                allPlayerIds.map((playerId) => {
-                    const memberData = memberMap.get(playerId)!;
-                    return playerRepository.upsertPlayerByFaceitId({
-                        player_name: memberData.nickname,
-                        faceit_id: memberData.user_id,
-                        player_logo: memberData.avatar,
-                        country: memberData.country,
-                        team_id: team.id,
-                    });
-                }),
-            );
 
             // Check if team is already registered for this stage
             const existingStageTeam = await teamRepository.findStageTeam(
-                team.id,
+                teamId,
                 entryStage.id,
             );
 
@@ -293,54 +263,44 @@ export const tournamentController = {
             // Create stage_teams entry
             const stageTeam = await tournamentRepository.upsertStageTeam({
                 stage_id: entryStage.id,
-                team_id: team.id,
+                team_id: teamId,
                 group_id: null,
             });
 
-            // Create stage roster entries with roles
-            const rosterEntries = [
-                ...playerIds.map((id) => ({
-                    playerId: id,
-                    role: "starter" as const,
-                })),
-                ...subIds.map((id) => ({
-                    playerId: id,
-                    role: "sub" as const,
-                })),
-                ...(coachId
-                    ? [
-                          {
-                              playerId: coachId,
-                              role: "coach" as const,
-                          },
-                      ]
-                    : []),
-            ];
-
             await Promise.all(
-                rosterEntries.map((entry) => {
-                    const player = createdPlayers.find(
-                        (p: any) => p.faceit_id === entry.playerId,
-                    );
-                    if (!player) return Promise.resolve();
-
-                    return tournamentRepository.upsertStageRoster({
-                        stage_id: entryStage.id,
-                        player_id: player.id,
-                        role: entry.role,
-                    });
-                }),
+                [
+                    ...starters.map((playerId) =>
+                        tournamentRepository.upsertStageRoster({
+                            stage_team_id: stageTeam.id,
+                            player_id: playerId,
+                            role: "starter",
+                        }),
+                    ),
+                    ...subs.map((playerId) =>
+                        tournamentRepository.upsertStageRoster({
+                            stage_team_id: stageTeam.id,
+                            player_id: playerId,
+                            role: "sub",
+                        }),
+                    ),
+                    ...coach.map((playerId) =>
+                        tournamentRepository.upsertStageRoster({
+                            stage_team_id: stageTeam.id,
+                            player_id: playerId,
+                            role: "coach",
+                        }),
+                    ),
+                ],
             );
 
             res.json({
                 success: true,
                 message: "Tournament registered successfully",
                 registration: {
-                    tournamentId: currentTournament.id,
+                    tournamentId,
                     stageId: entryStage.id,
-                    teamId: team.id,
-                    teamFaceitId: teamId,
-                    players: createdPlayers.length,
+                    teamId,
+                    players: allIds.length,
                     stageTeamId: stageTeam.id,
                 },
             });

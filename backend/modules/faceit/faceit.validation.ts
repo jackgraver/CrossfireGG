@@ -3,7 +3,9 @@ import z from "zod";
 export const ImportFaceitDataSchema = z.object({
     tournamentId: z.number().int().positive(),
     championshipId: z.string().min(1),
-    queryParams: z.record(z.string(), z.union([z.string(), z.number()])).optional(),
+    queryParams: z
+        .record(z.string(), z.union([z.string(), z.number()]))
+        .optional(),
 });
 
 export const ImportFaceitDataFromFileSchema = z.object({
@@ -38,12 +40,5 @@ export const RegisterForTournamentSchema = z.object({
     playerIds: z.array(z.string()).min(5).max(5),
     subIds: z.array(z.string()).max(3),
     coachId: z.string().optional(),
-    agreements: z.object({
-        rulesAndGuidelines: z.boolean().refine((val) => val === true, {
-            message: "You must agree to the rules and guidelines",
-        }),
-        discordConfirmation: z.boolean().refine((val) => val === true, {
-            message: "You must agree to the discord confirmation",
-        }),
-    }),
+    tournamentId: z.string(),
 });

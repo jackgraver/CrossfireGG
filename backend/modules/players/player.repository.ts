@@ -35,6 +35,8 @@ export const playerRepository = {
             country: string | null;
             team_id?: number | null;
             base_role?: "starter" | "sub" | "coach";
+            hltv_id?: string | null;
+            discord_id?: string | null;
         },
         dbOrTx = db,
     ) => {
@@ -58,6 +60,14 @@ export const playerRepository = {
                     player_logo: playerData.player_logo,
                     country: playerData.country,
                     base_role: playerData.base_role,
+                    hltv_id:
+                        playerData.hltv_id !== undefined
+                            ? playerData.hltv_id
+                            : existing[0].hltv_id,
+                    discord_id:
+                        playerData.discord_id !== undefined
+                            ? playerData.discord_id
+                            : existing[0].discord_id,
                     team_id:
                         playerData.team_id !== undefined
                             ? playerData.team_id
@@ -113,5 +123,20 @@ export const playerRepository = {
             .select()
             .from(players)
             .where(inArray(players.faceit_id, faceitIds));
+    },
+
+    findByIdsAndTeamId: async (playerIds: number[], teamId: number) => {
+        if (playerIds.length === 0) return [];
+
+        return db
+            .select()
+            .from(players)
+            .where(
+                and(
+                    inArray(players.id, playerIds),
+                    eq(players.team_id, teamId),
+                    isNull(players.deleted_at),
+                ),
+            );
     },
 };

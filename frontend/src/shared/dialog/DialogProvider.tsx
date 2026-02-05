@@ -28,7 +28,9 @@ export const useDialog = () => {
 const buttonClass = "flex-1 rounded-md py-2 font-semibold";
 
 export const DialogProvider = ({ children }: { children: ReactNode }) => {
-    const [dialogOptions, setDialogOptions] = useState<DialogOptions | null>(null);
+    const [dialogOptions, setDialogOptions] = useState<DialogOptions | null>(
+        null,
+    );
 
     const openDialog = (options: DialogOptions) => {
         setDialogOptions(options);
@@ -50,25 +52,27 @@ export const DialogProvider = ({ children }: { children: ReactNode }) => {
             {children}
             {dialogOptions && (
                 <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/60 p-4 pt-20">
-                    <div className="flex w-full max-w-md flex-col overflow-hidden rounded-lg border border-secondBg bg-firstBg shadow-2xl">
-                        <div className="flex items-center justify-between border-b border-secondBg p-4">
-                            <h2 className="text-lg font-bold text-textPrimary">
+                    <div className="bg-firstBg flex w-full max-w-md flex-col overflow-hidden rounded-lg shadow-2xl">
+                        <div className="border-secondBg flex items-center justify-between border-b p-4">
+                            <h2 className="text-textPrimary text-lg font-bold">
                                 {dialogOptions.title}
                             </h2>
                             <button
                                 onClick={closeDialog}
-                                className="rounded-full p-1 transition-colors hover:bg-secondBg"
+                                className="hover:bg-secondBg rounded-full p-1 transition-colors"
                             >
-                                <X className="h-5 w-5 text-textSecondary hover:text-textPrimary" />
+                                <X className="text-textSecondary hover:text-textPrimary h-5 w-5" />
                             </button>
                         </div>
-                        <div className="flex-1 p-6 text-textPrimary">{dialogOptions.content}</div>
+                        <div className="text-textPrimary flex-1 p-6">
+                            {dialogOptions.content}
+                        </div>
                         <div className="flex w-full gap-2 p-4 pt-0">
                             <button
                                 onClick={closeDialog}
                                 className={cn(
                                     buttonClass,
-                                    "border border-secondBg bg-transparent text-textPrimary transition-colors hover:bg-secondBg",
+                                    "border-secondBg text-textPrimary hover:bg-secondBg border bg-transparent transition-colors",
                                 )}
                             >
                                 {dialogOptions.cancelText || "Cancel"}
