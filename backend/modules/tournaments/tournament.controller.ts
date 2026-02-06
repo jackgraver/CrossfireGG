@@ -17,6 +17,7 @@ import {
 } from "@repo/contracts";
 import { AuthRequest } from "../../core/middleware/auth.middleware";
 import { sendContract } from "../../core/sendContract";
+import { parseOr400 } from "../../core/validation/parseOr400";
 
 export const tournamentController = {
     getAllTournaments: async (req: Request, res: Response) => {
@@ -28,64 +29,36 @@ export const tournamentController = {
     },
 
     getTournamentById: async (req: Request, res: Response) => {
-        const validation = TournamentParamsSchema.safeParse(req.params);
-        if (!validation.success) {
-            return res.status(400).json({
-                error: "Validation failed",
-                details: validation.error.issues.map((err) => ({
-                    path: err.path.join("."),
-                    message: err.message,
-                })),
-            });
-        }
+        const data = parseOr400(res, TournamentParamsSchema, req.params);
+        if (!data) return;
+
         const tournament = await tournamentService.getTournamentById(
-            validation.data.tournamentId,
+            data.tournamentId,
         );
 
         sendContract(res, TournamentWithMinimalStagesContract, tournament);
     },
 
     getTeamsByTournamentId: async (req: Request, res: Response) => {
-        const validation = TournamentParamsSchema.safeParse(req.params);
-        if (!validation.success) {
-            return res.status(400).json({
-                error: "Validation failed",
-            });
-        }
+        const data = parseOr400(res, TournamentParamsSchema, req.params);
+        if (!data) return;
+
         const teams = await tournamentService.getTeamsByTournamentId(
-            validation.data.tournamentId,
+            data.tournamentId,
         );
 
         sendContract(res, StageTeamSignUpContract.array(), teams);
     },
 
     registerForTournament: async (req: Request, res: Response) => {
-        const paramsValidation = TournamentParamsSchema.safeParse(req.params);
-        if (!paramsValidation.success) {
-            return res.status(400).json({
-                error: "Validation failed",
-                details: paramsValidation.error.issues.map((err) => ({
-                    path: err.path.join("."),
-                    message: err.message,
-                })),
-            });
-        }
+        const params = parseOr400(res, TournamentParamsSchema, req.params);
+        if (!params) return;
 
-        const bodyValidation = RegisterForTournamentBodySchema.safeParse(
-            req.body,
-        );
-        if (!bodyValidation.success) {
-            return res.status(400).json({
-                error: "Validation failed",
-                details: bodyValidation.error.issues.map((err) => ({
-                    path: err.path.join("."),
-                    message: err.message,
-                })),
-            });
-        }
+        const body = parseOr400(res, RegisterForTournamentBodySchema, req.body);
+        if (!body) return;
 
-        const tournamentId = paramsValidation.data.tournamentId;
-        const { teamId, starters, subs, coach } = bodyValidation.data;
+        const tournamentId = params.tournamentId;
+        const { teamId, starters, subs, coach } = body;
 
         const allIds = [...starters, ...subs, ...coach];
         const uniqueIds = new Set(allIds);

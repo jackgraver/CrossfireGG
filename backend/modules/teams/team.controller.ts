@@ -7,6 +7,7 @@ import { FaceitTeamPlayersResponse } from "../faceit/faceit.types";
 import { teamRepository } from "./team.repository";
 import { playerRepository } from "../players/player.repository";
 import { PlayerContract, TeamContract } from "@repo/contracts";
+import { parseOr400 } from "../../core/validation/parseOr400";
 
 export const teamController = {
     getTeamById: async (req: Request, res: Response) => {
@@ -171,19 +172,11 @@ export const teamController = {
 
     registerTeam: async (req: Request, res: Response) => {
         try {
-            const validation = RegisterTeamSchema.safeParse(req.body);
-            if (!validation.success) {
-                return res.status(400).json({
-                    error: "Validation failed",
-                    details: validation.error.issues.map((err) => ({
-                        path: err.path.join("."),
-                        message: err.message,
-                    })),
-                });
-            }
+            const data = parseOr400(res, RegisterTeamSchema, req.body);
+            if (!data) return;
 
             const { team, starters, subs, coach, agreements } =
-                validation.data;
+                data;
 
             const teamInfoAndPlayers =
                 await faceitFetchUtil.fetchData<FaceitTeamPlayersResponse>(

@@ -14,135 +14,79 @@ import {
     FaceitTeamPlayersResponse,
 } from "./faceit.types";
 import { playerRepository } from "../players/player.repository";
+import { parseOr400 } from "../../core/validation/parseOr400";
 
 export const faceitController = {
-    test: async (req: Request, res: Response) => {
-        try {
-            const test = await faceitFetchUtil.fetchData<any>(
-                "/matches/1-3eda1154-09fd-4274-a40c-54f676c2632f/stats",
-            );
-            res.json(test);
-        } catch (error: any) {
-            logger.error("Error testing Faceit:", error);
-            res.status(500).json({ error: "Failed to test Faceit" });
-        }
+    testFaceitRoute: async (req: Request, res: Response) => {
+        const route = req.body.route as string;
+        const data = await faceitFetchUtil._callApi(route);
+        res.json(data);
     },
 
     importFaceitStage: async (req: Request, res: Response) => {
-        try {
-            const validation = ImportFaceitStageSchema.safeParse(req.body);
-            if (!validation.success) {
-                return res.status(400).json({
-                    error: "Validation failed",
-                    details: validation.error.issues.map((err) => ({
-                        path: err.path.join("."),
-                        message: err.message,
-                    })),
-                });
-            }
+        const data = parseOr400(res, ImportFaceitStageSchema, req.body);
+        if (!data) return;
 
-            const {
-                tournamentId,
-                championshipId,
-                readFileName,
-                writeFileName,
-            } = validation.data;
+        const { tournamentId, championshipId, readFileName, writeFileName } =
+            data;
 
-            logger.info(
-                `Importing Faceit stage for championship ${championshipId}`,
-            );
+        const championshipData = await faceitFetchUtil.fetchStageData(
+            championshipId,
+            {
+                readFileName: readFileName,
+                writeFileName: writeFileName,
+            },
+        );
 
-            const championshipData = await faceitFetchUtil.fetchStageData(
-                championshipId,
-                {
-                    readFileName: readFileName,
-                    writeFileName: writeFileName,
-                },
-            );
+        const stage = await faceitImportService.importStage(
+            championshipData,
+            tournamentId,
+        );
 
-            const stage = await faceitImportService.importStage(
-                championshipData,
-                tournamentId,
-            );
-
-            res.json({
-                success: true,
-                message: "Stage imported successfully",
-                stage: stage,
-            });
-        } catch (error: any) {
-            logger.error("Error importing Faceit stage:", error);
-            res.status(500).json({
-                error: "Failed to import Faceit stage",
-                details: error.message,
-            });
-        }
+        res.json({
+            success: true,
+            message: "Stage imported successfully",
+            stageId: stage.id,
+        });
     },
 
     importFaceitMatches: async (req: Request, res: Response) => {
-        try {
-            const validation = ImportFaceitMatchesSchema.safeParse(req.body);
-            if (!validation.success) {
-                return res.status(400).json({
-                    error: "Validation failed",
-                    details: validation.error.issues.map((err) => ({
-                        path: err.path.join("."),
-                        message: err.message,
-                    })),
-                });
-            }
+        const data = parseOr400(res, ImportFaceitMatchesSchema, req.body);
+        if (!data) return;
 
-            const { stageId, championshipId, readFileName, writeFileName } =
-                validation.data;
+        const { stageId, championshipId, readFileName, writeFileName } = data;
 
-            logger.info(
-                `Importing Faceit matches for championship ${championshipId} into stage ${stageId}`,
-            );
+        const matchesData = await faceitFetchUtil.fetchMatchesData(
+            championshipId,
+            {
+                readFileName: readFileName,
+                writeFileName: writeFileName,
+            },
+        );
 
-            const matchesData = await faceitFetchUtil.fetchMatchesData(
-                championshipId,
-                {
-                    readFileName: readFileName,
-                    writeFileName: writeFileName,
-                },
-            );
+        const result = await faceitImportService.importMatches(
+            matchesData,
+            stageId,
+        );
 
-            const result = await faceitImportService.importMatches(
-                matchesData,
-                stageId,
-            );
-
-            res.json({
-                success: result.success,
-                message: "Matches import completed",
-                counts: result.counts,
-                errors: result.errors.length > 0 ? result.errors : undefined,
-            });
-        } catch (error: any) {
-            logger.error("Error importing Faceit matches:", error);
-            res.status(500).json({
-                error: "Failed to import Faceit matches",
-                details: error.message,
-            });
-        }
+        res.json({
+            success: result.success,
+            message: "Matches import completed",
+            counts: result.counts,
+            errors: result.errors.length > 0 ? result.errors : undefined,
+        });
     },
 
     getFaceitPlayerTeams: async (req: Request, res: Response) => {
         try {
-            const validation = VerifyFaceitPlayerTeamsSchema.safeParse(
+            const data = parseOr400(
+                res,
+                VerifyFaceitPlayerTeamsSchema,
                 req.params,
             );
-            if (!validation.success) {
-                return res.status(400).json({
-                    error: "Validation failed",
-                    details: validation.error.issues.map((err) => ({
-                        path: err.path.join("."),
-                        message: err.message,
-                    })),
-                });
-            }
+            if (!data) return;
 
-            const { playerId } = validation.data;
+            const { playerId } = data;
 
             const response =
                 await faceitFetchUtil.fetchData<FaceitPlayerTeamsResponse>(
@@ -192,18 +136,10 @@ export const faceitController = {
 
     getTeamPlayers: async (req: Request, res: Response) => {
         try {
-            const validation = VerifyTeamPlayersSchema.safeParse(req.params);
-            if (!validation.success) {
-                return res.status(400).json({
-                    error: "Validation failed",
-                    details: validation.error.issues.map((err) => ({
-                        path: err.path.join("."),
-                        message: err.message,
-                    })),
-                });
-            }
+            const data = parseOr400(res, VerifyTeamPlayersSchema, req.params);
+            if (!data) return;
 
-            const { teamId } = validation.data;
+            const { teamId } = data;
 
             const players =
                 await faceitFetchUtil.fetchData<FaceitTeamPlayersResponse>(

@@ -6,52 +6,36 @@ import {
     StageTeamWithTeamContract,
 } from "@repo/contracts";
 import { stagesService } from "./stages.service";
+import { parseOr400 } from "../../../core/validation/parseOr400";
 
 export const stageController = {
     getMatchesByStageId: async (req: Request, res: Response) => {
-        const validation = StageParamsSchema.safeParse(req.params);
-        if (!validation.success) {
-            return res.status(400).json({
-                error: "Validation failed",
-                details: validation.error.issues.map((err) => ({
-                    path: err.path.join("."),
-                    message: err.message,
-                })),
-            });
-        }
+        const data = parseOr400(res, StageParamsSchema, req.params);
+        if (!data) return;
+
         const matches = await stagesService.getMatchesByStageId(
-            validation.data.stageId,
+            data.stageId,
         );
         res.json({ matches });
     },
 
     getStageTeams: async (req: Request, res: Response) => {
-        const validation = StageParamsSchema.safeParse(req.params);
-        if (!validation.success) {
-            return res.status(400).json({
-                error: "Validation failed",
-            });
-        }
+        const data = parseOr400(res, StageParamsSchema, req.params);
+        if (!data) return;
+
         const teams = await stagesService.getStageTeams(
-            validation.data.stageId,
+            data.stageId,
         );
 
         sendContract(res, StageTeamWithTeamContract.array(), teams);
     },
 
     getStageBracket: async (req: Request, res: Response) => {
-        const validation = StageParamsSchema.safeParse(req.params);
-        if (!validation.success) {
-            return res.status(400).json({
-                error: "Validation failed",
-                details: validation.error.issues.map((err) => ({
-                    path: err.path.join("."),
-                    message: err.message,
-                })),
-            });
-        }
+        const data = parseOr400(res, StageParamsSchema, req.params);
+        if (!data) return;
+
         const groups = await stagesService.getStageBracket(
-            validation.data.stageId,
+            data.stageId,
         );
 
         sendContract(res, GroupWithMatchesAndFormatContract.array(), groups);

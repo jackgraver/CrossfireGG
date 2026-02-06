@@ -3,22 +3,15 @@ import { matchService } from "./match.service";
 import { logger } from "../../core/logger";
 import { ClaimMatchSchema, MatchParamsSchema, UnclaimMatchSchema } from "./match.validation";
 import { ClaimedAndUnclaimedMatchesContract } from "@repo/contracts";
+import { parseOr400 } from "../../core/validation/parseOr400";
 
 export const matchController = {
     getMatchById: async (req: Request, res: Response) => {
         try {
-            const validation = MatchParamsSchema.safeParse(req.params);
-            if (!validation.success) {
-                return res.status(400).json({
-                    error: "Validation failed",
-                    details: validation.error.issues.map((err) => ({
-                        path: err.path.join("."),
-                        message: err.message,
-                    })),
-                });
-            }
+            const data = parseOr400(res, MatchParamsSchema, req.params);
+            if (!data) return;
 
-            const match = await matchService.getMatchById(validation.data.matchId);
+            const match = await matchService.getMatchById(data.matchId);
             res.json(match);
         } catch (error: any) {
             if (
@@ -47,17 +40,10 @@ export const matchController = {
     },
     claimMatch: async (req: Request, res: Response) => {
         try {
-            const validation = ClaimMatchSchema.safeParse(req.body);
-            if (!validation.success) {
-                return res.status(400).json({
-                    error: "Validation failed",
-                    details: validation.error.issues.map((err) => ({
-                        path: err.path.join("."),
-                        message: err.message,
-                    })),
-                });
-            }
-            const match = await matchService.claimMatch(validation.data.matchId, 1); // TODO: Get caster ID from user
+            const data = parseOr400(res, ClaimMatchSchema, req.body);
+            if (!data) return;
+
+            const match = await matchService.claimMatch(data.matchId, 1); // TODO: Get caster ID from user
             res.json(match);
         } catch (error: any) {
             logger.error("Error claiming match:", error);
@@ -66,17 +52,10 @@ export const matchController = {
     },
     unclaimMatch: async (req: Request, res: Response) => {
         try {
-            const validation = UnclaimMatchSchema.safeParse(req.body);
-            if (!validation.success) {
-                return res.status(400).json({
-                    error: "Validation failed",
-                    details: validation.error.issues.map((err) => ({
-                        path: err.path.join("."),
-                        message: err.message,
-                    })),
-                });
-            }
-            const match = await matchService.unclaimMatch(validation.data.matchId, 1); // TODO: Get caster ID from user
+            const data = parseOr400(res, UnclaimMatchSchema, req.body);
+            if (!data) return;
+
+            const match = await matchService.unclaimMatch(data.matchId, 1); // TODO: Get caster ID from user
             res.json(match);
         } catch (error: any) {
             logger.error("Error unclaiming match:", error);

@@ -21,10 +21,15 @@ const createStage = () => {
     };
 };
 
+//TODO: ---------------------------------------------------------------------------------------- put stage id first and load from faceit (make sure stage is unique)
 export default function CreateTournaments() {
     const { form } = useCreateTournamentForm();
-    const stages = useStore(form.store, (state: any) => state.values.stages) ?? [];
-    const prizePool = useStore(form.store, (state: any) => state.values.prize_pool);
+    const stages =
+        useStore(form.store, (state: any) => state.values.stages) ?? [];
+    const prizePool = useStore(
+        form.store,
+        (state: any) => state.values.prize_pool,
+    );
 
     const addStage = () => {
         form.setFieldValue("stages", [...stages, createStage()]);
@@ -38,7 +43,7 @@ export default function CreateTournaments() {
     };
 
     return (
-        <div className="min-h-screen bg-mainBg p-6 text-textPrimary sm:p-8">
+        <div className="bg-mainBg text-textPrimary min-h-screen p-6 sm:p-8">
             <div className="mx-auto w-full max-w-6xl space-y-6">
                 <header className="flex flex-col gap-1">
                     <h1 className="text-2xl font-bold">Admin Configuration</h1>
@@ -54,10 +59,12 @@ export default function CreateTournaments() {
                     // }}
                     className="grid gap-6 lg:grid-cols-2"
                 >
-                    <section className="rounded-lg border border-secondBg bg-firstBg p-6 shadow-lg">
+                    <section className="border-secondBg bg-firstBg rounded-lg border p-6 shadow-lg">
                         <div className="flex items-center justify-between gap-4">
                             <div className="mb-4">
-                                <h2 className="text-lg font-semibold">Tournament details</h2>
+                                <h2 className="text-lg font-semibold">
+                                    Tournament details
+                                </h2>
                                 <p className="text-sm text-gray-400">
                                     Fill out the basics for the tournament.
                                 </p>
@@ -80,7 +87,9 @@ export default function CreateTournaments() {
                                     <Input
                                         name={field.name}
                                         value={field.state.value ?? ""}
-                                        onChange={(e) => field.handleChange(e.target.value)}
+                                        onChange={(e) =>
+                                            field.handleChange(e.target.value)
+                                        }
                                         onBlur={field.handleBlur}
                                         label="Tournament name"
                                         placeholder="e.g. Crossfire Season 4"
@@ -102,7 +111,11 @@ export default function CreateTournaments() {
                                         <Input
                                             name={field.name}
                                             value={field.state.value ?? ""}
-                                            onChange={(e) => field.handleChange(e.target.value)}
+                                            onChange={(e) =>
+                                                field.handleChange(
+                                                    e.target.value,
+                                                )
+                                            }
                                             onBlur={field.handleBlur}
                                             label="Prize pool"
                                             placeholder="e.g. 1000"
@@ -110,11 +123,11 @@ export default function CreateTournaments() {
                                         />
                                     )}
                                 </form.Field>
-                                <div className="   ">
+                                <div className=" ">
                                     <div className="mb-1 block text-sm font-medium text-gray-200">
                                         Preview
                                     </div>
-                                    <div className=" w-full rounded-md border border-secondBg text-sm bg-secondBg text-textPrimary  px-3 py-2">
+                                    <div className="border-secondBg bg-secondBg text-textPrimary w-full rounded-md border px-3 py-2 text-sm">
                                         {prizePool ? `$${prizePool}` : "—"}
                                     </div>
                                 </div>
@@ -125,7 +138,11 @@ export default function CreateTournaments() {
                                         <Input
                                             name={field.name}
                                             value={field.state.value ?? ""}
-                                            onChange={(e) => field.handleChange(e.target.value)}
+                                            onChange={(e) =>
+                                                field.handleChange(
+                                                    e.target.value,
+                                                )
+                                            }
                                             onBlur={field.handleBlur}
                                             label="Start date"
                                             type="text"
@@ -137,7 +154,11 @@ export default function CreateTournaments() {
                                         <Input
                                             name={field.name}
                                             value={field.state.value ?? ""}
-                                            onChange={(e) => field.handleChange(e.target.value)}
+                                            onChange={(e) =>
+                                                field.handleChange(
+                                                    e.target.value,
+                                                )
+                                            }
                                             onBlur={field.handleBlur}
                                             label="End date"
                                             type="text"
@@ -147,12 +168,15 @@ export default function CreateTournaments() {
                             </div>
                         </div>
                     </section>
-                    <section className="rounded-lg border border-secondBg bg-firstBg p-6 shadow-lg">
+                    <section className="border-secondBg bg-firstBg rounded-lg border p-6 shadow-lg">
                         <div className="flex items-start justify-between gap-4">
                             <div>
-                                <h2 className="text-lg font-semibold">Stages</h2>
+                                <h2 className="text-lg font-semibold">
+                                    Stages
+                                </h2>
                                 <p className="text-sm text-gray-400">
-                                    Add one or more stages (registration, groups, playoffs, etc).
+                                    Add one or more stages (registration,
+                                    groups, playoffs, etc).
                                 </p>
                             </div>
                             <button
@@ -165,15 +189,15 @@ export default function CreateTournaments() {
                             </button>
                         </div>
                         {stages.length === 0 ? (
-                            <div className="mt-4 flex min-h-[140px] items-center justify-center rounded-lg border border-dashed border-secondBg bg-secondBg/30 text-sm text-gray-400">
+                            <div className="border-secondBg bg-secondBg/30 mt-4 flex min-h-[140px] items-center justify-center rounded-lg border border-dashed text-sm text-gray-400">
                                 No stages yet. Click “Add stage” to create one.
                             </div>
                         ) : (
-                            <div className="mt-4 space-y-4 overflow-y-auto ">
+                            <div className="mt-4 space-y-4 overflow-y-auto">
                                 {stages.map((stage: any, index: number) => (
                                     <div
                                         key={stage?.__id ?? index}
-                                        className="rounded-lg border border-secondBg bg-secondBg/40 p-4"
+                                        className="border-secondBg bg-secondBg/40 rounded-lg border p-4"
                                     >
                                         <div className="mb-3 flex items-center justify-between gap-3">
                                             <div className="min-w-0">
@@ -186,12 +210,15 @@ export default function CreateTournaments() {
                                                     ) : null}
                                                 </div>
                                                 <div className="text-xs text-gray-400">
-                                                    Configure stage metadata (local only for now).
+                                                    Configure stage metadata
+                                                    (local only for now).
                                                 </div>
                                             </div>
                                             <button
                                                 type="button"
-                                                onClick={() => removeStage(stage.__id)}
+                                                onClick={() =>
+                                                    removeStage(stage.__id)
+                                                }
                                                 className="group rounded-md p-2 transition-colors hover:bg-red-500/10"
                                                 title="Remove stage"
                                                 aria-label={`Remove stage ${index + 1}`}
@@ -203,101 +230,164 @@ export default function CreateTournaments() {
                                             </button>
                                         </div>
                                         <div className="grid gap-4 md:grid-cols-2">
-                                            <form.Field name={`stages[${index}].name`}>
+                                            <form.Field
+                                                name={`stages[${index}].name`}
+                                            >
                                                 {(field: any) => (
                                                     <Input
                                                         name={field.name}
-                                                        value={field.state.value ?? ""}
-                                                        onChange={(e) =>
-                                                            field.handleChange(e.target.value)
+                                                        value={
+                                                            field.state.value ??
+                                                            ""
                                                         }
-                                                        onBlur={field.handleBlur}
+                                                        onChange={(e) =>
+                                                            field.handleChange(
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                        onBlur={
+                                                            field.handleBlur
+                                                        }
                                                         label="Stage name"
                                                         placeholder="e.g. Group Stage"
                                                     />
                                                 )}
                                             </form.Field>
-                                            <form.Field name={`stages[${index}].faceitId`}>
+                                            <form.Field
+                                                name={`stages[${index}].faceitId`}
+                                            >
                                                 {(field: any) => (
                                                     <Input
                                                         name={field.name}
-                                                        value={field.state.value ?? ""}
-                                                        onChange={(e) =>
-                                                            field.handleChange(e.target.value)
+                                                        value={
+                                                            field.state.value ??
+                                                            ""
                                                         }
-                                                        onBlur={field.handleBlur}
+                                                        onChange={(e) =>
+                                                            field.handleChange(
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                        onBlur={
+                                                            field.handleBlur
+                                                        }
                                                         label="FACEIT stage/tournament ID"
                                                         placeholder="Optional"
                                                     />
                                                 )}
                                             </form.Field>
-                                            <form.Field name={`stages[${index}].faceitLink`}>
+                                            <form.Field
+                                                name={`stages[${index}].faceitLink`}
+                                            >
                                                 {(field: any) => (
                                                     <Input
                                                         name={field.name}
-                                                        value={field.state.value ?? ""}
-                                                        onChange={(e) =>
-                                                            field.handleChange(e.target.value)
+                                                        value={
+                                                            field.state.value ??
+                                                            ""
                                                         }
-                                                        onBlur={field.handleBlur}
+                                                        onChange={(e) =>
+                                                            field.handleChange(
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                        onBlur={
+                                                            field.handleBlur
+                                                        }
                                                         label="FACEIT championship link"
                                                         placeholder="https://www.faceit.com/en/championship/<id>"
                                                     />
                                                 )}
                                             </form.Field>
-                                            <form.Field name={`stages[${index}].max_teams`}>
+                                            <form.Field
+                                                name={`stages[${index}].max_teams`}
+                                            >
                                                 {(field: any) => (
                                                     <Input
                                                         name={field.name}
-                                                        value={field.state.value ?? ""}
-                                                        onChange={(e) =>
-                                                            field.handleChange(e.target.value)
+                                                        value={
+                                                            field.state.value ??
+                                                            ""
                                                         }
-                                                        onBlur={field.handleBlur}
+                                                        onChange={(e) =>
+                                                            field.handleChange(
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                        onBlur={
+                                                            field.handleBlur
+                                                        }
                                                         label="Max teams"
                                                         type="number"
                                                         placeholder="e.g. 16"
                                                     />
                                                 )}
                                             </form.Field>
-                                            <form.Field name={`stages[${index}].format_id`}>
+                                            <form.Field
+                                                name={`stages[${index}].format_id`}
+                                            >
                                                 {(field: any) => (
                                                     <Input
                                                         name={field.name}
-                                                        value={field.state.value ?? ""}
-                                                        onChange={(e) =>
-                                                            field.handleChange(e.target.value)
+                                                        value={
+                                                            field.state.value ??
+                                                            ""
                                                         }
-                                                        onBlur={field.handleBlur}
+                                                        onChange={(e) =>
+                                                            field.handleChange(
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                        onBlur={
+                                                            field.handleBlur
+                                                        }
                                                         label="Format ID"
                                                         type="number"
                                                         placeholder="Optional"
                                                     />
                                                 )}
                                             </form.Field>
-                                            <form.Field name={`stages[${index}].start_date`}>
+                                            <form.Field
+                                                name={`stages[${index}].start_date`}
+                                            >
                                                 {(field: any) => (
                                                     <Input
                                                         name={field.name}
-                                                        value={field.state.value ?? ""}
-                                                        onChange={(e) =>
-                                                            field.handleChange(e.target.value)
+                                                        value={
+                                                            field.state.value ??
+                                                            ""
                                                         }
-                                                        onBlur={field.handleBlur}
+                                                        onChange={(e) =>
+                                                            field.handleChange(
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                        onBlur={
+                                                            field.handleBlur
+                                                        }
                                                         label="Stage start"
                                                         type="text"
                                                     />
                                                 )}
                                             </form.Field>
-                                            <form.Field name={`stages[${index}].end_date`}>
+                                            <form.Field
+                                                name={`stages[${index}].end_date`}
+                                            >
                                                 {(field: any) => (
                                                     <Input
                                                         name={field.name}
-                                                        value={field.state.value ?? ""}
-                                                        onChange={(e) =>
-                                                            field.handleChange(e.target.value)
+                                                        value={
+                                                            field.state.value ??
+                                                            ""
                                                         }
-                                                        onBlur={field.handleBlur}
+                                                        onChange={(e) =>
+                                                            field.handleChange(
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                        onBlur={
+                                                            field.handleBlur
+                                                        }
                                                         label="Stage end"
                                                         type="text"
                                                     />
@@ -309,18 +399,27 @@ export default function CreateTournaments() {
                                                 {(field: any) => (
                                                     <Input
                                                         name={field.name}
-                                                        value={field.state.value ?? ""}
-                                                        onChange={(e) =>
-                                                            field.handleChange(e.target.value)
+                                                        value={
+                                                            field.state.value ??
+                                                            ""
                                                         }
-                                                        onBlur={field.handleBlur}
+                                                        onChange={(e) =>
+                                                            field.handleChange(
+                                                                e.target.value,
+                                                            )
+                                                        }
+                                                        onBlur={
+                                                            field.handleBlur
+                                                        }
                                                         label="Registration deadline"
                                                         type="text"
                                                         className="md:col-span-2"
                                                     />
                                                 )}
                                             </form.Field>
-                                            <form.Field name={`stages[${index}].is_current`}>
+                                            <form.Field
+                                                name={`stages[${index}].is_current`}
+                                            >
                                                 {(field: any) => (
                                                     <div className="md:col-span-2">
                                                         <label className="mb-1 block text-sm font-medium text-gray-200">
@@ -330,12 +429,14 @@ export default function CreateTournaments() {
                                                             type="button"
                                                             onClick={() =>
                                                                 field.handleChange(
-                                                                    !field.state.value,
+                                                                    !field.state
+                                                                        .value,
                                                                 )
                                                             }
                                                             className={[
                                                                 "inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm",
-                                                                field.state.value
+                                                                field.state
+                                                                    .value
                                                                     ? "border-green-700/60 bg-green-900/20 text-green-200"
                                                                     : "border-secondBg bg-secondBg text-gray-200",
                                                             ].join(" ")}
@@ -343,7 +444,8 @@ export default function CreateTournaments() {
                                                             <span
                                                                 className={[
                                                                     "h-2.5 w-2.5 rounded-full",
-                                                                    field.state.value
+                                                                    field.state
+                                                                        .value
                                                                         ? "bg-green-400"
                                                                         : "bg-gray-500",
                                                                 ].join(" ")}
@@ -378,7 +480,10 @@ function FieldTextarea({
 }) {
     return (
         <div>
-            <label htmlFor={field.name} className="mb-1 block text-sm font-medium text-gray-200">
+            <label
+                htmlFor={field.name}
+                className="mb-1 block text-sm font-medium text-gray-200"
+            >
                 {label}
             </label>
             <textarea
@@ -388,7 +493,7 @@ function FieldTextarea({
                 onChange={(e) => field.handleChange(e.target.value)}
                 onBlur={field.handleBlur}
                 rows={4}
-                className="w-full resize-y rounded-md border border-secondBg bg-secondBg px-3 py-2 text-textPrimary outline-none focus:ring-2 "
+                className="border-secondBg bg-secondBg text-textPrimary w-full resize-y rounded-md border px-3 py-2 outline-none focus:ring-2"
             />
         </div>
     );
