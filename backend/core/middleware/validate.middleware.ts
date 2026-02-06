@@ -11,13 +11,13 @@ export const validate = (schemas: ValidationSchemas) => {
     return (req: Request, res: Response, next: NextFunction) => {
         try {
             if (schemas.params) {
-                (req as any).params = schemas.params.parse(req.params);
+                (req as any).params = schemas.params.safeParse(req.params);
             }
             if (schemas.query) {
-                (req as any).query = schemas.query.parse(req.query);
+                (req as any).query = schemas.query.safeParse(req.query);
             }
             if (schemas.body) {
-                (req as any).body = schemas.body.parse(req.body);
+                (req as any).body = schemas.body.safeParse(req.body);
             }
             next();
         } catch (error) {

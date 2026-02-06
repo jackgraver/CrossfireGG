@@ -3,13 +3,11 @@ import {
     tournaments,
     stages,
     groups,
-    matches,
     stageTeams,
     stageFormats,
     stagePlayers,
 } from "../../schemas";
 import { eq, and, isNull, count, inArray, desc } from "drizzle-orm";
-import { TournamentListItem } from "./tournament.types";
 
 export const tournamentRepository = {
     findAll: async () => {
@@ -92,20 +90,6 @@ export const tournamentRepository = {
                     isNull(groups.deleted_at),
                 ),
             );
-    },
-
-    findMatchesByStageId: async (stageId: number) => {
-        return await db.query.matches.findMany({
-            where: (m, { eq, and, isNull }) =>
-                and(eq(m.stage_id, stageId), isNull(m.deleted_at)),
-            with: {
-                participants: {
-                    with: {
-                        team: true,
-                    },
-                },
-            },
-        });
     },
 
     findTeamsByTournamentId: async (tournamentId: number) => {
@@ -375,43 +359,6 @@ export const tournamentRepository = {
             .from(stageFormats)
             .where(eq(stageFormats.name, formatName));
         return result[0] || null;
-    },
-
-    findStageStandings: async (stageId: number) => {
-        return await db.query.stages.findFirst({
-            where: (s, { eq, and, isNull }) =>
-                and(eq(s.id, stageId), isNull(s.deleted_at)),
-            with: {
-                stageFormat: true,
-                groups: {
-                    with: {
-                        matches: {
-                            with: {
-                                participants: {
-                                    with: {
-                                        stageTeam: {
-                                            with: {
-                                                team: true,
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                },
-            },
-        });
-    },
-
-    findAllStageTeams: async (stageId: number) => {
-        return await db.query.stageTeams.findMany({
-            where: (st, { eq, and, isNull }) =>
-                and(eq(st.stage_id, stageId), isNull(st.deleted_at)),
-            with: {
-                team: true,
-            },
-        });
     },
 
     findUpcomingTournament: async () => {

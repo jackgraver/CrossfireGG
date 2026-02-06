@@ -15,9 +15,6 @@ router.get(
 
 router.get("/:tournamentId", tournamentController.getTournamentById);
 router.get("/:tournamentId/teams", tournamentController.getTeamsByTournamentId);
-router.get("/stage/:stageId/matches", tournamentController.getMatchesByStageId);
-router.get("/stage/:stageId/teams", tournamentController.getStageTeams);
-router.get("/stage/:stageId/bracket", tournamentController.getStageBracket);
 router.post(
     "/:tournamentId/register",
     tournamentController.registerForTournament,
