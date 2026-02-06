@@ -1,18 +1,94 @@
-export const config = {
-    port: parseInt(process.env.PORT || "5000", 10),
-    nodeEnv: process.env.NODE_ENV || "development",
-    database: {
-        path: process.env.DATABASE_PATH || "./cf.db",
-        url: process.env.DATABASE_URL,
-    },
-    cors: {
-        allowedOrigins: ["http://localhost:5173", "http://localhost:3000"],
-    },
-    auth: {
-        clientId: process.env.FACEIT_CLIENT_ID,
-        clientSecret: process.env.FACEIT_CLIENT_SECRET,
-    },
-    faceit: {
-        apiKey: process.env.FACEIT_API_KEY || "",
-    },
+// Collect missing required environment variables and only throw after all checked
+
+type EnvVarInfo = {
+    name: string;
+    message: string;
+    parser?: (val: string) => any;
+    assignTo: (val: any, config: any) => void;
 };
+
+// Intermediate config to build incrementally
+const _config: any = {};
+
+const REQUIRED_VARS: EnvVarInfo[] = [
+    {
+        name: "PORT",
+        message: "PORT is required for server port",
+        parser: (v) => parseInt(v, 10),
+        assignTo: (val, config) => {
+            config.port = val;
+        },
+    },
+    {
+        name: "NODE_ENV",
+        message: "NODE_ENV is required for node environment",
+        assignTo: (val, config) => {
+            config.nodeEnv = val;
+        },
+    },
+    {
+        name: "DATABASE_URL",
+        message: "DATABASE_URL is required for database connection",
+        assignTo: (val, config) => {
+            config.database = config.database || {};
+            config.database.url = val;
+        },
+    },
+    {
+        name: "CORS_ALLOWED_ORIGINS",
+        message: "CORS_ALLOWED_ORIGINS is required for CORS allowed origins",
+        parser: (v) => v.split(","),
+        assignTo: (val, config) => {
+            config.cors = config.cors || {};
+            config.cors.allowedOrigins = val;
+        },
+    },
+    {
+        name: "FACEIT_CLIENT_ID",
+        message: "FACEIT_CLIENT_ID is required for Faceit authentication",
+        assignTo: (val, config) => {
+            config.auth = config.auth || {};
+            config.auth.clientId = val;
+        },
+    },
+    {
+        name: "FACEIT_CLIENT_SECRET",
+        message: "FACEIT_CLIENT_SECRET is required for Faceit authentication",
+        assignTo: (val, config) => {
+            config.auth = config.auth || {};
+            config.auth.clientSecret = val;
+        },
+    },
+    {
+        name: "FACEIT_API_KEY",
+        message: "FACEIT_API_KEY is required for accessing Faceit API",
+        assignTo: (val, config) => {
+            config.faceit = config.faceit || {};
+            config.faceit.apiKey = val;
+        },
+    },
+];
+
+const missingVars: { name: string; message: string }[] = [];
+
+for (const envVar of REQUIRED_VARS) {
+    const rawValue = process.env[envVar.name];
+    if (typeof rawValue === "undefined" || rawValue === "") {
+        missingVars.push({ name: envVar.name, message: envVar.message });
+        continue;
+    }
+    const value = envVar.parser ? envVar.parser(rawValue) : rawValue;
+    envVar.assignTo(value, _config);
+}
+
+if (missingVars.length > 0) {
+    // Print all missing at once, nicely
+    const errorMessages = missingVars
+        .map((v) => `- ${v.name}: ${v.message}`)
+        .join("\n");
+    throw new Error(
+        `The following required environment variables are missing or empty:\n${errorMessages}`,
+    );
+}
+
+export const config = _config;
