@@ -36,6 +36,15 @@ export const matchRepository = {
         });
     },
 
+    findAllByStageId: async (stageId: number) => {
+        return await db.query.matches.findMany({
+            where: and(
+                eq(matches.stage_id, stageId),
+                isNull(matches.deleted_at),
+            ),
+        });
+    },
+
     findAllMatchCasting: async () => {
         return await db.query.matches.findMany({
             where: isNull(matches.deleted_at),

@@ -70,10 +70,8 @@ export const faceitController = {
         );
 
         res.json({
-            success: result.success,
+            success: result !== undefined,
             message: "Matches import completed",
-            counts: result.counts,
-            errors: result.errors.length > 0 ? result.errors : undefined,
         });
     },
 
