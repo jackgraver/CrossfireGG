@@ -68,6 +68,72 @@ export type FaceitAPIMatch = {
     faceit_url: string;
 };
 
+export type FaceitAPIMatchStats = {
+    rounds: {
+        played: string;
+        round_stats: {
+            Map: string;
+            Rounds: string;
+            Score: string;
+            Winner: string;
+        };
+        teams: {
+            team_id: string;
+            players: {
+                player_id: string;
+                player_stats: {
+                    MVPs: string;
+                    "Utility Success Rate per Match": string;
+                    "Sniper Kill Rate per Round": string;
+                    "Triple Kills": string;
+                    "Utility Count": string;
+                    "1v2Wins": string;
+                    "Clutch Kills": string;
+                    "Utility Damage": string;
+                    "Zeus Kills": string;
+                    "Flashes per Round in a Match": string;
+                    "1v1Wins": string;
+                    "Match 1v2 Win Rate": string;
+                    "1v1Count": string;
+                    "Flash Count": string;
+                    "Pistol Kills": string;
+                    "Match Entry Rate": string;
+                    "Entry Wins": string;
+                    "Quadro Kills": string;
+                    "K/R Ratio": string;
+                    "Match 1v1 Win Rate": string;
+                    Damage: string;
+                    "Utility Successes": string;
+                    "First Kills": string;
+                    Headshots: string;
+                    "Double Kills": string;
+                    ADR: string;
+                    "Enemies Flashed per Round in a Match": string;
+                    "Sniper Kills": string;
+                    "Match Entry Success Rate": string;
+                    "Penta Kills": string;
+                    "Flash Successes": string;
+                    "Utility Enemies": string;
+                    "Entry Count": string;
+                    "Flash Success Rate per Match": string;
+                    Deaths: string;
+                    "Knife Kills": string;
+                    Kills: string;
+                    "Utility Damage per Round in a Match": string;
+                    "Utility Usage per Round": string;
+                    "Utility Damage Success Rate per Match": string;
+                    "Enemies Flashed": string;
+                    Assists: string;
+                    "Sniper Kill Rate per Match": string;
+                    "1v2Count": string;
+                    "K/D Ratio": string;
+                    "Headshots %": string;
+                };
+            }[];
+        }[];
+    }[];
+};
+
 // ============================== TRANSFORMATION FUNCTIONS ============================== //
 
 /**
@@ -113,7 +179,10 @@ export function transformFaceitPlayer(faceitPlayer: FaceitAPIPlayer) {
  * Transform Faceit team/faction data to Team schema
  * Note: team_captain_id needs to be resolved after upserting the captain player
  */
-export function transformFaceitTeam(faceitTeam: FaceitAPITeam, captainPlayerId: number) {
+export function transformFaceitTeam(
+    faceitTeam: FaceitAPITeam,
+    captainPlayerId: number,
+) {
     return {
         name: faceitTeam.name,
         team_logo: faceitTeam.avatar || null,
@@ -179,7 +248,9 @@ export function transformFaceitMatch(
         status: mapFaceitMatchStatus(faceitMatch.status),
         best_of: faceitMatch.best_of || 1,
         stream_url: null,
-        scheduled_at: faceitMatch.scheduled_at ? new Date(faceitMatch.scheduled_at * 1000) : null,
+        scheduled_at: faceitMatch.scheduled_at
+            ? new Date(faceitMatch.scheduled_at * 1000)
+            : null,
         faceit_url: faceitMatch.faceit_url?.replace("{lang}", "en") || null,
     };
 }
@@ -193,7 +264,10 @@ export function transformFaceitMaps(
     participantMap: { faction1: number; faction2: number },
     formattedRound?: string,
 ) {
-    if (!faceitMatch.detailed_results || faceitMatch.detailed_results.length === 0) {
+    if (
+        !faceitMatch.detailed_results ||
+        faceitMatch.detailed_results.length === 0
+    ) {
         return [];
     }
 
@@ -271,7 +345,9 @@ export function extractGroupsFromMatches(matches: FaceitAPIMatch[]): number[] {
 /**
  * Extract all unique players from a match
  */
-export function extractPlayersFromMatch(faceitMatch: FaceitAPIMatch): FaceitAPIPlayer[] {
+export function extractPlayersFromMatch(
+    faceitMatch: FaceitAPIMatch,
+): FaceitAPIPlayer[] {
     const players: FaceitAPIPlayer[] = [];
 
     if (faceitMatch.teams.faction1?.roster) {
@@ -288,7 +364,9 @@ export function extractPlayersFromMatch(faceitMatch: FaceitAPIMatch): FaceitAPIP
 /**
  * Extract all unique teams from a match
  */
-export function extractTeamsFromMatch(faceitMatch: FaceitAPIMatch): FaceitAPITeam[] {
+export function extractTeamsFromMatch(
+    faceitMatch: FaceitAPIMatch,
+): FaceitAPITeam[] {
     const teams: FaceitAPITeam[] = [];
 
     if (faceitMatch.teams.faction1) {
@@ -305,7 +383,9 @@ export function extractTeamsFromMatch(faceitMatch: FaceitAPIMatch): FaceitAPITea
 /**
  * Extract all unique players from multiple matches
  */
-export function extractAllPlayers(matches: FaceitAPIMatch[]): Map<string, FaceitAPIPlayer> {
+export function extractAllPlayers(
+    matches: FaceitAPIMatch[],
+): Map<string, FaceitAPIPlayer> {
     const playersMap = new Map<string, FaceitAPIPlayer>();
 
     for (const match of matches) {
@@ -323,7 +403,9 @@ export function extractAllPlayers(matches: FaceitAPIMatch[]): Map<string, Faceit
 /**
  * Extract all unique teams from multiple matches
  */
-export function extractAllTeams(matches: FaceitAPIMatch[]): Map<string, FaceitAPITeam> {
+export function extractAllTeams(
+    matches: FaceitAPIMatch[],
+): Map<string, FaceitAPITeam> {
     const teamsMap = new Map<string, FaceitAPITeam>();
 
     for (const match of matches) {

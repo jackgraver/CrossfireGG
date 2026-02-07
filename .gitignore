@@ -101,3 +101,5 @@ MD/
 .cursor/rules/
 
 frontend/.output/*
+
+debug-data/

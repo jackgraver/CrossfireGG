@@ -941,7 +941,10 @@ describe("faceit - import matches", () => {
             },
         }));
 
-        const result = await faceitImportService.importMatches(matches, 1);
+        const result = await faceitImportService.processNewStageMatches(
+            matches,
+            1,
+        );
 
         expect(result.success).toBe(true);
         expect(result.counts.matches).toBe(1);

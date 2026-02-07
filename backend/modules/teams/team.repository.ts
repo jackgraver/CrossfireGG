@@ -8,7 +8,7 @@ import {
     stages,
     tournaments,
 } from "../../schemas";
-import { eq, and, isNull, inArray, like, or, ne } from "drizzle-orm";
+import { eq, and, isNull, inArray, like, or, ne, sql } from "drizzle-orm";
 
 export const teamRepository = {
     findAll: async () => {
@@ -52,6 +52,22 @@ export const teamRepository = {
             )
             .limit(1);
         return result[0];
+    },
+
+    findStageTeamByFaceitId: async (faceitId: string, stageId: number) => {
+        const team = await db.query.teams.findFirst({
+            where: (t, { eq, and, isNull }) =>
+                and(eq(t.faceit_id, faceitId), isNull(t.deleted_at)),
+        });
+        if (!team) return undefined;
+        return await db.query.stageTeams.findFirst({
+            where: (st, { eq, and, isNull }) =>
+                and(
+                    eq(st.team_id, team.id),
+                    eq(st.stage_id, stageId),
+                    isNull(st.deleted_at),
+                ),
+        });
     },
 
     findMatchesByTeamId: async (teamId: number) => {
@@ -269,5 +285,51 @@ export const teamRepository = {
             .select()
             .from(teams)
             .where(inArray(teams.faceit_id, faceitIds));
+    },
+    incrementStageTeamRecord: async (
+        teamId: number,
+        stageId: number,
+        deltaWins: number,
+        deltaLosses: number,
+    ) => {
+        const result = await db
+            .update(stageTeams)
+            .set({
+                wins: sql<number>`coalesce(${stageTeams.wins}, 0) + ${deltaWins}`,
+                losses: sql<number>`coalesce(${stageTeams.losses}, 0) + ${deltaLosses}`,
+                updated_at: new Date(),
+            })
+            .where(
+                and(
+                    eq(stageTeams.team_id, teamId),
+                    eq(stageTeams.stage_id, stageId),
+                    isNull(stageTeams.deleted_at),
+                ),
+            )
+            .returning();
+        return result[0];
+    },
+    updateStageTeamRecord: async (
+        teamId: number,
+        stageId: number,
+        wins: number,
+        losses: number,
+    ) => {
+        const result = await db
+            .update(stageTeams)
+            .set({
+                wins,
+                losses,
+                updated_at: new Date(),
+            })
+            .where(
+                and(
+                    eq(stageTeams.team_id, teamId),
+                    eq(stageTeams.stage_id, stageId),
+                    isNull(stageTeams.deleted_at),
+                ),
+            )
+            .returning();
+        return result[0];
     },
 };

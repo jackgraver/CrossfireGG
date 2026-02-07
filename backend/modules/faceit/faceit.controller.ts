@@ -64,7 +64,7 @@ export const faceitController = {
             },
         );
 
-        const result = await faceitImportService.importMatches(
+        const result = await faceitImportService.processNewStageMatches(
             matchesData,
             stageId,
         );
@@ -72,6 +72,7 @@ export const faceitController = {
         res.json({
             success: result !== undefined,
             message: "Matches import completed",
+            newMatchesCount: result?.newMatchesCount ?? 0,
         });
     },
 

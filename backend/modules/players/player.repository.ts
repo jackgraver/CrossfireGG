@@ -1,5 +1,5 @@
 import { db } from "../../config/database";
-import { players } from "../../schemas";
+import { players, playerStats } from "../../schemas";
 import { eq, and, isNull, inArray } from "drizzle-orm";
 
 export const playerRepository = {
@@ -138,5 +138,38 @@ export const playerRepository = {
                     isNull(players.deleted_at),
                 ),
             );
+    },
+
+    upsertPlayerStats: async (
+        faceitId: string,
+        matchId: number,
+        mapId: number,
+        stats: {
+            kills: number;
+            deaths: number;
+            assists: number;
+            adr: number;
+            damage: number;
+        },
+    ) => {
+        const player = await playerRepository.findByFaceitId(faceitId);
+        if (!player) {
+            throw new Error(`Player with faceitId ${faceitId} not found`);
+        }
+        console.log("player stats b4");
+        const result = await db
+            .insert(playerStats)
+            .values({
+                player_id: player.id,
+                match_id: matchId,
+                map_id: mapId,
+                kills: stats.kills,
+                deaths: stats.deaths,
+                assists: stats.assists,
+                adr: stats.adr,
+                damage: stats.damage,
+            })
+            .returning();
+        console.log("player stats after", result);
     },
 };

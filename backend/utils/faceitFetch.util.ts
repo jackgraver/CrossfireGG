@@ -6,6 +6,20 @@ import { FaceitAPIMatch, FaceitAPIChampionship } from "./transformFaceitData";
 interface faceitFetchOptions {
     readFileName?: string;
     writeFileName?: string;
+    allow404?: boolean;
+}
+
+class FaceitApiError extends Error {
+    status: number;
+    statusText: string;
+    endpoint: string;
+    constructor(args: { status: number; statusText: string; endpoint: string }) {
+        super(`Faceit API error: ${args.status} ${args.statusText}`);
+        this.name = "FaceitApiError";
+        this.status = args.status;
+        this.statusText = args.statusText;
+        this.endpoint = args.endpoint;
+    }
 }
 
 export const faceitFetchUtil = {
@@ -41,9 +55,11 @@ export const faceitFetchUtil = {
             },
         });
         if (!response.ok) {
-            throw new Error(
-                `Faceit API error: ${response.status} ${response.statusText}`,
-            );
+            throw new FaceitApiError({
+                status: response.status,
+                statusText: response.statusText,
+                endpoint,
+            });
         }
         return response.json() as Promise<T>;
     },
@@ -57,6 +73,7 @@ export const faceitFetchUtil = {
                     recursive: true,
                 });
             }
+            fs.mkdirSync(path.dirname(filePath), { recursive: true });
             fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
             console.log(`[DEBUG] Data written to: ${filePath}`);
         } catch (error) {
@@ -82,7 +99,7 @@ export const faceitFetchUtil = {
         endpoint: string,
         options: faceitFetchOptions = {},
     ): Promise<T> => {
-        const { readFileName, writeFileName } = options;
+        const { readFileName, writeFileName, allow404 } = options;
         if (config.nodeEnv === "development") {
             const cachedData = await faceitFetchUtil._readFromFile<{
                 items: T;
@@ -102,6 +119,16 @@ export const faceitFetchUtil = {
 
             return data as T;
         } catch (error) {
+            if (
+                allow404 &&
+                error instanceof FaceitApiError &&
+                error.status === 404
+            ) {
+                console.log(
+                    `[Faceit API] ${endpoint} returned 404 (likely forfeit/no stats). Skipping.`,
+                );
+                return undefined as unknown as T;
+            }
             console.error(`[Faceit API] Error fetching data:`, error);
             throw error;
         }
