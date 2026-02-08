@@ -6,7 +6,7 @@ import stagesRoutes from "./stages/stages.routes";
 
 const router = Router();
 
-router.use("/stages", stagesRoutes);
+router.use("/stage", stagesRoutes);
 
 router.get(
     "/all",

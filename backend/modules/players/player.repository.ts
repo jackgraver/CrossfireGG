@@ -141,7 +141,7 @@ export const playerRepository = {
     },
 
     upsertPlayerStats: async (
-        faceitId: string,
+        playerId: number,
         matchId: number,
         mapId: number,
         stats: {
@@ -152,24 +152,48 @@ export const playerRepository = {
             damage: number;
         },
     ) => {
-        const player = await playerRepository.findByFaceitId(faceitId);
-        if (!player) {
-            throw new Error(`Player with faceitId ${faceitId} not found`);
+        const existing = await db
+            .select()
+            .from(playerStats)
+            .where(
+                and(
+                    eq(playerStats.player_id, playerId),
+                    eq(playerStats.match_id, matchId),
+                    eq(playerStats.map_id, mapId),
+                    isNull(playerStats.deleted_at),
+                ),
+            )
+            .limit(1);
+
+        if (existing.length > 0) {
+            return await db
+                .update(playerStats)
+                .set({
+                    kills: stats.kills,
+                    deaths: stats.deaths,
+                    assists: stats.assists,
+                    adr: stats.adr,
+                    damage: stats.damage,
+                    updated_at: new Date(),
+                })
+                .where(eq(playerStats.id, existing[0].id))
+                .returning();
+        } else {
+            return await db
+                .insert(playerStats)
+                .values({
+                    player_id: playerId,
+                    match_id: matchId,
+                    map_id: mapId,
+                    kills: stats.kills,
+                    deaths: stats.deaths,
+                    assists: stats.assists,
+                    adr: stats.adr,
+                    damage: stats.damage,
+                    created_at: new Date(),
+                    updated_at: new Date(),
+                })
+                .returning();
         }
-        console.log("player stats b4");
-        const result = await db
-            .insert(playerStats)
-            .values({
-                player_id: player.id,
-                match_id: matchId,
-                map_id: mapId,
-                kills: stats.kills,
-                deaths: stats.deaths,
-                assists: stats.assists,
-                adr: stats.adr,
-                damage: stats.damage,
-            })
-            .returning();
-        console.log("player stats after", result);
     },
 };

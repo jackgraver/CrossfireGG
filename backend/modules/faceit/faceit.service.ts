@@ -2,84 +2,17 @@ import { logger } from "../../core/logger";
 import { playerRepository } from "../players/player.repository";
 import { tournamentRepository } from "../tournaments/tournament.repository";
 import {
-    transformFaceitPlayer,
-    transformFaceitTeam,
-    transformFaceitMatch,
-    transformFaceitMatchParticipants,
-    transformFaceitMaps,
-    extractGroupsFromMatches,
-    extractAllPlayers,
-    extractAllTeams,
     FaceitAPIMatch,
     FaceitAPIChampionship,
     transformFaceitTournament,
-    FaceitAPITeam,
     FaceitAPIMatchStats,
+    transformFaceitMatch,
+    transformFaceitMatchParticipants,
+    transformFaceitMaps,
 } from "../../utils/transformFaceitData";
-import { type StageFormat } from "../../utils/roundFormatter";
 import { teamRepository } from "../teams/team.repository";
 import { matchRepository } from "../matches/match.repository";
-import { MatchSchema } from "../teams/team.types";
-import { MatchDTO, TeamDTO } from "@repo/contracts";
 import { faceitFetchUtil } from "../../utils/faceitFetch.util";
-
-interface ImportResult {
-    success: boolean;
-    stageId?: number;
-    counts: {
-        players: number;
-        teams: number;
-        matches: number;
-        groups: number;
-    };
-    errors: string[];
-}
-
-/**
- * Calculate team records (wins/losses) up to a specific round
- * This is useful for Swiss format where we need to know team records for round labeling
- */
-function calculateTeamRecordsUpToRound(
-    matches: FaceitAPIMatch[],
-    teamFaceitId: string,
-    currentRound: number,
-): { wins: number; losses: number } {
-    let wins = 0;
-    let losses = 0;
-
-    for (const match of matches) {
-        // Only count matches before the current round
-        if (!match.round || match.round >= currentRound) {
-            continue;
-        }
-
-        // Skip if match doesn't involve this team
-        const isFaction1 = match.teams.faction1?.faction_id === teamFaceitId;
-        const isFaction2 = match.teams.faction2?.faction_id === teamFaceitId;
-
-        if (!isFaction1 && !isFaction2) {
-            continue;
-        }
-
-        // Check if match is finished
-        if (match.status !== "FINISHED" || !match.results?.winner) {
-            continue;
-        }
-
-        // Count win or loss
-        const teamWon =
-            (isFaction1 && match.results.winner === "faction1") ||
-            (isFaction2 && match.results.winner === "faction2");
-
-        if (teamWon) {
-            wins++;
-        } else {
-            losses++;
-        }
-    }
-
-    return { wins, losses };
-}
 
 export const faceitImportService = {
     /**
@@ -125,100 +58,90 @@ export const faceitImportService = {
             );
         }
 
-        //TODO use offset in faceit api call?
         const existingMatches = await matchRepository.findAllByStageId(stageId);
-        logger.info(`Found ${existingMatches.length} existing matches`);
-        const newMatches = matches.filter(
-            (match) =>
-                !existingMatches.some((m) => m.faceit_id === match.match_id),
-        );
-        logger.info(`Found ${newMatches.length} new matches`);
+        const existingFaceitIds = new Set(existingMatches.map((m) => m.faceit_id));
+
+        const newMatches = matches
+            .filter((match) => !existingFaceitIds.has(match.match_id))
+            .sort((a, b) => {
+                const timeA = a.started_at ?? a.scheduled_at ?? a.configured_at ?? 0;
+                const timeB = b.started_at ?? b.scheduled_at ?? b.configured_at ?? 0;
+                return timeA - timeB;
+            });
 
         let newMatchesCount = 0;
 
-        for (const match of newMatches.reverse()) {
+        for (const match of newMatches) {
             try {
-                const team1 = await teamRepository.findStageTeamByFaceitId(
+                const stageTeam1 = await teamRepository.findStageTeamByFaceitId(
                     match.teams.faction1.faction_id,
                     stageId,
                 );
-                const players1 = await playerRepository.findByFaceitIds(
-                    match.teams.faction1.roster.map(
-                        (player) => player.player_id,
-                    ),
-                );
-                if (players1.length !== match.teams.faction1.roster.length) {
-                    logger.warn(
-                        `Players not found for team ${match.teams.faction1.faction_id}`,
-                    );
-                    continue;
-                }
-                const team2 = await teamRepository.findStageTeamByFaceitId(
+                const stageTeam2 = await teamRepository.findStageTeamByFaceitId(
                     match.teams.faction2.faction_id,
                     stageId,
                 );
-                const players2 = await playerRepository.findByFaceitIds(
-                    match.teams.faction2.roster.map(
-                        (player) => player.player_id,
-                    ),
-                );
-                if (players2.length !== match.teams.faction2.roster.length) {
+
+                if (!stageTeam1 || !stageTeam2) {
                     logger.warn(
-                        `Players not found for team ${match.teams.faction2.faction_id}`,
+                        `Stage teams not found for match ${match.match_id}. Faction1: ${match.teams.faction1.faction_id}, Faction2: ${match.teams.faction2.faction_id}`,
                     );
                     continue;
                 }
 
-                const winnerFaction =
-                    match.status === "FINISHED"
-                        ? match.results?.winner
-                        : undefined;
-                const winnerId =
-                    winnerFaction === "faction1"
-                        ? team1?.team_id
-                        : winnerFaction === "faction2"
-                          ? team2?.team_id
-                          : undefined;
-
-                const createdMatch =
-                    await faceitImportService.processStageMatch(
-                        match,
-                        {
-                            id: team1?.team_id ?? 0,
-                            games: (team1?.wins ?? 0) + (team1?.losses ?? 0),
-                            winner:
-                                winnerId !== undefined &&
-                                winnerId === team1?.team_id,
-                        },
-                        {
-                            id: team2?.team_id ?? 0,
-                            games: (team2?.wins ?? 0) + (team2?.losses ?? 0),
-                            winner:
-                                winnerId !== undefined &&
-                                winnerId === team2?.team_id,
-                        },
-                        stageId,
+                const players1 = await playerRepository.findByFaceitIds(
+                    match.teams.faction1.roster.map((p) => p.player_id),
+                );
+                if (players1.length !== match.teams.faction1.roster.length) {
+                    logger.warn(
+                        `Not all players found for team ${match.teams.faction1.faction_id} in match ${match.match_id}. Skipping.`,
                     );
+                    continue;
+                }
 
-                if (createdMatch) newMatchesCount++;
+                const players2 = await playerRepository.findByFaceitIds(
+                    match.teams.faction2.roster.map((p) => p.player_id),
+                );
+                if (players2.length !== match.teams.faction2.roster.length) {
+                    logger.warn(
+                        `Not all players found for team ${match.teams.faction2.faction_id} in match ${match.match_id}. Skipping.`,
+                    );
+                    continue;
+                }
 
-                if (createdMatch && winnerId !== undefined) {
-                    if (team1) {
-                        const isTeam1Winner = winnerId === team1.team_id;
+                let groupId: number | null = null;
+                if (match.group !== undefined && match.group !== null) {
+                    const group = await tournamentRepository.upsertGroupByName(
+                        stageId,
+                        match.group.toString(),
+                    );
+                    groupId = group.id;
+                }
+
+                const created = await faceitImportService.processStageMatch(
+                    match,
+                    stageId,
+                    groupId,
+                    stageTeam1,
+                    stageTeam2,
+                );
+
+                if (created) {
+                    newMatchesCount++;
+                    
+                    if (match.status === "FINISHED" && match.results?.winner) {
+                        const winnerFaction = match.results.winner;
                         await teamRepository.incrementStageTeamRecord(
-                            team1.team_id,
+                            stageTeam1.team_id,
                             stageId,
-                            isTeam1Winner ? 1 : 0,
-                            isTeam1Winner ? 0 : 1,
+                            winnerFaction === "faction1" ? 1 : 0,
+                            winnerFaction === "faction1" ? 0 : 1,
                         );
-                    }
-                    if (team2) {
-                        const isTeam2Winner = winnerId === team2.team_id;
                         await teamRepository.incrementStageTeamRecord(
-                            team2.team_id,
+                            stageTeam2.team_id,
                             stageId,
-                            isTeam2Winner ? 1 : 0,
-                            isTeam2Winner ? 0 : 1,
+                            winnerFaction === "faction2" ? 1 : 0,
+                            winnerFaction === "faction2" ? 0 : 1,
                         );
                     }
                 }
@@ -235,53 +158,34 @@ export const faceitImportService = {
      */
     processStageMatch: async (
         faceitMatch: FaceitAPIMatch,
-        team1: { id: number; games: number; winner: boolean },
-        team2: { id: number; games: number; winner: boolean },
         stageId: number,
+        groupId: number | null,
+        stageTeam1: { id: number; team_id: number },
+        stageTeam2: { id: number; team_id: number },
     ): Promise<boolean> => {
-        if (team1.winner && team2.winner) {
-            return false;
-        }
+        const matchData = transformFaceitMatch(
+            faceitMatch,
+            stageId,
+            groupId,
+        );
 
-        let round = 1;
-        if (
-            faceitMatch.round &&
-            faceitMatch.round > 1 &&
-            team1.games === team2.games
-        ) {
-            round = team1.games + 1;
-        }
+        const createdMatch = await matchRepository.upsertMatchByFaceitId(matchData);
 
-        const createdMatch = await matchRepository.upsertMatchByFaceitId({
-            group_id: faceitMatch.group ?? 1,
-            stage_id: stageId,
-            faceit_id: faceitMatch.match_id,
-            match_number: null,
-            round: round.toString(),
-            status: faceitMatch.status,
-            best_of: faceitMatch.best_of,
-            stream_url: null,
-            scheduled_at: faceitMatch.scheduled_at
-                ? new Date(faceitMatch.scheduled_at * 1000)
-                : null,
-            faceit_url: faceitMatch.faceit_url,
-        });
+        const participants = transformFaceitMatchParticipants(
+            faceitMatch,
+            createdMatch.id,
+            { faction1: stageTeam1.id, faction2: stageTeam2.id },
+        );
 
-        matchRepository.upsertMatchParticipant({
-            match_id: createdMatch.id,
-            team_id: team1.id,
-            position: 1,
-            score: 0,
-            winner: team1.winner,
-        });
+        const [p1, p2] = await Promise.all([
+            matchRepository.upsertMatchParticipant(participants[0]),
+            matchRepository.upsertMatchParticipant(participants[1]),
+        ]);
 
-        matchRepository.upsertMatchParticipant({
-            match_id: createdMatch.id,
-            team_id: team2.id,
-            position: 2,
-            score: 0,
-            winner: team2.winner,
-        });
+        const participantMap = {
+            [faceitMatch.teams.faction1.faction_id]: p1.id,
+            [faceitMatch.teams.faction2.faction_id]: p2.id,
+        };
 
         try {
             const stats = await faceitFetchUtil.fetchData<FaceitAPIMatchStats>(
@@ -292,39 +196,58 @@ export const faceitImportService = {
                 },
             );
 
-            for (const round of stats.rounds) {
-                const [score1, score2] = round.round_stats.Score.split(" / ");
+            if (stats && stats.rounds && stats.rounds.length > 0) {
+                for (let i = 0; i < stats.rounds.length; i++) {
+                    const round = stats.rounds[i];
+                    const [score1, score2] = round.round_stats.Score.split("/").map(s => parseInt(s.trim()));
+                    
+                    const winnerFaceitId = round.round_stats.Winner;
+                    const winnerParticipantId = participantMap[winnerFaceitId] || null;
 
-                const map = await matchRepository.upsertMap({
-                    match_id: createdMatch.id,
-                    map_name: round.round_stats.Map,
-                    map_order: 1,
-                    round: "1",
-                    team1_score: parseInt(score1),
-                    team2_score: parseInt(score2),
-                    winner_id: null,
-                });
+                    const map = await matchRepository.upsertMap({
+                        match_id: createdMatch.id,
+                        map_name: round.round_stats.Map,
+                        map_order: i + 1,
+                        round: matchData.round,
+                        team1_score: score1 || 0,
+                        team2_score: score2 || 0,
+                        winner_id: winnerParticipantId,
+                    });
 
-                for (const team of round.teams) {
-                    for (const player of team.players) {
-                        await playerRepository.upsertPlayerStats(
-                            player.player_id,
-                            createdMatch.id,
-                            map.id,
-                            {
-                                kills: parseInt(player.player_stats.Kills),
-                                deaths: parseInt(player.player_stats.Deaths),
-                                assists: parseInt(player.player_stats.Assists),
-                                adr: parseInt(player.player_stats.ADR),
-                                damage: parseInt(player.player_stats.Damage),
-                            },
-                        );
+                    for (const teamStats of round.teams) {
+                        for (const playerStats of teamStats.players) {
+                            const player = await playerRepository.findByFaceitId(playerStats.player_id);
+                            if (player) {
+                                await playerRepository.upsertPlayerStats(
+                                    player.id,
+                                    createdMatch.id,
+                                    map.id,
+                                    {
+                                        kills: parseInt(playerStats.player_stats.Kills) || 0,
+                                        deaths: parseInt(playerStats.player_stats.Deaths) || 0,
+                                        assists: parseInt(playerStats.player_stats.Assists) || 0,
+                                        adr: parseInt(playerStats.player_stats.ADR) || 0,
+                                        damage: parseInt(playerStats.player_stats.Damage) || 0,
+                                    },
+                                );
+                            }
+                        }
                     }
+                }
+            } else if (faceitMatch.detailed_results && faceitMatch.detailed_results.length > 0) {
+                const maps = transformFaceitMaps(
+                    faceitMatch,
+                    createdMatch.id,
+                    { faction1: p1.id, faction2: p2.id },
+                    matchData.round || undefined,
+                );
+                for (const mapData of maps) {
+                    await matchRepository.upsertMap(mapData);
                 }
             }
         } catch (error) {
             logger.warn(
-                `Failed to fetch stats for match ${faceitMatch.match_id}`,
+                `Failed to process stats for match ${faceitMatch.match_id}`,
                 error,
             );
         }

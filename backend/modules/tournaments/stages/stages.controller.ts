@@ -13,9 +13,7 @@ export const stageController = {
         const data = parseOr400(res, StageParamsSchema, req.params);
         if (!data) return;
 
-        const matches = await stagesService.getMatchesByStageId(
-            data.stageId,
-        );
+        const matches = await stagesService.getMatchesByStageId(data.stageId);
         res.json({ matches });
     },
 
@@ -23,9 +21,7 @@ export const stageController = {
         const data = parseOr400(res, StageParamsSchema, req.params);
         if (!data) return;
 
-        const teams = await stagesService.getStageTeams(
-            data.stageId,
-        );
+        const teams = await stagesService.getStageTeams(data.stageId);
 
         sendContract(res, StageTeamWithTeamContract.array(), teams);
     },
@@ -34,10 +30,8 @@ export const stageController = {
         const data = parseOr400(res, StageParamsSchema, req.params);
         if (!data) return;
 
-        const groups = await stagesService.getStageBracket(
-            data.stageId,
-        );
+        const groups = await stagesService.getStageBracket(data.stageId);
 
-        sendContract(res, GroupWithMatchesAndFormatContract.array(), groups);
+        sendContract(res, GroupWithMatchesAndFormatContract, groups);
     },
 };
