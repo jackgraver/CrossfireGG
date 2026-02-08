@@ -1,6 +1,14 @@
 import { queryClient } from "@/lib/queryClient";
-import { useMutation } from "@tanstack/react-query";
-import { apiPOST } from "@/api/client";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { apiGET, apiPOST } from "@/api/client";
+import { StageFormatDTO } from "@repo/contracts";
+
+export const useAllStageFormats = () => {
+    return useQuery<StageFormatDTO[]>({
+        queryKey: ["stage-formats"],
+        queryFn: () => apiGET<StageFormatDTO[]>("tournament/stage/format/all"),
+    });
+};
 
 export const useCreateTournament = () => {
     return useMutation({

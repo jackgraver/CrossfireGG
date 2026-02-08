@@ -1,11 +1,10 @@
-import { useCreateTournamentForm } from "../-hooks/useCreateTournamentForm";
+import { createFileRoute } from "@tanstack/react-router";
+import { useCreateTournamentForm } from "../../-hooks/useCreateTournamentForm";
 import { Plus, SaveIcon, Trash2 } from "lucide-react";
 import { useStore } from "@tanstack/react-form";
 import { Input } from "@/shared/form/Input";
 import { Checkbox, Select } from "@/shared/form";
-import { apiGET } from "@/api/client";
-import { useQuery } from "@tanstack/react-query";
-import { StageFormatDTO } from "@repo/contracts";
+import { useAllStageFormats } from "../../-queries/manage_tournaments.queries";
 
 const createStage = () => {
     const id = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
@@ -25,14 +24,14 @@ const createStage = () => {
     };
 };
 
-//TODO: ---------------------------------------------------------------------------------------- put stage id first and load from faceit (make sure stage is unique)
-export default function CreateTournaments() {
+export const Route = createFileRoute("/admin/create/tournament/")({
+    component: RouteComponent,
+});
+
+function RouteComponent() {
     const { form } = useCreateTournamentForm();
 
-    const { data: stageFormats } = useQuery<StageFormatDTO[]>({
-        queryKey: ["stage-formats"],
-        queryFn: () => apiGET<StageFormatDTO[]>("tournament/stage/format/all"),
-    });
+    const { data: stageFormats } = useAllStageFormats();
 
     const stages =
         useStore(form.store, (state: any) => state.values.stages) ?? [];

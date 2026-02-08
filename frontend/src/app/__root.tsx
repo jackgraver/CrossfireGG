@@ -1,6 +1,6 @@
 /// <reference types="vite/client" />
 
-import Providers from "./providers";
+import Providers from "./-providers";
 import NavBar from "@/shared/NavBar";
 import Footer from "@/shared/Footer";
 

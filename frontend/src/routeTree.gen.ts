@@ -26,12 +26,16 @@ import { Route as RegisterTeamIndexRouteImport } from './app/register/team/index
 import { Route as MatchMatch_idIndexRouteImport } from './app/match/$match_id/index'
 import { Route as TeamTeam_idMembersRouteImport } from './app/team/$team_id/members'
 import { Route as TeamTeam_idMatchesRouteImport } from './app/team/$team_id/matches'
+import { Route as AdminCreateTournamentIndexRouteImport } from './app/admin/create/tournament/index'
 import { Route as MatchMatch_idStatsPageRouteImport } from './app/match/$match_id/stats/page'
 import { Route as TournamentTournamentIdStageStageIdRouteRouteImport } from './app/tournament/$tournamentId/stage/$stageId/route'
+import { Route as AdminManageTournamentTournament_idRouteRouteImport } from './app/admin/manage/tournament/$tournament_id/route'
 import { Route as TournamentTournamentIdStageStageIdIndexRouteImport } from './app/tournament/$tournamentId/stage/$stageId/index'
 import { Route as TournamentTournamentIdStageStageIdTeamsRouteImport } from './app/tournament/$tournamentId/stage/$stageId/teams'
 import { Route as TournamentTournamentIdStageStageIdStandingsRouteImport } from './app/tournament/$tournamentId/stage/$stageId/standings'
 import { Route as TournamentTournamentIdStageStageIdBracketRouteImport } from './app/tournament/$tournamentId/stage/$stageId/bracket'
+import { Route as AdminManageTournamentTournament_idTeamsRouteImport } from './app/admin/manage/tournament/$tournament_id/teams'
+import { Route as AdminManageTournamentTournament_idStagesRouteImport } from './app/admin/manage/tournament/$tournament_id/stages'
 
 const NotFoundRoute = NotFoundRouteImport.update({
   id: '/not-found',
@@ -118,6 +122,12 @@ const TeamTeam_idMatchesRoute = TeamTeam_idMatchesRouteImport.update({
   path: '/matches',
   getParentRoute: () => TeamTeam_idRouteRoute,
 } as any)
+const AdminCreateTournamentIndexRoute =
+  AdminCreateTournamentIndexRouteImport.update({
+    id: '/admin/create/tournament/',
+    path: '/admin/create/tournament/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const MatchMatch_idStatsPageRoute = MatchMatch_idStatsPageRouteImport.update({
   id: '/match/$match_id/stats/page',
   path: '/match/$match_id/stats/page',
@@ -127,6 +137,12 @@ const TournamentTournamentIdStageStageIdRouteRoute =
   TournamentTournamentIdStageStageIdRouteRouteImport.update({
     id: '/tournament/$tournamentId/stage/$stageId',
     path: '/tournament/$tournamentId/stage/$stageId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const AdminManageTournamentTournament_idRouteRoute =
+  AdminManageTournamentTournament_idRouteRouteImport.update({
+    id: '/admin/manage/tournament/$tournament_id',
+    path: '/admin/manage/tournament/$tournament_id',
     getParentRoute: () => rootRouteImport,
   } as any)
 const TournamentTournamentIdStageStageIdIndexRoute =
@@ -153,6 +169,18 @@ const TournamentTournamentIdStageStageIdBracketRoute =
     path: '/bracket',
     getParentRoute: () => TournamentTournamentIdStageStageIdRouteRoute,
   } as any)
+const AdminManageTournamentTournament_idTeamsRoute =
+  AdminManageTournamentTournament_idTeamsRouteImport.update({
+    id: '/teams',
+    path: '/teams',
+    getParentRoute: () => AdminManageTournamentTournament_idRouteRoute,
+  } as any)
+const AdminManageTournamentTournament_idStagesRoute =
+  AdminManageTournamentTournament_idStagesRouteImport.update({
+    id: '/stages',
+    path: '/stages',
+    getParentRoute: () => AdminManageTournamentTournament_idRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -172,8 +200,12 @@ export interface FileRoutesByFullPath {
   '/register/team/': typeof RegisterTeamIndexRoute
   '/stats/$match_id/': typeof StatsMatch_idIndexRoute
   '/team/$team_id/': typeof TeamTeam_idIndexRoute
+  '/admin/manage/tournament/$tournament_id': typeof AdminManageTournamentTournament_idRouteRouteWithChildren
   '/tournament/$tournamentId/stage/$stageId': typeof TournamentTournamentIdStageStageIdRouteRouteWithChildren
   '/match/$match_id/stats/page': typeof MatchMatch_idStatsPageRoute
+  '/admin/create/tournament/': typeof AdminCreateTournamentIndexRoute
+  '/admin/manage/tournament/$tournament_id/stages': typeof AdminManageTournamentTournament_idStagesRoute
+  '/admin/manage/tournament/$tournament_id/teams': typeof AdminManageTournamentTournament_idTeamsRoute
   '/tournament/$tournamentId/stage/$stageId/bracket': typeof TournamentTournamentIdStageStageIdBracketRoute
   '/tournament/$tournamentId/stage/$stageId/standings': typeof TournamentTournamentIdStageStageIdStandingsRoute
   '/tournament/$tournamentId/stage/$stageId/teams': typeof TournamentTournamentIdStageStageIdTeamsRoute
@@ -196,7 +228,11 @@ export interface FileRoutesByTo {
   '/register/team': typeof RegisterTeamIndexRoute
   '/stats/$match_id': typeof StatsMatch_idIndexRoute
   '/team/$team_id': typeof TeamTeam_idIndexRoute
+  '/admin/manage/tournament/$tournament_id': typeof AdminManageTournamentTournament_idRouteRouteWithChildren
   '/match/$match_id/stats/page': typeof MatchMatch_idStatsPageRoute
+  '/admin/create/tournament': typeof AdminCreateTournamentIndexRoute
+  '/admin/manage/tournament/$tournament_id/stages': typeof AdminManageTournamentTournament_idStagesRoute
+  '/admin/manage/tournament/$tournament_id/teams': typeof AdminManageTournamentTournament_idTeamsRoute
   '/tournament/$tournamentId/stage/$stageId/bracket': typeof TournamentTournamentIdStageStageIdBracketRoute
   '/tournament/$tournamentId/stage/$stageId/standings': typeof TournamentTournamentIdStageStageIdStandingsRoute
   '/tournament/$tournamentId/stage/$stageId/teams': typeof TournamentTournamentIdStageStageIdTeamsRoute
@@ -221,8 +257,12 @@ export interface FileRoutesById {
   '/register/team/': typeof RegisterTeamIndexRoute
   '/stats/$match_id/': typeof StatsMatch_idIndexRoute
   '/team/$team_id/': typeof TeamTeam_idIndexRoute
+  '/admin/manage/tournament/$tournament_id': typeof AdminManageTournamentTournament_idRouteRouteWithChildren
   '/tournament/$tournamentId/stage/$stageId': typeof TournamentTournamentIdStageStageIdRouteRouteWithChildren
   '/match/$match_id/stats/page': typeof MatchMatch_idStatsPageRoute
+  '/admin/create/tournament/': typeof AdminCreateTournamentIndexRoute
+  '/admin/manage/tournament/$tournament_id/stages': typeof AdminManageTournamentTournament_idStagesRoute
+  '/admin/manage/tournament/$tournament_id/teams': typeof AdminManageTournamentTournament_idTeamsRoute
   '/tournament/$tournamentId/stage/$stageId/bracket': typeof TournamentTournamentIdStageStageIdBracketRoute
   '/tournament/$tournamentId/stage/$stageId/standings': typeof TournamentTournamentIdStageStageIdStandingsRoute
   '/tournament/$tournamentId/stage/$stageId/teams': typeof TournamentTournamentIdStageStageIdTeamsRoute
@@ -248,8 +288,12 @@ export interface FileRouteTypes {
     | '/register/team/'
     | '/stats/$match_id/'
     | '/team/$team_id/'
+    | '/admin/manage/tournament/$tournament_id'
     | '/tournament/$tournamentId/stage/$stageId'
     | '/match/$match_id/stats/page'
+    | '/admin/create/tournament/'
+    | '/admin/manage/tournament/$tournament_id/stages'
+    | '/admin/manage/tournament/$tournament_id/teams'
     | '/tournament/$tournamentId/stage/$stageId/bracket'
     | '/tournament/$tournamentId/stage/$stageId/standings'
     | '/tournament/$tournamentId/stage/$stageId/teams'
@@ -272,7 +316,11 @@ export interface FileRouteTypes {
     | '/register/team'
     | '/stats/$match_id'
     | '/team/$team_id'
+    | '/admin/manage/tournament/$tournament_id'
     | '/match/$match_id/stats/page'
+    | '/admin/create/tournament'
+    | '/admin/manage/tournament/$tournament_id/stages'
+    | '/admin/manage/tournament/$tournament_id/teams'
     | '/tournament/$tournamentId/stage/$stageId/bracket'
     | '/tournament/$tournamentId/stage/$stageId/standings'
     | '/tournament/$tournamentId/stage/$stageId/teams'
@@ -296,8 +344,12 @@ export interface FileRouteTypes {
     | '/register/team/'
     | '/stats/$match_id/'
     | '/team/$team_id/'
+    | '/admin/manage/tournament/$tournament_id'
     | '/tournament/$tournamentId/stage/$stageId'
     | '/match/$match_id/stats/page'
+    | '/admin/create/tournament/'
+    | '/admin/manage/tournament/$tournament_id/stages'
+    | '/admin/manage/tournament/$tournament_id/teams'
     | '/tournament/$tournamentId/stage/$stageId/bracket'
     | '/tournament/$tournamentId/stage/$stageId/standings'
     | '/tournament/$tournamentId/stage/$stageId/teams'
@@ -319,8 +371,10 @@ export interface RootRouteChildren {
   MatchMatch_idIndexRoute: typeof MatchMatch_idIndexRoute
   RegisterTeamIndexRoute: typeof RegisterTeamIndexRoute
   StatsMatch_idIndexRoute: typeof StatsMatch_idIndexRoute
+  AdminManageTournamentTournament_idRouteRoute: typeof AdminManageTournamentTournament_idRouteRouteWithChildren
   TournamentTournamentIdStageStageIdRouteRoute: typeof TournamentTournamentIdStageStageIdRouteRouteWithChildren
   MatchMatch_idStatsPageRoute: typeof MatchMatch_idStatsPageRoute
+  AdminCreateTournamentIndexRoute: typeof AdminCreateTournamentIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -444,6 +498,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TeamTeam_idMatchesRouteImport
       parentRoute: typeof TeamTeam_idRouteRoute
     }
+    '/admin/create/tournament/': {
+      id: '/admin/create/tournament/'
+      path: '/admin/create/tournament'
+      fullPath: '/admin/create/tournament/'
+      preLoaderRoute: typeof AdminCreateTournamentIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/match/$match_id/stats/page': {
       id: '/match/$match_id/stats/page'
       path: '/match/$match_id/stats/page'
@@ -456,6 +517,13 @@ declare module '@tanstack/react-router' {
       path: '/tournament/$tournamentId/stage/$stageId'
       fullPath: '/tournament/$tournamentId/stage/$stageId'
       preLoaderRoute: typeof TournamentTournamentIdStageStageIdRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/manage/tournament/$tournament_id': {
+      id: '/admin/manage/tournament/$tournament_id'
+      path: '/admin/manage/tournament/$tournament_id'
+      fullPath: '/admin/manage/tournament/$tournament_id'
+      preLoaderRoute: typeof AdminManageTournamentTournament_idRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tournament/$tournamentId/stage/$stageId/': {
@@ -486,6 +554,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TournamentTournamentIdStageStageIdBracketRouteImport
       parentRoute: typeof TournamentTournamentIdStageStageIdRouteRoute
     }
+    '/admin/manage/tournament/$tournament_id/teams': {
+      id: '/admin/manage/tournament/$tournament_id/teams'
+      path: '/teams'
+      fullPath: '/admin/manage/tournament/$tournament_id/teams'
+      preLoaderRoute: typeof AdminManageTournamentTournament_idTeamsRouteImport
+      parentRoute: typeof AdminManageTournamentTournament_idRouteRoute
+    }
+    '/admin/manage/tournament/$tournament_id/stages': {
+      id: '/admin/manage/tournament/$tournament_id/stages'
+      path: '/stages'
+      fullPath: '/admin/manage/tournament/$tournament_id/stages'
+      preLoaderRoute: typeof AdminManageTournamentTournament_idStagesRouteImport
+      parentRoute: typeof AdminManageTournamentTournament_idRouteRoute
+    }
   }
 }
 
@@ -503,6 +585,24 @@ const TeamTeam_idRouteRouteChildren: TeamTeam_idRouteRouteChildren = {
 
 const TeamTeam_idRouteRouteWithChildren =
   TeamTeam_idRouteRoute._addFileChildren(TeamTeam_idRouteRouteChildren)
+
+interface AdminManageTournamentTournament_idRouteRouteChildren {
+  AdminManageTournamentTournament_idStagesRoute: typeof AdminManageTournamentTournament_idStagesRoute
+  AdminManageTournamentTournament_idTeamsRoute: typeof AdminManageTournamentTournament_idTeamsRoute
+}
+
+const AdminManageTournamentTournament_idRouteRouteChildren: AdminManageTournamentTournament_idRouteRouteChildren =
+  {
+    AdminManageTournamentTournament_idStagesRoute:
+      AdminManageTournamentTournament_idStagesRoute,
+    AdminManageTournamentTournament_idTeamsRoute:
+      AdminManageTournamentTournament_idTeamsRoute,
+  }
+
+const AdminManageTournamentTournament_idRouteRouteWithChildren =
+  AdminManageTournamentTournament_idRouteRoute._addFileChildren(
+    AdminManageTournamentTournament_idRouteRouteChildren,
+  )
 
 interface TournamentTournamentIdStageStageIdRouteRouteChildren {
   TournamentTournamentIdStageStageIdBracketRoute: typeof TournamentTournamentIdStageStageIdBracketRoute
@@ -543,9 +643,12 @@ const rootRouteChildren: RootRouteChildren = {
   MatchMatch_idIndexRoute: MatchMatch_idIndexRoute,
   RegisterTeamIndexRoute: RegisterTeamIndexRoute,
   StatsMatch_idIndexRoute: StatsMatch_idIndexRoute,
+  AdminManageTournamentTournament_idRouteRoute:
+    AdminManageTournamentTournament_idRouteRouteWithChildren,
   TournamentTournamentIdStageStageIdRouteRoute:
     TournamentTournamentIdStageStageIdRouteRouteWithChildren,
   MatchMatch_idStatsPageRoute: MatchMatch_idStatsPageRoute,
+  AdminCreateTournamentIndexRoute: AdminCreateTournamentIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
