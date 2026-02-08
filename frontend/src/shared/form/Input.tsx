@@ -8,7 +8,7 @@ type InputProps = {
     onChange: (value: any) => void;
     onBlur?: () => void;
     errors?: string[];
-    type?: "text" | "email" | "url" | "number";
+    type?: "text" | "email" | "url" | "number" | "date" | "textarea";
     placeholder?: string;
     label?: string;
     disabled?: boolean;
@@ -32,10 +32,13 @@ export function Input({
     className,
     title,
 }: InputProps) {
-    const isInvalid = errors && errors.length > 0 ? String(errors[0]) : undefined;
+    const isInvalid =
+        errors && errors.length > 0 ? String(errors[0]) : undefined;
 
-    const firstError = errors && errors.length > 0 ? String(errors[0]) : undefined;
-    const extraErrors = errors && errors.length > 1 ? errors.slice(1).join(", ") : undefined;
+    const firstError =
+        errors && errors.length > 0 ? String(errors[0]) : undefined;
+    const extraErrors =
+        errors && errors.length > 1 ? errors.slice(1).join(", ") : undefined;
 
     return (
         <div className={cn(styles.wrapper, "flex flex-1 flex-col", className)}>
@@ -45,31 +48,53 @@ export function Input({
                         htmlFor={name}
                         className={cn(
                             styles.label,
-                            "text-xs font-medium text-gray-400 uppercase tracking-wider",
+                            "pl-1 text-xs font-medium tracking-wider text-gray-400 uppercase",
                         )}
                     >
                         {label}
                     </Label.Root>
                 )}
                 <div className={cn(styles.inputContainer, "relative w-full")}>
-                    <input
-                        id={name}
-                        type={type}
-                        placeholder={placeholder}
-                        value={value}
-                        onChange={(e) => onChange(e.target.value)}
-                        onBlur={onBlur}
-                        disabled={disabled}
-                        title={title}
-                        className={cn(
-                            styles.input,
-                            "w-full rounded-md border p-2 bg-thirdBg text-white transition-colors",
-                            isInvalid
-                                ? "border-red-500 focus:ring-red-500"
-                                : "border-gray-400 focus:border-orange-500 focus:ring-orange-500",
-                            "disabled:opacity-50 disabled:cursor-not-allowed",
-                        )}
-                    />
+                    {type === "textarea" ? (
+                        <textarea
+                            id={name}
+                            placeholder={placeholder}
+                            value={value}
+                            onChange={(e) => onChange(e.target.value)}
+                            onBlur={onBlur}
+                            disabled={disabled}
+                            title={title}
+                            rows={4}
+                            className={cn(
+                                styles.input,
+                                "border-firstBg w-full rounded-md border p-2 text-white transition-colors",
+                                isInvalid
+                                    ? "border-red-500 focus:ring-red-500"
+                                    : "focus:border-orange-500 focus:ring-orange-500",
+                                "disabled:cursor-not-allowed disabled:border-none disabled:opacity-50",
+                            )}
+                        />
+                    ) : (
+                        <input
+                            id={name}
+                            type={type}
+                            placeholder={placeholder}
+                            value={value}
+                            onChange={(e) => onChange(e.target.value)}
+                            onBlur={onBlur}
+                            disabled={disabled}
+                            title={title}
+                            className={cn(
+                                styles.input,
+                                "border-firstBg w-full rounded-md border p-2 text-white transition-colors",
+                                isInvalid
+                                    ? "border-red-500 focus:ring-red-500"
+                                    : "focus:border-orange-500 focus:ring-orange-500",
+                                "disabled:cursor-not-allowed disabled:border-none disabled:opacity-50",
+                            )}
+                        />
+                    )}
+
                     {children}
                 </div>
             </div>
@@ -77,13 +102,16 @@ export function Input({
                 role="alert"
                 className={cn(
                     styles.errorText,
-                    "text-sm font-medium min-h-5 mt-[0.5px]",
-                    isInvalid ? "text-red-500 visible" : "invisible",
+                    "mt-[0.5px] min-h-5 text-sm font-medium",
+                    isInvalid ? "visible text-red-500" : "invisible",
                 )}
             >
                 {firstError}
                 {extraErrors && (
-                    <span title={extraErrors}> {"+" + (errors && errors.length - 1)}</span>
+                    <span title={extraErrors}>
+                        {" "}
+                        {"+" + (errors && errors.length - 1)}
+                    </span>
                 )}
             </em>
         </div>

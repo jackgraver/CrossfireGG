@@ -4,6 +4,7 @@ import { useForm } from "@tanstack/react-form";
 import { Checkbox, Input, PasswordInput, SubmitButton } from "@/shared/form";
 import UserForm from "@/shared/UserForm";
 import { useAuth } from "@/contexts/auth";
+import { authClient } from "@/lib/auth-client";
 
 export const Route = createFileRoute("/sign-in/")({
     component: SignIn,
@@ -60,23 +61,10 @@ function SignIn() {
                 <button
                     className="bg-border text-textSecondary hover:bg-secondBg flex-1 rounded px-4 py-2"
                     onClick={() => {
-                        // authClient.signUp.email(
-                        //     {
-                        //         email: "test@test2.com",
-                        //         password: "password",
-                        //         name: "test",
-                        //     },
-                        //     {
-                        //         onError: (error) => {
-                        //             console.error(error);
-                        //         },
-                        //         onSuccess: () => {
-                        //             console.log("success");
-                        //             refetch(); //TODO: this is necessary to update the user role, make sure it exists in proper setup
-                        //             navigate({ to: "/" });
-                        //         },
-                        //     },
-                        // );
+                        authClient.signIn.email({
+                            email: "test@test2.com",
+                            password: "password",
+                        });
                     }}
                 >
                     test

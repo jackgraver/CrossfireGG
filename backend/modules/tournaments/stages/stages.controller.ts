@@ -3,6 +3,7 @@ import { StageParamsSchema } from "../tournament.validation";
 import { sendContract } from "../../../core/sendContract";
 import {
     GroupWithMatchesAndFormatContract,
+    StageFormatContract,
     StageTeamWithTeamContract,
 } from "@repo/contracts";
 import { stagesService } from "./stages.service";
@@ -33,5 +34,10 @@ export const stageController = {
         const groups = await stagesService.getStageBracket(data.stageId);
 
         sendContract(res, GroupWithMatchesAndFormatContract, groups);
+    },
+
+    getAllFormats: async (req: Request, res: Response) => {
+        const formats = await stagesService.getAllFormats();
+        sendContract(res, StageFormatContract.array(), formats);
     },
 };

@@ -36,6 +36,7 @@ export const stagesRepository = {
                             },
                         },
                     },
+                    orderBy: (g, { asc }) => asc(g.name),
                 },
             },
         });
@@ -49,5 +50,9 @@ export const stagesRepository = {
                 team: true,
             },
         });
+    },
+
+    findAllFormats: async () => {
+        return await db.query.stageFormats.findMany();
     },
 };

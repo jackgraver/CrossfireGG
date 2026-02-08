@@ -30,6 +30,7 @@ export const stages = pgTable(
                 onDelete: "restrict",
             }),
         is_current: boolean("is_current").notNull().default(false),
+        is_entry_stage: boolean("is_entry_stage").notNull().default(false),
         start_date: timestamp("start_date").notNull(),
         end_date: timestamp("end_date").notNull(),
         registration_deadline: timestamp("registration_deadline").notNull(),

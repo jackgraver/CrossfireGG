@@ -18,4 +18,8 @@ export const stagesService = {
     getStageTeams: async (stageId: number) => {
         return await stagesRepository.findAllStageTeams(stageId);
     },
+
+    getAllFormats: async () => {
+        return await stagesRepository.findAllFormats();
+    },
 };

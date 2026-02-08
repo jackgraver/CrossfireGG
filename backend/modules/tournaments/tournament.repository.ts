@@ -379,7 +379,11 @@ export const tournamentRepository = {
     findEntryStage: async (tournamentId: number) => {
         return await db.query.stages.findFirst({
             where: (s, { eq, and, isNull }) =>
-                eq(s.tournament_id, tournamentId),
+                and(
+                    eq(s.tournament_id, tournamentId),
+                    eq(s.is_entry_stage, true),
+                    isNull(s.deleted_at),
+                ),
             orderBy: (s, { asc }) => [asc(s.start_date)],
         });
     },

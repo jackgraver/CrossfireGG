@@ -2,6 +2,10 @@ import { useCreateTournamentForm } from "../-hooks/useCreateTournamentForm";
 import { Plus, SaveIcon, Trash2 } from "lucide-react";
 import { useStore } from "@tanstack/react-form";
 import { Input } from "@/shared/form/Input";
+import { Checkbox, Select } from "@/shared/form";
+import { apiGET } from "@/api/client";
+import { useQuery } from "@tanstack/react-query";
+import { StageFormatDTO } from "@repo/contracts";
 
 const createStage = () => {
     const id = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
@@ -24,12 +28,15 @@ const createStage = () => {
 //TODO: ---------------------------------------------------------------------------------------- put stage id first and load from faceit (make sure stage is unique)
 export default function CreateTournaments() {
     const { form } = useCreateTournamentForm();
+
+    const { data: stageFormats } = useQuery<StageFormatDTO[]>({
+        queryKey: ["stage-formats"],
+        queryFn: () => apiGET<StageFormatDTO[]>("tournament/stage/format/all"),
+    });
+
     const stages =
         useStore(form.store, (state: any) => state.values.stages) ?? [];
-    const prizePool = useStore(
-        form.store,
-        (state: any) => state.values.prize_pool,
-    );
+    console.log(stages.length);
 
     const addStage = () => {
         form.setFieldValue("stages", [...stages, createStage()]);
@@ -59,7 +66,7 @@ export default function CreateTournaments() {
                     // }}
                     className="grid gap-6 lg:grid-cols-2"
                 >
-                    <section className="border-secondBg bg-firstBg rounded-lg border p-6 shadow-lg">
+                    <section className="border-secondBg bg-firstBg max-h-[575px] rounded-lg border p-6 shadow-lg">
                         <div className="flex items-center justify-between gap-4">
                             <div className="mb-4">
                                 <h2 className="text-lg font-semibold">
@@ -75,13 +82,25 @@ export default function CreateTournaments() {
                                     e.preventDefault();
                                     form.handleSubmit();
                                 }}
-                                className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-3 py-2 text-sm font-medium text-white hover:bg-blue-500"
+                                disabled={
+                                    (form.state.isSubmitting ||
+                                        stages.length === 0) &&
+                                    stages.forEach(
+                                        (stage: any) => stage.name === "",
+                                    )
+                                }
+                                className="inline-flex items-center gap-2 rounded-md bg-green-600 px-3 py-2 text-sm font-medium text-white hover:bg-green-500 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-green-600"
+                                title={
+                                    stages.length === 0
+                                        ? "At least one stage is required"
+                                        : ""
+                                }
                             >
                                 <SaveIcon className="h-4 w-4" />
                                 Create tournament
                             </button>
                         </div>
-                        <div className="grid gap-4">
+                        <div className="grid gap-2">
                             <form.Field name="name">
                                 {(field: any) => (
                                     <Input
@@ -98,8 +117,14 @@ export default function CreateTournaments() {
                             </form.Field>
                             <form.Field name="description">
                                 {(field: any) => (
-                                    <FieldTextarea
-                                        field={field}
+                                    <Input
+                                        type="textarea"
+                                        name={field.name}
+                                        value={field.state.value ?? ""}
+                                        onChange={(e) =>
+                                            field.handleChange(e.target.value)
+                                        }
+                                        onBlur={field.handleBlur}
                                         label="Description"
                                         placeholder="Short description shown on the site."
                                     />
@@ -123,14 +148,15 @@ export default function CreateTournaments() {
                                         />
                                     )}
                                 </form.Field>
-                                <div className=" ">
-                                    <div className="mb-1 block text-sm font-medium text-gray-200">
-                                        Preview
-                                    </div>
-                                    <div className="border-secondBg bg-secondBg text-textPrimary w-full rounded-md border px-3 py-2 text-sm">
-                                        {prizePool ? `$${prizePool}` : "—"}
-                                    </div>
-                                </div>
+                                <form.Field name="is_vrs_enabled">
+                                    {(field: any) => (
+                                        <Checkbox
+                                            field={field}
+                                            label="Is VRS Enabled"
+                                            disabled={false}
+                                        />
+                                    )}
+                                </form.Field>
                             </div>
                             <div className="grid gap-4 sm:grid-cols-2">
                                 <form.Field name="start_date">
@@ -145,24 +171,26 @@ export default function CreateTournaments() {
                                             }
                                             onBlur={field.handleBlur}
                                             label="Start date"
-                                            type="text"
+                                            type="date"
                                         />
                                     )}
                                 </form.Field>
                                 <form.Field name="end_date">
                                     {(field: any) => (
-                                        <Input
-                                            name={field.name}
-                                            value={field.state.value ?? ""}
-                                            onChange={(e) =>
-                                                field.handleChange(
-                                                    e.target.value,
-                                                )
-                                            }
-                                            onBlur={field.handleBlur}
-                                            label="End date"
-                                            type="text"
-                                        />
+                                        <>
+                                            <Input
+                                                name={field.name}
+                                                value={field.state.value ?? ""}
+                                                onChange={(e) =>
+                                                    field.handleChange(
+                                                        e.target.value,
+                                                    )
+                                                }
+                                                onBlur={field.handleBlur}
+                                                label="End date"
+                                                type="date"
+                                            />
+                                        </>
                                     )}
                                 </form.Field>
                             </div>
@@ -190,14 +218,14 @@ export default function CreateTournaments() {
                         </div>
                         {stages.length === 0 ? (
                             <div className="border-secondBg bg-secondBg/30 mt-4 flex min-h-[140px] items-center justify-center rounded-lg border border-dashed text-sm text-gray-400">
-                                No stages yet. Click “Add stage” to create one.
+                                No stages yet.
                             </div>
                         ) : (
-                            <div className="mt-4 space-y-4 overflow-y-auto">
+                            <div className="mt-4 space-y-4">
                                 {stages.map((stage: any, index: number) => (
                                     <div
                                         key={stage?.__id ?? index}
-                                        className="border-secondBg bg-secondBg/40 rounded-lg border p-4"
+                                        className="border-secondBg bg-secondBg/40 rounded-lg border p-4 pb-0"
                                     >
                                         <div className="mb-3 flex items-center justify-between gap-3">
                                             <div className="min-w-0">
@@ -210,8 +238,7 @@ export default function CreateTournaments() {
                                                     ) : null}
                                                 </div>
                                                 <div className="text-xs text-gray-400">
-                                                    Configure stage metadata
-                                                    (local only for now).
+                                                    Configure stage metadata.
                                                 </div>
                                             </div>
                                             <button
@@ -327,23 +354,18 @@ export default function CreateTournaments() {
                                                 name={`stages[${index}].format_id`}
                                             >
                                                 {(field: any) => (
-                                                    <Input
-                                                        name={field.name}
-                                                        value={
-                                                            field.state.value ??
-                                                            ""
+                                                    <Select
+                                                        field={field}
+                                                        options={
+                                                            stageFormats?.map(
+                                                                (format) => ({
+                                                                    value: format.id.toString(),
+                                                                    label: format.name,
+                                                                }),
+                                                            ) ?? []
                                                         }
-                                                        onChange={(e) =>
-                                                            field.handleChange(
-                                                                e.target.value,
-                                                            )
-                                                        }
-                                                        onBlur={
-                                                            field.handleBlur
-                                                        }
-                                                        label="Format ID"
-                                                        type="number"
-                                                        placeholder="Optional"
+                                                        label="Format"
+                                                        placeholder="Select a format"
                                                     />
                                                 )}
                                             </form.Field>
@@ -417,46 +439,6 @@ export default function CreateTournaments() {
                                                     />
                                                 )}
                                             </form.Field>
-                                            <form.Field
-                                                name={`stages[${index}].is_current`}
-                                            >
-                                                {(field: any) => (
-                                                    <div className="md:col-span-2">
-                                                        <label className="mb-1 block text-sm font-medium text-gray-200">
-                                                            Current stage
-                                                        </label>
-                                                        <button
-                                                            type="button"
-                                                            onClick={() =>
-                                                                field.handleChange(
-                                                                    !field.state
-                                                                        .value,
-                                                                )
-                                                            }
-                                                            className={[
-                                                                "inline-flex items-center gap-2 rounded-md border px-3 py-2 text-sm",
-                                                                field.state
-                                                                    .value
-                                                                    ? "border-green-700/60 bg-green-900/20 text-green-200"
-                                                                    : "border-secondBg bg-secondBg text-gray-200",
-                                                            ].join(" ")}
-                                                        >
-                                                            <span
-                                                                className={[
-                                                                    "h-2.5 w-2.5 rounded-full",
-                                                                    field.state
-                                                                        .value
-                                                                        ? "bg-green-400"
-                                                                        : "bg-gray-500",
-                                                                ].join(" ")}
-                                                            />
-                                                            {field.state.value
-                                                                ? "Yes (current)"
-                                                                : "No"}
-                                                        </button>
-                                                    </div>
-                                                )}
-                                            </form.Field>
                                         </div>
                                     </div>
                                 ))}
@@ -465,36 +447,6 @@ export default function CreateTournaments() {
                     </section>
                 </form>
             </div>
-        </div>
-    );
-}
-
-function FieldTextarea({
-    field,
-    label,
-    placeholder,
-}: {
-    field: any;
-    label: string;
-    placeholder?: string;
-}) {
-    return (
-        <div>
-            <label
-                htmlFor={field.name}
-                className="mb-1 block text-sm font-medium text-gray-200"
-            >
-                {label}
-            </label>
-            <textarea
-                id={field.name}
-                placeholder={placeholder}
-                value={field.state.value ?? ""}
-                onChange={(e) => field.handleChange(e.target.value)}
-                onBlur={field.handleBlur}
-                rows={4}
-                className="border-secondBg bg-secondBg text-textPrimary w-full resize-y rounded-md border px-3 py-2 outline-none focus:ring-2"
-            />
         </div>
     );
 }

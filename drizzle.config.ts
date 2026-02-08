@@ -10,7 +10,7 @@ import type { Config } from "drizzle-kit";
 // } satisfies Config;
 
 export default {
-    schema: "./shared/schemas/index.ts",
+    schema: "./backend/schemas",
     out: "./drizzle",
     dialect: "postgresql",
     dbCredentials: {

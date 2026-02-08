@@ -18,6 +18,7 @@ export const useCreateTournamentForm = () => {
             name: "",
             description: "",
             prize_pool: "",
+            is_vrs_enabled: false,
             start_date: toDateInput(today),
             end_date: toDateInput(today),
             stages: [] as CreateStageDTO[],

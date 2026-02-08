@@ -59,13 +59,17 @@ export const faceitImportService = {
         }
 
         const existingMatches = await matchRepository.findAllByStageId(stageId);
-        const existingFaceitIds = new Set(existingMatches.map((m) => m.faceit_id));
+        const existingFaceitIds = new Set(
+            existingMatches.map((m) => m.faceit_id),
+        );
 
         const newMatches = matches
             .filter((match) => !existingFaceitIds.has(match.match_id))
             .sort((a, b) => {
-                const timeA = a.started_at ?? a.scheduled_at ?? a.configured_at ?? 0;
-                const timeB = b.started_at ?? b.scheduled_at ?? b.configured_at ?? 0;
+                const timeA =
+                    a.started_at ?? a.scheduled_at ?? a.configured_at ?? 0;
+                const timeB =
+                    b.started_at ?? b.scheduled_at ?? b.configured_at ?? 0;
                 return timeA - timeB;
             });
 
@@ -128,7 +132,7 @@ export const faceitImportService = {
 
                 if (created) {
                     newMatchesCount++;
-                    
+
                     if (match.status === "FINISHED" && match.results?.winner) {
                         const winnerFaction = match.results.winner;
                         await teamRepository.incrementStageTeamRecord(
@@ -163,13 +167,10 @@ export const faceitImportService = {
         stageTeam1: { id: number; team_id: number },
         stageTeam2: { id: number; team_id: number },
     ): Promise<boolean> => {
-        const matchData = transformFaceitMatch(
-            faceitMatch,
-            stageId,
-            groupId,
-        );
+        const matchData = transformFaceitMatch(faceitMatch, stageId, groupId);
 
-        const createdMatch = await matchRepository.upsertMatchByFaceitId(matchData);
+        const createdMatch =
+            await matchRepository.upsertMatchByFaceitId(matchData);
 
         const participants = transformFaceitMatchParticipants(
             faceitMatch,
@@ -199,14 +200,17 @@ export const faceitImportService = {
             if (stats && stats.rounds && stats.rounds.length > 0) {
                 for (let i = 0; i < stats.rounds.length; i++) {
                     const round = stats.rounds[i];
-                    const [score1, score2] = round.round_stats.Score.split("/").map(s => parseInt(s.trim()));
-                    
+                    const [score1, score2] = round.round_stats.Score.split(
+                        "/",
+                    ).map((s) => parseInt(s.trim()));
+
                     const winnerFaceitId = round.round_stats.Winner;
-                    const winnerParticipantId = participantMap[winnerFaceitId] || null;
+                    const winnerParticipantId =
+                        participantMap[winnerFaceitId] || null;
 
                     const map = await matchRepository.upsertMap({
                         match_id: createdMatch.id,
-                        map_name: round.round_stats.Map,
+                        map_name: round.round_stats.Map.split("_")[1],
                         map_order: i + 1,
                         round: matchData.round,
                         team1_score: score1 || 0,
@@ -216,25 +220,47 @@ export const faceitImportService = {
 
                     for (const teamStats of round.teams) {
                         for (const playerStats of teamStats.players) {
-                            const player = await playerRepository.findByFaceitId(playerStats.player_id);
+                            const player =
+                                await playerRepository.findByFaceitId(
+                                    playerStats.player_id,
+                                );
                             if (player) {
                                 await playerRepository.upsertPlayerStats(
                                     player.id,
                                     createdMatch.id,
                                     map.id,
                                     {
-                                        kills: parseInt(playerStats.player_stats.Kills) || 0,
-                                        deaths: parseInt(playerStats.player_stats.Deaths) || 0,
-                                        assists: parseInt(playerStats.player_stats.Assists) || 0,
-                                        adr: parseInt(playerStats.player_stats.ADR) || 0,
-                                        damage: parseInt(playerStats.player_stats.Damage) || 0,
+                                        kills:
+                                            parseInt(
+                                                playerStats.player_stats.Kills,
+                                            ) || 0,
+                                        deaths:
+                                            parseInt(
+                                                playerStats.player_stats.Deaths,
+                                            ) || 0,
+                                        assists:
+                                            parseInt(
+                                                playerStats.player_stats
+                                                    .Assists,
+                                            ) || 0,
+                                        adr:
+                                            parseInt(
+                                                playerStats.player_stats.ADR,
+                                            ) || 0,
+                                        damage:
+                                            parseInt(
+                                                playerStats.player_stats.Damage,
+                                            ) || 0,
                                     },
                                 );
                             }
                         }
                     }
                 }
-            } else if (faceitMatch.detailed_results && faceitMatch.detailed_results.length > 0) {
+            } else if (
+                faceitMatch.detailed_results &&
+                faceitMatch.detailed_results.length > 0
+            ) {
                 const maps = transformFaceitMaps(
                     faceitMatch,
                     createdMatch.id,
