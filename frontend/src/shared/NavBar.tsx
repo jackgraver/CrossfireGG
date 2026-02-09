@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { logoutFn } from "@/lib/server/auth.server";
 import { matchesRole } from "@/lib/role.util";
+import { Roles } from "@repo/types";
 import {
     Trophy,
     Users,
@@ -112,18 +113,11 @@ export default function NavBar() {
                                 label="My Team"
                             />
                         )}
-                        {matchesRole(user?.roles, "ADMIN") && (
-                            <NavItem
-                                to="/manage-teams"
-                                icon={<Users size={18} />}
-                                label="Manage Teams"
-                            />
-                        )}
                         {matchesRole(
                             user?.roles,
-                            "ADMIN",
-                            "PRODUCTION_LEAD",
-                            "PRODUCTION",
+                            Roles.ADMIN,
+                            Roles.PRODUCTION_LEAD,
+                            Roles.PRODUCTION,
                         ) && (
                             <NavItem
                                 to="/casting"
@@ -131,7 +125,7 @@ export default function NavBar() {
                                 label="Casting"
                             />
                         )}
-                        {matchesRole(user?.roles, "ADMIN") && (
+                        {matchesRole(user?.roles, Roles.ADMIN) && (
                             <NavItem
                                 to="/admin"
                                 icon={<Settings size={18} />}

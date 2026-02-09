@@ -17,7 +17,6 @@ type InputProps = {
     title?: string;
 };
 
-//TODO support date or create new component
 export function Input({
     name,
     value,

@@ -2,6 +2,7 @@ import { Request, Response, NextFunction, RequestHandler } from "express";
 import { auth } from "../../lib/auth";
 import { fromNodeHeaders } from "better-auth/node";
 import { userRepository } from "../../modules/users/user.repository";
+import { Role } from "@repo/types";
 
 export interface AuthRequest extends Request {
     session?: any;
@@ -15,7 +16,7 @@ export interface AuthRequest extends Request {
         team_id: number | null;
         faceit_id: string | null;
     } | null;
-    roles?: string[];
+    roles?: Role[];
 }
 
 export const fetchSession: RequestHandler = async (req, res, next) => {
@@ -67,7 +68,7 @@ export const requireSession: RequestHandler = (req, res, next) => {
 export const authMiddleware = [fetchSession, requireSession];
 
 export const requireRoles =
-    (...requiredRoles: string[]): RequestHandler =>
+    (...requiredRoles: Role[]): RequestHandler =>
     (req, res, next) => {
         const authReq = req as AuthRequest;
         if (!authReq.user) {

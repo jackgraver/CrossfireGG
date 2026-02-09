@@ -32,6 +32,7 @@ export const users = pgTable("users", {
 export const roles = pgTable("roles", {
     id: serial("id").primaryKey(),
     name: text("name").notNull().unique(),
+    deleted_at: timestamp("deleted_at"),
 });
 
 export const userRoles = pgTable(

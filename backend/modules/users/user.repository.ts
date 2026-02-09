@@ -2,6 +2,7 @@ import { db } from "../../config/database";
 import { users, userRoles, roles, players } from "../../schemas";
 import { eq, and, isNull } from "drizzle-orm";
 import { uuidv4 } from "zod";
+import { Role } from "@repo/types";
 
 export const userRepository = {
     findByEmail: async (email: string) => {
@@ -74,7 +75,7 @@ export const userRepository = {
         return Array.isArray(result) ? result[0] : undefined;
     },
 
-    getUserRoles: async (userId: string | number): Promise<string[]> => {
+    getUserRoles: async (userId: string | number): Promise<Role[]> => {
         const result = await db
             .select({ roleName: roles.name })
             .from(userRoles)
@@ -83,9 +84,10 @@ export const userRepository = {
                 and(
                     eq(userRoles.user_id, String(userId)),
                     isNull(userRoles.deleted_at),
+                    isNull(roles.deleted_at),
                 ),
             );
-        return result.map((r) => r.roleName);
+        return result.map((r) => r.roleName as Role);
     },
 
     updateTeamId: async (userId: number, teamId: number | null) => {
