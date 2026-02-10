@@ -8,6 +8,7 @@ type StepNavigationProps = {
     onFinish?: () => void;
 };
 
+export default function StepNavigation({
     canGoBack,
     canGoNext,
     isSubmitting = false,

@@ -1,4 +1,4 @@
-import { queryClient } from "@/lib/queryClient";
+import { queryClient } from "@/lib/api/queryClient";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiGET, apiPOST } from "@/lib/api/client";
 import { StageFormatDTO } from "@repo/contracts";

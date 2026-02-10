@@ -1,6 +1,6 @@
 import { useNavigate } from "@tanstack/react-router";
 import { MatchTeam } from "./MatchTeam";
-import { openInNewTab } from "@/lib/NewTab";
+import { openInNewTab } from "@/utils/openInNewTab";
 import { MatchWithParticipantsDTO } from "@repo/contracts";
 
 type MatchCardProps = {

@@ -4,7 +4,7 @@ import { Plus, SaveIcon, Trash2 } from "lucide-react";
 import { useStore } from "@tanstack/react-form";
 import { Input } from "@/components/shared/form/Input";
 import { Checkbox, Select } from "@/components/shared/form";
-import { useAllStageFormats } from "../../-queries/manage_tournaments.queries";
+import { useAllStageFormats } from "../../../../lib/api/manage_tournaments.queries";
 
 const createStage = () => {
     const id = `${Date.now()}-${Math.random().toString(16).slice(2)}`;

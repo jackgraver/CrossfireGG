@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { useMatch } from "./-queries/matchQueries";
+import { useMatch } from "../../../lib/api/match.queries";
 import OSSTable, { ColumnDef } from "@/components/shared/OSSTable";
 import TeamLogo from "@/components/shared/bracket/atoms/TeamLogo";
 import { cn } from "@/utils/cn";

@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useTournamentTeams } from "@/app/tournament/-queries/tournamentsQueries";
+import { useTournamentTeams } from "@/lib/api/tournament.queries";
 import { Loader2 } from "lucide-react";
 import {
     createColumnHelper,

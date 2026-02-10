@@ -7,6 +7,8 @@ import { queryClient } from "@/lib/api/queryClient";
 
 import appCss from '../styles.css?url'
 import { AuthProvider } from '@/contexts/auth';
+import { DialogProvider } from '@/lib/dialog/DialogProvider';
+import { NotFound } from './not-found';
 
 export const Route = createRootRoute({
   head: () => ({
@@ -27,7 +29,7 @@ export const Route = createRootRoute({
           },
       ],
   }),
-
+  notFoundComponent: () => <NotFound/>,
   shellComponent: RootDocument,
 })
 
@@ -56,20 +58,22 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <body>
             <QueryClientProvider client={queryClient}>
                  <AuthProvider>
-                    <NavBar />
-                    {children}
-                    <TanStackDevtools
-                        config={{
-                            position: 'bottom-right',
-                        }}
-                        plugins={[
-                            {
-                            name: 'Tanstack Router',
-                            render: <TanStackRouterDevtoolsPanel />,
-                            },
-                        ]}
-                        />
-                    <Scripts />
+                    <DialogProvider>
+                        <NavBar />
+                        {children}
+                        <TanStackDevtools
+                            config={{
+                                position: 'bottom-right',
+                            }}
+                            plugins={[
+                                {
+                                name: 'Tanstack Router',
+                                render: <TanStackRouterDevtoolsPanel />,
+                                },
+                            ]}
+                            />
+                        <Scripts />
+                    </DialogProvider>
                  </AuthProvider>
             </QueryClientProvider>
         </body>

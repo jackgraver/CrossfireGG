@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as NotFoundRouteImport } from './routes/not-found'
 import { Route as AdminRouteRouteImport } from './routes/admin/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TournamentIndexRouteImport } from './routes/tournament/index'
@@ -32,6 +33,11 @@ import { Route as TournamentTournamentIdStageStageIdBracketRouteImport } from '.
 import { Route as AdminManageTournamentTournament_idTeamsRouteImport } from './routes/admin/manage/tournament/$tournament_id/teams'
 import { Route as AdminManageTournamentTournament_idStagesRouteImport } from './routes/admin/manage/tournament/$tournament_id/stages'
 
+const NotFoundRoute = NotFoundRouteImport.update({
+  id: '/not-found',
+  path: '/not-found',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminRouteRoute = AdminRouteRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -154,6 +160,7 @@ const AdminManageTournamentTournament_idStagesRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
+  '/not-found': typeof NotFoundRoute
   '/team/$team_id': typeof TeamTeam_idRouteRouteWithChildren
   '/casting/': typeof CastingIndexRoute
   '/sign-in/': typeof SignInIndexRoute
@@ -178,6 +185,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
+  '/not-found': typeof NotFoundRoute
   '/casting': typeof CastingIndexRoute
   '/sign-in': typeof SignInIndexRoute
   '/sign-up': typeof SignUpIndexRoute
@@ -201,6 +209,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteRouteWithChildren
+  '/not-found': typeof NotFoundRoute
   '/team/$team_id': typeof TeamTeam_idRouteRouteWithChildren
   '/casting/': typeof CastingIndexRoute
   '/sign-in/': typeof SignInIndexRoute
@@ -227,6 +236,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
+    | '/not-found'
     | '/team/$team_id'
     | '/casting/'
     | '/sign-in/'
@@ -251,6 +261,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/admin'
+    | '/not-found'
     | '/casting'
     | '/sign-in'
     | '/sign-up'
@@ -273,6 +284,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/admin'
+    | '/not-found'
     | '/team/$team_id'
     | '/casting/'
     | '/sign-in/'
@@ -298,6 +310,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRouteRoute: typeof AdminRouteRouteWithChildren
+  NotFoundRoute: typeof NotFoundRoute
   TeamTeam_idRouteRoute: typeof TeamTeam_idRouteRouteWithChildren
   CastingIndexRoute: typeof CastingIndexRoute
   SignInIndexRoute: typeof SignInIndexRoute
@@ -312,6 +325,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/not-found': {
+      id: '/not-found'
+      path: '/not-found'
+      fullPath: '/not-found'
+      preLoaderRoute: typeof NotFoundRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin': {
       id: '/admin'
       path: '/admin'
@@ -541,6 +561,7 @@ const TournamentTournamentIdStageStageIdRouteRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRouteRoute: AdminRouteRouteWithChildren,
+  NotFoundRoute: NotFoundRoute,
   TeamTeam_idRouteRoute: TeamTeam_idRouteRouteWithChildren,
   CastingIndexRoute: CastingIndexRoute,
   SignInIndexRoute: SignInIndexRoute,

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useForm } from "@tanstack/react-form";
 import { Checkbox, Input, PasswordInput, SubmitButton } from "@/components/shared/form";
 import UserForm from "@/components/shared/UserForm";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth/auth-client";
 
 export const Route = createFileRoute("/sign-in/")({
     component: SignIn,
