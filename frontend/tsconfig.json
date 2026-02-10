@@ -12,6 +12,7 @@
         "isolatedModules": true,
         "jsx": "preserve",
         "incremental": true,
+        "verbatimModuleSyntax": false,
         "paths": {
             "@/*": ["./src/*"],
             "@repo/contracts": ["../shared/contracts/src"]

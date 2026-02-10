@@ -7,6 +7,7 @@
     "files": [],
     "references": [
         { "path": "shared/contracts" },
+        { "path": "shared/types" },
         { "path": "backend" },
         { "path": "frontend" }
     ]

@@ -1,9 +1,8 @@
-import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useForm } from "@tanstack/react-form";
 import { Checkbox, Input, PasswordInput, SubmitButton } from "@/shared/form";
 import UserForm from "@/shared/UserForm";
-import { useAuth } from "@/contexts/auth";
 import { authClient } from "@/lib/auth-client";
 
 export const Route = createFileRoute("/sign-in/")({
@@ -15,8 +14,6 @@ function SignIn() {
     const [submitStatus, setSubmitStatus] = useState<
         "idle" | "submitting" | "success" | "error"
     >("idle");
-
-    const { refetch } = useAuth();
 
     const form = useForm({
         defaultValues: {

@@ -1,5 +1,6 @@
 /// <reference types="vite/client" />
 
+import React from "react";
 import Providers from "./-providers";
 import NavBar from "@/shared/NavBar";
 import Footer from "@/shared/Footer";

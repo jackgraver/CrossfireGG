@@ -3,7 +3,6 @@ import { Loader } from "lucide-react";
 import SelectableCard from "../-components/SelectableCard";
 import { SelectableCardGroup } from "../-components/SelectableCardGroup";
 import StepContainer from "../-components/StepContainer";
-import StepNavigation from "../-components/StepNavigation";
 import PlayerFormFields from "../-components/PlayerFormFields";
 import type { StepValidationErrors } from "../-types/registration.types";
 import { useEffect } from "react";
@@ -57,14 +56,18 @@ export default function StepStarters({
     const left = (
         <div className="flex flex-col gap-y-4">
             <div className="flex flex-col gap-y-1">
-                <h1 className="text-2xl font-bold text-white">Select Starters</h1>
+                <h1 className="text-2xl font-bold text-white">
+                    Select Starters
+                </h1>
                 <p className="text-sm text-gray-400">
                     Choose 5 players to be in your starting lineup.
                 </p>
             </div>
-            {error && <div className="text-red-500">Error: {error.message}</div>}
+            {error && (
+                <div className="text-red-500">Error: {error.message}</div>
+            )}
             {isLoading && (
-                <div className="flex items-center gap-x-2 text-gray-400 py-4">
+                <div className="flex items-center gap-x-2 py-4 text-gray-400">
                     <Loader className="h-5 w-5 animate-spin" />
                     <span>Loading team players...</span>
                 </div>
@@ -80,7 +83,9 @@ export default function StepStarters({
                     if (existingIndex >= 0) {
                         form.setFieldValue(
                             "starters",
-                            starters.filter((_: any, i: number) => i !== existingIndex),
+                            starters.filter(
+                                (_: any, i: number) => i !== existingIndex,
+                            ),
                         );
                     } else {
                         form.setFieldValue("starters", [
@@ -103,7 +108,8 @@ export default function StepStarters({
                             (player) =>
                                 !excludedIds.has(player.user_id) &&
                                 !starters.some(
-                                    (starter: any) => starter.faceitId === player.user_id,
+                                    (starter: any) =>
+                                        starter.faceitId === player.user_id,
                                 ),
                         )
                         .map((player) => (
@@ -122,7 +128,9 @@ export default function StepStarters({
     const right = (
         <div className="flex flex-col gap-y-6">
             <div className="border-b border-gray-700 pb-4">
-                <h2 className="text-xl font-semibold text-white">Starters Details</h2>
+                <h2 className="text-xl font-semibold text-white">
+                    Starters Details
+                </h2>
                 <p className="text-sm text-gray-400">
                     Complete the information for each selected starter.
                 </p>
@@ -136,7 +144,7 @@ export default function StepStarters({
                 {starters.map((player: any, index: number) => (
                     <div
                         key={`${index}-${player.faceitId}`}
-                        className="rounded-lg  transition-all duration-20"
+                        className="rounded-lg transition-all duration-20"
                     >
                         <PlayerFormFields
                             form={form}
@@ -147,7 +155,10 @@ export default function StepStarters({
                                     ? () =>
                                           form.setFieldValue(
                                               "starters",
-                                              starters.filter((_: any, i: number) => i !== index),
+                                              starters.filter(
+                                                  (_: any, i: number) =>
+                                                      i !== index,
+                                              ),
                                           )
                                     : undefined
                             }

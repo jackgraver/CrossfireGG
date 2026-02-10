@@ -12,6 +12,7 @@ FROM base AS deps
 COPY package.json package-lock.json ./
 COPY backend/package.json backend/
 COPY shared/contracts/package.json shared/contracts/
+COPY shared/types/package.json shared/types/
 RUN npm install
 
 # ---------------------
@@ -24,7 +25,7 @@ COPY backend backend
 COPY shared shared
 
 # Build shared packages first
-RUN npx tsc -b shared/contracts --clean && npx tsc -b shared/contracts
+RUN npx tsc -b shared/contracts --clean && npx tsc -b shared/contracts && npx tsc -b shared/types --clean && npx tsc -b shared/types
 
 # Now build backend
 # RUN npx tsc -b backend --clean && npx tsc -b backend
@@ -40,6 +41,7 @@ ENV PORT=8080
 COPY --from=builder /app/backend/dist ./backend/dist
 COPY --from=builder /app/backend/package.json ./backend/package.json
 COPY --from=builder /app/shared ./shared
+COPY --from=builder /app/shared/types ./shared/types
 COPY --from=builder /app/node_modules ./node_modules
 
 EXPOSE 8080

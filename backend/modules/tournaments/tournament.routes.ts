@@ -6,13 +6,12 @@ import stagesRoutes from "./stages/stages.routes";
 
 const router = Router();
 
-router.use("/stage", stagesRoutes);
-
 router.get(
     "/all",
     fetchSession,
     asyncHandler(tournamentController.getAllTournaments),
 );
+router.use("/stage", stagesRoutes);
 router.get("/:tournamentId", tournamentController.getTournamentById);
 router.get("/:tournamentId/teams", tournamentController.getTeamsByTournamentId);
 router.post(

@@ -1,7 +1,6 @@
+import React from "react";
 import { useEffect } from "react";
 import { Link } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
-import { logoutFn } from "@/lib/server/auth.server";
 import { matchesRole } from "@/lib/role.util";
 import { Roles } from "@repo/types";
 import {
@@ -17,6 +16,7 @@ import {
 import { useAuth } from "@/contexts/auth";
 
 function toggleDarkMode() {
+    if (typeof document === "undefined") return;
     const isDark = document.documentElement.classList.toggle("dark");
     if (typeof window !== "undefined") {
         localStorage.setItem("theme", isDark ? "dark" : "light");
@@ -24,6 +24,7 @@ function toggleDarkMode() {
 }
 
 const preloadImage = (url: string) => {
+    if (typeof window === "undefined") return;
     const img = new Image();
     img.src = url;
 };
@@ -77,9 +78,9 @@ const NavItem = ({
 
 export default function NavBar() {
     const { user } = useAuth();
-    const logout = useServerFn(logoutFn);
 
     useEffect(() => {
+        if (typeof window === "undefined") return;
         const darkPref = localStorage.getItem("theme");
         if (darkPref === "light") {
             document.documentElement.classList.remove("dark");
@@ -150,7 +151,6 @@ export default function NavBar() {
                                     label="Sign Out"
                                     onClick={(e) => {
                                         e.preventDefault();
-                                        logout();
                                     }}
                                     onMouseEnter={() =>
                                         preloadImage("/bg-city.png")

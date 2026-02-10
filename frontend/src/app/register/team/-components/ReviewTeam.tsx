@@ -1,5 +1,4 @@
 import TeamLogo from "@/shared/bracket/atoms/TeamLogo";
-import { useTeamPlayers } from "../-queries/registerTeam.queries";
 import { Player } from "../-types/registration.types";
 
 type ReviewTeamProps = {
@@ -9,7 +8,12 @@ type ReviewTeamProps = {
     coach: Player[];
 };
 
-export default function ReviewTeam({ teamId, players, subs, coach }: ReviewTeamProps) {
+export default function ReviewTeam({
+    teamId,
+    players,
+    subs,
+    coach,
+}: ReviewTeamProps) {
     return (
         <div>
             {players.length > 0 && (
@@ -31,7 +35,11 @@ export default function ReviewTeam({ teamId, players, subs, coach }: ReviewTeamP
                     <h2 className="text-lg font-bold">Substitutes</h2>
                     <div className="flex flex-col gap-2">
                         {subs.map((sub) => (
-                            <Card key={sub.faceitId} avatar={sub.avatar} name={sub.playerName} />
+                            <Card
+                                key={sub.faceitId}
+                                avatar={sub.avatar}
+                                name={sub.playerName}
+                            />
                         ))}
                     </div>
                 </>
@@ -41,7 +49,11 @@ export default function ReviewTeam({ teamId, players, subs, coach }: ReviewTeamP
                     <h2 className="text-lg font-bold">Coach</h2>
                     <div className="flex flex-col gap-2">
                         {coach.map((c) => (
-                            <Card key={c.faceitId} avatar={c.avatar} name={c.playerName} />
+                            <Card
+                                key={c.faceitId}
+                                avatar={c.avatar}
+                                name={c.playerName}
+                            />
                         ))}
                     </div>
                 </>
@@ -54,7 +66,7 @@ function Card({ avatar, name }: { avatar: string; name: string }) {
     return (
         <div className="flex w-full flex-col items-center pr-2">
             <div
-                className={`group grid w-full grid-cols-[48px_1fr_32px] items-center rounded-lg border p-2 transition-colors duration-150 border-gray-600`}
+                className={`group grid w-full grid-cols-[48px_1fr_32px] items-center rounded-lg border border-gray-600 p-2 transition-colors duration-150`}
             >
                 <TeamLogo
                     avatar={avatar ?? "/oss-logo-placeholder.png"}

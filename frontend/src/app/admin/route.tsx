@@ -1,9 +1,4 @@
-import {
-    createFileRoute,
-    Outlet,
-    redirect,
-    useNavigate,
-} from "@tanstack/react-router";
+import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/contexts/auth";
 import { Roles } from "@repo/types";
 

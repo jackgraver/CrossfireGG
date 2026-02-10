@@ -103,3 +103,5 @@ MD/
 frontend/.output/*
 
 debug-data/
+
+DOCKER.md

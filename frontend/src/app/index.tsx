@@ -1,3 +1,4 @@
+import React from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { MoveUpRight } from "lucide-react";
 
@@ -14,7 +15,9 @@ function Home() {
                 <img src="/crossfire.png" className="h-96 w-96" />
                 <div className="flex flex-col text-center">
                     <h1 className="text-6xl font-bold">CROSSFIREGG</h1>
-                    <p className="text-xl text-red-500">#CAUGHTINTHECROSSFIRE</p>
+                    <p className="text-xl text-red-500">
+                        #CAUGHTINTHECROSSFIRE
+                    </p>
                 </div>
             </div>
             <div className="text-6xl">WORK IN PROGRESS :)</div>
@@ -42,7 +45,7 @@ function Home() {
                     className="flex w-64 items-center justify-center gap-2 rounded-md bg-red-600 px-4 py-2 text-white"
                     onClick={() =>
                         navigate({
-                            to: "/manage-teams",
+                            to: "/",
                         })
                     }
                 >

@@ -14,10 +14,14 @@
         "declaration": true,
         "sourceMap": true,
         "paths": {
-            "@repo/contracts": ["../shared/contracts/src"]
+            "@repo/contracts": ["../shared/contracts/src"],
+            "@repo/types": ["../shared/types/src"]
         }
     },
     "include": ["."],
     "exclude": ["node_modules", "dist"],
-    "references": [{ "path": "../shared/contracts" }]
+    "references": [
+        { "path": "../shared/contracts" },
+        { "path": "../shared/types" }
+    ]
 }

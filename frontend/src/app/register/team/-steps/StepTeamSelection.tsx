@@ -4,7 +4,6 @@ import { usePlayerFaceitTeams } from "../-queries/registerTeam.queries";
 import SelectableCard from "../-components/SelectableCard";
 import { SelectableCardGroup } from "../-components/SelectableCardGroup";
 import StepContainer from "../-components/StepContainer";
-import StepNavigation from "../-components/StepNavigation";
 import TeamFormFields from "../-components/TeamFormFields";
 import type { StepValidationErrors } from "../-types/registration.types";
 
@@ -28,7 +27,11 @@ export default function StepTeamSelection({
     onNext,
 }: StepTeamSelectionProps) {
     const navigate = useNavigate();
-    const { data: playerFaceitTeams, isLoading, error } = usePlayerFaceitTeams(userFaceitId ?? "");
+    const {
+        data: playerFaceitTeams,
+        isLoading,
+        error,
+    } = usePlayerFaceitTeams(userFaceitId ?? "");
 
     const selectedTeam = form.state.values.team;
 
@@ -38,15 +41,19 @@ export default function StepTeamSelection({
             <p className="text-gray-400">
                 Choose the team you want to register from your Faceit teams.
             </p>
-            {error && <div className="text-red-500">Error: {error.message}</div>}
+            {error && (
+                <div className="text-red-500">Error: {error.message}</div>
+            )}
             {isLoading && (
-                <div className="flex items-center gap-x-2 text-gray-400 py-4">
+                <div className="flex items-center gap-x-2 py-4 text-gray-400">
                     <Loader className="h-5 w-5 animate-spin" />
                     <span>Loading your teams...</span>
                 </div>
             )}
             {playerFaceitTeams?.teams?.length === 0 && !isLoading && (
-                <div className="text-gray-500 italic">No Faceit teams found</div>
+                <div className="text-gray-500 italic">
+                    No Faceit teams found
+                </div>
             )}
             <SelectableCardGroup
                 min={1}
@@ -84,7 +91,10 @@ export default function StepTeamSelection({
             >
                 {!isLoading &&
                     playerFaceitTeams?.teams
-                        ?.sort((a: any, b: any) => (a.isRegistered ?? 0) - (b.isRegistered ?? 0))
+                        ?.sort(
+                            (a: any, b: any) =>
+                                (a.isRegistered ?? 0) - (b.isRegistered ?? 0),
+                        )
                         .map((team) => (
                             <SelectableCard
                                 key={team.team_id}
@@ -97,7 +107,9 @@ export default function StepTeamSelection({
                                     onClick: () => {
                                         navigate({
                                             to: `/team/$team_id`,
-                                            params: { team_id: team.isRegistered!! },
+                                            params: {
+                                                team_id: team.isRegistered!!,
+                                            },
                                         });
                                     },
                                 }}

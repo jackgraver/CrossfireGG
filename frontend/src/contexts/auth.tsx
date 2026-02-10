@@ -1,7 +1,15 @@
+import React from "react";
 import { createContext, useContext, ReactNode } from "react";
-import { type User } from "@/lib/server/auth.server";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/api/client";
+
+export type User = {
+    userId: string;
+    name: string;
+    faceitId: string;
+    teamId: number;
+    roles: string[];
+};
 
 const useUserRole = (hasSession: boolean) => {
     return useQuery({

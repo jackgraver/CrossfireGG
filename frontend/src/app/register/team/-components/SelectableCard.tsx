@@ -1,5 +1,5 @@
 import TeamLogo from "@/shared/bracket/atoms/TeamLogo";
-import { Check, Circle, MoveUpRight, Plus } from "lucide-react";
+import { MoveUpRight, Plus } from "lucide-react";
 import { useSelectableCardGroup } from "./SelectableCardGroup";
 
 type SelectableCardProps = {
@@ -23,7 +23,8 @@ export default function SelectableCard({
     const { toggle, isSelected, canSelectMore, max } = useSelectableCardGroup();
     const selected = isSelected(element);
     const isSingleSelect = max === 1;
-    const isClickable = !disabled && (isSingleSelect || selected || canSelectMore);
+    const isClickable =
+        !disabled && (isSingleSelect || selected || canSelectMore);
 
     const handleClick = () => {
         if (isClickable) {
@@ -37,11 +38,11 @@ export default function SelectableCard({
                 onClick={handleClick}
                 className={`group grid w-full grid-cols-[48px_1fr_32px] items-center rounded-lg border p-2 transition-colors duration-150 ${
                     disabled
-                        ? "cursor-not-allowed bg-thirdBg opacity-50"
+                        ? "bg-thirdBg cursor-not-allowed opacity-50"
                         : isClickable
-                          ? "cursor-pointer hover:bg-secondBg"
+                          ? "hover:bg-secondBg cursor-pointer"
                           : "cursor-not-allowed opacity-70"
-                } ${selected ? "border-green-500 bg-secondBg/80" : "border-secondBg"}`}
+                } ${selected ? "bg-secondBg/80 border-green-500" : "border-secondBg"}`}
             >
                 <TeamLogo
                     avatar={avatar ?? "/oss-logo-placeholder.png"}

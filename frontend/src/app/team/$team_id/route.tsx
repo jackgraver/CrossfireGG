@@ -6,26 +6,23 @@ import {
     useMatchRoute,
 } from "@tanstack/react-router";
 import { useTeam } from "../-queries/team.queries";
-import { queryClient } from "@/lib/queryClient";
-import { apiGET } from "@/api/client";
-import { TeamDTO } from "@repo/contracts";
 
 export const Route = createFileRoute("/team/$team_id")({
     component: RouteComponent,
-    loader: async ({ context, params }) => {
-        // const user = await fetchSession();
-        // console.log('loader, user:', user);
-        // if (!user) {
-        //     throw redirect({ to: "/" });
-        // }
-        // return {
-        //     user,
-        // };
-        await queryClient.prefetchQuery({
-            queryKey: ["team", params.team_id],
-            queryFn: () => apiGET<TeamDTO>(`/team/${params.team_id}`),
-        });
-    },
+    // loader: async ({ context, params }) => {
+    //     // const user = await fetchSession();
+    //     // console.log('loader, user:', user);
+    //     // if (!user) {
+    //     //     throw redirect({ to: "/" });
+    //     // }
+    //     // return {
+    //     //     user,
+    //     // };
+    //     await queryClient.prefetchQuery({
+    //         queryKey: ["team", params.team_id],
+    //         queryFn: () => apiGET<TeamDTO>(`/team/${params.team_id}`),
+    //     });
+    // },
 });
 
 function RouteComponent() {

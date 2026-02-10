@@ -1,7 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useForm } from "@tanstack/react-form";
-import { useServerFn } from "@tanstack/react-start";
 import { useAuth } from "@/contexts/auth";
 import {
     Input,
@@ -11,7 +10,6 @@ import {
     SubmitButton,
 } from "@/shared/form";
 import UserForm from "@/shared/UserForm";
-import { api } from "@/api/client";
 
 export const Route = createFileRoute("/sign-up/")({
     component: SignUp,

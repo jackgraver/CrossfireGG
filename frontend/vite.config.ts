@@ -11,6 +11,7 @@ export default defineConfig({
     },
     plugins: [
         tsconfigPaths(),
+        tailwindcss(),
         tanstackStart({
             srcDirectory: "src",
             router: {
@@ -18,7 +19,5 @@ export default defineConfig({
             },
         }),
         nitro(),
-        viteReact(),
-        tailwindcss(),
     ],
 });

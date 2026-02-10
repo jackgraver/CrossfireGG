@@ -12,6 +12,7 @@ FROM base AS deps
 COPY package.json package-lock.json ./
 COPY frontend/package.json frontend/
 COPY shared/contracts/package.json shared/contracts/
+COPY shared/types/package.json shared/types/
 RUN npm install
 
 # ---------------------
@@ -27,7 +28,7 @@ ARG VITE_API_BASE_URL
 ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 
 # Build shared packages first
-RUN npx tsc -b shared/contracts --clean && npx tsc -b shared/contracts
+RUN npx tsc -b shared/contracts --clean && npx tsc -b shared/contracts && npx tsc -b shared/types --clean && npx tsc -b shared/types
 
 # Build the frontend
 RUN npm run build -w frontend
@@ -40,7 +41,7 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
 
-COPY --from=builder /app/frontend/.output .output
+COPY --from=builder /app/frontend/.output ./.output
 
 EXPOSE 3000
 CMD ["node", ".output/server/index.mjs"]

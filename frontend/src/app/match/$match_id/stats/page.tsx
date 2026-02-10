@@ -1,8 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import OSSTable from "@/shared/OSSTable";
-import { useQuery } from "@tanstack/react-query";
-import MatchHeader from "../-components/MatchHeader";
 
 export const Route = createFileRoute("/match/$match_id/stats/page")({
     component: MatchStats,

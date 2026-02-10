@@ -1,9 +1,15 @@
 {
     "name": "@repo/types",
     "version": "1.0.0",
-    "main": "./index.ts",
-    "types": "./index.ts",
     "exports": {
-        ".": "./index.ts"
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./src/index.ts",
+            "require": "./dist/index.js",
+            "default": "./dist/index.js"
+        }
+    },
+    "scripts": {
+        "build": "tsc -b"
     }
 }

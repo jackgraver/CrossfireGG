@@ -182,21 +182,21 @@ export interface FileRoutesByFullPath {
   '/error': typeof ErrorRoute
   '/not-found': typeof NotFoundRoute
   '/team/$team_id': typeof TeamTeam_idRouteRouteWithChildren
-  '/casting/': typeof CastingIndexRoute
-  '/sign-in/': typeof SignInIndexRoute
-  '/sign-up/': typeof SignUpIndexRoute
-  '/tournament/': typeof TournamentIndexRoute
-  '/user/': typeof UserIndexRoute
+  '/casting': typeof CastingIndexRoute
+  '/sign-in': typeof SignInIndexRoute
+  '/sign-up': typeof SignUpIndexRoute
+  '/tournament': typeof TournamentIndexRoute
+  '/user': typeof UserIndexRoute
   '/team/$team_id/matches': typeof TeamTeam_idMatchesRoute
   '/team/$team_id/members': typeof TeamTeam_idMembersRoute
-  '/match/$match_id/': typeof MatchMatch_idIndexRoute
-  '/register/team/': typeof RegisterTeamIndexRoute
-  '/stats/$match_id/': typeof StatsMatch_idIndexRoute
+  '/match/$match_id': typeof MatchMatch_idIndexRoute
+  '/register/team': typeof RegisterTeamIndexRoute
+  '/stats/$match_id': typeof StatsMatch_idIndexRoute
   '/team/$team_id/': typeof TeamTeam_idIndexRoute
   '/admin/manage/tournament/$tournament_id': typeof AdminManageTournamentTournament_idRouteRouteWithChildren
   '/tournament/$tournamentId/stage/$stageId': typeof TournamentTournamentIdStageStageIdRouteRouteWithChildren
   '/match/$match_id/stats/page': typeof MatchMatch_idStatsPageRoute
-  '/admin/create/tournament/': typeof AdminCreateTournamentIndexRoute
+  '/admin/create/tournament': typeof AdminCreateTournamentIndexRoute
   '/admin/manage/tournament/$tournament_id/stages': typeof AdminManageTournamentTournament_idStagesRoute
   '/admin/manage/tournament/$tournament_id/teams': typeof AdminManageTournamentTournament_idTeamsRoute
   '/tournament/$tournamentId/stage/$stageId/bracket': typeof TournamentTournamentIdStageStageIdBracketRoute
@@ -267,21 +267,21 @@ export interface FileRouteTypes {
     | '/error'
     | '/not-found'
     | '/team/$team_id'
-    | '/casting/'
-    | '/sign-in/'
-    | '/sign-up/'
-    | '/tournament/'
-    | '/user/'
+    | '/casting'
+    | '/sign-in'
+    | '/sign-up'
+    | '/tournament'
+    | '/user'
     | '/team/$team_id/matches'
     | '/team/$team_id/members'
-    | '/match/$match_id/'
-    | '/register/team/'
-    | '/stats/$match_id/'
+    | '/match/$match_id'
+    | '/register/team'
+    | '/stats/$match_id'
     | '/team/$team_id/'
     | '/admin/manage/tournament/$tournament_id'
     | '/tournament/$tournamentId/stage/$stageId'
     | '/match/$match_id/stats/page'
-    | '/admin/create/tournament/'
+    | '/admin/create/tournament'
     | '/admin/manage/tournament/$tournament_id/stages'
     | '/admin/manage/tournament/$tournament_id/teams'
     | '/tournament/$tournamentId/stage/$stageId/bracket'
@@ -395,35 +395,35 @@ declare module '@tanstack/react-router' {
     '/user/': {
       id: '/user/'
       path: '/user'
-      fullPath: '/user/'
+      fullPath: '/user'
       preLoaderRoute: typeof UserIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tournament/': {
       id: '/tournament/'
       path: '/tournament'
-      fullPath: '/tournament/'
+      fullPath: '/tournament'
       preLoaderRoute: typeof TournamentIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sign-up/': {
       id: '/sign-up/'
       path: '/sign-up'
-      fullPath: '/sign-up/'
+      fullPath: '/sign-up'
       preLoaderRoute: typeof SignUpIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/sign-in/': {
       id: '/sign-in/'
       path: '/sign-in'
-      fullPath: '/sign-in/'
+      fullPath: '/sign-in'
       preLoaderRoute: typeof SignInIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/casting/': {
       id: '/casting/'
       path: '/casting'
-      fullPath: '/casting/'
+      fullPath: '/casting'
       preLoaderRoute: typeof CastingIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -444,21 +444,21 @@ declare module '@tanstack/react-router' {
     '/stats/$match_id/': {
       id: '/stats/$match_id/'
       path: '/stats/$match_id'
-      fullPath: '/stats/$match_id/'
+      fullPath: '/stats/$match_id'
       preLoaderRoute: typeof StatsMatch_idIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/register/team/': {
       id: '/register/team/'
       path: '/register/team'
-      fullPath: '/register/team/'
+      fullPath: '/register/team'
       preLoaderRoute: typeof RegisterTeamIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/match/$match_id/': {
       id: '/match/$match_id/'
       path: '/match/$match_id'
-      fullPath: '/match/$match_id/'
+      fullPath: '/match/$match_id'
       preLoaderRoute: typeof MatchMatch_idIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -479,7 +479,7 @@ declare module '@tanstack/react-router' {
     '/admin/create/tournament/': {
       id: '/admin/create/tournament/'
       path: '/create/tournament'
-      fullPath: '/admin/create/tournament/'
+      fullPath: '/admin/create/tournament'
       preLoaderRoute: typeof AdminCreateTournamentIndexRouteImport
       parentRoute: typeof AdminRouteRoute
     }

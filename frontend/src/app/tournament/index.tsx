@@ -1,17 +1,10 @@
+import React from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useAllTournaments } from "./-queries/tournamentsQueries";
 import { formatDateOnly, toUnixTimestamp } from "@/lib/dateUtils";
 import SignUpButton from "./-components/SignUpButton";
-import { openInNewTab } from "@/lib/NewTab";
-import {
-    Trophy,
-    Users,
-    ExternalLink,
-    Calendar,
-    DollarSign,
-} from "lucide-react";
+import { Trophy, Users, Calendar, DollarSign } from "lucide-react";
 import { TournamentWithStagesDTO } from "@repo/contracts";
-import { useAuth } from "@/contexts/auth";
 
 export const Route = createFileRoute("/tournament/")({
     component: RouteComponent,
