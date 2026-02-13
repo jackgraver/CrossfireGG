@@ -11,6 +11,8 @@
     --color-textPrimary: var(--color-text-primary);
     --color-textSecondary: var(--color-text-secondary);
     --color-border: var(--color-border);
+    --color-faceit: #ff5500;
+    --color-faceit-secondary: #ff6900;
 }
 
 :root {

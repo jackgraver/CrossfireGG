@@ -54,13 +54,13 @@ function RootLayout() {
             <body className="min-h-screen font-sans antialiased">
                 <Providers>
                     <div className="flex min-h-screen flex-col">
-                        <NavBar />
                         <div className="mx-auto w-full max-w-8/12 flex-1">
+                            <NavBar />
                             <main>
                                 <Outlet />
                             </main>
+                            <Footer />
                         </div>
-                        <Footer />
                     </div>
                 </Providers>
                 <Scripts />

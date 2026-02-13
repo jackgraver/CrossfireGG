@@ -13,6 +13,7 @@ import {
     Moon,
 } from "lucide-react";
 import { useAuth } from "@/contexts/auth";
+import TeamLogo from "./shared/bracket/atoms/TeamLogo";
 
 function toggleDarkMode() {
     if (typeof document === "undefined") return;
@@ -90,7 +91,60 @@ export default function NavBar() {
 
     return (
         <nav className="bg-mainBg/80 sticky top-0 z-50 backdrop-blur-md">
-            <div className="w-full px-4 pl-0">
+            <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4">
+                <div className="flex items-center gap-1">
+                    <NavItem
+                        to="/tournament"
+                        icon={<Trophy size={18} />}
+                        label="Tournaments"
+                    />
+                    {matchesRole(
+                        user?.roles,
+                        Roles.ADMIN,
+                        Roles.PRODUCTION_LEAD,
+                        Roles.PRODUCTION,
+                    ) && (
+                        <NavItem
+                            to="/casting"
+                            icon={<Video size={18} />}
+                            label="Casting"
+                        />
+                    )}
+                </div>
+                <div className="flex items-center gap-1">
+                    {user ? (
+                        <>
+                            <NavItem
+                                to="/user"
+                                icon={<User size={18} />}
+                                label={user?.name}
+                            />
+                            <NavItem
+                                to="/"
+                                icon={<LogOut size={18} />}
+                                label="Sign Out"
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                }}
+                                onMouseEnter={() =>
+                                    preloadImage("/bg-city.png")
+                                }
+                            />
+                        </>
+                    ) : (
+                        <button className="bg-faceit hover:bg-faceitSecondary flex items-center gap-2 rounded-md py-2 pr-3 pl-2 font-bold text-black">
+                            <img
+                                src="/faceit.png"
+                                alt="Faceit"
+                                className="h-5 w-5"
+                            />
+                            Sign In With Faceit
+                        </button>
+                    )}
+                </div>
+            </div>
+
+            {/* <div className="w-full px-4 pl-0">
                 <div className="flex h-14 items-center justify-between">
                     <Link to="/" className="shrink-0">
                         <img
@@ -168,7 +222,7 @@ export default function NavBar() {
                         )}
                     </div>
                 </div>
-            </div>
+            </div> */}
         </nav>
     );
 }

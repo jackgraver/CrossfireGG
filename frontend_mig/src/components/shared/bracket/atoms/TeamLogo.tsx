@@ -1,11 +1,11 @@
-import { Team } from "@/types/TeamModel";
+import { TeamDTO } from "@repo/contracts";
 
 export default function TeamLogo({
     team,
     avatar,
     styling,
 }: {
-    team?: Team | undefined;
+    team?: TeamDTO | undefined;
     avatar?: string | undefined;
     styling: string | undefined;
 }) {

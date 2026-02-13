@@ -1,7 +1,12 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useForm } from "@tanstack/react-form";
-import { Checkbox, Input, PasswordInput, SubmitButton } from "@/components/shared/form";
+import {
+    Checkbox,
+    Input,
+    PasswordInput,
+    SubmitButton,
+} from "@/components/shared/form";
 import UserForm from "@/components/shared/UserForm";
 import { authClient } from "@/lib/auth/auth-client";
 
@@ -67,10 +72,11 @@ function SignIn() {
                     test
                 </button>
                 <button
+                    className="bg-border text-textSecondary hover:bg-secondBg flex-1 rounded px-4 py-2"
                     onClick={() => {
-                        // authClient.signOut().catch((error) => {
-                        //     console.error(error);
-                        // });
+                        authClient.signOut().catch((error) => {
+                            console.error(error);
+                        });
                     }}
                 >
                     out

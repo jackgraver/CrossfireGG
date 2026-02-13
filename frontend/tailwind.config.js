@@ -13,6 +13,8 @@ export default {
                 textSecondary: "var(--color-text-secondary)",
                 border: "var(--color-border)",
                 gradient: "var(--color-gradient)",
+                faceit: "var(--color-faceit)",
+                faceitSecondary: "var(--color-faceit-secondary)",
             },
         },
     },
