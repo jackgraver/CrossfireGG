@@ -1,47 +1,41 @@
-# Build from repo root:
-# docker build -t frontend -f frontend/Dockerfile .
+# Use Node.js as the base image
+FROM node:22-slim AS base
 
-FROM node:20-alpine AS base
+# Set working directory
 WORKDIR /app
-RUN apk add --no-cache libc6-compat
 
-# ---------------------
-# Dependencies
-# ---------------------
-FROM base AS deps
+# Install dependencies needed for build
+# We need to copy the root package.json and lockfile because it's a workspace
 COPY package.json package-lock.json ./
-COPY frontend/package.json frontend/
-COPY shared/contracts/package.json shared/contracts/
-COPY shared/types/package.json shared/types/
-RUN npm install
+COPY frontend_mig/package.json ./frontend_mig/
+COPY shared/contracts/package.json ./shared/contracts/
+COPY shared/types/package.json ./shared/types/
 
-# ---------------------
-# Build
-# ---------------------
-FROM base AS builder
-COPY --from=deps /app/node_modules ./node_modules
-COPY package.json package-lock.json ./
-COPY frontend frontend
-COPY shared shared
+# Install dependencies
+RUN npm ci
 
-ARG VITE_API_BASE_URL
-ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
+# Copy source files
+COPY shared/ ./shared/
+COPY frontend_mig/ ./frontend_mig/
 
-# Build shared packages first
-RUN npx tsc -b shared/contracts --clean && npx tsc -b shared/contracts && npx tsc -b shared/types --clean && npx tsc -b shared/types
+# Build the application
+WORKDIR /app/frontend_mig
+RUN npm run build
 
-# Build the frontend
-RUN npm run build -w frontend
+# Production stage
+FROM node:22-slim AS runner
 
-# ---------------------
-# Runtime
-# ---------------------
-FROM base AS runner
 WORKDIR /app
+
+# Copy the built output from the build stage
+COPY --from=base /app/frontend_mig/.output ./.output
+
+# Expose the port the app runs on
+EXPOSE 3000
+
+# Set environment variables
 ENV NODE_ENV=production
 ENV PORT=3000
 
-COPY --from=builder /app/frontend/.output ./.output
-
-EXPOSE 3000
+# Start the server
 CMD ["node", ".output/server/index.mjs"]

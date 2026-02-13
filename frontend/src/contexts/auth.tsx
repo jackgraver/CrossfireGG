@@ -1,7 +1,6 @@
-import React from "react";
 import { createContext, useContext, ReactNode } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { api } from "@/api/client";
+import { api } from "@/lib/api/client";
 
 export type User = {
     userId: string;
