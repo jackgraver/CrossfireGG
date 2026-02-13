@@ -11,8 +11,5 @@
     },
     "scripts": {
         "build": "tsc -b"
-    },
-    "dependencies": {
-        "drizzle-orm": "^0.45.1"
     }
 }

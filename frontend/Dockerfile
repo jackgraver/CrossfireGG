@@ -4,22 +4,25 @@ FROM node:22-slim AS base
 # Set working directory
 WORKDIR /app
 
+ARG VITE_API_BASE_URL
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
+
 # Install dependencies needed for build
 # We need to copy the root package.json and lockfile because it's a workspace
 COPY package.json package-lock.json ./
-COPY frontend_mig/package.json ./frontend_mig/
+COPY frontend/package.json ./frontend/
 COPY shared/contracts/package.json ./shared/contracts/
 COPY shared/types/package.json ./shared/types/
 
 # Install dependencies
-RUN npm ci
+RUN npm install
 
 # Copy source files
 COPY shared/ ./shared/
-COPY frontend_mig/ ./frontend_mig/
+COPY frontend/ ./frontend/
 
 # Build the application
-WORKDIR /app/frontend_mig
+WORKDIR /app/frontend
 RUN npm run build
 
 # Production stage
@@ -28,12 +31,13 @@ FROM node:22-slim AS runner
 WORKDIR /app
 
 # Copy the built output from the build stage
-COPY --from=base /app/frontend_mig/.output ./.output
+COPY --from=base /app/frontend/.output ./.output
 
 # Expose the port the app runs on
 EXPOSE 3000
 
 # Set environment variables
+
 ENV NODE_ENV=production
 ENV PORT=3000
 

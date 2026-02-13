@@ -10,14 +10,13 @@ export type User = {
     roles: string[];
 };
 
-const useUserRole = (hasSession: boolean) => {
+const useMe = () => {
     return useQuery({
-        queryKey: ["user-role"],
+        queryKey: ["me"],
         queryFn: async () => {
-            const res = await api.get<User>("/user/me");
+            const res = await api.get<User | null>("/user/me");
             return res.data;
         },
-        enabled: hasSession,
         staleTime: 1000 * 60 * 5,
         refetchOnWindowFocus: false,
         refetchOnMount: true,
@@ -33,18 +32,14 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-    const {
-        data: user,
-        isPending: userLoading,
-        refetch: refetchUser,
-    } = useUserRole(true);
+    const { data: user, isPending: isLoading, refetch } = useMe();
 
     return (
         <AuthContext.Provider
             value={{
                 user: user ?? null,
-                isLoading: userLoading,
-                refetch: refetchUser,
+                isLoading,
+                refetch,
             }}
         >
             {children}
