@@ -11,7 +11,7 @@ services:
         restart: unless-stopped
 
     backend:
-        image: registry.digitalocean.com/crossfire-buildimages/cf-frontend:latest
+        image: registry.digitalocean.com/crossfire-buildimages/cf-backend:latest
         environment:
             SERVICE_URL_BACKEND_8080: ""
             NODE_ENV: production
