@@ -33,6 +33,10 @@ RUN npm run build -w backend
 
 # 4. Runtime
 FROM base AS runner
+
+# Install curl for healthchecks
+RUN apk add --no-cache curl
+
 WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=8080

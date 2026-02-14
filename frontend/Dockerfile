@@ -28,6 +28,9 @@ RUN npm run build
 # Production stage
 FROM node:22-slim AS runner
 
+# Install curl for healthchecks
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
 # Copy the built output from the build stage
