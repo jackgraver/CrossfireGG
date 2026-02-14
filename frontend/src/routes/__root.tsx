@@ -1,8 +1,8 @@
 import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router";
+import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import NavBar from "@/components/NavBar";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/lib/api/queryClient";
-import React, { Suspense } from "react";
 
 import appCss from "../styles.css?url";
 import { AuthProvider } from "@/contexts/auth";
@@ -10,23 +10,11 @@ import { DialogProvider } from "@/lib/dialog/DialogProvider";
 import { NotFound } from "./not-found";
 import Footer from "@/components/Footer";
 
-const TanStackDevtools =
-    process.env.NODE_ENV === "production"
-        ? () => null
-        : React.lazy(() =>
-              import("@tanstack/react-devtools").then((res) => ({
-                  default: res.TanStackDevtools,
-              })),
-          );
-
-const TanStackRouterDevtoolsPanel =
-    process.env.NODE_ENV === "production"
-        ? () => null
-        : React.lazy(() =>
-              import("@tanstack/react-router-devtools").then((res) => ({
-                  default: res.TanStackRouterDevtoolsPanel,
-              })),
-          );
+let TanStackDevtools: any;
+if (process.env.NODE_ENV !== "production") {
+    TanStackDevtools =
+        require("@tanstack/react-query-devtools").TanStackDevtools;
+}
 
 export const Route = createRootRoute({
     head: () => ({
@@ -84,7 +72,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                                     <Footer />
                                 </div>
                             </div>
-                            <Suspense fallback={null}>
+                            {process.env.NODE_ENV !== "production" && (
                                 <TanStackDevtools
                                     config={{
                                         position: "bottom-right",
@@ -92,11 +80,13 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                                     plugins={[
                                         {
                                             name: "Tanstack Router",
-                                            render: <TanStackRouterDevtoolsPanel />,
+                                            render: (
+                                                <TanStackRouterDevtoolsPanel />
+                                            ),
                                         },
                                     ]}
                                 />
-                            </Suspense>
+                            )}
                             <Scripts />
                         </DialogProvider>
                     </AuthProvider>
