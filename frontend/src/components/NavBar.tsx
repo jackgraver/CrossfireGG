@@ -132,7 +132,7 @@ export default function NavBar() {
                             />
                         </>
                     ) : (
-                        <button className="bg-faceit hover:bg-faceitSecondary flex items-center gap-2 rounded-md py-2 pr-3 pl-2 font-bold text-black">
+                        <button className="bg-faceit hover:bg-faceitSecondary flex items-center gap-2 rounded-md py-2 pr-3 pl-2 text-sm font-bold text-black">
                             <img
                                 src="/faceit.png"
                                 alt="Faceit"

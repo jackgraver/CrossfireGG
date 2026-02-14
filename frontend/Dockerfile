@@ -34,12 +34,12 @@ WORKDIR /app
 COPY --from=base /app/frontend/.output ./.output
 
 # Expose the port the app runs on
-EXPOSE 3000
+EXPOSE 5173
 
 # Set environment variables
 
 ENV NODE_ENV=production
-ENV PORT=3000
+ENV PORT=5173
 
 # Start the server
 CMD ["node", ".output/server/index.mjs"]
