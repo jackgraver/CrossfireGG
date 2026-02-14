@@ -5,22 +5,20 @@ RUN apk add --no-cache libc6-compat
 ARG VITE_API_BASE_URL
 ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 
-FROM base AS deps
+FROM base AS builder
+WORKDIR /app
 COPY package.json package-lock.json tsconfig.json ./
 COPY frontend/package.json ./frontend/
 COPY shared/contracts/package.json ./shared/contracts/
 COPY shared/types/package.json ./shared/types/
 RUN npm install
 
-FROM base AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
-COPY package.json package-lock.json tsconfig.json ./
 COPY shared ./shared
 COPY frontend ./frontend
 
 ARG VITE_API_BASE_URL
 ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
+ENV PATH=/app/node_modules/.bin:$PATH
 
 RUN npm run build -w @repo/contracts && npm run build -w @repo/types
 RUN npm run build -w frontend_mig
