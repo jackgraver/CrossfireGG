@@ -1,10 +1,6 @@
 services:
     frontend:
-        build:
-            context: .
-            dockerfile: frontend/Dockerfile
-            args:
-                VITE_API_BASE_URL: ${SERVICE_URL_BACKEND}
+        image: registry.digitalocean.com/crossfire-buildimages/cf-frontend:latest
         environment:
             SERVICE_URL_FRONTEND_5173: ""
             NODE_ENV: production
@@ -15,9 +11,7 @@ services:
         restart: unless-stopped
 
     backend:
-        build:
-            context: .
-            dockerfile: backend/Dockerfile
+        image: registry.digitalocean.com/crossfire-buildimages/cf-frontend:latest
         environment:
             SERVICE_URL_BACKEND_8080: ""
             NODE_ENV: production
