@@ -1,17 +1,55 @@
+name: cf
+
 services:
-    # frontend:
-    #     build:
-    #         context: ./frontend
-    #         dockerfile: Dockerfile
-    #     environment:
-    #         NODE_ENV: production
-    #     ports:
-    #         - 3000:3000
+    frontend:
+        build:
+            context: .
+            dockerfile: frontend/Dockerfile
+            args:
+                VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8080}
+        environment:
+            NODE_ENV: production
+            PORT: 5173
+        ports:
+            - "5173:5173"
+        networks:
+            - public
 
     backend:
         build:
-            context: ./backend
-            dockerfile: Dockerfile
-        container_name: oss_backend
+            context: .
+            dockerfile: backend/Dockerfile
+        container_name: cf_api
+        env_file:
+            - ./backend/.env
+        environment:
+            NODE_ENV: ${NODE_ENV:-production}
+            PORT: ${BACKEND_PORT:-8080}
+            DATABASE_URL: ${DATABASE_URL:-postgresql://app_user:app_password@postgres:5432/cf-db}
+            CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-http://localhost:5173}
         ports:
-            - "8000:8000"
+            - "${BACKEND_PORT:-8080}:${BACKEND_PORT:-8080}"
+        networks:
+            - public
+            - private
+
+    postgres:
+        image: postgres:16-alpine
+        environment:
+            POSTGRES_DB: ${POSTGRES_DB:-cf-db}
+            POSTGRES_USER: ${POSTGRES_USER:-app_user}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-app_password}
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+        ports:
+            - "5432:5432"
+        networks:
+            - private
+
+volumes:
+    postgres_data:
+
+networks:
+    public:
+    private:
+        internal: true
