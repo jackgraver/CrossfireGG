@@ -15,7 +15,7 @@ COPY shared/contracts/package.json ./shared/contracts/
 COPY shared/types/package.json ./shared/types/
 
 # Install dependencies
-RUN npm install
+RUN npm install --include=dev
 
 # Copy source files
 COPY shared/ ./shared/
