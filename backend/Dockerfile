@@ -1,61 +1,38 @@
-# ---------------------
-# Base
-# ---------------------
 FROM node:20-alpine AS base
 WORKDIR /app
 RUN apk add --no-cache libc6-compat
 
-# ---------------------
-# Dependencies
-# ---------------------
 FROM base AS deps
-COPY package.json package-lock.json ./
-COPY backend/package.json backend/
-COPY shared/contracts/package.json shared/contracts/
-COPY shared/types/package.json shared/types/
+COPY package.json package-lock.json tsconfig.json ./
+COPY backend/package.json ./backend/
+COPY shared/contracts/package.json ./shared/contracts/
+COPY shared/types/package.json ./shared/types/
 RUN npm install
 
-# ---------------------
-# Build
-# ---------------------
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
-COPY package.json package-lock.json ./
-COPY backend backend
-COPY shared shared
+COPY package.json package-lock.json tsconfig.json ./
+COPY shared ./shared
+COPY backend ./backend
 
-# Ensure local binaries from node_modules/.bin are used
-ENV PATH=/app/node_modules/.bin:$PATH
+RUN npm run build -w @repo/contracts && npm run build -w @repo/types
+RUN npm run build -w cf-backend
 
-# Build shared packages first
-RUN tsc -b shared/contracts --clean \
-    && tsc -b shared/contracts \
-    && tsc -b shared/types --clean \
-    && tsc -b shared/types
-
-# Now build backend
-# RUN npx tsc -b backend --clean && npx tsc -b backend
-RUN npm run build -w backend
-
-# 4. Runtime
 FROM base AS runner
-
-# Install curl for healthchecks
-RUN apk add --no-cache curl
-
 WORKDIR /app
+RUN apk add --no-cache curl
 ENV NODE_ENV=production
 ENV PORT=8080
 
-# Copy the built backend, shared packages, and node_modules
+COPY --from=deps /app/node_modules ./node_modules
 COPY --from=builder /app/backend/dist ./backend/dist
-COPY --from=builder /app/backend/package.json ./backend/package.json
-COPY --from=builder /app/shared ./shared
-COPY --from=builder /app/shared/types ./shared/types
-COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/backend/package.json ./backend/
+COPY --from=builder /app/shared/contracts/dist ./shared/contracts/dist
+COPY --from=builder /app/shared/contracts/package.json ./shared/contracts/
+COPY --from=builder /app/shared/types/dist ./shared/types/dist
+COPY --from=builder /app/shared/types/package.json ./shared/types/
+COPY package.json ./
 
 EXPOSE 8080
-
-# Start the backend server
 CMD ["node", "backend/dist/index.js"]

@@ -1,45 +1,36 @@
-# Use Node.js as the base image
-FROM node:22-slim AS base
-
-# Set working directory
+FROM node:20-alpine AS base
 WORKDIR /app
+RUN apk add --no-cache libc6-compat
 
 ARG VITE_API_BASE_URL
 ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 
-# Install dependencies needed for build
-# We need to copy the root package.json and lockfile because it's a workspace
-COPY package.json package-lock.json ./
+FROM base AS deps
+COPY package.json package-lock.json tsconfig.json ./
 COPY frontend/package.json ./frontend/
 COPY shared/contracts/package.json ./shared/contracts/
 COPY shared/types/package.json ./shared/types/
+RUN npm install
 
-# Install dependencies
-RUN npm install --include=dev
-
-# Copy source files
-COPY shared/ ./shared/
-COPY frontend/ ./frontend/
-
-# Build the application
-WORKDIR /app/frontend
-RUN npm run build
-
-# Production stage
-FROM node:22-slim AS runner
-
+FROM base AS builder
 WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY package.json package-lock.json tsconfig.json ./
+COPY shared ./shared
+COPY frontend ./frontend
 
-# Copy the built output from the build stage
-COPY --from=base /app/frontend/.output ./.output
+ARG VITE_API_BASE_URL
+ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 
-# Expose the port the app runs on
-EXPOSE 5173
+RUN npm run build -w @repo/contracts && npm run build -w @repo/types
+RUN npm run build -w frontend_mig
 
-# Set environment variables
-
+FROM base AS runner
+WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=5173
 
-# Start the server
+COPY --from=builder /app/frontend/.output ./.output
+
+EXPOSE 5173
 CMD ["node", ".output/server/index.mjs"]

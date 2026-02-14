@@ -52,7 +52,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-app.use("/api/health", (_, res) => {
+app.use("/health", (_, res) => {
     res.status(200).json({ message: "OK" });
 });
 
