@@ -19,13 +19,20 @@ RUN npm install
 # Build
 # ---------------------
 FROM base AS builder
+WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY package.json package-lock.json ./
 COPY backend backend
 COPY shared shared
 
+# Ensure local binaries from node_modules/.bin are used
+ENV PATH=/app/node_modules/.bin:$PATH
+
 # Build shared packages first
-RUN npx tsc -b shared/contracts --clean && npx tsc -b shared/contracts && npx tsc -b shared/types --clean && npx tsc -b shared/types
+RUN tsc -b shared/contracts --clean \
+    && tsc -b shared/contracts \
+    && tsc -b shared/types --clean \
+    && tsc -b shared/types
 
 # Now build backend
 # RUN npx tsc -b backend --clean && npx tsc -b backend
