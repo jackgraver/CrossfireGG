@@ -26,9 +26,9 @@ RUN npm run build -w frontend_mig
 FROM base AS runner
 WORKDIR /app
 ENV NODE_ENV=production
-ENV PORT=5173
+ENV PORT=3000
 
 COPY --from=builder /app/frontend/.output ./.output
 
-EXPOSE 5173
+EXPOSE 3000
 CMD ["node", ".output/server/index.mjs"]
