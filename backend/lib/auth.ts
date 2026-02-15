@@ -17,7 +17,7 @@ export const auth = betterAuth({
             verification,
         },
     }),
-    trustedOrigins: ["http://localhost:5173"],
+    trustedOrigins: config.auth.trustedOrigins || [config.appOrigin],
     emailAndPassword: {
         enabled: true,
     },
@@ -60,7 +60,7 @@ export const auth = betterAuth({
                     scopes: ["openid", "profile", "email"],
                     authentication: "basic",
                     pkce: true,
-                    redirectURI: `http://localhost:3000`,
+                    redirectURI: config.auth.redirectUri,
                     responseMode: "query",
                 },
             ],

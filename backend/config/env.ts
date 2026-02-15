@@ -67,6 +67,30 @@ const REQUIRED_VARS: EnvVarInfo[] = [
             config.faceit.apiKey = val;
         },
     },
+    {
+        name: "APP_ORIGIN",
+        message: "APP_ORIGIN is required for production (e.g. https://app.com)",
+        assignTo: (val, config) => {
+            config.appOrigin = val;
+        },
+    },
+    {
+        name: "AUTH_TRUSTED_ORIGINS",
+        message: "AUTH_TRUSTED_ORIGINS is required (comma separated)",
+        parser: (v: string) => v.split(","),
+        assignTo: (val, config) => {
+            config.auth = config.auth || {};
+            config.auth.trustedOrigins = val;
+        },
+    },
+    {
+        name: "FACEIT_REDIRECT_URI",
+        message: "FACEIT_REDIRECT_URI is required for OAuth callback",
+        assignTo: (val, config) => {
+            config.auth = config.auth || {};
+            config.auth.redirectUri = val;
+        },
+    },
 ];
 
 const missingVars: { name: string; message: string }[] = [];
