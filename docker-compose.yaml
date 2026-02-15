@@ -1,24 +1,12 @@
 services:
-    caddy:
-        image: caddy:2-alpine
-        restart: unless-stopped
-        ports:
-            - "80:80"
-            - "443:443"
-        volumes:
-            - ./Caddyfile:/etc/caddy/Caddyfile
-            - caddy_data:/data
-            - caddy_config:/config
-        depends_on:
-            - frontend
-            - backend
-
     frontend:
         image: registry.digitalocean.com/crossfire-buildimages/cf-frontend:latest
         environment:
             NODE_ENV: production
             PORT: "3000"
         restart: unless-stopped
+        expose:
+            - "3000"
 
     backend:
         image: registry.digitalocean.com/crossfire-buildimages/cf-backend:latest
@@ -38,6 +26,8 @@ services:
             postgres:
                 condition: service_healthy
         restart: unless-stopped
+        expose:
+            - "5000"
         healthcheck:
             test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
             interval: 10s
@@ -66,5 +56,3 @@ services:
 
 volumes:
     postgres_data:
-    caddy_data:
-    caddy_config:
