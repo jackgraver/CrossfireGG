@@ -9,6 +9,8 @@ services:
             backend:
                 condition: service_healthy
         restart: unless-stopped
+        ports:
+            - "3000:3000"
 
     backend:
         image: registry.digitalocean.com/crossfire-buildimages/cf-backend:latest

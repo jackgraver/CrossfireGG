@@ -40,6 +40,8 @@ docker tag ${BACKEND_IMAGE}:${TAG} ${REGISTRY}/${BACKEND_IMAGE}:${TAG}
 
 echo "Pushing images in parallel..."
 
+docker image prune -f
+
 docker push ${REGISTRY}/${FRONTEND_IMAGE}:${TAG} &
 docker push ${REGISTRY}/${BACKEND_IMAGE}:${TAG} &
 
