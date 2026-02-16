@@ -134,6 +134,35 @@ export type FaceitAPIMatchStats = {
     }[];
 };
 
+
+
+export type FaceitAPIMember = {
+    user_id: string;
+    nickname: string;
+    avatar: string;
+    country: string;
+    skill_level: number;
+    faceit_url: string;
+};
+
+export type FaceitAPITournamentTeam = {
+    leader: string;
+    coleader: string;
+    team: {
+        team_id: string;
+        name: string;
+        team_type: string;
+        members: FaceitAPIMember[];
+        leader: string;
+        chat_room_id: string;
+        faceit_url: string;
+    };
+    group: number;
+    substitutes: string[];
+    roster: string[];
+    status: string;
+};
+
 // ============================== TRANSFORMATION FUNCTIONS ============================== //
 
 /**

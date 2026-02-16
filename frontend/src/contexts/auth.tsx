@@ -1,6 +1,8 @@
 import { createContext, useContext, ReactNode } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api/client";
+import { queryClient } from "@/lib/api/queryClient";
+import { authClient } from "@/lib/auth/auth-client";
 
 export type User = {
     userId: string;
@@ -21,6 +23,17 @@ const useMe = () => {
         refetchOnWindowFocus: false,
         refetchOnMount: true,
         refetchOnReconnect: true,
+    });
+};
+
+export const useSignOut = () => {
+    return useMutation({
+        mutationFn: async () => {
+            await authClient.signOut();
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["me"] });
+        },
     });
 };
 

@@ -5,6 +5,19 @@ import { uuidv4 } from "zod";
 import { Role } from "@repo/types";
 
 export const userRepository = {
+    findAll: async () => {
+        return db.query.users.findMany({
+            where: isNull(users.deleted_at),
+            with: {
+                userRoles: {
+                    with: {
+                        role: true,
+                    },
+                },
+            },
+        });
+    },
+
     findByEmail: async (email: string) => {
         const result = await db
             .select()

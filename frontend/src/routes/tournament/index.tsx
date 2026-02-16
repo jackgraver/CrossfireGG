@@ -5,6 +5,7 @@ import SignUpButton from "./-components/SignUpButton";
 import { Trophy, Users, Calendar, DollarSign } from "lucide-react";
 import { TournamentWithStagesDTO } from "@repo/contracts";
 import { api } from "@/lib/api/client";
+import { authClient } from "@/lib/auth/auth-client";
 
 export const Route = createFileRoute("/tournament/")({
     component: RouteComponent,
@@ -42,7 +43,7 @@ function RouteComponent() {
     );
 
     return (
-        <div className="mx-auto min-h-screen max-w-[1600px] p-6 lg:p-12">
+        <div className="min-h-screen py-6">
             {isLoading ? (
                 <div className="flex min-h-screen justify-center pt-24">
                     <div className="text-textPrimary flex animate-pulse flex-col items-center gap-4">
@@ -66,7 +67,8 @@ function RouteComponent() {
                             <button
                                 className="bg-border text-textSecondary hover:bg-secondBg flex-1 rounded px-4 py-2"
                                 onClick={() =>
-                                    api.post("/faceit/test-route", {})
+                                    // api.post("/faceit/test-route", {})
+                                    authClient.signOut()
                                 }
                             >
                                 Testing faceit
@@ -113,7 +115,7 @@ export const TournamentGroup = ({
                 {tournaments.map((tournament: TournamentWithStagesDTO) => (
                     <section
                         key={tournament.id}
-                        className="bg-firstBg border-border/10 hover:border-cfRed/30 flex min-w-[500px] flex-col rounded-2xl border p-0 transition-all"
+                        className="bg-firstBg border-border/10 hover:border-cfRed/30 flex min-w-125 flex-col rounded-2xl border p-0 transition-all"
                     >
                         <img
                             src={
@@ -125,48 +127,56 @@ export const TournamentGroup = ({
                             className="h-48 w-full rounded-t-2xl object-cover"
                             style={{ background: "#252628" }}
                         />
-                        <div className="flex-1 space-y-4 p-6">
-                            <div className="flex items-center justify-between">
-                                <h2 className="text-textPrimary line-clamp-2 text-2xl font-black tracking-tight">
-                                    {tournament.name}
-                                </h2>
-                                <div className="flex items-center gap-4">
-                                    {tournament.prize_pool != null && (
-                                        <span className="text-textSecondary flex items-center gap-1 text-xs font-bold">
-                                            <DollarSign
-                                                size={14}
-                                                className="text-cfRed opacity-70"
-                                            />
-                                            {tournament.prize_pool.toLocaleString()}
-                                        </span>
-                                    )}
-                                    <span className="text-textSecondary flex items-center gap-1 text-xs font-bold">
-                                        <Users size={12} />0 /{" "}
-                                        {tournament?.stages[0]?.max_teams} Teams
-                                    </span>
+                        <div className="flex flex-1 flex-col justify-between gap-4 p-6">
+                            <div className="flex flex-col gap-2">
+                                <div className="flex items-center justify-between gap-2">
+                                    <h2 className="text-textPrimary line-clamp-2 text-2xl font-black tracking-tight">
+                                        {tournament.name}
+                                    </h2>
+                                    <div className="flex shrink-0 items-center gap-2">
+                                        {tournament.prize_pool != null && (
+                                            <span className="bg-cfRed/10 text-cfRed flex items-center gap-1 rounded-md px-2 py-1 text-xs font-bold">
+                                                <DollarSign size={12} />
+                                                {tournament.prize_pool.toLocaleString()}
+                                            </span>
+                                        )}
+                                    </div>
                                 </div>
-                            </div>
-
-                            {tournament.start_date && (
-                                <div className="text-textSecondary flex items-center gap-1.5 text-xs font-medium opacity-60">
-                                    <Calendar size={14} />
-                                    {formatDateOnly(
-                                        toUnixTimestamp(tournament.start_date)!,
-                                    )}
-                                    {tournament.end_date && (
-                                        <>
-                                            {" - "}
+                                <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                                    <span className="text-textSecondary flex items-center gap-1.5 text-xs font-bold">
+                                        <Users
+                                            size={14}
+                                            className="opacity-70"
+                                        />
+                                        {tournament?.stages[0]?.teams_count ||
+                                            0}{" "}
+                                        / {tournament?.stages[0]?.max_teams}{" "}
+                                        Teams
+                                    </span>
+                                    {tournament.start_date && (
+                                        <div className="text-textSecondary flex items-center gap-1.5 text-xs font-medium opacity-60">
+                                            <Calendar size={14} />
                                             {formatDateOnly(
                                                 toUnixTimestamp(
-                                                    tournament.end_date,
+                                                    tournament.start_date,
                                                 )!,
                                             )}
-                                        </>
+                                            {tournament.end_date && (
+                                                <>
+                                                    {" - "}
+                                                    {formatDateOnly(
+                                                        toUnixTimestamp(
+                                                            tournament.end_date,
+                                                        )!,
+                                                    )}
+                                                </>
+                                            )}
+                                        </div>
                                     )}
                                 </div>
-                            )}
+                            </div>
                         </div>
-                        <div className="mt-4 flex flex-row gap-2 px-6 pb-6">
+                        <div className="flex flex-row gap-2 px-6 pb-6">
                             <Link
                                 to={
                                     "/tournament/$tournamentId/stage/$stageId/bracket"

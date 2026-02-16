@@ -36,6 +36,7 @@ export const faceitFetchUtil = {
     ): Promise<T> => {
         let url = `${faceitFetchUtil.baseUrl}/${endpoint.replace(/^\//, "")}`;
 
+        console.log("URL:", url);
         if (queryParams && Object.keys(queryParams).length > 0) {
             const params = new URLSearchParams();
             for (const [key, value] of Object.entries(queryParams)) {

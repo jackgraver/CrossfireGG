@@ -14,8 +14,8 @@ export const ImportFaceitDataFromFileSchema = z.object({
 });
 
 export const ImportFaceitStageSchema = z.object({
-    tournamentId: z.number().int().positive(),
-    championshipId: z.string().min(1),
+    cfTournamentId: z.number().int().positive(),
+    faceitChampionshipId: z.string().min(1),
     readFileName: z.string().optional(),
     writeFileName: z.string().optional(),
 });

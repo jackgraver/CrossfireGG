@@ -78,8 +78,6 @@ export const useRegistrationsByTournamentId = (tournamentId: number) => {
 };
 
 export const useRefreshMatches = (faceitId: string, stageId: number) => {
-    console.log("faceitId", faceitId);
-    console.log("stageId", stageId);
     return useMutation({
         mutationFn: () =>
             apiPOST(`/faceit/import/matches`, {

@@ -18,6 +18,11 @@ if (config.nodeEnv === "development") {
 router.post("/import/stage", faceitController.importFaceitStage);
 
 /**
+ * Import the teams for a specific stage from Faceit data
+ */
+router.post("/import/stage/teams", faceitController.importFaceitStageTeams);
+
+/**
  * Import matches for a specific stage from Faceit data
  */
 router.post("/import/matches", faceitController.importFaceitMatches);

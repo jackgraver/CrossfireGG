@@ -38,14 +38,23 @@ export type TournamentWithMinimalStagesDTO = z.infer<
     typeof TournamentWithMinimalStagesContract
 >;
 
-export const CreateTournamentContract = z.object({
-    name: z.string().min(2, "Tournament name is required"),
-    description: z.string().optional(),
-    prize_pool: z.coerce.number().optional(),
-    start_date: z.coerce.date().min(new Date()),
-    end_date: z.coerce.date().min(new Date()),
-    is_vrs_enabled: z.boolean().default(false),
-    stages: z.array(CreateStageContract),
-});
+export const CreateTournamentContract = z
+    .object({
+        name: z.string().min(2, "Tournament name is required"),
+        description: z.string().optional(),
+        prize_pool: z.coerce.number().optional(),
+        start_date: z.coerce.date().min(new Date()),
+        end_date: z.coerce.date().min(new Date()),
+        is_vrs_enabled: z.boolean().default(false),
+        stages: z.array(CreateStageContract),
+    })
+    .refine(
+        ({ start_date, end_date }) =>
+            !!start_date && !!end_date && end_date > start_date,
+        {
+            message: "End date must be after start date and not equal",
+            path: ["end_date"],
+        },
+    );
 
 export type CreateTournamentDTO = z.infer<typeof CreateTournamentContract>;

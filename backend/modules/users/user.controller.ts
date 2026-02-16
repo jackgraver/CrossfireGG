@@ -1,5 +1,8 @@
 import { Response, RequestHandler } from "express";
 import { AuthRequest } from "../../core/middleware/auth.middleware";
+import { userRepository } from "./user.repository";
+import { sendContract } from "../../core/sendContract";
+import { UserWithRolesContract } from "@repo/contracts";
 
 export const userController = {
     getMe: (async (req, res: Response) => {
@@ -19,5 +22,12 @@ export const userController = {
         } catch (error: any) {
             res.status(500).json({ error: error.message });
         }
+    }) as RequestHandler,
+
+    getAllUsers: (async (req, res: Response) => {
+        const users = await userRepository.findAll();
+
+        // res.json(users);
+        sendContract(res, UserWithRolesContract.array(), users);
     }) as RequestHandler,
 };

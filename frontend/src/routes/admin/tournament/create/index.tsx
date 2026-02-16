@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useCreateTournamentForm } from "../../-hooks/useCreateTournamentForm";
+import { useCreateTournamentForm } from "./-hooks/useCreateTournamentForm";
 import { Check, Plus, SaveIcon, Trash2 } from "lucide-react";
 import { useStore } from "@tanstack/react-form";
 import { Input } from "@/components/shared/form/Input";
@@ -49,7 +49,7 @@ function RouteComponent() {
 
     return (
         <div className="bg-mainBg text-textPrimary min-h-screen py-6">
-            <div className="mx-auto w-full max-w-6xl space-y-6">
+            <div className="mx-auto w-full space-y-6">
                 <header className="flex flex-col gap-1">
                     <h1 className="text-2xl font-bold">Admin Configuration</h1>
                     <p className="text-sm text-gray-400">
@@ -75,18 +75,18 @@ function RouteComponent() {
                                 </p>
                             </div>
                             <button
-                                // type="submit"
                                 onClick={async (e) => {
                                     e.preventDefault();
                                     console.log(form.state.values);
                                     form.handleSubmit();
                                 }}
                                 disabled={
-                                    (form.state.isSubmitting ||
+                                    form.state.errors.length > 0 ||
+                                    ((form.state.isSubmitting ||
                                         stages.length === 0) &&
-                                    stages.forEach(
-                                        (stage: any) => stage.name === "",
-                                    )
+                                        stages.forEach(
+                                            (stage: any) => stage.name === "",
+                                        ))
                                 }
                                 className="inline-flex items-center gap-2 rounded-md bg-green-600 px-3 py-2 text-sm font-medium text-white hover:bg-green-500 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-green-600"
                                 title={
@@ -186,8 +186,7 @@ function RouteComponent() {
                                     Stages
                                 </h2>
                                 <p className="text-sm text-gray-400">
-                                    Add one or more stages (registration,
-                                    groups, playoffs, etc).
+                                    Add one or more stages
                                 </p>
                             </div>
                             <button

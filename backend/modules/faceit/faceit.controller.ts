@@ -15,6 +15,7 @@ import {
 } from "./faceit.types";
 import { playerRepository } from "../players/player.repository";
 import { parseOr400 } from "../../core/validation/parseOr400";
+import { FaceitAPITournamentTeam } from "../../utils/transformFaceitData";
 
 export const faceitController = {
     testFaceitRoute: async (req: Request, res: Response) => {
@@ -27,11 +28,15 @@ export const faceitController = {
         const data = parseOr400(res, ImportFaceitStageSchema, req.body);
         if (!data) return;
 
-        const { tournamentId, championshipId, readFileName, writeFileName } =
-            data;
+        const {
+            cfTournamentId,
+            faceitChampionshipId,
+            readFileName,
+            writeFileName,
+        } = data;
 
         const championshipData = await faceitFetchUtil.fetchStageData(
-            championshipId,
+            faceitChampionshipId,
             {
                 readFileName: readFileName,
                 writeFileName: writeFileName,
@@ -40,13 +45,43 @@ export const faceitController = {
 
         const stage = await faceitImportService.importStage(
             championshipData,
-            tournamentId,
+            cfTournamentId,
         );
 
         res.json({
             success: true,
             message: "Stage imported successfully",
             stageId: stage.id,
+        });
+    },
+
+    importFaceitStageTeams: async (req: Request, res: Response) => {
+        const data = parseOr400(res, ImportFaceitStageSchema, req.body);
+        if (!data) return;
+
+        const {
+            cfTournamentId,
+            faceitChampionshipId,
+            readFileName,
+            writeFileName,
+        } = data;
+
+        const teamsData = await faceitFetchUtil.fetchData<{
+            items: FaceitAPITournamentTeam[];
+        }>(`/championships/${faceitChampionshipId}/subscriptions`, {
+            readFileName: readFileName,
+            writeFileName: writeFileName,
+        });
+
+        const result = await faceitImportService.processStageTeams(
+            teamsData.items,
+            cfTournamentId,
+        );
+
+        res.json({
+            success: true,
+            message: "Teams imported successfully",
+            teams: result,
         });
     },
 

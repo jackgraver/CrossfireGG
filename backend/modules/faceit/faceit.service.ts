@@ -9,10 +9,12 @@ import {
     transformFaceitMatch,
     transformFaceitMatchParticipants,
     transformFaceitMaps,
+    FaceitAPITournamentTeam,
 } from "../../utils/transformFaceitData";
 import { teamRepository } from "../teams/team.repository";
 import { matchRepository } from "../matches/match.repository";
 import { faceitFetchUtil } from "../../utils/faceitFetch.util";
+import { stagesRepository } from "../tournaments/stages/stages.repository";
 
 export const faceitImportService = {
     /**
@@ -279,5 +281,87 @@ export const faceitImportService = {
         }
 
         return true;
+    },
+
+    processStageTeams: async (
+        teams: FaceitAPITournamentTeam[],
+        stageId: number,
+    ) => {
+        const stage = await tournamentRepository.findStageById(stageId);
+        if (!stage) {
+            throw new Error(`Stage with ID ${stageId} not found`);
+        }
+
+        const existingTeams = await teamRepository.findByFaceitIds(
+            teams.map((team) => team.team.team_id),
+        );
+        const existingTeamFaceitIds = new Set(
+            existingTeams.map((t) => t.faceit_id),
+        );
+
+        for (const team of teams.filter(
+            (team) => !existingTeamFaceitIds.has(team.team.team_id),
+        )) {
+            let leaderId: number | null = null;
+
+            const insertedTeam = await teamRepository.upsertTeamByFaceitId({
+                name: team.team.name,
+                team_logo: "",
+                faceit_id: team.team.team_id,
+                team_captain_id: null,
+            });
+            const insertedStageTeam =
+                await tournamentRepository.upsertStageTeam({
+                    stage_id: stageId,
+                    team_id: insertedTeam.id,
+                    group_id: null, //TODO create group first?
+                    seed: 0,
+                    wins: 0,
+                    losses: 0,
+                });
+
+            for (const playerId of team.roster) {
+                const player = await playerRepository.findByFaceitId(playerId);
+
+                const member = team.team.members.find(
+                    (m) => m.user_id === playerId,
+                );
+
+                if (!member) {
+                    throw new Error(`Member with ID ${playerId} not found`);
+                }
+
+                const insertedPlayer =
+                    await playerRepository.upsertPlayerByFaceitId({
+                        player_name: member.nickname,
+                        faceit_id: member.user_id,
+                        player_logo: member.avatar,
+                        country: member.country,
+                        team_id: insertedTeam.id,
+                        base_role: "starter",
+                        hltv_id: "",
+                        discord_id: "",
+                    });
+                await tournamentRepository.upsertStageRoster({
+                    stage_team_id: insertedStageTeam.id,
+                    player_id: insertedPlayer.id,
+                    role: "starter",
+                });
+                ``;
+
+                if (playerId === team.leader) {
+                    leaderId = insertedPlayer.id;
+                }
+            }
+
+            if (leaderId) {
+                await teamRepository.updateTeamCaptain(
+                    insertedTeam.id,
+                    leaderId,
+                );
+            }
+        }
+
+        return teams;
     },
 };

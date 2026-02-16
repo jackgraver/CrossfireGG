@@ -7,6 +7,11 @@ import { db } from "../config/database";
 import { users, session, account, verification } from "../schemas";
 import { playerRepository } from "../modules/players/player.repository";
 
+console.log("AUTH ENV CHECK", {
+  BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
+  TRUSTED_ORIGINS: config.auth.trustedOrigins,
+});
+
 export const auth = betterAuth({
     database: drizzleAdapter(db, {
         provider: "pg",
@@ -21,15 +26,15 @@ export const auth = betterAuth({
     emailAndPassword: {
         enabled: true,
     },
-    // logger: {
-    //     disabled: false,
-    //     disableColors: false,
-    //     level: "info",
-    //     log: (level, message, ...args) => {
-    //         // Custom logging implementation
-    //         console.log(`[${level}] ${message}`, ...args);
-    //     },
-    // },
+    logger: {
+        disabled: false,
+        disableColors: false,
+        level: "debug",
+        log: (level, message, ...args) => {
+            // Custom logging implementation
+            console.log(`[${level}] ${message}`, ...args);
+        },
+    },
     hooks: {
         after: createAuthMiddleware(async (ctx) => {
             const returned = ctx.context.returned as {

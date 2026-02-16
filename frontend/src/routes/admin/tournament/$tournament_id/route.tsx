@@ -39,7 +39,7 @@ function RouteComponent() {
     const { data: tournament } = useTournamentById(tournament_id);
 
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex min-h-screen flex-col gap-4">
             <h1 className="text-textPrimary text-2xl font-bold">
                 {tournament?.name}
             </h1>

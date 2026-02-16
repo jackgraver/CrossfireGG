@@ -131,7 +131,7 @@ export default function SignUpButton({
     }
 
     const activeClass =
-        "flex w-full items-center justify-center rounded-lg bg-cfRed px-4 py-2 text-xs font-black tracking-widest text-white uppercase shadow-sm transition-all hover:bg-cfRedDark gap-2";
+        "flex w-full items-center justify-center rounded-lg border-2 border-cfRed bg-transparent px-4 py-2 text-xs font-black tracking-widest text-cfRed uppercase shadow-sm transition-all gap-2 hover:bg-cfRed hover:text-white font-bold";
 
     const getButtonContent = () => {
         if (!user) {

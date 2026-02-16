@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/contexts/auth";
 import TeamLogo from "./shared/bracket/atoms/TeamLogo";
+import { useSignOut } from "@/contexts/auth";
 
 function toggleDarkMode() {
     if (typeof document === "undefined") return;
@@ -78,6 +79,7 @@ const NavItem = ({
 
 export default function NavBar() {
     const { user } = useAuth();
+    const signOut = useSignOut();
 
     useEffect(() => {
         if (typeof window === "undefined") return;
@@ -91,7 +93,7 @@ export default function NavBar() {
 
     return (
         <nav className="bg-mainBg/80 sticky top-0 z-50 backdrop-blur-md">
-            <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4">
+            <div className="mx-auto flex h-14 max-w-7xl items-center justify-between">
                 <div className="flex items-center gap-1">
                     <NavItem
                         to="/tournament"
@@ -138,22 +140,34 @@ export default function NavBar() {
                     )}
                     {user ? (
                         <>
-                            <NavItem
-                                to="/user"
-                                icon={<User size={18} />}
-                                label={user?.name}
-                            />
-                            <NavItem
-                                to="/"
-                                icon={<LogOut size={18} />}
-                                label="Sign Out"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                }}
-                                onMouseEnter={() =>
-                                    preloadImage("/bg-city.png")
-                                }
-                            />
+                            <div className="group relative">
+                                <NavItem
+                                    to="/user"
+                                    icon={<User size={18} />}
+                                    label={user?.name}
+                                />
+                                <div className="bg-mainBg border-border invisible absolute right-0 z-20 mt-2 w-40 rounded border opacity-0 shadow-md transition-opacity duration-200 group-hover:visible group-hover:opacity-100">
+                                    <ul className="flex flex-col py-2">
+                                        <li>
+                                            <NavItem
+                                                to="/user"
+                                                icon={<User size={16} />}
+                                                label="Profile"
+                                            />
+                                        </li>
+                                        <li>
+                                            <NavItem
+                                                to="/"
+                                                icon={<LogOut size={18} />}
+                                                label="Sign Out"
+                                                onClick={() => {
+                                                    signOut.mutate();
+                                                }}
+                                            />
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
                         </>
                     ) : (
                         <button className="bg-faceit hover:bg-faceitSecondary flex items-center gap-2 rounded-md py-2 pr-3 pl-2 text-sm font-bold text-black">
