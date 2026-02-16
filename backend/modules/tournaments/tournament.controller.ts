@@ -14,6 +14,7 @@ import {
     StageTeamSignUpContract,
     TournamentWithMinimalStagesContract,
     TournamentWithStagesContract,
+    CreateTournamentContract,
 } from "@repo/contracts";
 import { AuthRequest } from "../../core/middleware/auth.middleware";
 import { sendContract } from "../../core/sendContract";
@@ -48,6 +49,18 @@ export const tournamentController = {
         );
 
         sendContract(res, StageTeamSignUpContract.array(), teams);
+    },
+
+    getRegistrationsByTournamentId: async (req: Request, res: Response) => {
+        const data = parseOr400(res, TournamentParamsSchema, req.params);
+        if (!data) return;
+
+        const registrations =
+            await tournamentService.getRegistrationsByTournamentId(
+                data.tournamentId,
+            );
+
+        sendContract(res, StageTeamSignUpContract.array(), registrations);
     },
 
     registerForTournament: async (req: Request, res: Response) => {
@@ -167,20 +180,23 @@ export const tournamentController = {
     },
 
     createTournament: async (req: Request, res: Response) => {
-        // try {
-        //     const validation = CreateTournamentSchema.safeParse(req.body);
-        //     if (!validation.success) {
-        //         return res.status(400).json({
-        //             error: "Validation failed",
-        //         });
-        //     }
-        // }
-        // catch (error: any) {
-        //     logger.error("Error creating tournament:", error);
-        //     res.status(500).json({
-        //         error: "Failed to create tournament",
-        //         details: error.message,
-        //     });
-        // }
+        const data = parseOr400(res, CreateTournamentContract, req.body);
+        if (!data) return;
+
+        try {
+            const tournament =
+                await tournamentRepository.createTournament(data);
+            res.status(201).json({
+                success: true,
+                message: "Tournament created successfully",
+                tournamentId: tournament.id,
+            });
+        } catch (error: any) {
+            console.error("Error creating tournament:", error);
+            res.status(500).json({
+                error: "Failed to create tournament",
+                message: error.message,
+            });
+        }
     },
 };

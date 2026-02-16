@@ -428,22 +428,44 @@ export const tournamentRepository = {
         }
     },
 
-    findstagePlayersByStageId: async (stageId: number) => {
-        const { stagePlayers } = await import("../../schemas");
-        const { players } = await import("../../schemas");
+    createTournament: async (tournamentData: any) => {
+        return await db.transaction(async (tx) => {
+            const [tournament] = await tx
+                .insert(tournaments)
+                .values({
+                    name: tournamentData.name,
+                    description: tournamentData.description,
+                    prize_pool: tournamentData.prize_pool,
+                    start_date: tournamentData.start_date,
+                    end_date: tournamentData.end_date,
+                    status: "upcoming",
+                    created_at: new Date(),
+                    updated_at: new Date(),
+                })
+                .returning();
 
-        return await db
-            .select({
-                roster: stagePlayers,
-                player: players,
-            })
-            .from(stagePlayers)
-            .innerJoin(players, eq(stagePlayers.player_id, players.id))
-            .where(
-                and(
-                    // eq(stagePlayers.stage_id, stageId),
-                    isNull(stagePlayers.deleted_at),
-                ),
-            );
+            if (tournamentData.stages && tournamentData.stages.length > 0) {
+                await tx.insert(stages).values(
+                    tournamentData.stages.map((stage: any, index: number) => ({
+                        tournament_id: tournament.id,
+                        name: stage.name,
+                        faceit_id: stage.faceit_id || "",
+                        max_teams: stage.max_teams || 32,
+                        format_id: stage.format_id || 1,
+                        is_current: stage.is_current || false,
+                        is_entry_stage: index === 0, // First stage is entry stage by default
+                        start_date: stage.start_date || tournament.start_date,
+                        end_date: stage.end_date || tournament.end_date,
+                        registration_deadline:
+                            stage.registration_deadline ||
+                            tournament.start_date,
+                        created_at: new Date(),
+                        updated_at: new Date(),
+                    })),
+                );
+            }
+
+            return tournament;
+        });
     },
 };

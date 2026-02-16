@@ -47,7 +47,11 @@ export const stagesRepository = {
             where: (st, { eq, and, isNull }) =>
                 and(eq(st.stage_id, stageId), isNull(st.deleted_at)),
             with: {
-                team: true,
+                team: {
+                    with: {
+                        players: true,
+                    },
+                },
             },
         });
     },

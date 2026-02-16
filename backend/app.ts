@@ -13,6 +13,11 @@ import cors from "cors";
 import rateLimit from "express-rate-limit";
 import { toNodeHandler } from "better-auth/node";
 import { auth } from "./lib/auth";
+import {
+    authMiddleware,
+    requireRoles,
+} from "./core/middleware/auth.middleware";
+import { Roles } from "@repo/types";
 
 const burstLimiter = rateLimit({
     windowMs: 10 * 1000,
@@ -60,7 +65,7 @@ app.use("/user", userRoutes);
 app.use("/tournament", tournamentRoutes);
 app.use("/match", matchRoutes);
 app.use("/team", teamRoutes);
-app.use("/faceit", faceitRoutes);
+app.use("/faceit", ...authMiddleware, requireRoles(Roles.ADMIN), faceitRoutes);
 
 app.use(errorHandler);
 

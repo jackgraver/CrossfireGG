@@ -13,7 +13,11 @@ class FaceitApiError extends Error {
     status: number;
     statusText: string;
     endpoint: string;
-    constructor(args: { status: number; statusText: string; endpoint: string }) {
+    constructor(args: {
+        status: number;
+        statusText: string;
+        endpoint: string;
+    }) {
         super(`Faceit API error: ${args.status} ${args.statusText}`);
         this.name = "FaceitApiError";
         this.status = args.status;
@@ -166,7 +170,7 @@ export const faceitFetchUtil = {
                 await faceitFetchUtil._writeToFile(writeFileName, data);
             }
 
-            return data as FaceitAPIMatch[];
+            return data.items as FaceitAPIMatch[];
         } catch (error) {
             console.error(`[Faceit API] Error fetching matches data:`, error);
             throw error;

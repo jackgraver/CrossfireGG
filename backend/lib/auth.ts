@@ -21,6 +21,15 @@ export const auth = betterAuth({
     emailAndPassword: {
         enabled: true,
     },
+    // logger: {
+    //     disabled: false,
+    //     disableColors: false,
+    //     level: "info",
+    //     log: (level, message, ...args) => {
+    //         // Custom logging implementation
+    //         console.log(`[${level}] ${message}`, ...args);
+    //     },
+    // },
     hooks: {
         after: createAuthMiddleware(async (ctx) => {
             const returned = ctx.context.returned as {

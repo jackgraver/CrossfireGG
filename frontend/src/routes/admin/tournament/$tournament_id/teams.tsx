@@ -10,7 +10,7 @@ import {
 import { StageTeamSignUpDTO } from "@repo/contracts";
 
 export const Route = createFileRoute(
-    "/admin/manage/tournament/$tournament_id/teams",
+    "/admin/tournament/$tournament_id/teams",
 )({
     component: RouteComponent,
 });

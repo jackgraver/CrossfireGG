@@ -1,5 +1,9 @@
 import { z } from "zod";
-import { MinimalStageContract, StageContract } from "./stage.contracts";
+import {
+    CreateStageContract,
+    MinimalStageContract,
+    StageContract,
+} from "./stage.contracts";
 
 export const TournamentContract = z.object({
     id: z.number(),
@@ -37,9 +41,11 @@ export type TournamentWithMinimalStagesDTO = z.infer<
 export const CreateTournamentContract = z.object({
     name: z.string().min(2, "Tournament name is required"),
     description: z.string().optional(),
-    prize_pool: z.number().optional(),
-    start_date: z.date().min(new Date()),
-    end_date: z.date().min(new Date()),
+    prize_pool: z.coerce.number().optional(),
+    start_date: z.coerce.date().min(new Date()),
+    end_date: z.coerce.date().min(new Date()),
+    is_vrs_enabled: z.boolean().default(false),
+    stages: z.array(CreateStageContract),
 });
 
 export type CreateTournamentDTO = z.infer<typeof CreateTournamentContract>;

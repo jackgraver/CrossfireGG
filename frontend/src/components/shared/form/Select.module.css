@@ -4,10 +4,8 @@
 
 .label {
     display: block;
-    margin-bottom: 0.375rem;
-    font-size: 0.875rem;
     font-weight: 500;
-    color: var(--color-text-primary);
+    color: var(--color-text-secondary);
 }
 
 .errorText {
@@ -24,7 +22,6 @@
     align-items: center;
     justify-content: space-between;
     border-radius: 0.375rem;
-    border: 1px solid var(--color-third-bg);
     background-color: var(--color-second-bg);
     color: var(--color-text-primary);
     padding: 0.5rem 1rem;
@@ -51,11 +48,6 @@
 
 .trigger[data-placeholder] {
     color: var(--color-text-secondary);
-}
-
-.hasError .trigger {
-    border-color: #ef4444;
-    box-shadow: 0 0 0 2px #ef4444;
 }
 
 .icon {

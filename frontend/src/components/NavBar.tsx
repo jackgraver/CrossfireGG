@@ -112,6 +112,30 @@ export default function NavBar() {
                     )}
                 </div>
                 <div className="flex items-center gap-1">
+                    <NavItem
+                        icon={<Moon size={18} />}
+                        label="Theme"
+                        onClick={() => toggleDarkMode()}
+                    />
+                    {matchesRole(
+                        user?.roles,
+                        Roles.ADMIN,
+                        Roles.PRODUCTION_LEAD,
+                        Roles.PRODUCTION,
+                    ) && (
+                        <NavItem
+                            to="/casting"
+                            icon={<Video size={18} />}
+                            label="Casting"
+                        />
+                    )}
+                    {matchesRole(user?.roles, Roles.ADMIN) && (
+                        <NavItem
+                            to="/admin"
+                            icon={<Settings size={18} />}
+                            label="Admin"
+                        />
+                    )}
                     {user ? (
                         <>
                             <NavItem

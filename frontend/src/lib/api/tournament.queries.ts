@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import {
     GroupWithMatchesAndFormatDTO,
     StageTeamSignUpDTO,
@@ -7,7 +7,7 @@ import {
     TournamentWithStagesDTO,
 } from "@repo/contracts";
 
-import { apiGET } from "@/lib/api/client";
+import { apiGET, apiPOST } from "@/lib/api/client";
 
 export const useAllTournaments = () => {
     return useQuery<TournamentWithStagesDTO[]>({
@@ -24,7 +24,6 @@ export const useTournamentTeams = (tournamentId: string) => {
         enabled: !!tournamentId,
     });
 };
-
 
 export const useTournamentById = (tournamentId: string) => {
     return useQuery<TournamentWithMinimalStagesDTO>({
@@ -64,5 +63,49 @@ export const useStageBracket = (stageId: number | null) => {
                 `/tournament/stage/${stageId}/bracket`,
             ),
         enabled: !!stageId,
+    });
+};
+
+export const useRegistrationsByTournamentId = (tournamentId: number) => {
+    return useQuery<StageTeamSignUpDTO[]>({
+        queryKey: ["registrations", tournamentId],
+        queryFn: () =>
+            apiGET<StageTeamSignUpDTO[]>(
+                `/tournament/${tournamentId}/registrations`,
+            ),
+        enabled: !!tournamentId,
+    });
+};
+
+export const useRefreshMatches = (faceitId: string, stageId: number) => {
+    console.log("faceitId", faceitId);
+    console.log("stageId", stageId);
+    return useMutation({
+        mutationFn: () =>
+            apiPOST(`/faceit/import/matches`, {
+                championshipId: faceitId,
+                stageId,
+            }),
+        onSuccess: (result) => {
+            console.log(result);
+            return result;
+        },
+        onError: (error) => {
+            console.error("Error refreshing matches:", error);
+            return null;
+        },
+    });
+};
+
+export const useCreateTournament = () => {
+    return useMutation({
+        mutationFn: (payload: any) =>
+            apiPOST<any>(`/tournament/create`, payload),
+        onSuccess: () => {
+            console.log("Tournament created successfully");
+        },
+        onError: (error) => {
+            console.error("Error creating tournament:", error);
+        },
     });
 };

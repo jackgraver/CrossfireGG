@@ -63,6 +63,7 @@ export const faceitController = {
                 writeFileName: writeFileName,
             },
         );
+        console.log(matchesData);
 
         const result = await faceitImportService.processNewStageMatches(
             matchesData,

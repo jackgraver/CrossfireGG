@@ -3,6 +3,7 @@ import { auth } from "../../lib/auth";
 import { fromNodeHeaders } from "better-auth/node";
 import { userRepository } from "../../modules/users/user.repository";
 import { Role } from "@repo/types";
+import { logger } from "../logger";
 
 export interface AuthRequest extends Request {
     session?: any;
@@ -19,6 +20,19 @@ export interface AuthRequest extends Request {
     roles?: Role[];
 }
 
+/**
+ * Used for routes that should behave differently for anonymous vs logged-in users.
+ *
+ * Provides:
+ * - `req.session`: Better Auth session (or `null` if missing/invalid)
+ * - `req.user`: user row from DB (only when session user exists in DB)
+ * - `req.roles`: roles loaded from DB for the user
+ * - `req.playerInfo`: player/team linkage info (if available)
+ *
+ * Depends on:
+ * - No prior middleware required. Other auth middlewares (e.g. `requireSession`, `requireRoles`)
+ *   should run AFTER this to use the populated fields.
+ */
 export const fetchSession: RequestHandler = async (req, res, next) => {
     try {
         const session = await auth.api.getSession({
@@ -50,13 +64,21 @@ export const fetchSession: RequestHandler = async (req, res, next) => {
 
         next();
     } catch (error: any) {
-        // Even if session fetch fails, we might want to continue as anonymous
-        // but log it for debugging
+        logger.warn("Failed to fetch session, continuing as anonymous.", error);
         (req as AuthRequest).session = null;
         next();
     }
 };
 
+/**
+ * Used for routes that require a logged-in user.
+ *
+ * Provides:
+ * - Guarantees `req.session.user.id` exists for subsequent handlers.
+ *
+ * Depends on:
+ * - `fetchSession` (or an equivalent middleware) running first to set `req.session`.
+ */
 export const requireSession: RequestHandler = (req, res, next) => {
     const authReq = req as AuthRequest;
     if (!authReq.session?.user?.id) {
@@ -65,8 +87,28 @@ export const requireSession: RequestHandler = (req, res, next) => {
     next();
 };
 
+/**
+ * Used for routes that should always require login.
+ *
+ * Provides:
+ * - `fetchSession` hydration + enforced authentication via `requireSession`.
+ *
+ * Depends on:
+ * - No prior middleware required.
+ */
 export const authMiddleware = [fetchSession, requireSession];
 
+/**
+ * Used for routes that require specific role(s).
+ *
+ * Provides:
+ * - Enforces authorization: user must have at least one of the required roles.
+ *
+ * Depends on:
+ * - `fetchSession` (or equivalent) to populate `req.user` and `req.roles`.
+ * - If you also want to explicitly enforce "must be logged in", add `requireSession`
+ *   (or use `authMiddleware`) before this.
+ */
 export const requireRoles =
     (...requiredRoles: Role[]): RequestHandler =>
     (req, res, next) => {

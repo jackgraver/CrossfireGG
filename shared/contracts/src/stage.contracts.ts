@@ -30,6 +30,7 @@ export type StageWithFormatDTO = z.infer<typeof StageWithFormatContract>;
 
 export const MinimalStageContract = z.object({
     id: z.number(),
+    faceit_id: z.string(),
     name: z.string(),
 });
 
@@ -38,12 +39,12 @@ export type MinimalStageDTO = z.infer<typeof MinimalStageContract>;
 export const CreateStageContract = z.object({
     name: z.string().min(2, "Stage name is required"),
     faceit_id: z.string().optional(),
-    max_teams: z.number().min(1, "Max teams is required"),
-    format_id: z.number().min(1, "Format is required"),
+    max_teams: z.coerce.number().min(1, "Max teams is required"),
+    format_id: z.coerce.number().min(1, "Format is required"),
     is_current: z.boolean().default(false),
-    start_date: z.date().min(new Date()),
-    end_date: z.date().min(new Date()),
-    registration_deadline: z.date().min(new Date()),
+    start_date: z.coerce.date().min(new Date()),
+    end_date: z.coerce.date().min(new Date()),
+    registration_deadline: z.coerce.date().min(new Date()),
 });
 
 export type CreateStageDTO = z.infer<typeof CreateStageContract>;

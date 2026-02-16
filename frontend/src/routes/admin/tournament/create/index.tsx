@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCreateTournamentForm } from "../../-hooks/useCreateTournamentForm";
-import { Plus, SaveIcon, Trash2 } from "lucide-react";
+import { Check, Plus, SaveIcon, Trash2 } from "lucide-react";
 import { useStore } from "@tanstack/react-form";
 import { Input } from "@/components/shared/form/Input";
 import { Checkbox, Select } from "@/components/shared/form";
@@ -24,7 +24,7 @@ const createStage = () => {
     };
 };
 
-export const Route = createFileRoute("/admin/create/tournament/")({
+export const Route = createFileRoute("/admin/tournament/create/")({
     component: RouteComponent,
 });
 
@@ -35,7 +35,6 @@ function RouteComponent() {
 
     const stages =
         useStore(form.store, (state: any) => state.values.stages) ?? [];
-    console.log(stages.length);
 
     const addStage = () => {
         form.setFieldValue("stages", [...stages, createStage()]);
@@ -49,7 +48,7 @@ function RouteComponent() {
     };
 
     return (
-        <div className="bg-mainBg text-textPrimary min-h-screen p-6 sm:p-8">
+        <div className="bg-mainBg text-textPrimary min-h-screen py-6">
             <div className="mx-auto w-full max-w-6xl space-y-6">
                 <header className="flex flex-col gap-1">
                     <h1 className="text-2xl font-bold">Admin Configuration</h1>
@@ -58,11 +57,11 @@ function RouteComponent() {
                     </p>
                 </header>
                 <form
-                    // onSubmit={(e) => {
-                    //     e.preventDefault();
-                    //     form.handleSubmit();
-                    //     console.log("form meta", form.state);
-                    // }}
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        form.handleSubmit();
+                        console.log("form meta", form.state);
+                    }}
                     className="grid gap-6 lg:grid-cols-2"
                 >
                     <section className="border-secondBg bg-firstBg max-h-[575px] rounded-lg border p-6 shadow-lg">
@@ -77,8 +76,9 @@ function RouteComponent() {
                             </div>
                             <button
                                 // type="submit"
-                                onClick={(e) => {
+                                onClick={async (e) => {
                                     e.preventDefault();
+                                    console.log(form.state.values);
                                     form.handleSubmit();
                                 }}
                                 disabled={
@@ -105,9 +105,7 @@ function RouteComponent() {
                                     <Input
                                         name={field.name}
                                         value={field.state.value ?? ""}
-                                        onChange={(e) =>
-                                            field.handleChange(e.target.value)
-                                        }
+                                        onChange={field.handleChange}
                                         onBlur={field.handleBlur}
                                         label="Tournament name"
                                         placeholder="e.g. Crossfire Season 4"
@@ -120,9 +118,7 @@ function RouteComponent() {
                                         type="textarea"
                                         name={field.name}
                                         value={field.state.value ?? ""}
-                                        onChange={(e) =>
-                                            field.handleChange(e.target.value)
-                                        }
+                                        onChange={field.handleChange}
                                         onBlur={field.handleBlur}
                                         label="Description"
                                         placeholder="Short description shown on the site."
@@ -135,11 +131,7 @@ function RouteComponent() {
                                         <Input
                                             name={field.name}
                                             value={field.state.value ?? ""}
-                                            onChange={(e) =>
-                                                field.handleChange(
-                                                    e.target.value,
-                                                )
-                                            }
+                                            onChange={field.handleChange}
                                             onBlur={field.handleBlur}
                                             label="Prize pool"
                                             placeholder="e.g. 1000"
@@ -163,11 +155,7 @@ function RouteComponent() {
                                         <Input
                                             name={field.name}
                                             value={field.state.value ?? ""}
-                                            onChange={(e) =>
-                                                field.handleChange(
-                                                    e.target.value,
-                                                )
-                                            }
+                                            onChange={field.handleChange}
                                             onBlur={field.handleBlur}
                                             label="Start date"
                                             type="date"
@@ -180,11 +168,7 @@ function RouteComponent() {
                                             <Input
                                                 name={field.name}
                                                 value={field.state.value ?? ""}
-                                                onChange={(e) =>
-                                                    field.handleChange(
-                                                        e.target.value,
-                                                    )
-                                                }
+                                                onChange={field.handleChange}
                                                 onBlur={field.handleBlur}
                                                 label="End date"
                                                 type="date"
@@ -266,10 +250,8 @@ function RouteComponent() {
                                                             field.state.value ??
                                                             ""
                                                         }
-                                                        onChange={(e) =>
-                                                            field.handleChange(
-                                                                e.target.value,
-                                                            )
+                                                        onChange={
+                                                            field.handleChange
                                                         }
                                                         onBlur={
                                                             field.handleBlur
@@ -289,39 +271,13 @@ function RouteComponent() {
                                                             field.state.value ??
                                                             ""
                                                         }
-                                                        onChange={(e) =>
-                                                            field.handleChange(
-                                                                e.target.value,
-                                                            )
-                                                        }
-                                                        onBlur={
-                                                            field.handleBlur
-                                                        }
-                                                        label="FACEIT stage/tournament ID"
-                                                        placeholder="Optional"
-                                                    />
-                                                )}
-                                            </form.Field>
-                                            <form.Field
-                                                name={`stages[${index}].faceitLink`}
-                                            >
-                                                {(field: any) => (
-                                                    <Input
-                                                        name={field.name}
-                                                        value={
-                                                            field.state.value ??
-                                                            ""
-                                                        }
-                                                        onChange={(e) =>
-                                                            field.handleChange(
-                                                                e.target.value,
-                                                            )
+                                                        onChange={
+                                                            field.handleChange
                                                         }
                                                         onBlur={
                                                             field.handleBlur
                                                         }
                                                         label="FACEIT championship link"
-                                                        placeholder="https://www.faceit.com/en/championship/<id>"
                                                     />
                                                 )}
                                             </form.Field>
@@ -335,10 +291,8 @@ function RouteComponent() {
                                                             field.state.value ??
                                                             ""
                                                         }
-                                                        onChange={(e) =>
-                                                            field.handleChange(
-                                                                e.target.value,
-                                                            )
+                                                        onChange={
+                                                            field.handleChange
                                                         }
                                                         onBlur={
                                                             field.handleBlur
@@ -378,16 +332,14 @@ function RouteComponent() {
                                                             field.state.value ??
                                                             ""
                                                         }
-                                                        onChange={(e) =>
-                                                            field.handleChange(
-                                                                e.target.value,
-                                                            )
+                                                        onChange={
+                                                            field.handleChange
                                                         }
                                                         onBlur={
                                                             field.handleBlur
                                                         }
                                                         label="Stage start"
-                                                        type="text"
+                                                        type="date"
                                                     />
                                                 )}
                                             </form.Field>
@@ -401,16 +353,14 @@ function RouteComponent() {
                                                             field.state.value ??
                                                             ""
                                                         }
-                                                        onChange={(e) =>
-                                                            field.handleChange(
-                                                                e.target.value,
-                                                            )
+                                                        onChange={
+                                                            field.handleChange
                                                         }
                                                         onBlur={
                                                             field.handleBlur
                                                         }
                                                         label="Stage end"
-                                                        type="text"
+                                                        type="date"
                                                     />
                                                 )}
                                             </form.Field>
@@ -424,17 +374,23 @@ function RouteComponent() {
                                                             field.state.value ??
                                                             ""
                                                         }
-                                                        onChange={(e) =>
-                                                            field.handleChange(
-                                                                e.target.value,
-                                                            )
+                                                        onChange={
+                                                            field.handleChange
                                                         }
                                                         onBlur={
                                                             field.handleBlur
                                                         }
                                                         label="Registration deadline"
-                                                        type="text"
-                                                        className="md:col-span-2"
+                                                        type="date"
+                                                    />
+                                                )}
+                                            </form.Field>
+                                            <form.Field name="is_vrs_enabled">
+                                                {(field: any) => (
+                                                    <Checkbox
+                                                        field={field}
+                                                        label="Is VRS Enabled"
+                                                        disabled={false}
                                                     />
                                                 )}
                                             </form.Field>

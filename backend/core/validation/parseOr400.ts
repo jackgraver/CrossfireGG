@@ -14,6 +14,7 @@ export function parseOr400<S extends z.ZodTypeAny>(
     const validation = schema.safeParse(data);
 
     if (!validation.success) {
+        console.log(validation.error.issues);
         res.status(400).json({
             error: "Validation failed",
             details: validation.error.issues.map((err) => ({

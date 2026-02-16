@@ -6,6 +6,7 @@ import TeamLogo from "@/components/shared/bracket/atoms/TeamLogo";
 import { Link } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
 import { MoveUpRight } from "lucide-react";
+import { useAuth } from "@/contexts/auth";
 
 const useRegisterTeamForTournament = () => {
     return useMutation({
@@ -119,9 +120,7 @@ export default function SignUpButton({
 }: {
     tournamentId: string;
 }) {
-    // const { user, isLoading: isAuthLoading } = useAuth();
-    const user = null as any;
-    const isAuthLoading = false;
+    const { user, isLoading: isAuthLoading } = useAuth();
 
     const { openDialog } = useDialog();
 

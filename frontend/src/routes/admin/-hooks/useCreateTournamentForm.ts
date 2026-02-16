@@ -1,16 +1,10 @@
-import {
-    CreateStageContract,
-    CreateStageDTO,
-    CreateTournamentContract,
-} from "@repo/contracts";
+import { CreateStageDTO, CreateTournamentContract } from "@repo/contracts";
 import { useForm } from "@tanstack/react-form";
-import { z } from "zod";
-
-const tournamentSchema = CreateTournamentContract.extend({
-    stages: z.array(CreateStageContract),
-});
+import { useCreateTournament } from "@/lib/api/tournament.queries";
 
 export const useCreateTournamentForm = () => {
+    const { mutate } = useCreateTournament();
+
     const toDateInput = (d: Date) => d.toISOString().slice(0, 10);
     const today = new Date();
     const form = useForm({
@@ -24,10 +18,10 @@ export const useCreateTournamentForm = () => {
             stages: [] as CreateStageDTO[],
         },
         validators: {
-            onChange: tournamentSchema,
+            CreateTournamentContract,
         },
         onSubmit: async ({ value }: any) => {
-            console.log(value);
+            mutate(value);
         },
     } as any);
 

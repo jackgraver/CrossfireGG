@@ -4,6 +4,7 @@ import { formatDateOnly, toUnixTimestamp } from "@/lib/dateUtils";
 import SignUpButton from "./-components/SignUpButton";
 import { Trophy, Users, Calendar, DollarSign } from "lucide-react";
 import { TournamentWithStagesDTO } from "@repo/contracts";
+import { api } from "@/lib/api/client";
 
 export const Route = createFileRoute("/tournament/")({
     component: RouteComponent,
@@ -62,6 +63,14 @@ function RouteComponent() {
                         </div>
                     ) : (
                         <>
+                            <button
+                                className="bg-border text-textSecondary hover:bg-secondBg flex-1 rounded px-4 py-2"
+                                onClick={() =>
+                                    api.post("/faceit/test-route", {})
+                                }
+                            >
+                                Testing faceit
+                            </button>
                             <TournamentGroup
                                 type="active"
                                 tournaments={activeTournaments}
