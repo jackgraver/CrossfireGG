@@ -1,8 +1,9 @@
-import { GroupWithMatchesAndFormatDTO, GroupWithMatchesDTO, StageFormatDTO } from "@repo/contracts";
+import { GroupWithMatchesDTO, StageFormatDTO } from "@repo/contracts";
 import RegularSeasonBracket from "./bracket_types/RegularSeasonBracket";
 import Groups from "./bracket_types/Groups";
 import PlayoffBracket from "./bracket_types/PlayoffBracket";
 import { useMemo } from "react";
+import { MatchDropdownProvider } from "./components/MatchDropdownProvider";
 
 export default function TopLevelBracket({
     stageFormat,
@@ -11,20 +12,31 @@ export default function TopLevelBracket({
     stageFormat: StageFormatDTO;
     groups: GroupWithMatchesDTO[];
 }) {
-    if (!stageFormat) {
-        return <></>;
-    }
+    const allMatches = useMemo(
+        () => groups.flatMap((group) => group.matches),
+        [groups],
+    );
 
-    switch (stageFormat.name.toLowerCase()) {
-        case "groups":
-            return <Groups groups={groups} />;
-        case "single elimination":
-            const matches = useMemo(() => groups.flatMap((group) => group.matches), [groups]);
-            return <PlayoffBracket matches={matches} />;
-        case "swiss":
-            //TODO: how to flat map only for bottom two?
-            return <RegularSeasonBracket matches={groups.flatMap((group) => group.matches)} />;
-        default:
-            return <div className="text-xl text-red-500">Warning: Stage format not supported</div>;
-    }
+    if (!stageFormat) return null;
+
+    return (
+        <MatchDropdownProvider>
+            {(() => {
+                switch (stageFormat.name.toLowerCase()) {
+                    case "groups":
+                        return <Groups groups={groups} />;
+                    case "single elimination":
+                        return <PlayoffBracket matches={allMatches} />;
+                    case "swiss":
+                        return <RegularSeasonBracket matches={allMatches} />;
+                    default:
+                        return (
+                            <div className="text-xl text-red-500">
+                                Warning: Stage format not supported
+                            </div>
+                        );
+                }
+            })()}
+        </MatchDropdownProvider>
+    );
 }
