@@ -2,6 +2,8 @@ import { MatchWithParticipantsDTO } from "@repo/contracts";
 import { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import { getPlayoffRounds, BracketRound } from "./playoff_utils";
 import { BracketMatch } from "../components/BracketMatch";
+import MatchCard from "../components/MatchCard";
+import { cn } from "@/utils/cn";
 
 type PlayoffBracketProps = {
     matches: MatchWithParticipantsDTO[];
@@ -15,7 +17,14 @@ interface MatchPosition {
 }
 
 export default function PlayoffBracket({ matches }: PlayoffBracketProps) {
-    const rounds = useMemo(() => getPlayoffRounds(matches), [matches]);
+    const rounds = useMemo(() => {
+        const allRounds = getPlayoffRounds(matches);
+        // Separate the 3rd place round from the main flow
+        return {
+            mainRounds: allRounds.filter((r) => r.name !== "3rd Place"),
+            thirdPlaceRound: allRounds.find((r) => r.name === "3rd Place"),
+        };
+    }, [matches]);
     const [positions, setPositions] = useState<Record<string, MatchPosition>>(
         {},
     );
@@ -65,8 +74,8 @@ export default function PlayoffBracket({ matches }: PlayoffBracketProps) {
     const renderConnections = () => {
         const paths: React.ReactNode[] = [];
 
-        rounds.forEach((round, roundIndex) => {
-            if (roundIndex === rounds.length - 1) return;
+        rounds.mainRounds.forEach((round, roundIndex) => {
+            if (roundIndex === rounds.mainRounds.length - 1) return;
 
             round.matches.forEach((_, matchIndex) => {
                 const currentKey = `${roundIndex}-${matchIndex}`;
@@ -88,7 +97,7 @@ export default function PlayoffBracket({ matches }: PlayoffBracketProps) {
                             key={`path-${currentKey}`}
                             d={`M ${startX} ${startY} L ${midX} ${startY} L ${midX} ${endY} L ${endX} ${endY}`}
                             fill="none"
-                            stroke="#4a5568"
+                            stroke="var(--color-second-bg)"
                             strokeWidth="2"
                         />,
                     );
@@ -106,28 +115,54 @@ export default function PlayoffBracket({ matches }: PlayoffBracketProps) {
     return (
         <div
             ref={containerRef}
-            className="relative flex min-h-[800px] flex-row overflow-auto"
+            className="relative flex min-h-[800px] flex-row"
         >
             {renderConnections()}
-            {rounds.map((round, roundIndex) => (
+            {rounds.mainRounds.map((round, roundIndex) => (
                 <div
                     key={round.name}
-                    className="z-10 flex flex-col justify-around px-8"
+                    className={cn(
+                        "z-10 flex flex-col justify-around",
+                        roundIndex === 0 ? "pr-8" : "px-8",
+                    )}
                 >
                     <div className="mb-4 text-center">
-                        <h2 className="font-bold tracking-wider text-gray-400 uppercase">
+                        <h2 className="bg-secondBg rounded-md p-1 font-bold tracking-wider text-gray-400 uppercase">
                             {round.name}
                         </h2>
                     </div>
                     <div className="flex grow flex-col justify-around">
                         {round.matches.map((match, matchIndex) => (
-                            <BracketMatch
+                            <div
                                 key={`${roundIndex}-${matchIndex}`}
-                                match={match}
-                                roundIndex={roundIndex}
-                                matchIndex={matchIndex}
-                                onPositionUpdate={handlePositionUpdate}
-                            />
+                                className="relative"
+                            >
+                                <BracketMatch
+                                    match={match}
+                                    roundIndex={roundIndex}
+                                    matchIndex={matchIndex}
+                                    onPositionUpdate={handlePositionUpdate}
+                                />
+                                {round.name === "Grand Final" &&
+                                    rounds.thirdPlaceRound && (
+                                        <div className="absolute top-full right-0 left-0 mt-32">
+                                            <div className="text-center">
+                                                <h2 className="bg-secondBg rounded-md p-1 font-bold tracking-wider text-gray-400 uppercase">
+                                                    Third Place
+                                                </h2>
+                                            </div>
+                                            <div className="flex min-h-[100px] items-center">
+                                                <MatchCard
+                                                    match={
+                                                        rounds.thirdPlaceRound
+                                                            ?.matches[0]
+                                                    }
+                                                    margin={false}
+                                                />
+                                            </div>
+                                        </div>
+                                    )}
+                            </div>
                         ))}
                     </div>
                 </div>

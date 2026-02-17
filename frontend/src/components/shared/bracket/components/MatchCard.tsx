@@ -39,9 +39,7 @@ export default function MatchCard({ match, margin }: MatchCardProps) {
         <div
             ref={triggerRef}
             className={`group border-border bg-firstBg text-textPrimary relative flex grow flex-col overflow-hidden border transition-all duration-200 ${
-                margin
-                    ? "m-2 rounded-md"
-                    : "rounded-tr-md rounded-br-md rounded-bl-md"
+                margin ? "m-2 rounded-md" : "rounded-md"
             } ${isOpen ? "ring-2 ring-blue-500/50" : ""}`}
         >
             <div className="cursor-pointer" onClick={handleToggle}>
