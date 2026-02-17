@@ -38,7 +38,7 @@ export default function MatchCard({ match, margin }: MatchCardProps) {
     return (
         <div
             ref={triggerRef}
-            className={`group border-border bg-firstBg text-textPrimary relative flex grow flex-col border transition-all duration-200 ${
+            className={`group border-border bg-firstBg text-textPrimary relative flex grow flex-col overflow-hidden border transition-all duration-200 ${
                 margin
                     ? "m-2 rounded-md"
                     : "rounded-tr-md rounded-br-md rounded-bl-md"
