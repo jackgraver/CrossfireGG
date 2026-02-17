@@ -95,6 +95,32 @@ export const useRefreshMatches = (faceitId: string, stageId: number) => {
     });
 };
 
+export const useRefreshTeams = () => {
+    return useMutation({
+        mutationFn: ({
+            faceitId,
+            tournamentId,
+        }: {
+            faceitId: string;
+            tournamentId: number;
+        }) => {
+            console.log(faceitId, tournamentId);
+            return apiPOST(`/faceit/import/stage/teams`, {
+                faceitChampionshipId: faceitId,
+                cfTournamentId: tournamentId,
+            });
+        },
+        onSuccess: (result) => {
+            console.log(result);
+            return result;
+        },
+        onError: (error) => {
+            console.error("Error refreshing teams:", error);
+            return null;
+        },
+    });
+};
+
 export const useCreateTournament = () => {
     return useMutation({
         mutationFn: (payload: any) =>

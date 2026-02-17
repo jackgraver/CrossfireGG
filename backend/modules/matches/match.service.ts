@@ -30,10 +30,7 @@ export const matchService = {
 
         return {
             ...match,
-            participants: participantsRows.map((r) => ({
-                ...r.participant,
-                team: r.team,
-            })),
+            participants: participantsRows,
             maps: matchMaps.map((m) => ({
                 ...m,
                 playerStats: statsByMapId.get(m.id) ?? [],

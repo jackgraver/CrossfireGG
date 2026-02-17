@@ -88,6 +88,16 @@ export const faceitImportService = {
                     stageId,
                 );
 
+                //update team avatars
+                await teamRepository.updateTeamAvatarByFaceitId(
+                    match.teams.faction1.faction_id,
+                    match.teams.faction1.avatar,
+                );
+                await teamRepository.updateTeamAvatarByFaceitId(
+                    match.teams.faction2.faction_id,
+                    match.teams.faction2.avatar,
+                );
+
                 if (!stageTeam1 || !stageTeam2) {
                     logger.warn(
                         `Stage teams not found for match ${match.match_id}. Faction1: ${match.teams.faction1.faction_id}, Faction2: ${match.teams.faction2.faction_id}`,
@@ -292,16 +302,14 @@ export const faceitImportService = {
             throw new Error(`Stage with ID ${stageId} not found`);
         }
 
-        const existingTeams = await teamRepository.findByFaceitIds(
-            teams.map((team) => team.team.team_id),
-        );
-        const existingTeamFaceitIds = new Set(
-            existingTeams.map((t) => t.faceit_id),
-        );
+        // const existingTeams = await teamRepository.findByFaceitIds(
+        //     teams.map((team) => team.team.team_id),
+        // );
+        // const existingTeamFaceitIds = new Set(
+        //     existingTeams.map((t) => t.faceit_id),
+        // );
 
-        for (const team of teams.filter(
-            (team) => !existingTeamFaceitIds.has(team.team.team_id),
-        )) {
+        for (const team of teams) {
             let leaderId: number | null = null;
 
             const insertedTeam = await teamRepository.upsertTeamByFaceitId({
@@ -320,7 +328,7 @@ export const faceitImportService = {
                     losses: 0,
                 });
 
-            for (const playerId of team.roster) {
+            for (const playerId of [...team.roster, ...team.substitutes]) {
                 const player = await playerRepository.findByFaceitId(playerId);
 
                 const member = team.team.members.find(

@@ -332,4 +332,10 @@ export const teamRepository = {
             .returning();
         return result[0];
     },
+    updateTeamAvatarByFaceitId: async (faceitId: string, teamLogo: string) => {
+        await db
+            .update(teams)
+            .set({ team_logo: teamLogo, updated_at: new Date() })
+            .where(eq(teams.faceit_id, faceitId));
+    },
 };

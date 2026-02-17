@@ -66,22 +66,39 @@ export const faceitController = {
             writeFileName,
         } = data;
 
-        const teamsData = await faceitFetchUtil.fetchData<{
-            items: FaceitAPITournamentTeam[];
-        }>(`/championships/${faceitChampionshipId}/subscriptions`, {
-            readFileName: readFileName,
-            writeFileName: writeFileName,
-        });
+        let offset = 0;
 
-        const result = await faceitImportService.processStageTeams(
-            teamsData.items,
-            cfTournamentId,
-        );
+        let teamcount = 0;
+
+        while (true) {
+            const teamsData = await faceitFetchUtil.fetchData<{
+                items: FaceitAPITournamentTeam[];
+            }>(
+                `/championships/${faceitChampionshipId}/subscriptions?offset=${offset}`,
+                {
+                    readFileName: readFileName,
+                    writeFileName: writeFileName,
+                },
+            );
+
+            const result = await faceitImportService.processStageTeams(
+                teamsData.items,
+                cfTournamentId,
+            );
+
+            teamcount += result.length;
+
+            if (teamsData.items.length === 0) {
+                break;
+            }
+
+            offset += 10;
+        }
 
         res.json({
             success: true,
             message: "Teams imported successfully",
-            teams: result,
+            teamcount,
         });
     },
 
@@ -98,7 +115,6 @@ export const faceitController = {
                 writeFileName: writeFileName,
             },
         );
-        console.log(matchesData);
 
         const result = await faceitImportService.processNewStageMatches(
             matchesData,

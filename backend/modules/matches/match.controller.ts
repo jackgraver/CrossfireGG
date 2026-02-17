@@ -1,7 +1,11 @@
 import { Request, Response } from "express";
 import { matchService } from "./match.service";
 import { logger } from "../../core/logger";
-import { ClaimMatchSchema, MatchParamsSchema, UnclaimMatchSchema } from "./match.validation";
+import {
+    ClaimMatchSchema,
+    MatchParamsSchema,
+    UnclaimMatchSchema,
+} from "./match.validation";
 import { ClaimedAndUnclaimedMatchesContract } from "@repo/contracts";
 import { parseOr400 } from "../../core/validation/parseOr400";
 
@@ -14,6 +18,7 @@ export const matchController = {
             const match = await matchService.getMatchById(data.matchId);
             res.json(match);
         } catch (error: any) {
+            console.log(error);
             if (
                 error.message === "Match not found" ||
                 error.message === "Match participants not found"

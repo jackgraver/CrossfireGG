@@ -87,21 +87,16 @@ export const matchRepository = {
     },
 
     findParticipants: async (matchId: number) => {
-        return await db
-            .select({
-                participant: matchParticipants,
-                team: teams,
-            })
-            .from(matchParticipants)
-            .innerJoin(teams, eq(matchParticipants.team_id, teams.id))
-            .where(
-                and(
-                    eq(matchParticipants.match_id, matchId),
-                    isNull(matchParticipants.deleted_at),
-                    isNull(teams.deleted_at),
-                ),
-            )
-            .orderBy(matchParticipants.position);
+        return await db.query.matchParticipants.findMany({
+            where: and(
+                eq(matchParticipants.match_id, matchId),
+                isNull(matchParticipants.deleted_at),
+            ),
+            with: {
+                team: true,
+            },
+            orderBy: matchParticipants.position,
+        });
     },
 
     findGroupById: async (groupId: number) => {

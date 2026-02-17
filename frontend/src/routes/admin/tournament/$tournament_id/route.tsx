@@ -1,5 +1,6 @@
 import {
     useRefreshMatches,
+    useRefreshTeams,
     useTournamentById,
 } from "@/lib/api/tournament.queries";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
@@ -38,6 +39,8 @@ function RouteComponent() {
     const { tournament_id } = Route.useParams();
     const { data: tournament } = useTournamentById(tournament_id);
 
+    const { mutate } = useRefreshTeams();
+
     return (
         <div className="flex min-h-screen flex-col gap-4">
             <h1 className="text-textPrimary text-2xl font-bold">
@@ -53,6 +56,18 @@ function RouteComponent() {
                     />
                 ))}
             </div>
+            <button
+                onClick={() => {
+                    console.log("stages", tournament?.stages[0]);
+                    mutate({
+                        faceitId: "4988a83a-1e76-484d-bbcd-f485b3c0fc08",
+                        tournamentId: 15,
+                    });
+                }}
+                className="rounded bg-blue-600 px-4 py-1 text-white transition hover:bg-blue-700 disabled:opacity-60"
+            >
+                Fetch teams
+            </button>
             <TeamsTable tournamentId={tournament?.id ?? 0} />
             <Outlet />
         </div>

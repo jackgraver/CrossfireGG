@@ -25,6 +25,7 @@ export const useCreateTournamentForm = () => {
             CreateTournamentContract,
         },
         onSubmit: async ({ value }: any) => {
+            console.log(value);
             mutate(value);
         },
     } as any);

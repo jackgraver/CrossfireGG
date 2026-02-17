@@ -12,7 +12,7 @@ export default function TeamLogo({
     if (!team && !avatar) return null;
     if (team && !team.team_logo && !avatar) return null;
 
-    const placeholder = "/oss-logo-placeholder.png";
+    const placeholder = "/crossfire.png";
 
     const isValidSrc = (src: string | undefined | null): src is string =>
         !!src && typeof src === "string" && src.trim() !== "";

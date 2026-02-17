@@ -261,7 +261,7 @@ function RouteComponent() {
                                                 )}
                                             </form.Field>
                                             <form.Field
-                                                name={`stages[${index}].faceitId`}
+                                                name={`stages[${index}].faceit_id`}
                                             >
                                                 {(field: any) => (
                                                     <Input
