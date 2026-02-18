@@ -23,6 +23,8 @@ function MatchPage() {
     const team1 = participants[0];
     const team2 = participants[1];
 
+    console.log(team1, team2);
+
     console.log(maps);
 
     const currentMap = maps.find(
@@ -46,10 +48,12 @@ function MatchPage() {
             <div className="flex items-center justify-center gap-12 py-4">
                 <div className="flex flex-col items-center gap-2">
                     <TeamLogo
-                        team={team1.team}
+                        team={team1.stageTeam.team}
                         styling="h-16 w-16 rounded shadow-lg"
                     />
-                    <span className="text-xl font-bold">{team1.team.name}</span>
+                    <span className="text-xl font-bold">
+                        {team1.stageTeam.team.name}
+                    </span>
                     <span className="text-cfRed text-3xl font-black">
                         {team1.score}
                     </span>
@@ -59,10 +63,12 @@ function MatchPage() {
                 </span>
                 <div className="flex flex-col items-center gap-2">
                     <TeamLogo
-                        team={team2.team}
+                        team={team2.stageTeam.team}
                         styling="h-16 w-16 rounded shadow-lg"
                     />
-                    <span className="text-xl font-bold">{team2.team.name}</span>
+                    <span className="text-xl font-bold">
+                        {team2.stageTeam.team.name}
+                    </span>
                     <span className="text-3xl font-black">{team2.score}</span>
                 </div>
             </div>
@@ -98,16 +104,17 @@ function MatchPage() {
                         <div className="flex flex-col gap-3">
                             <div className="flex items-center gap-2 px-1">
                                 <TeamLogo
-                                    team={team1.team}
+                                    team={team1.stageTeam.team}
                                     styling="h-6 w-6 rounded-sm"
                                 />
                                 <span className="text-textSecondary text-sm font-bold tracking-wider uppercase">
-                                    {team1.team.name}
+                                    {team1.stageTeam.team.name}
                                 </span>
                             </div>
                             <OSSTable
-                                data={currentMap.playerStats.filter(
-                                    (s: any) => s.team_id === team1.team.id,
+                                data={currentMap?.playerStats?.filter(
+                                    (s: any) =>
+                                        s.team_id === team1.stageTeam.team.id,
                                 )}
                                 columns={columns}
                                 className="bg-mainBg border-border overflow-hidden rounded-lg border shadow-sm"
@@ -116,16 +123,17 @@ function MatchPage() {
                         <div className="flex flex-col gap-3">
                             <div className="flex items-center gap-2 px-1">
                                 <TeamLogo
-                                    team={team2.team}
+                                    team={team2.stageTeam.team}
                                     styling="h-6 w-6 rounded-sm"
                                 />
                                 <span className="text-textSecondary text-sm font-bold tracking-wider uppercase">
-                                    {team2.team.name}
+                                    {team2.stageTeam.team.name}
                                 </span>
                             </div>
                             <OSSTable
-                                data={currentMap.playerStats.filter(
-                                    (s: any) => s.team_id === team2.team.id,
+                                data={currentMap?.playerStats?.filter(
+                                    (s: any) =>
+                                        s.team_id === team2.stageTeam.team.id,
                                 )}
                                 columns={columns}
                                 className="bg-mainBg border-border overflow-hidden rounded-lg border shadow-sm"

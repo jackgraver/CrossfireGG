@@ -93,7 +93,11 @@ export const matchRepository = {
                 isNull(matchParticipants.deleted_at),
             ),
             with: {
-                team: true,
+                stageTeam: {
+                    with: {
+                        team: true,
+                    },
+                },
             },
             orderBy: matchParticipants.position,
         });

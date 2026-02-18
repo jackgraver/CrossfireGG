@@ -64,15 +64,6 @@ function RouteComponent() {
                         </div>
                     ) : (
                         <>
-                            <button
-                                className="bg-border text-textSecondary hover:bg-secondBg flex-1 rounded px-4 py-2"
-                                onClick={() =>
-                                    // api.post("/faceit/test-route", {})
-                                    authClient.signOut()
-                                }
-                            >
-                                Testing faceit
-                            </button>
                             <TournamentGroup
                                 type="active"
                                 tournaments={activeTournaments}

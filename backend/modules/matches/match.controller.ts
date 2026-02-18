@@ -6,28 +6,18 @@ import {
     MatchParamsSchema,
     UnclaimMatchSchema,
 } from "./match.validation";
-import { ClaimedAndUnclaimedMatchesContract } from "@repo/contracts";
 import { parseOr400 } from "../../core/validation/parseOr400";
+import { sendContract } from "../../core/sendContract";
+import { MatchWithParticipantsAndMapsContract } from "@repo/contracts";
 
 export const matchController = {
     getMatchById: async (req: Request, res: Response) => {
-        try {
-            const data = parseOr400(res, MatchParamsSchema, req.params);
-            if (!data) return;
+        const data = parseOr400(res, MatchParamsSchema, req.params);
+        if (!data) return;
 
-            const match = await matchService.getMatchById(data.matchId);
-            res.json(match);
-        } catch (error: any) {
-            console.log(error);
-            if (
-                error.message === "Match not found" ||
-                error.message === "Match participants not found"
-            ) {
-                return res.status(404).json({ error: error.message });
-            }
-            logger.error("Error fetching match:", error);
-            res.status(500).json({ error: "Failed to fetch match" });
-        }
+        const match = await matchService.getMatchById(data.matchId);
+
+        sendContract(res, MatchWithParticipantsAndMapsContract, match);
     },
 
     getAllMatchCasting: async (_: Request, res: Response) => {

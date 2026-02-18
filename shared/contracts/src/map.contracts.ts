@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { PlayerStatsContract } from "./player.contracts";
 
 export const MapContract = z.object({
     id: z.number(),
@@ -12,3 +13,9 @@ export const MapContract = z.object({
 });
 
 export type MapDTO = z.infer<typeof MapContract>;
+
+export const MapWithPlayerStatsContract = MapContract.extend({
+    playerStats: PlayerStatsContract.array(),
+});
+
+export type MapWithPlayerStatsDTO = z.infer<typeof MapWithPlayerStatsContract>;

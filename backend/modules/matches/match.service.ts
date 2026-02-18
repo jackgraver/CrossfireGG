@@ -1,7 +1,7 @@
 import { matchRepository } from "./match.repository";
 
 export const matchService = {
-    getMatchById: async (matchId: number): Promise<any> => {
+    getMatchById: async (matchId: number) => {
         const match = await matchRepository.findById(matchId);
         if (!match) throw new Error("Match not found");
 
