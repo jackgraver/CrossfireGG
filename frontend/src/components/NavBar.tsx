@@ -15,6 +15,7 @@ import {
 import { useAuth } from "@/contexts/auth";
 import TeamLogo from "./shared/bracket/atoms/TeamLogo";
 import { useSignOut } from "@/contexts/auth";
+import { authClient } from "@/lib/auth/auth-client";
 
 function toggleDarkMode() {
     if (typeof document === "undefined") return;
@@ -170,7 +171,16 @@ export default function NavBar() {
                             </div>
                         </>
                     ) : (
-                        <button className="bg-faceit hover:bg-faceitSecondary flex items-center gap-2 rounded-md py-2 pr-3 pl-2 text-sm font-bold text-black">
+                        <button
+                            className="bg-faceit hover:bg-faceitSecondary flex cursor-pointer items-center gap-2 rounded-md py-2 pr-3 pl-2 text-sm font-bold text-black"
+                            onClick={async () => {
+                                await authClient.signIn.oauth2({
+                                    providerId: "faceit",
+                                    callbackURL:
+                                        "https://crossfiregg.com/tournament",
+                                });
+                            }}
+                        >
                             <img
                                 src="/faceit.png"
                                 alt="Faceit"

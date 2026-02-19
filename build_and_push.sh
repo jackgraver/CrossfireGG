@@ -15,7 +15,7 @@ echo "Building images in parallel..."
 (
   echo "Building frontend..."
   docker build -t ${FRONTEND_IMAGE}:${TAG} \
-    --build-arg VITE_API_BASE_URL=http://api.f83jdf.165.232.131.108.sslip.io \
+    --build-arg VITE_API_BASE_URL=https://api.crossfiregg.com \
     -f frontend/Dockerfile .
 ) &
 

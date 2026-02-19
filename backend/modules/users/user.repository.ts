@@ -1,5 +1,5 @@
 import { db } from "../../config/database";
-import { users, userRoles, roles, players } from "../../schemas";
+import { users, userRoles, roles, players, account } from "../../schemas";
 import { eq, and, isNull } from "drizzle-orm";
 import { uuidv4 } from "zod";
 import { Role } from "@repo/types";
@@ -45,6 +45,19 @@ export const userRepository = {
             },
             where: and(eq(players.user_id, userId), isNull(players.deleted_at)),
         });
+    },
+    findFaceitAccountIdByUserId: async (userId: string) => {
+        const result = await db
+            .select({ accountId: account.accountId })
+            .from(account)
+            .where(
+                and(
+                    eq(account.userId, userId),
+                    eq(account.providerId, "faceit"),
+                ),
+            )
+            .limit(1);
+        return result[0]?.accountId ?? null;
     },
 
     create: async (userData: {

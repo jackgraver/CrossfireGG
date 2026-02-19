@@ -21,9 +21,23 @@ function StageRow({
 }) {
     const { mutate, isPending } = useRefreshMatches(faceitId, stageId);
 
+    const { mutate: mutateTeams, isPending: isPendingTeams } = useRefreshTeams();
+
     return (
         <div className="bg-secondBg border-border flex items-center justify-between rounded-md border px-4 py-3">
             <h2 className="text-textPrimary text-lg font-semibold">{name}</h2>
+             <button
+                disabled={isPendingTeams}
+                onClick={() => {
+                    mutateTeams({
+                        faceitId: faceitId,
+                        tournamentId: stageId,
+                    });
+                }}
+                className="rounded bg-blue-600 px-4 py-1 text-white transition hover:bg-blue-700 disabled:opacity-60"
+            >
+                {isPendingTeams ? "Fetch teams" : "Fetch teams"}
+            </button>
             <button
                 className="ml-4 rounded bg-blue-600 px-4 py-1 text-white transition hover:bg-blue-700 disabled:opacity-60"
                 disabled={isPending}
@@ -38,8 +52,6 @@ function StageRow({
 function RouteComponent() {
     const { tournament_id } = Route.useParams();
     const { data: tournament } = useTournamentById(tournament_id);
-
-    const { mutate } = useRefreshTeams();
 
     return (
         <div className="flex min-h-screen flex-col gap-4">
@@ -56,18 +68,7 @@ function RouteComponent() {
                     />
                 ))}
             </div>
-            <button
-                onClick={() => {
-                    console.log("stages", tournament?.stages[0]);
-                    mutate({
-                        faceitId: "4988a83a-1e76-484d-bbcd-f485b3c0fc08",
-                        tournamentId: 15,
-                    });
-                }}
-                className="rounded bg-blue-600 px-4 py-1 text-white transition hover:bg-blue-700 disabled:opacity-60"
-            >
-                Fetch teams
-            </button>
+           
             <TeamsTable tournamentId={tournament?.id ?? 0} />
             <Outlet />
         </div>

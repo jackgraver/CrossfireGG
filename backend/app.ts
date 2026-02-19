@@ -38,7 +38,7 @@ app.set("trust proxy", 1);
 
 // app.use(burstLimiter);
 app.use(globalLimiter);
-app.use(morgan("dev"));
+app.use(morgan("[:date[iso]] :method :url :status :response-time ms"));
 app.use(
     helmet({
         contentSecurityPolicy: false,

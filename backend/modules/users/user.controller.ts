@@ -1,6 +1,7 @@
 import { Response, RequestHandler } from "express";
 import { AuthRequest } from "../../core/middleware/auth.middleware";
 import { userRepository } from "./user.repository";
+import { playerRepository } from "../players/player.repository";
 import { sendContract } from "../../core/sendContract";
 import { UserWithRolesContract } from "@repo/contracts";
 
@@ -11,12 +12,32 @@ export const userController = {
             if (!authReq.user) {
                 return res.json(null);
             }
+            let playerInfo = authReq.playerInfo;
+            if (!playerInfo?.faceit_id) {
+                const faceitAccountId =
+                    await userRepository.findFaceitAccountIdByUserId(
+                        authReq.user.id,
+                    );
+                if (faceitAccountId) {
+                    await playerRepository.upsertPlayerByFaceitId({
+                        faceit_id: faceitAccountId,
+                        user_id: authReq.user.id,
+                        player_name: authReq.user.name,
+                        player_logo: null,
+                        country: null,
+                        base_role: "starter",
+                    });
+                    playerInfo = await userRepository.userPlayerInfo(
+                        authReq.user.id,
+                    );
+                }
+            }
 
             res.json({
                 userId: authReq.user.id,
                 name: authReq.user.name,
-                faceitId: authReq.playerInfo?.faceit_id,
-                teamId: authReq.playerInfo?.team_id,
+                faceitId: playerInfo?.faceit_id,
+                teamId: playerInfo?.team_id,
                 roles: authReq.roles ?? [],
             });
         } catch (error: any) {
