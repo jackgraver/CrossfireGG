@@ -2,7 +2,15 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useAllTournaments } from "@/lib/api/tournament.queries";
 import { formatDateOnly, toUnixTimestamp } from "@/lib/dateUtils";
 import SignUpButton from "./-components/SignUpButton";
-import { Trophy, Users, Calendar, DollarSign } from "lucide-react";
+import {
+    Trophy,
+    Users,
+    Calendar,
+    DollarSign,
+    PlayCircle,
+    CheckCircle2,
+    CalendarFold,
+} from "lucide-react";
 import { TournamentWithStagesDTO } from "@repo/contracts";
 import { api } from "@/lib/api/client";
 import { authClient } from "@/lib/auth/auth-client";
@@ -93,9 +101,16 @@ export const TournamentGroup = ({
 }) => {
     if (tournaments.length === 0) return null;
 
+    const iconMap = {
+        active: <PlayCircle size={28} />,
+        upcoming: <CalendarFold size={28} />,
+        ended: <CheckCircle2 size={28} />,
+    };
+
     return (
         <div className="mb-12 flex flex-col gap-4">
-            <h2 className="text-textPrimary border-border/10 border-b text-3xl font-black tracking-tight uppercase">
+            <h2 className="text-textSecondary border-border/10 flex items-center gap-2 border-b text-3xl font-black tracking-tight uppercase">
+                {iconMap[type]}
                 {type === "active"
                     ? "Active Tournaments"
                     : type === "upcoming"
