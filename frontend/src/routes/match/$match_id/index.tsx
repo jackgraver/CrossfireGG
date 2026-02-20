@@ -25,8 +25,41 @@ function MatchPage() {
         (m: any) => m.id === (selectedMapId ?? maps[0]?.id),
     );
 
-    const table1 = useStatsTable(currentMap?.playerStats.team1);
-    const table2 = useStatsTable(currentMap?.playerStats.team2);
+    // Aggregate stats across arrays of player stats for any team or mix of teams
+    function aggregatePlayerStats(statsList: any[]) {
+        const statsMap = new Map();
+        for (const stat of statsList) {
+            const playerId = stat.stagePlayer.player.id;
+            if (!statsMap.has(playerId)) {
+                statsMap.set(playerId, { ...stat });
+            } else {
+                const existing = statsMap.get(playerId);
+                statsMap.set(playerId, {
+                    ...existing,
+                    kills: (existing.kills ?? 0) + (stat.kills ?? 0),
+                    deaths: (existing.deaths ?? 0) + (stat.deaths ?? 0),
+                    assists: (existing.assists ?? 0) + (stat.assists ?? 0),
+                    adr: (existing.adr ?? 0) + (stat.adr ?? 0),
+                });
+            }
+        }
+        return Array.from(statsMap.values());
+    }
+
+    // Combined stats for just the selected map's team1 and team2 (for toggling view)
+    const combinedStats1 = aggregatePlayerStats(
+        currentMap?.playerStats?.team1 ?? [],
+    );
+    const combinedStats2 = aggregatePlayerStats(
+        currentMap?.playerStats?.team2 ?? [],
+    );
+
+    const table1 = useStatsTable(
+        selectedMapId === 0 ? combinedStats1 : currentMap?.playerStats.team1,
+    );
+    const table2 = useStatsTable(
+        selectedMapId === 0 ? combinedStats2 : currentMap?.playerStats.team2,
+    );
 
     if (isLoading)
         return <div className="text-textSecondary p-6">Loading...</div>;
@@ -71,299 +104,55 @@ function MatchPage() {
                     </div>
                 )}
             </div>
-            {(currentMap || selectedMapId === 0) && (
-                <>
-                    {selectedMapId === 0 ? (
-                        <div className="flex flex-col gap-8">
-                            <div className="flex flex-col gap-8">
-                                <div className="flex flex-col gap-3">
-                                    <div className="flex items-center gap-2 px-1">
-                                        <TeamLogo
-                                            team={team1.stageTeam.team}
-                                            styling="h-8 w-8 rounded-full"
-                                        />
-                                        <span className="text-textSecondary font-bold tracking-wider uppercase">
-                                            {team1.stageTeam.team.name}
-                                        </span>
-                                        <span
-                                            className={cn(
-                                                `font-black`,
-                                                team1.winner
-                                                    ? "text-green-500"
-                                                    : "text-red-500",
-                                            )}
-                                        >
-                                            {team1.score}
-                                        </span>
-                                    </div>
-                                    <table className="w-max border-collapse">
-                                        <thead>
-                                            {table1
-                                                .getHeaderGroups()
-                                                .map((headerGroup) => (
-                                                    <tr key={headerGroup.id}>
-                                                        {headerGroup.headers.map(
-                                                            (header) => (
-                                                                <th
-                                                                    key={
-                                                                        header.id
-                                                                    }
-                                                                    colSpan={
-                                                                        header.colSpan
-                                                                    }
-                                                                    className="border-border bg-secondBg text-textPrimary border px-4 py-2 text-left text-sm font-medium whitespace-nowrap"
-                                                                >
-                                                                    {header.isPlaceholder
-                                                                        ? null
-                                                                        : flexRender(
-                                                                              header
-                                                                                  .column
-                                                                                  .columnDef
-                                                                                  .header,
-                                                                              header.getContext(),
-                                                                          )}
-                                                                </th>
-                                                            ),
-                                                        )}
-                                                    </tr>
-                                                ))}
-                                        </thead>
-                                        <tbody>
-                                            {table1
-                                                .getRowModel()
-                                                .rows.map((row) => (
-                                                    <tr
-                                                        key={row.id}
-                                                        className="hover:bg-secondBg"
-                                                    >
-                                                        {row
-                                                            .getVisibleCells()
-                                                            .map((cell) => (
-                                                                <td
-                                                                    key={
-                                                                        cell.id
-                                                                    }
-                                                                    className="border-border text-textPrimary border px-4 py-2 text-sm whitespace-nowrap"
-                                                                >
-                                                                    {flexRender(
-                                                                        cell
-                                                                            .column
-                                                                            .columnDef
-                                                                            .cell,
-                                                                        cell.getContext(),
-                                                                    )}
-                                                                </td>
-                                                            ))}
-                                                    </tr>
-                                                ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                                <div className="flex flex-col gap-3">
-                                    <div className="flex items-center gap-2 px-1">
-                                        <TeamLogo
-                                            team={team2.stageTeam.team}
-                                            styling="h-8 w-8 rounded-full"
-                                        />
-                                        <span className="text-textSecondary text-sm font-bold tracking-wider uppercase">
-                                            {team2.stageTeam.team.name}
-                                        </span>
-                                        <span
-                                            className={cn(
-                                                `text-sm font-black`,
-                                                team2.winner
-                                                    ? "text-green-500"
-                                                    : "text-red-500",
-                                            )}
-                                        >
-                                            {team2.score}
-                                        </span>
-                                    </div>
-                                    {/*<OSSTable
-                                        data={Object.values(
-                                            maps.reduce(
-                                                (acc: any, map: any) => {
-                                                    map.playerStats.team2.forEach(
-                                                        (playerStat: any) => {
-                                                            const pid =
-                                                                playerStat
-                                                                    .stagePlayer
-                                                                    .player_id ??
-                                                                playerStat.player_id;
-                                                            if (!acc[pid]) {
-                                                                acc[pid] = {
-                                                                    ...playerStat,
-                                                                };
-                                                            } else {
-                                                                acc[pid] = {
-                                                                    ...acc[pid],
-                                                                    kills:
-                                                                        (acc[
-                                                                            pid
-                                                                        ]
-                                                                            .kills ??
-                                                                            0) +
-                                                                        (playerStat.kills ??
-                                                                            0),
-                                                                    deaths:
-                                                                        (acc[
-                                                                            pid
-                                                                        ]
-                                                                            .deaths ??
-                                                                            0) +
-                                                                        (playerStat.deaths ??
-                                                                            0),
-                                                                    assists:
-                                                                        (acc[
-                                                                            pid
-                                                                        ]
-                                                                            .assists ??
-                                                                            0) +
-                                                                        (playerStat.assists ??
-                                                                            0),
-                                                                    adr:
-                                                                        (acc[
-                                                                            pid
-                                                                        ].adr ??
-                                                                            0) +
-                                                                        (playerStat.adr ??
-                                                                            0),
-                                                                    damage:
-                                                                        (acc[
-                                                                            pid
-                                                                        ]
-                                                                            .damage ??
-                                                                            0) +
-                                                                        (playerStat.damage ??
-                                                                            0),
-                                                                };
-                                                            }
-                                                        },
-                                                    );
-                                                    return acc;
-                                                },
-                                                {},
-                                            ),
-                                        )}
-                                        columns={columns}
-                                        className="bg-mainBg border-border overflow-hidden rounded-lg border shadow-sm"
-                                    />*/}
-                                    <table className="w-max border-collapse">
-                                        <thead>
-                                            {table2
-                                                .getHeaderGroups()
-                                                .map((headerGroup) => (
-                                                    <tr key={headerGroup.id}>
-                                                        {headerGroup.headers.map(
-                                                            (header) => (
-                                                                <th
-                                                                    key={
-                                                                        header.id
-                                                                    }
-                                                                    colSpan={
-                                                                        header.colSpan
-                                                                    }
-                                                                    className="border-border bg-secondBg text-textPrimary border px-4 py-2 text-left text-sm font-medium whitespace-nowrap"
-                                                                >
-                                                                    {header.isPlaceholder
-                                                                        ? null
-                                                                        : flexRender(
-                                                                              header
-                                                                                  .column
-                                                                                  .columnDef
-                                                                                  .header,
-                                                                              header.getContext(),
-                                                                          )}
-                                                                </th>
-                                                            ),
-                                                        )}
-                                                    </tr>
-                                                ))}
-                                        </thead>
-                                        <tbody>
-                                            {table2
-                                                .getRowModel()
-                                                .rows.map((row) => (
-                                                    <tr
-                                                        key={row.id}
-                                                        className="hover:bg-secondBg"
-                                                    >
-                                                        {row
-                                                            .getVisibleCells()
-                                                            .map((cell) => (
-                                                                <td
-                                                                    key={
-                                                                        cell.id
-                                                                    }
-                                                                    className="border-border text-textPrimary border px-4 py-2 text-sm whitespace-nowrap"
-                                                                >
-                                                                    {flexRender(
-                                                                        cell
-                                                                            .column
-                                                                            .columnDef
-                                                                            .cell,
-                                                                        cell.getContext(),
-                                                                    )}
-                                                                </td>
-                                                            ))}
-                                                    </tr>
-                                                ))}
-                                        </tbody>
-                                    </table>
-                                </div>
+            {currentMap && (
+                <div className="flex flex-col gap-8">
+                    <div className="flex flex-col gap-8">
+                        <div className="flex flex-col gap-3">
+                            <div className="flex items-center gap-2 px-1">
+                                <TeamLogo
+                                    team={team1.stageTeam.team}
+                                    styling="h-8 w-8 rounded-full"
+                                />
+                                <span className="text-textSecondary font-bold tracking-wider uppercase">
+                                    {team1.stageTeam.team.name}
+                                </span>
+                                <span
+                                    className={cn(
+                                        `font-black`,
+                                        team1.winner
+                                            ? "text-green-500"
+                                            : "text-red-500",
+                                    )}
+                                >
+                                    {team1.score}
+                                </span>
                             </div>
+                            <CFTable table={table1} />
                         </div>
-                    ) : (
-                        <div className="flex flex-col gap-8">
-                            <div className="flex flex-col gap-8">
-                                <div className="flex flex-col gap-3">
-                                    <div className="flex items-center gap-2 px-1">
-                                        <TeamLogo
-                                            team={team1.stageTeam.team}
-                                            styling="h-8 w-8 rounded-full"
-                                        />
-                                        <span className="text-textSecondary font-bold tracking-wider uppercase">
-                                            {team1.stageTeam.team.name}
-                                        </span>
-                                        <span
-                                            className={cn(
-                                                `font-black`,
-                                                team1.winner
-                                                    ? "text-green-500"
-                                                    : "text-red-500",
-                                            )}
-                                        >
-                                            {team1.score}
-                                        </span>
-                                    </div>
-                                    <CFTable table={table1} />
-                                </div>
-                                <div className="flex flex-col gap-3">
-                                    <div className="flex items-center gap-2 px-1">
-                                        <TeamLogo
-                                            team={team2.stageTeam.team}
-                                            styling="h-8 w-8 rounded-full"
-                                        />
-                                        <span className="text-textSecondary text-sm font-bold tracking-wider uppercase">
-                                            {team2.stageTeam.team.name}
-                                        </span>
-                                        <span
-                                            className={cn(
-                                                `text-sm font-black`,
-                                                team2.winner
-                                                    ? "text-green-500"
-                                                    : "text-red-500",
-                                            )}
-                                        >
-                                            {team2.score}
-                                        </span>
-                                    </div>
-                                    <CFTable table={table2} />
-                                </div>
+                        <div className="flex flex-col gap-3">
+                            <div className="flex items-center gap-2 px-1">
+                                <TeamLogo
+                                    team={team2.stageTeam.team}
+                                    styling="h-8 w-8 rounded-full"
+                                />
+                                <span className="text-textSecondary text-sm font-bold tracking-wider uppercase">
+                                    {team2.stageTeam.team.name}
+                                </span>
+                                <span
+                                    className={cn(
+                                        `text-sm font-black`,
+                                        team2.winner
+                                            ? "text-green-500"
+                                            : "text-red-500",
+                                    )}
+                                >
+                                    {team2.score}
+                                </span>
                             </div>
+                            <CFTable table={table2} />
                         </div>
-                    )}
-                </>
+                    </div>
+                </div>
             )}
         </div>
     );
