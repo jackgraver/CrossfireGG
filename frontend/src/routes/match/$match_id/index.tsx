@@ -3,12 +3,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMatch } from "../../../lib/api/match.queries";
 import TeamLogo from "@/components/shared/bracket/atoms/TeamLogo";
 import { cn } from "@/utils/cn";
-import {
-    createColumnHelper,
-    flexRender,
-    getCoreRowModel,
-    useReactTable,
-} from "@tanstack/react-table";
+import CFTable from "@/components/shared/CFTable";
+import { useStatsTable } from "../-hooks/useStatsTable";
+import { flexRender } from "@tanstack/react-table";
 
 export const Route = createFileRoute("/match/$match_id/")({
     component: MatchPage,
@@ -28,42 +25,8 @@ function MatchPage() {
         (m: any) => m.id === (selectedMapId ?? maps[0]?.id),
     );
 
-    const columnHelper = createColumnHelper<any>();
-
-    const columns = [
-        columnHelper.accessor("stagePlayer.player.player_name", {
-            header: "Player",
-            cell: (info) => info.getValue(),
-        }),
-        columnHelper.accessor("kills", {
-            header: "K",
-            cell: (info) => info.getValue(),
-        }),
-        columnHelper.accessor("deaths", {
-            header: "D",
-            cell: (info) => info.getValue(),
-        }),
-        columnHelper.accessor("assists", {
-            header: "A",
-            cell: (info) => info.getValue(),
-        }),
-        columnHelper.accessor("adr", {
-            header: "ADR",
-            cell: (info) => info.getValue(),
-        }),
-    ];
-
-    const table1 = useReactTable({
-        data: currentMap?.playerStats.team1 ?? [],
-        columns: columns,
-        getCoreRowModel: getCoreRowModel(),
-    });
-
-    const table2 = useReactTable({
-        data: currentMap?.playerStats.team2 ?? [],
-        columns: columns,
-        getCoreRowModel: getCoreRowModel(),
-    });
+    const table1 = useStatsTable(currentMap?.playerStats.team1);
+    const table2 = useStatsTable(currentMap?.playerStats.team2);
 
     if (isLoading)
         return <div className="text-textSecondary p-6">Loading...</div>;
@@ -133,75 +96,6 @@ function MatchPage() {
                                             {team1.score}
                                         </span>
                                     </div>
-                                    {/*<OSSTable
-                                        data={Object.values(
-                                            maps.reduce(
-                                                (acc: any, map: any) => {
-                                                    map.playerStats.team1.forEach(
-                                                        (playerStat: any) => {
-                                                            const pid =
-                                                                playerStat
-                                                                    .stagePlayer
-                                                                    .player_id ??
-                                                                playerStat.player_id;
-                                                            if (!acc[pid]) {
-                                                                acc[pid] = {
-                                                                    ...playerStat,
-                                                                };
-                                                            } else {
-                                                                acc[pid] = {
-                                                                    ...acc[pid],
-                                                                    kills:
-                                                                        (acc[
-                                                                            pid
-                                                                        ]
-                                                                            .kills ??
-                                                                            0) +
-                                                                        (playerStat.kills ??
-                                                                            0),
-                                                                    deaths:
-                                                                        (acc[
-                                                                            pid
-                                                                        ]
-                                                                            .deaths ??
-                                                                            0) +
-                                                                        (playerStat.deaths ??
-                                                                            0),
-                                                                    assists:
-                                                                        (acc[
-                                                                            pid
-                                                                        ]
-                                                                            .assists ??
-                                                                            0) +
-                                                                        (playerStat.assists ??
-                                                                            0),
-                                                                    adr:
-                                                                        (acc[
-                                                                            pid
-                                                                        ].adr ??
-                                                                            0) +
-                                                                        (playerStat.adr ??
-                                                                            0),
-                                                                    damage:
-                                                                        (acc[
-                                                                            pid
-                                                                        ]
-                                                                            .damage ??
-                                                                            0) +
-                                                                        (playerStat.damage ??
-                                                                            0),
-                                                                };
-                                                            }
-                                                        },
-                                                    );
-                                                    return acc;
-                                                },
-                                                {},
-                                            ),
-                                        )}
-                                        columns={columns}
-                                        className="bg-mainBg border-border overflow-hidden rounded-lg border shadow-sm"
-                                    />*/}
                                     <table className="w-max border-collapse">
                                         <thead>
                                             {table1
@@ -442,75 +336,7 @@ function MatchPage() {
                                             {team1.score}
                                         </span>
                                     </div>
-                                    {/* <OSSTable
-                                        data={
-                                            currentMap?.playerStats.team1 ?? []
-                                        }
-                                        columns={columns}
-                                        className="bg-mainBg border-border overflow-hidden rounded-lg border shadow-sm"
-                                    /> */}
-                                    <table className="w-max border-collapse">
-                                        <thead>
-                                            {table1
-                                                .getHeaderGroups()
-                                                .map((headerGroup) => (
-                                                    <tr key={headerGroup.id}>
-                                                        {headerGroup.headers.map(
-                                                            (header) => (
-                                                                <th
-                                                                    key={
-                                                                        header.id
-                                                                    }
-                                                                    colSpan={
-                                                                        header.colSpan
-                                                                    }
-                                                                    className="border-border bg-secondBg text-textPrimary border px-4 py-2 text-left text-sm font-medium whitespace-nowrap"
-                                                                >
-                                                                    {header.isPlaceholder
-                                                                        ? null
-                                                                        : flexRender(
-                                                                              header
-                                                                                  .column
-                                                                                  .columnDef
-                                                                                  .header,
-                                                                              header.getContext(),
-                                                                          )}
-                                                                </th>
-                                                            ),
-                                                        )}
-                                                    </tr>
-                                                ))}
-                                        </thead>
-                                        <tbody>
-                                            {table1
-                                                .getRowModel()
-                                                .rows.map((row) => (
-                                                    <tr
-                                                        key={row.id}
-                                                        className="hover:bg-secondBg"
-                                                    >
-                                                        {row
-                                                            .getVisibleCells()
-                                                            .map((cell) => (
-                                                                <td
-                                                                    key={
-                                                                        cell.id
-                                                                    }
-                                                                    className="border-border text-textPrimary border px-4 py-2 text-sm whitespace-nowrap"
-                                                                >
-                                                                    {flexRender(
-                                                                        cell
-                                                                            .column
-                                                                            .columnDef
-                                                                            .cell,
-                                                                        cell.getContext(),
-                                                                    )}
-                                                                </td>
-                                                            ))}
-                                                    </tr>
-                                                ))}
-                                        </tbody>
-                                    </table>
+                                    <CFTable table={table1} />
                                 </div>
                                 <div className="flex flex-col gap-3">
                                     <div className="flex items-center gap-2 px-1">
@@ -532,75 +358,7 @@ function MatchPage() {
                                             {team2.score}
                                         </span>
                                     </div>
-                                    {/* <OSSTable
-                                        data={
-                                            currentMap?.playerStats.team2 ?? []
-                                        }
-                                        columns={columns}
-                                        className="bg-mainBg border-border overflow-hidden rounded-lg border shadow-sm"
-                                    /> */}
-                                    <table className="w-max border-collapse">
-                                        <thead>
-                                            {table2
-                                                .getHeaderGroups()
-                                                .map((headerGroup) => (
-                                                    <tr key={headerGroup.id}>
-                                                        {headerGroup.headers.map(
-                                                            (header) => (
-                                                                <th
-                                                                    key={
-                                                                        header.id
-                                                                    }
-                                                                    colSpan={
-                                                                        header.colSpan
-                                                                    }
-                                                                    className="border-border bg-secondBg text-textPrimary border px-4 py-2 text-left text-sm font-medium whitespace-nowrap"
-                                                                >
-                                                                    {header.isPlaceholder
-                                                                        ? null
-                                                                        : flexRender(
-                                                                              header
-                                                                                  .column
-                                                                                  .columnDef
-                                                                                  .header,
-                                                                              header.getContext(),
-                                                                          )}
-                                                                </th>
-                                                            ),
-                                                        )}
-                                                    </tr>
-                                                ))}
-                                        </thead>
-                                        <tbody>
-                                            {table2
-                                                .getRowModel()
-                                                .rows.map((row) => (
-                                                    <tr
-                                                        key={row.id}
-                                                        className="hover:bg-secondBg"
-                                                    >
-                                                        {row
-                                                            .getVisibleCells()
-                                                            .map((cell) => (
-                                                                <td
-                                                                    key={
-                                                                        cell.id
-                                                                    }
-                                                                    className="border-border text-textPrimary border px-4 py-2 text-sm whitespace-nowrap"
-                                                                >
-                                                                    {flexRender(
-                                                                        cell
-                                                                            .column
-                                                                            .columnDef
-                                                                            .cell,
-                                                                        cell.getContext(),
-                                                                    )}
-                                                                </td>
-                                                            ))}
-                                                    </tr>
-                                                ))}
-                                        </tbody>
-                                    </table>
+                                    <CFTable table={table2} />
                                 </div>
                             </div>
                         </div>
