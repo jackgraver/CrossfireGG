@@ -7,6 +7,7 @@ import { authClient } from "@/lib/auth/auth-client";
 export type User = {
     userId: string;
     name: string;
+    image: string | null;
     faceitId: string;
     teamId: number;
     roles: string[];

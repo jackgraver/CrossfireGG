@@ -1,12 +1,11 @@
 import { apiGET } from "@/lib/api/client";
 import { useQuery } from "@tanstack/react-query";
-import { MatchWithParticipantsAndMapsDTO } from "@repo/contracts";
+import { MatchPageDTO } from "@repo/contracts";
 
 export const useMatch = (matchId: string) => {
-    return useQuery<MatchWithParticipantsAndMapsDTO>({
+    return useQuery<MatchPageDTO>({
         queryKey: ["match", matchId],
-        queryFn: () =>
-            apiGET<MatchWithParticipantsAndMapsDTO>(`/match/${matchId}`),
+        queryFn: () => apiGET<MatchPageDTO>(`/match/${matchId}`),
         enabled: !!matchId,
     });
 };

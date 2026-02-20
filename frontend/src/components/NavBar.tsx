@@ -36,6 +36,7 @@ interface NavItemProps {
     params?: Record<string, string>;
     icon: React.ReactNode;
     label: string;
+    left?: boolean;
     onClick?: (e: React.MouseEvent) => void;
     onMouseEnter?: () => void;
 }
@@ -45,6 +46,7 @@ const NavItem = ({
     params,
     icon,
     label,
+    left = true,
     onClick,
     onMouseEnter,
 }: NavItemProps) => {
@@ -60,8 +62,9 @@ const NavItem = ({
                 onClick={onClick}
                 onMouseEnter={onMouseEnter}
             >
-                {icon}
+                {left && icon}
                 <span className="hidden sm:inline">{label}</span>
+                {!left && icon}
             </Link>
         );
     }
@@ -72,8 +75,9 @@ const NavItem = ({
             onClick={onClick}
             onMouseEnter={onMouseEnter}
         >
-            {icon}
+            {left && icon}
             <span className="hidden sm:inline">{label}</span>
+            {!left && icon}
         </button>
     );
 };
@@ -119,6 +123,7 @@ export default function NavBar() {
                         icon={<Moon size={18} />}
                         label="Theme"
                         onClick={() => toggleDarkMode()}
+                        left={false}
                     />
                     {matchesRole(
                         user?.roles,
@@ -130,6 +135,7 @@ export default function NavBar() {
                             to="/casting"
                             icon={<Video size={18} />}
                             label="Casting"
+                            left={false}
                         />
                     )}
                     {matchesRole(user?.roles, Roles.ADMIN) && (
@@ -137,20 +143,28 @@ export default function NavBar() {
                             to="/admin"
                             icon={<Settings size={18} />}
                             label="Admin"
+                            left={false}
                         />
                     )}
                     {user ? (
                         <>
                             <div className="group relative">
                                 <NavItem
+                                    left={false}
                                     to="/user"
-                                    icon={<User size={18} />}
+                                    icon={
+                                        <TeamLogo
+                                            avatar={user.image ?? undefined}
+                                            styling={"h-8 w-8 rounded-md"}
+                                        />
+                                    }
                                     label={user?.name}
                                 />
                                 <div className="bg-mainBg border-border invisible absolute right-0 z-20 mt-2 w-40 rounded border opacity-0 shadow-md transition-opacity duration-200 group-hover:visible group-hover:opacity-100">
                                     <ul className="flex flex-col py-2">
                                         <li>
                                             <NavItem
+                                                left={false}
                                                 to="/user"
                                                 icon={<User size={16} />}
                                                 label="Profile"
@@ -158,6 +172,7 @@ export default function NavBar() {
                                         </li>
                                         <li>
                                             <NavItem
+                                                left={false}
                                                 to="/"
                                                 icon={<LogOut size={18} />}
                                                 label="Sign Out"
@@ -174,6 +189,14 @@ export default function NavBar() {
                         <button
                             className="bg-faceit hover:bg-faceitSecondary flex cursor-pointer items-center gap-2 rounded-md py-2 pr-3 pl-2 text-sm font-bold text-black"
                             onClick={async () => {
+                                if (process.env.NODE_ENV === "development") {
+                                    await authClient.signIn.email({
+                                        email: "root@admin.com",
+                                        password: "root-password",
+                                    });
+                                    return;
+                                }
+
                                 await authClient.signIn.oauth2({
                                     providerId: "faceit",
                                     callbackURL:

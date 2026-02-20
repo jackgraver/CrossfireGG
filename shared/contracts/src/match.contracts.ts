@@ -1,7 +1,11 @@
 import { z } from "zod";
 import { MatchParticipantWithTeamContract } from "./match_participant.contracts";
 import { MatchCasterContract } from "./match_caster.contracts";
-import { MapWithPlayerStatsContract } from "./map.contracts";
+import { MapContract, MapWithPlayerStatsContract } from "./map.contracts";
+import {
+    PlayerStatsContract,
+    PlayerStatsWithPlayerContract,
+} from "./player.contracts";
 
 export const MatchContract = z.object({
     id: z.number(),
@@ -50,3 +54,18 @@ export const ClaimedAndUnclaimedMatchesContract = z.object({
 export type ClaimedAndUnclaimedMatchesDTO = z.infer<
     typeof ClaimedAndUnclaimedMatchesContract
 >;
+
+export const MatchPageContract = z.object({
+    match: MatchWithParticipantsContract.extend({
+        maps: z.array(
+            MapContract.extend({
+                playerStats: z.object({
+                    team1: z.array(PlayerStatsWithPlayerContract),
+                    team2: z.array(PlayerStatsWithPlayerContract),
+                }),
+            }),
+        ),
+    }),
+});
+
+export type MatchPageDTO = z.infer<typeof MatchPageContract>;

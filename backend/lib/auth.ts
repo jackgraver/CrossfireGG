@@ -7,11 +7,6 @@ import { db } from "../config/database";
 import { users, session, account, verification } from "../schemas";
 import { playerRepository } from "../modules/players/player.repository";
 
-console.log("AUTH ENV CHECK", {
-    BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
-    TRUSTED_ORIGINS: config.auth.trustedOrigins,
-});
-
 export const auth = betterAuth({
     database: drizzleAdapter(db, {
         provider: "pg",
@@ -102,6 +97,24 @@ export const auth = betterAuth({
                         redirect_popup: "true",
                     },
                     overrideUserInfo: true,
+                    /*
+                    FACEIT USER INFO RESPONSE {
+                        guid: '2abbf5d5-ae35-40a1-bf6c-cf19c844168d',
+                        picture: 'https://assets.faceit-cdn.net/avatars/2abbf5d5-ae35-40a1-bf6c-cf19c844168d_1550686836060.jpg',
+                        email: 'duw.jack@gmail.com',
+                        birthdate: '08/04/1990',
+                        nickname: 'duw',
+                        locale: 'ca',
+                        iss: 'https://api.faceit.com/auth',
+                        sub: '2abbf5d5-ae35-40a1-bf6c-cf19c844168d',
+                        aud: '9a576081-e8bd-4f7b-8494-b5cff7081ef0',
+                        exp: 1771539918,
+                        iat: 1771536318,
+                        given_name: 'Jack',
+                        family_name: 'Graver',
+                        email_verified: true
+                        }
+                    */
                     getUserInfo: async (tokens) => {
                         const response = await fetch(
                             "https://api.faceit.com/auth/v1/resources/userinfo",
@@ -116,21 +129,17 @@ export const auth = betterAuth({
                             sub: string;
                             email?: string;
                             nickname?: string;
-                            preferred_username?: string;
-                            name?: string;
                             picture?: string;
                             email_verified?: boolean;
                         };
-                        const resolvedName =
-                            profile.nickname ||
-                            profile.preferred_username ||
-                            profile.name ||
-                            profile.email ||
-                            profile.sub;
                         return {
                             id: profile.sub,
-                            email: profile.email ?? `${profile.sub}@faceit.local`,
-                            name: resolvedName,
+                            email:
+                                profile.email ?? `${profile.sub}@faceit.local`,
+                            name:
+                                profile.nickname ||
+                                profile.email ||
+                                profile.sub,
                             image: profile.picture || undefined,
                             emailVerified: !!profile.email_verified,
                         };

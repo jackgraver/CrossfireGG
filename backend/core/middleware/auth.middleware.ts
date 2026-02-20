@@ -11,6 +11,7 @@ export interface AuthRequest extends Request {
         id: string;
         name: string;
         email: string;
+        image?: string | null;
     };
     playerInfo?: {
         user_id: string | null;
@@ -56,6 +57,7 @@ export const fetchSession: RequestHandler = async (req, res, next) => {
             id: user.id,
             name: user.name ?? session.user.name,
             email: user.email ?? session.user.email,
+            image: user.image ?? null,
         };
         authReq.roles = await userRepository.getUserRoles(session.user.id);
         authReq.playerInfo = await userRepository.userPlayerInfo(

@@ -19,19 +19,30 @@ export const matchRepository = {
             with: {
                 participants: {
                     with: {
-                        team: true,
+                        stageTeam: {
+                            with: {
+                                team: true,
+                            },
+                        },
                     },
                 },
-                // maps: {
-                //     with: {
-                //         playerStats: {
-                //             orderBy: [
-                //                 desc(playerStats.kills),
-                //                 desc(playerStats.deaths),
-                //             ],
-                //         },
-                //     },
-                // },
+                maps: {
+                    with: {
+                        playerStats: {
+                            with: {
+                                stagePlayer: {
+                                    with: {
+                                        player: true,
+                                    },
+                                },
+                            },
+                            orderBy: [
+                                desc(playerStats.kills),
+                                desc(playerStats.deaths),
+                            ],
+                        },
+                    },
+                },
             },
         });
     },

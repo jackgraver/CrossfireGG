@@ -36,6 +36,7 @@ export const userController = {
             res.json({
                 userId: authReq.user.id,
                 name: authReq.user.name,
+                image: authReq.user.image,
                 faceitId: playerInfo?.faceit_id,
                 teamId: playerInfo?.team_id,
                 roles: authReq.roles ?? [],

@@ -12,8 +12,8 @@ router.get("/me", fetchSession, userController.getMe);
 
 router.get(
     "/all",
-    // fetchSession,
-    // requireRoles(Roles.ADMIN),
+    fetchSession,
+    requireRoles(Roles.ADMIN),
     userController.getAllUsers,
 );
 

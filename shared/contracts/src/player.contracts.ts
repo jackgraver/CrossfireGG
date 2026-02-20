@@ -29,4 +29,19 @@ export const PlayerStatsContract = z.object({
     damage: z.number().default(0),
 });
 
+export const StagePlayerContract = z.object({
+    id: z.number(),
+    player_id: z.number(),
+    stage_team_id: z.number(),
+    role: z.string(),
+});
+
+export type StagePlayerDTO = z.infer<typeof StagePlayerContract>;
+
 export type PlayerStatsDTO = z.infer<typeof PlayerStatsContract>;
+
+export const PlayerStatsWithPlayerContract = PlayerStatsContract.extend({
+    stagePlayer: StagePlayerContract.extend({
+        player: PlayerContract,
+    }),
+});

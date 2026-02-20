@@ -11,6 +11,7 @@ import morgan from "morgan";
 import helmet from "helmet";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
+import { scannerBlocker } from "./core/middleware/scannerBlocker";
 import { toNodeHandler } from "better-auth/node";
 import { auth } from "./lib/auth";
 import {
@@ -38,6 +39,7 @@ app.set("trust proxy", 1);
 
 // app.use(burstLimiter);
 app.use(globalLimiter);
+app.use(scannerBlocker);
 app.use(morgan("[:date[iso]] :method :url :status :response-time ms"));
 app.use(
     helmet({
@@ -65,8 +67,7 @@ app.use("/user", userRoutes);
 app.use("/tournament", tournamentRoutes);
 app.use("/match", matchRoutes);
 app.use("/team", teamRoutes);
-// app.use("/faceit", ...authMiddleware, requireRoles(Roles.ADMIN), faceitRoutes);
-app.use("/faceit", faceitRoutes);
+app.use("/faceit", ...authMiddleware, requireRoles(Roles.ADMIN), faceitRoutes);
 
 app.use(errorHandler);
 

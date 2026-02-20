@@ -9,6 +9,7 @@ import {
 import { parseOr400 } from "../../core/validation/parseOr400";
 import { sendContract } from "../../core/sendContract";
 import { MatchWithParticipantsAndMapsContract } from "@repo/contracts";
+import { MatchPageContract } from "@repo/contracts";
 
 export const matchController = {
     getMatchById: async (req: Request, res: Response) => {
@@ -17,7 +18,7 @@ export const matchController = {
 
         const match = await matchService.getMatchById(data.matchId);
 
-        sendContract(res, MatchWithParticipantsAndMapsContract, match);
+        sendContract(res, MatchPageContract, match);
     },
 
     getAllMatchCasting: async (_: Request, res: Response) => {

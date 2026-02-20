@@ -5,37 +5,29 @@ export const matchService = {
         const match = await matchRepository.findById(matchId);
         if (!match) throw new Error("Match not found");
 
-        const participantsRows =
-            await matchRepository.findParticipants(matchId);
-        if (!participantsRows || participantsRows.length === 0) {
-            throw new Error("Match participants not found");
-        }
+        const transformedMaps = match.maps.map((map) => {
+            const teamIds = match.participants.map((p) => p.team_id);
 
-        const matchMaps = await matchRepository.findMapsByMatchId(matchId);
-        const statsRows =
-            await matchRepository.findPlayerStatsByMatchId(matchId);
+            const team1Id = teamIds[0];
+            const team2Id = teamIds[1];
 
-        const statsByMapId = new Map<number, any[]>();
-        for (const row of statsRows) {
-            const mapId = row.stat.map_id;
-            const current = statsByMapId.get(mapId) ?? [];
-            current.push({
-                ...row.stat,
-                player_name: row.player_name,
-                team_id: row.team_id,
-                team_name: row.team_name,
-            });
-            statsByMapId.set(mapId, current);
-        }
+            const team1Stats = map.playerStats.filter(
+                (s) => s.stagePlayer?.stage_team_id === team1Id,
+            );
+            const team2Stats = map.playerStats.filter(
+                (s) => s.stagePlayer?.stage_team_id === team2Id,
+            );
 
-        return {
-            ...match,
-            participants: participantsRows,
-            maps: matchMaps.map((m) => ({
-                ...m,
-                playerStats: statsByMapId.get(m.id) ?? [],
-            })),
-        };
+            return {
+                ...map,
+                playerStats: {
+                    team1: team1Stats,
+                    team2: team2Stats,
+                },
+            };
+        });
+
+        return { match: { ...match, maps: transformedMaps } };
     },
 
     getAllMatchCasting: async () => {
