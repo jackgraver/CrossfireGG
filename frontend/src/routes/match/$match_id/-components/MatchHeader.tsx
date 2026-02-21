@@ -1,4 +1,4 @@
-import { formatMatchDate } from "@/lib/dateUtils";
+import { formatMatchDate } from "@/lib/date.utils";
 
 type Match = {
     match_id: string;
@@ -57,7 +57,9 @@ export default function MatchHeader({ team1, team2, match }: MatchHeaderProps) {
     return (
         <div className="flex max-w-5xl items-center justify-between gap-x-16 px-4">
             {match.status !== "SCHEDULED" && (
-                <span className="text-4xl font-extrabold text-green-400">{match.team1_score}</span>
+                <span className="text-4xl font-extrabold text-green-400">
+                    {match.team1_score}
+                </span>
             )}
             <div className="flex flex-col items-center text-center text-gray-400">
                 <p className="font-bold text-white">{match.status}</p>
@@ -65,7 +67,9 @@ export default function MatchHeader({ team1, team2, match }: MatchHeaderProps) {
                 <p>{roundString(match.round)}</p>
             </div>
             {match.status !== "SCHEDULED" && (
-                <span className="text-4xl font-extrabold text-white">{match.team2_score}</span>
+                <span className="text-4xl font-extrabold text-white">
+                    {match.team2_score}
+                </span>
             )}
         </div>
     );

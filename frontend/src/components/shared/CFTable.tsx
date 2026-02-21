@@ -1,6 +1,6 @@
 import { flexRender } from "@tanstack/react-table";
 import { Table } from "@tanstack/table-core";
-import { ArrowDown, ArrowUp } from "lucide-react";
+import { ArrowDown, ArrowUp, ChevronDown, ChevronUp } from "lucide-react";
 
 export default function CFTable<T>({ table }: { table: Table<T> }) {
     return (
@@ -30,8 +30,10 @@ export default function CFTable<T>({ table }: { table: Table<T> }) {
                                               header.getContext(),
                                           )}
                                     {{
-                                        asc: <ArrowUp className="h-4 w-4" />,
-                                        desc: <ArrowDown className="h-4 w-4" />,
+                                        asc: <ChevronUp className="h-4 w-4" />,
+                                        desc: (
+                                            <ChevronDown className="h-4 w-4" />
+                                        ),
                                     }[header.column.getIsSorted() as string] ??
                                         null}
                                 </div>

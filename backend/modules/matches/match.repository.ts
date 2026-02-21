@@ -213,7 +213,7 @@ export const matchRepository = {
         status: string;
         best_of: number;
         stream_url: string | null;
-        scheduled_at: Date | null;
+        scheduled_at: number | null;
         faceit_url: string | null;
     }) => {
         const existing = await db

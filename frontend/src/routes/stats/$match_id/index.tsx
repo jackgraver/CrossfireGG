@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import OSSTable from "@/components/shared/OSSTable";
 import { useQuery } from "@tanstack/react-query";
-import { formatMatchDate } from "@/lib/dateUtils";
+import { formatMatchDate } from "@/lib/date.utils";
 import { notFound } from "@tanstack/react-router";
 import { useNavigate } from "@tanstack/react-router";
 import { use } from "react";

@@ -220,9 +220,13 @@ export const faceitImportService = {
                     const winnerParticipantId =
                         participantMap[winnerFaceitId] || null;
 
+                    const mapPart = round.round_stats.Map.split("_")[1];
+                    const mapName =
+                        mapPart.charAt(0).toUpperCase() + mapPart.slice(1);
+
                     const map = await matchRepository.upsertMap({
                         match_id: createdMatch.id,
-                        map_name: round.round_stats.Map.split("_")[1],
+                        map_name: mapName,
                         map_order: i + 1,
                         round: matchData.round,
                         team1_score: score1 || 0,

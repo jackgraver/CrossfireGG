@@ -134,8 +134,6 @@ export type FaceitAPIMatchStats = {
     }[];
 };
 
-
-
 export type FaceitAPIMember = {
     user_id: string;
     nickname: string;
@@ -277,9 +275,7 @@ export function transformFaceitMatch(
         status: mapFaceitMatchStatus(faceitMatch.status),
         best_of: faceitMatch.best_of || 1,
         stream_url: null,
-        scheduled_at: faceitMatch.scheduled_at
-            ? new Date(faceitMatch.scheduled_at * 1000)
-            : null,
+        scheduled_at: faceitMatch.scheduled_at ?? null,
         faceit_url: faceitMatch.faceit_url?.replace("{lang}", "en") || null,
     };
 }

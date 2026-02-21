@@ -5,6 +5,7 @@ import {
     text,
     timestamp,
     index,
+    bigint,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { users } from "./user.schemas";
@@ -32,7 +33,7 @@ export const matches = pgTable(
         status: text("status").default("scheduled"),
         best_of: integer("best_of").default(1),
         stream_url: text("stream_url"),
-        scheduled_at: timestamp("scheduled_at"),
+        scheduled_at: bigint("scheduled_at", { mode: "number" }),
         faceit_url: text("faceit_url"),
         created_at: timestamp("created_at").notNull().defaultNow(),
         updated_at: timestamp("updated_at").notNull().defaultNow(),

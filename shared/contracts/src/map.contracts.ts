@@ -19,3 +19,11 @@ export const MapWithPlayerStatsContract = MapContract.extend({
 });
 
 export type MapWithPlayerStatsDTO = z.infer<typeof MapWithPlayerStatsContract>;
+
+export const MinifiedMapContract = z.object({
+    id: z.number(),
+    map_name: z.string(),
+    team1_score: z.number().default(0),
+    team2_score: z.number().default(0),
+    winner_id: z.number().nullable().optional(),
+});

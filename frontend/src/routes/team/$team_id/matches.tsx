@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { useTeam, useTeamMatchesByStage } from "@/lib/api/team.queries";
-import { formatMatchDate } from "@/lib/dateUtils";
+import { formatMatchDate } from "@/lib/date.utils";
 import { openInNewTab } from "@/utils/openInNewTab";
 import TeamLogo from "@/components/shared/bracket/atoms/TeamLogo";
 
@@ -25,16 +25,23 @@ function MatchesPage() {
         }
     }, [stages, selectedStageId]);
 
-    const { data: matches, isLoading } = useTeamMatchesByStage(team_id, selectedStageId);
+    const { data: matches, isLoading } = useTeamMatchesByStage(
+        team_id,
+        selectedStageId,
+    );
 
     const sortedMatches = matches
-        ? [...matches].sort((a, b) => (b.scheduled_at ?? 0) - (a.scheduled_at ?? 0))
+        ? [...matches].sort(
+              (a, b) => (b.scheduled_at ?? 0) - (a.scheduled_at ?? 0),
+          )
         : [];
 
     return (
         <div className="bg-firstBg rounded-xl shadow-md">
             <div className="border-border flex flex-col gap-4 border-b p-4 sm:flex-row sm:items-center sm:justify-between">
-                <h2 className="text-textPrimary text-lg font-semibold">Matches</h2>
+                <h2 className="text-textPrimary text-lg font-semibold">
+                    Matches
+                </h2>
                 {stages.length > 0 && (
                     <select
                         value={selectedStageId || ""}
@@ -51,7 +58,9 @@ function MatchesPage() {
             </div>
             <div className="p-4">
                 {isLoading ? (
-                    <div className="text-textSecondary py-8 text-center">Loading matches...</div>
+                    <div className="text-textSecondary py-8 text-center">
+                        Loading matches...
+                    </div>
                 ) : sortedMatches.length === 0 ? (
                     <div className="text-textSecondary py-8 text-center">
                         No matches found for this stage
@@ -59,7 +68,11 @@ function MatchesPage() {
                 ) : (
                     <div className="flex flex-col gap-3">
                         {sortedMatches.map((match) => (
-                            <MatchCard key={match.match_id} match={match} teamId={team_id} />
+                            <MatchCard
+                                key={match.match_id}
+                                match={match}
+                                teamId={team_id}
+                            />
                         ))}
                     </div>
                 )}
@@ -68,7 +81,13 @@ function MatchesPage() {
     );
 }
 
-function MatchCard({ match, teamId }: { match: FormattedMatch; teamId: string }) {
+function MatchCard({
+    match,
+    teamId,
+}: {
+    match: FormattedMatch;
+    teamId: string;
+}) {
     const { team1, team2 } = match.participants;
     const isTeam1 = team1?.team_id === teamId;
     const ourTeam = isTeam1 ? team1 : team2;
@@ -133,7 +152,9 @@ function MatchCard({ match, teamId }: { match: FormattedMatch; teamId: string })
                         {ourTeam?.name || "TBD"}
                     </span>
                 </div>
-                <span className="text-textSecondary shrink-0 px-4 text-sm font-medium">vs</span>
+                <span className="text-textSecondary shrink-0 px-4 text-sm font-medium">
+                    vs
+                </span>
                 <div className="flex min-w-0 flex-1 items-center justify-end gap-3">
                     <span className="text-textPrimary truncate font-semibold">
                         {opponent?.name || "TBD"}

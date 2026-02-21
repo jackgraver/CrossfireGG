@@ -1,4 +1,31 @@
 /**
+ * Formats a Unix timestamp to a specific format: Sept 2nd, 2025 @ 9:00PM
+ * @param timestamp Unix timestamp in seconds
+ * @returns Formatted date string
+ */
+export const formatScheduledDate = (timestamp: number): string => {
+    const date = new Date(timestamp * 1000);
+
+    const month = date.toLocaleDateString("en-US", { month: "short" });
+    const day = date.getDate();
+    const year = date.getFullYear();
+
+    const getOrdinal = (n: number) => {
+        const s = ["th", "st", "nd", "rd"];
+        const v = n % 100;
+        return s[(v - 20) % 10] || s[v] || s[0];
+    };
+
+    const time = date.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+    });
+
+    return `${month} ${day}${getOrdinal(day)}, ${year} @ ${time.replace(" ", "")}`;
+};
+
+/**
  * Formats a Unix timestamp for display in a user-friendly format
  * @param timestamp Unix timestamp in seconds
  * @returns Formatted date string
@@ -83,7 +110,9 @@ export const isToday = (timestamp: number): boolean => {
  * @param date Date string, Date object, or Unix timestamp in seconds
  * @returns Unix timestamp in seconds
  */
-export const toUnixTimestamp = (date: string | Date | number | null | undefined): number | null => {
+export const toUnixTimestamp = (
+    date: string | Date | number | null | undefined,
+): number | null => {
     if (!date) return null;
     if (typeof date === "number") return date;
     if (typeof date === "string") {

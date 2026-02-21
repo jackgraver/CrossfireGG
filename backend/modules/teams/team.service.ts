@@ -75,15 +75,27 @@ export const teamService = {
         // };
     },
 
-    getTeamMatchesByStage: async (teamId: number, stageId: number): Promise<FormattedMatch[]> => {
-        const teamMatches = await teamRepository.findMatchesByTeamIdAndStageId(teamId, stageId);
+    getTeamMatchesByStage: async (
+        teamId: number,
+        stageId: number,
+    ): Promise<FormattedMatch[]> => {
+        const teamMatches = await teamRepository.findMatchesByTeamIdAndStageId(
+            teamId,
+            stageId,
+        );
 
         const formattedMatches: FormattedMatch[] = await Promise.all(
             teamMatches.map(async (match) => {
-                const participants = await teamRepository.findMatchParticipants(match.id);
+                const participants = await teamRepository.findMatchParticipants(
+                    match.id,
+                );
 
-                const team1Entry = participants.find((p) => p.participant.position === 1);
-                const team2Entry = participants.find((p) => p.participant.position === 2);
+                const team1Entry = participants.find(
+                    (p) => p.participant.position === 1,
+                );
+                const team2Entry = participants.find(
+                    (p) => p.participant.position === 2,
+                );
 
                 const team1Data = team1Entry?.team;
                 const team2Data = team2Entry?.team;
@@ -94,7 +106,8 @@ export const teamService = {
                           name: team1Data.name,
                           team_logo: team1Data.team_logo || null,
                           faceit_id: team1Data.faceit_id || null,
-                          team_captain_id: team1Data.team_captain_id?.toString() || null,
+                          team_captain_id:
+                              team1Data.team_captain_id?.toString() || null,
                       }
                     : null;
 
@@ -104,7 +117,8 @@ export const teamService = {
                           name: team2Data.name,
                           team_logo: team2Data.team_logo || null,
                           faceit_id: team2Data.faceit_id || null,
-                          team_captain_id: team2Data.team_captain_id?.toString() || null,
+                          team_captain_id:
+                              team2Data.team_captain_id?.toString() || null,
                       }
                     : null;
 
@@ -112,9 +126,7 @@ export const teamService = {
                     match_id: match.id.toString(),
                     group_id: match.group_id?.toString() || "",
                     status: match.status || null,
-                    scheduled_at: match.scheduled_at
-                        ? Math.floor(match.scheduled_at.getTime() / 1000)
-                        : null,
+                    scheduled_at: match.scheduled_at ?? null,
                     round: match.round || null,
                     faceit_url: match.faceit_url || null,
                     participants: {
@@ -133,7 +145,10 @@ export const teamService = {
     },
 
     searchPlayers: async (searchQuery: string, excludeTeamId?: number) => {
-        const foundPlayers = await teamRepository.searchPlayers(searchQuery, excludeTeamId);
+        const foundPlayers = await teamRepository.searchPlayers(
+            searchQuery,
+            excludeTeamId,
+        );
         return foundPlayers.map((player) => ({
             player_id: player.id.toString(),
             player_name: player.player_name,

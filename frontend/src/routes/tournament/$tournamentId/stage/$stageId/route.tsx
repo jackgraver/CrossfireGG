@@ -1,7 +1,12 @@
-import { createFileRoute, Link, Outlet, useMatchRoute } from "@tanstack/react-router";
+import {
+    createFileRoute,
+    Link,
+    Outlet,
+    useMatchRoute,
+} from "@tanstack/react-router";
 import { useTournamentById } from "../../../../../lib/api/tournament.queries";
-import { formatDateOnly, toUnixTimestamp } from "@/lib/dateUtils";
-import { Calendar, LayoutDashboard,Users } from "lucide-react";
+import { formatDateOnly, toUnixTimestamp } from "@/lib/date.utils";
+import { Calendar, LayoutDashboard, Users } from "lucide-react";
 import { cn } from "@/utils/cn";
 import SignUpButton from "@/routes/tournament/-components/SignUpButton";
 
@@ -27,13 +32,19 @@ const InfoTile = ({
     </div>
 );
 
-export const Route = createFileRoute("/tournament/$tournamentId/stage/$stageId")({
+export const Route = createFileRoute(
+    "/tournament/$tournamentId/stage/$stageId",
+)({
     component: RouteComponent,
 });
 
 function RouteComponent() {
     const { tournamentId, stageId } = Route.useParams();
-    const { data: tournament, isLoading, error } = useTournamentById(tournamentId);
+    const {
+        data: tournament,
+        isLoading,
+        error,
+    } = useTournamentById(tournamentId);
     const matchRoute = useMatchRoute();
 
     if (isLoading) {
@@ -76,7 +87,9 @@ function RouteComponent() {
 
     const isActiveTab = (to: string, exact: boolean) => {
         if (exact) {
-            return matchRoute({ to, params: { tournamentId, stageId } }) !== false;
+            return (
+                matchRoute({ to, params: { tournamentId, stageId } }) !== false
+            );
         }
         return (
             matchRoute({
@@ -100,14 +113,20 @@ function RouteComponent() {
                         <h1 className="text-textPrimary mb-2 pt-2 text-5xl font-black tracking-tight md:text-6xl">
                             {tournament.name}
                         </h1>
-                        {tournament.status === "upcoming" && <SignUpButton tournamentId={tournamentId} />}
+                        {tournament.status === "upcoming" && (
+                            <SignUpButton tournamentId={tournamentId} />
+                        )}
                         <div className="flex flex-wrap items-center gap-x-12 gap-y-6 pt-4">
                             <InfoTile
                                 icon={Calendar}
                                 label="Start Date"
                                 value={
                                     tournament.start_date
-                                        ? formatDateOnly(toUnixTimestamp(tournament.start_date)!)
+                                        ? formatDateOnly(
+                                              toUnixTimestamp(
+                                                  tournament.start_date,
+                                              )!,
+                                          )
                                         : "TBD"
                                 }
                             />
@@ -116,7 +135,11 @@ function RouteComponent() {
                                 label="Registration Deadline" //TODO: Change to Registration Deadline
                                 value={
                                     tournament.start_date
-                                        ? formatDateOnly(toUnixTimestamp(tournament.start_date)!)
+                                        ? formatDateOnly(
+                                              toUnixTimestamp(
+                                                  tournament.start_date,
+                                              )!,
+                                          )
                                         : "TBD"
                                 }
                             />
@@ -125,7 +148,11 @@ function RouteComponent() {
                                 label="End Date"
                                 value={
                                     tournament.end_date
-                                        ? formatDateOnly(toUnixTimestamp(tournament.start_date)!)
+                                        ? formatDateOnly(
+                                              toUnixTimestamp(
+                                                  tournament.start_date,
+                                              )!,
+                                          )
                                         : "TBD"
                                 }
                             />
@@ -143,7 +170,11 @@ function RouteComponent() {
                                 label="Prize Pool"
                                 value={
                                     tournament.prize_pool
-                                        ? formatDateOnly(toUnixTimestamp(tournament.start_date)!)
+                                        ? formatDateOnly(
+                                              toUnixTimestamp(
+                                                  tournament.start_date,
+                                              )!,
+                                          )
                                         : "TBD"
                                 }
                             />

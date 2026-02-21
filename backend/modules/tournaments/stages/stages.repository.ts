@@ -33,6 +33,9 @@ export const stagesRepository = {
                                         },
                                     },
                                 },
+                                maps: {
+                                    orderBy: (m, { asc }) => asc(m.map_order),
+                                },
                             },
                         },
                     },

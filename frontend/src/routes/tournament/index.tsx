@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useAllTournaments } from "@/lib/api/tournament.queries";
-import { formatDateOnly, toUnixTimestamp } from "@/lib/dateUtils";
+import { formatDateOnly, toUnixTimestamp } from "@/lib/date.utils";
 import SignUpButton from "./-components/SignUpButton";
 import {
     Trophy,

@@ -1,11 +1,10 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMatch } from "../../../lib/api/match.queries";
 import TeamLogo from "@/components/shared/bracket/atoms/TeamLogo";
 import { cn } from "@/utils/cn";
 import CFTable from "@/components/shared/CFTable";
 import { useStatsTable } from "../-hooks/useStatsTable";
-import { flexRender } from "@tanstack/react-table";
 
 export const Route = createFileRoute("/match/$match_id/")({
     component: MatchPage,
@@ -25,41 +24,51 @@ function MatchPage() {
         (m: any) => m.id === (selectedMapId ?? maps[0]?.id),
     );
 
-    // Aggregate stats across arrays of player stats for any team or mix of teams
-    function aggregatePlayerStats(statsList: any[]) {
-        const statsMap = new Map();
-        for (const stat of statsList) {
-            const playerId = stat.stagePlayer.player.id;
-            if (!statsMap.has(playerId)) {
-                statsMap.set(playerId, { ...stat });
-            } else {
-                const existing = statsMap.get(playerId);
-                statsMap.set(playerId, {
-                    ...existing,
-                    kills: (existing.kills ?? 0) + (stat.kills ?? 0),
-                    deaths: (existing.deaths ?? 0) + (stat.deaths ?? 0),
-                    assists: (existing.assists ?? 0) + (stat.assists ?? 0),
-                    adr: (existing.adr ?? 0) + (stat.adr ?? 0),
-                });
-            }
+    const stats = useMemo(() => {
+        if (selectedMapId !== 0) {
+            return {
+                team1: currentMap?.playerStats.team1 ?? [],
+                team2: currentMap?.playerStats.team2 ?? [],
+            };
         }
-        return Array.from(statsMap.values());
-    }
 
-    // Combined stats for just the selected map's team1 and team2 (for toggling view)
-    const combinedStats1 = aggregatePlayerStats(
-        currentMap?.playerStats?.team1 ?? [],
-    );
-    const combinedStats2 = aggregatePlayerStats(
-        currentMap?.playerStats?.team2 ?? [],
-    );
+        const aggregate = (teamKey: "team1" | "team2") => {
+            const statsMap = new Map<string, any>();
+            maps.forEach((map: any) => {
+                const teamStats = map.playerStats?.[teamKey] ?? [];
+                teamStats.forEach((stat: any) => {
+                    const playerId = stat.player_id;
+                    if (!statsMap.has(playerId)) {
+                        statsMap.set(playerId, { ...stat, mapCount: 1 });
+                    } else {
+                        const existing = statsMap.get(playerId);
+                        statsMap.set(playerId, {
+                            ...existing,
+                            kills: (existing.kills ?? 0) + (stat.kills ?? 0),
+                            deaths: (existing.deaths ?? 0) + (stat.deaths ?? 0),
+                            assists:
+                                (existing.assists ?? 0) + (stat.assists ?? 0),
+                            adr: (existing.adr ?? 0) + (stat.adr ?? 0),
+                            mapCount: existing.mapCount + 1,
+                        });
+                    }
+                });
+            });
 
-    const table1 = useStatsTable(
-        selectedMapId === 0 ? combinedStats1 : currentMap?.playerStats.team1,
-    );
-    const table2 = useStatsTable(
-        selectedMapId === 0 ? combinedStats2 : currentMap?.playerStats.team2,
-    );
+            return Array.from(statsMap.values()).map((s) => ({
+                ...s,
+                adr: Math.round(s.adr / s.mapCount),
+            }));
+        };
+
+        return {
+            team1: aggregate("team1"),
+            team2: aggregate("team2"),
+        };
+    }, [selectedMapId, currentMap, maps]);
+
+    const table1 = useStatsTable(stats.team1);
+    const table2 = useStatsTable(stats.team2);
 
     if (isLoading)
         return <div className="text-textSecondary p-6">Loading...</div>;
@@ -104,7 +113,7 @@ function MatchPage() {
                     </div>
                 )}
             </div>
-            {currentMap && (
+            {(currentMap || selectedMapId === 0) && (
                 <div className="flex flex-col gap-8">
                     <div className="flex flex-col gap-8">
                         <div className="flex flex-col gap-3">

@@ -2,12 +2,19 @@ import { useRef } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { MatchTeam } from "./MatchTeam";
 import { openInNewTab } from "@/utils/openInNewTab";
-import { MatchWithParticipantsDTO } from "@repo/contracts";
+import { MatchWithParticipantAndMinifiedMapsDTO } from "@repo/contracts";
 import { ExternalLink, Info } from "lucide-react";
 import { useMatchDropdown, MatchDropdownPortal } from "./MatchDropdownProvider";
+import { cn } from "@/utils/cn";
+import {
+    formatDateOnly,
+    formatFullDate,
+    formatMatchDate,
+    formatScheduledDate,
+} from "@/lib/date.utils";
 
 type MatchCardProps = {
-    match: MatchWithParticipantsDTO | undefined;
+    match: MatchWithParticipantAndMinifiedMapsDTO | undefined;
     margin?: boolean;
 };
 
@@ -59,19 +66,68 @@ export default function MatchCard({ match, margin }: MatchCardProps) {
                     <div
                         style={{
                             position: "absolute",
-                            top: `${anchorRect.bottom + 4}px`,
+                            top: `${anchorRect.bottom + 8}px`,
                             left: `${anchorRect.left + anchorRect.width / 2}px`,
                             transform: "translateX(-50%)",
                             zIndex: 9999,
                         }}
-                        className="border-border bg-firstBg animate-in fade-in slide-in-from-top-1 rounded-md border p-3 whitespace-nowrap shadow-xl duration-200"
+                        className="border-border bg-firstBg animate-in fade-in slide-in-from-top-2 flex min-w-[280px] flex-col gap-4 rounded-lg border p-4 shadow-2xl duration-200"
                     >
-                        <div className="mb-3 flex items-center justify-between px-1">
-                            <span className="text-textSecondary text-xs font-bold tracking-wider uppercase">
-                                {team1?.name || "TBD"} vs {team2?.name || "TBD"}
-                            </span>
+                        <div className="flex flex-col gap-3 border-b border-white/5 pb-3">
+                            <div className="flex justify-center">
+                                <span className="text-textSecondary text-[10px] font-medium tracking-wider uppercase">
+                                    {formatScheduledDate(match.scheduled_at!)}
+                                </span>
+                            </div>
+                            <div className="flex items-center justify-between gap-4">
+                                <span className="text-textPrimary max-w-[110px] truncate text-sm font-bold">
+                                    {team1?.name || "TBD"}
+                                </span>
+                                <span className="text-textPrimary max-w-[110px] truncate text-right text-sm font-bold">
+                                    {team2?.name || "TBD"}
+                                </span>
+                            </div>
                         </div>
-                        <div className="flex gap-2">
+
+                        {match.maps.length > 0 && (
+                            <div className="flex flex-col gap-2">
+                                {match.maps.map((map) => (
+                                    <div
+                                        key={map.id}
+                                        className="flex items-center justify-between rounded-md bg-white/5 px-3 py-2"
+                                    >
+                                        <span
+                                            className={cn(
+                                                "w-8 text-center text-xs font-bold",
+                                                map.winner_id ===
+                                                    match?.participants?.[0].id
+                                                    ? "text-green-500"
+                                                    : "text-textSecondary",
+                                            )}
+                                        >
+                                            {map.team1_score}
+                                        </span>
+                                        <span className="h-3 w-[1px] bg-white/10" />
+                                        <span className="text-textPrimary flex-grow text-center text-xs font-medium">
+                                            {map.map_name}
+                                        </span>
+                                        <span className="h-3 w-[1px] bg-white/10" />
+                                        <span
+                                            className={cn(
+                                                "w-8 text-center text-xs font-bold",
+                                                map.winner_id ===
+                                                    match?.participants?.[1].id
+                                                    ? "text-green-500"
+                                                    : "text-textSecondary",
+                                            )}
+                                        >
+                                            {map.team2_score}
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                        <div className="flex flex-row gap-2 pt-1">
                             <button
                                 onClick={(e) => {
                                     e.stopPropagation();
@@ -79,10 +135,10 @@ export default function MatchCard({ match, margin }: MatchCardProps) {
                                         openInNewTab(match.faceit_url);
                                     }
                                 }}
-                                className="flex items-center justify-center gap-2 rounded bg-white/5 px-4 py-2 text-xs font-bold transition-colors hover:bg-white/10 disabled:opacity-50"
+                                className="text-textPrimary flex w-full items-center justify-center gap-2 rounded-md bg-white/5 py-2.5 text-xs font-bold transition-all hover:bg-white/10 active:scale-[0.98] disabled:opacity-50"
                                 disabled={!match.faceit_url}
                             >
-                                <ExternalLink className="h-3.3 w-3.3" />
+                                <ExternalLink className="h-3.5 w-3.5" />
                                 View on Faceit
                             </button>
                             <button
@@ -95,9 +151,9 @@ export default function MatchCard({ match, margin }: MatchCardProps) {
                                         },
                                     });
                                 }}
-                                className="flex items-center justify-center gap-2 rounded bg-blue-600 px-4 py-2 text-xs font-bold transition-colors hover:bg-blue-700"
+                                className="flex w-full items-center justify-center gap-2 rounded-md bg-blue-600 py-2.5 text-xs font-bold text-white transition-all hover:bg-blue-700 active:scale-[0.98]"
                             >
-                                <Info className="h-3.3 w-3.3" />
+                                <Info className="h-3.5 w-3.5" />
                                 Match Page
                             </button>
                         </div>
