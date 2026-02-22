@@ -13,62 +13,40 @@ export const Route = createFileRoute("/match/$match_id/")({
 function MatchPage() {
     const { match_id } = Route.useParams();
     const { data, isLoading, error } = useMatch(match_id);
-    const [selectedMapId, setSelectedMapId] = useState<number | null>(null);
+    const [selectedMapId, setSelectedMapId] = useState<number>(0);
 
     const maps = data?.match?.maps ?? [];
     const participants = data?.match?.participants ?? [];
     const team1 = participants[0];
     const team2 = participants[1];
+    const combinedStats = data?.match.combinedStats;
 
-    const currentMap = maps.find(
-        (m: any) => m.id === (selectedMapId ?? maps[0]?.id),
+    const currentMap =
+        selectedMapId === 0
+            ? undefined
+            : maps.find((m: any) => m.id === selectedMapId);
+
+    console.log(currentMap);
+    console.log(
+        selectedMapId === 0
+            ? combinedStats?.team1
+            : currentMap?.playerStats.team1,
+        "\n",
+        selectedMapId === 0
+            ? combinedStats?.team2
+            : currentMap?.playerStats.team2,
     );
 
-    const stats = useMemo(() => {
-        if (selectedMapId !== 0) {
-            return {
-                team1: currentMap?.playerStats.team1 ?? [],
-                team2: currentMap?.playerStats.team2 ?? [],
-            };
-        }
-
-        const aggregate = (teamKey: "team1" | "team2") => {
-            const statsMap = new Map<string, any>();
-            maps.forEach((map: any) => {
-                const teamStats = map.playerStats?.[teamKey] ?? [];
-                teamStats.forEach((stat: any) => {
-                    const playerId = stat.player_id;
-                    if (!statsMap.has(playerId)) {
-                        statsMap.set(playerId, { ...stat, mapCount: 1 });
-                    } else {
-                        const existing = statsMap.get(playerId);
-                        statsMap.set(playerId, {
-                            ...existing,
-                            kills: (existing.kills ?? 0) + (stat.kills ?? 0),
-                            deaths: (existing.deaths ?? 0) + (stat.deaths ?? 0),
-                            assists:
-                                (existing.assists ?? 0) + (stat.assists ?? 0),
-                            adr: (existing.adr ?? 0) + (stat.adr ?? 0),
-                            mapCount: existing.mapCount + 1,
-                        });
-                    }
-                });
-            });
-
-            return Array.from(statsMap.values()).map((s) => ({
-                ...s,
-                adr: Math.round(s.adr / s.mapCount),
-            }));
-        };
-
-        return {
-            team1: aggregate("team1"),
-            team2: aggregate("team2"),
-        };
-    }, [selectedMapId, currentMap, maps]);
-
-    const table1 = useStatsTable(stats.team1);
-    const table2 = useStatsTable(stats.team2);
+    const table1 = useStatsTable(
+        selectedMapId === 0
+            ? combinedStats?.team1
+            : currentMap?.playerStats.team1,
+    );
+    const table2 = useStatsTable(
+        selectedMapId === 0
+            ? combinedStats?.team2
+            : currentMap?.playerStats.team2,
+    );
 
     if (isLoading)
         return <div className="text-textSecondary p-6">Loading...</div>;

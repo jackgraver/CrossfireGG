@@ -27,7 +27,44 @@ export const matchService = {
             };
         });
 
-        return { match: { ...match, maps: transformedMaps } };
+        const sumStatsPerPlayer = (stats: any[]) => {
+            const playerMap = new Map();
+
+            stats.forEach((s) => {
+                const playerId = s.player_id;
+                if (!playerMap.has(playerId)) {
+                    playerMap.set(playerId, {
+                        ...s,
+                        kills: 0,
+                        deaths: 0,
+                        assists: 0,
+                        damage: 0,
+                    });
+                }
+                const current = playerMap.get(playerId);
+                current.kills += s.kills || 0;
+                current.deaths += s.deaths || 0;
+                current.assists += s.assists || 0;
+                current.damage += s.damage || 0;
+            });
+
+            return Array.from(playerMap.values());
+        };
+
+        return {
+            match: {
+                ...match,
+                maps: transformedMaps,
+                combinedStats: {
+                    team1: sumStatsPerPlayer(
+                        transformedMaps.flatMap((m) => m.playerStats.team1),
+                    ),
+                    team2: sumStatsPerPlayer(
+                        transformedMaps.flatMap((m) => m.playerStats.team2),
+                    ),
+                },
+            },
+        };
     },
 
     getAllMatchCasting: async () => {
