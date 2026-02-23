@@ -75,12 +75,10 @@ export const MatchPageContract = z.object({
                 }),
             }),
         ),
-        combinedStats: z.array(
-            z.object({
-                team1: z.array(PlayerStatsWithPlayerContract),
-                team2: z.array(PlayerStatsWithPlayerContract),
-            }),
-        ),
+        combinedStats: z.object({
+            team1: z.array(PlayerStatsWithPlayerContract),
+            team2: z.array(PlayerStatsWithPlayerContract),
+        }),
     }),
 });
 

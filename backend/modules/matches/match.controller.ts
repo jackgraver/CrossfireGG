@@ -18,8 +18,7 @@ export const matchController = {
 
         const match = await matchService.getMatchById(data.matchId);
 
-        res.json(match);
-        // sendContract(res, MatchPageContract, match);
+        sendContract(res, MatchPageContract, match);
     },
 
     getAllMatchCasting: async (_: Request, res: Response) => {

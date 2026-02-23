@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMatch } from "../../../lib/api/match.queries";
 import TeamLogo from "@/components/shared/bracket/atoms/TeamLogo";
@@ -26,17 +26,6 @@ function MatchPage() {
             ? undefined
             : maps.find((m: any) => m.id === selectedMapId);
 
-    console.log(currentMap);
-    console.log(
-        selectedMapId === 0
-            ? combinedStats?.team1
-            : currentMap?.playerStats.team1,
-        "\n",
-        selectedMapId === 0
-            ? combinedStats?.team2
-            : currentMap?.playerStats.team2,
-    );
-
     const table1 = useStatsTable(
         selectedMapId === 0
             ? combinedStats?.team1
@@ -54,7 +43,7 @@ function MatchPage() {
         return <div className="p-6 text-red-500">Error loading match</div>;
 
     return (
-        <div className="flex min-h-screen flex-col gap-8 p-6">
+        <div className="flex min-h-screen flex-col gap-8 py-6">
             <div className="border-border flex flex-wrap items-center gap-2 border-b">
                 <div className="flex flex-1 flex-wrap gap-2">
                     <button
@@ -83,13 +72,32 @@ function MatchPage() {
                         </button>
                     ))}
                 </div>
-                {currentMap && (
+                {/*{currentMap && (
                     <div className="ml-auto flex items-center gap-4 text-2xl font-black">
                         <span>{currentMap.team1_score}</span>
                         <span className="text-textSecondary/30">:</span>
                         <span>{currentMap.team2_score}</span>
                     </div>
                 )}
+                {selectedMapId === 0 && (
+                    <div className="ml-auto flex items-center gap-4 text-2xl font-black">
+                        <span>
+                            {maps.reduce(
+                                (sum: number, map: any) =>
+                                    sum + map.team1_score,
+                                0,
+                            )}
+                        </span>
+                        <span className="text-textSecondary/30">:</span>
+                        <span>
+                            {maps.reduce(
+                                (sum: number, map: any) =>
+                                    sum + map.team2_score,
+                                0,
+                            )}
+                        </span>
+                    </div>
+                )}*/}
             </div>
             {(currentMap || selectedMapId === 0) && (
                 <div className="flex flex-col gap-8">
@@ -103,16 +111,30 @@ function MatchPage() {
                                 <span className="text-textSecondary font-bold tracking-wider uppercase">
                                     {team1.stageTeam.team.name}
                                 </span>
-                                <span
-                                    className={cn(
-                                        `font-black`,
-                                        team1.winner
-                                            ? "text-green-500"
-                                            : "text-red-500",
-                                    )}
-                                >
-                                    {team1.score}
-                                </span>
+                                {currentMap && (
+                                    <span
+                                        className={cn(
+                                            `text-sm font-black`,
+                                            currentMap.winner_id === team1.id
+                                                ? "text-green-500"
+                                                : "text-red-500",
+                                        )}
+                                    >
+                                        {currentMap.team1_score}
+                                    </span>
+                                )}
+                                {selectedMapId === 0 && (
+                                    <span
+                                        className={cn(
+                                            `font-black`,
+                                            team1.winner
+                                                ? "text-green-500"
+                                                : "text-red-500",
+                                        )}
+                                    >
+                                        {team1.score}
+                                    </span>
+                                )}
                             </div>
                             <CFTable table={table1} />
                         </div>
@@ -125,16 +147,30 @@ function MatchPage() {
                                 <span className="text-textSecondary text-sm font-bold tracking-wider uppercase">
                                     {team2.stageTeam.team.name}
                                 </span>
-                                <span
-                                    className={cn(
-                                        `text-sm font-black`,
-                                        team2.winner
-                                            ? "text-green-500"
-                                            : "text-red-500",
-                                    )}
-                                >
-                                    {team2.score}
-                                </span>
+                                {currentMap && (
+                                    <span
+                                        className={cn(
+                                            `text-sm font-black`,
+                                            currentMap.winner_id === team2.id
+                                                ? "text-green-500"
+                                                : "text-red-500",
+                                        )}
+                                    >
+                                        {currentMap.team2_score}
+                                    </span>
+                                )}
+                                {selectedMapId === 0 && (
+                                    <span
+                                        className={cn(
+                                            `font-black`,
+                                            team2.winner
+                                                ? "text-green-500"
+                                                : "text-red-500",
+                                        )}
+                                    >
+                                        {team2.score}
+                                    </span>
+                                )}
                             </div>
                             <CFTable table={table2} />
                         </div>

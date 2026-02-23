@@ -27,7 +27,7 @@ export const matchService = {
             };
         });
 
-        const sumStatsPerPlayer = (stats: any[]) => {
+        const sumStatsPerPlayer = (stats: any[], numMaps: number) => {
             const playerMap = new Map();
 
             stats.forEach((s) => {
@@ -39,6 +39,7 @@ export const matchService = {
                         deaths: 0,
                         assists: 0,
                         damage: 0,
+                        adr: 0,
                     });
                 }
                 const current = playerMap.get(playerId);
@@ -46,9 +47,15 @@ export const matchService = {
                 current.deaths += s.deaths || 0;
                 current.assists += s.assists || 0;
                 current.damage += s.damage || 0;
+                current.adr += s.adr || 0;
             });
 
-            return Array.from(playerMap.values());
+            return Array.from(playerMap.values())
+                .map((player) => ({
+                    ...player,
+                    adr: numMaps > 0 ? Math.round(player.adr / numMaps) : 0,
+                }))
+                .sort((s1, s2) => s2.adr - s1.adr);
         };
 
         return {
@@ -58,9 +65,11 @@ export const matchService = {
                 combinedStats: {
                     team1: sumStatsPerPlayer(
                         transformedMaps.flatMap((m) => m.playerStats.team1),
+                        transformedMaps.length,
                     ),
                     team2: sumStatsPerPlayer(
                         transformedMaps.flatMap((m) => m.playerStats.team2),
+                        transformedMaps.length,
                     ),
                 },
             },

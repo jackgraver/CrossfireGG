@@ -37,8 +37,8 @@ export const matchRepository = {
                                 },
                             },
                             orderBy: [
+                                desc(playerStats.adr),
                                 desc(playerStats.kills),
-                                desc(playerStats.deaths),
                             ],
                         },
                     },
