@@ -10,6 +10,10 @@ type EnvVarInfo = {
 // Intermediate config to build incrementally
 const _config: any = {};
 
+_config.redis = {
+    url: process.env.REDIS_URL || "redis://localhost:6379",
+};
+
 const REQUIRED_VARS: EnvVarInfo[] = [
     {
         name: "PORT",

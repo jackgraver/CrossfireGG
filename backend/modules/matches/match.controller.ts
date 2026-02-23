@@ -14,14 +14,31 @@ import {
 } from "@repo/contracts";
 import { MatchPageContract } from "@repo/contracts";
 import { AuthRequest } from "../../core/middleware/auth.middleware";
+import { redisGet, redisSet } from "../../core/redis";
+
+const matchCacheKey = (matchId: number) => `match:${matchId}`;
 
 export const matchController = {
     getMatchById: async (req: Request, res: Response) => {
         const data = parseOr400(res, MatchParamsSchema, req.params);
         if (!data) return;
 
+        const cached = await redisGet(matchCacheKey(data.matchId));
+        if (cached) {
+            logger.debug("Redis cache hit");
+            try {
+                res.json(JSON.parse(cached));
+                return;
+            } catch (err) {
+                logger.debug("Redis cache parse failed", err);
+            }
+        }
+        logger.debug("Redis cache miss");
+
         const match = await matchService.getMatchById(data.matchId);
 
+        logger.debug("Redis cache set", match.match.id);
+        redisSet(matchCacheKey(data.matchId), JSON.stringify(match));
         sendContract(res, MatchPageContract, match);
     },
 
