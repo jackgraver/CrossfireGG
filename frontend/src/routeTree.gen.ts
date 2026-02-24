@@ -14,6 +14,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as TournamentIndexRouteImport } from './routes/tournament/index'
 import { Route as SignUpIndexRouteImport } from './routes/sign-up/index'
 import { Route as SignInIndexRouteImport } from './routes/sign-in/index'
+import { Route as RulesIndexRouteImport } from './routes/rules/index'
 import { Route as D43fc9c518864db78e7d07a782b35160IndexRouteImport } from './routes/d43fc9c5-1886-4db7-8e7d-07a782b35160/index'
 import { Route as CastingIndexRouteImport } from './routes/casting/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
@@ -57,6 +58,11 @@ const SignUpIndexRoute = SignUpIndexRouteImport.update({
 const SignInIndexRoute = SignInIndexRouteImport.update({
   id: '/sign-in/',
   path: '/sign-in/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RulesIndexRoute = RulesIndexRouteImport.update({
+  id: '/rules/',
+  path: '/rules/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const D43fc9c518864db78e7d07a782b35160IndexRoute =
@@ -171,6 +177,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/casting/': typeof CastingIndexRoute
   '/d43fc9c5-1886-4db7-8e7d-07a782b35160/': typeof D43fc9c518864db78e7d07a782b35160IndexRoute
+  '/rules/': typeof RulesIndexRoute
   '/sign-in/': typeof SignInIndexRoute
   '/sign-up/': typeof SignUpIndexRoute
   '/tournament/': typeof TournamentIndexRoute
@@ -196,6 +203,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/casting': typeof CastingIndexRoute
   '/d43fc9c5-1886-4db7-8e7d-07a782b35160': typeof D43fc9c518864db78e7d07a782b35160IndexRoute
+  '/rules': typeof RulesIndexRoute
   '/sign-in': typeof SignInIndexRoute
   '/sign-up': typeof SignUpIndexRoute
   '/tournament': typeof TournamentIndexRoute
@@ -222,6 +230,7 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/casting/': typeof CastingIndexRoute
   '/d43fc9c5-1886-4db7-8e7d-07a782b35160/': typeof D43fc9c518864db78e7d07a782b35160IndexRoute
+  '/rules/': typeof RulesIndexRoute
   '/sign-in/': typeof SignInIndexRoute
   '/sign-up/': typeof SignUpIndexRoute
   '/tournament/': typeof TournamentIndexRoute
@@ -250,6 +259,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/casting/'
     | '/d43fc9c5-1886-4db7-8e7d-07a782b35160/'
+    | '/rules/'
     | '/sign-in/'
     | '/sign-up/'
     | '/tournament/'
@@ -275,6 +285,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/casting'
     | '/d43fc9c5-1886-4db7-8e7d-07a782b35160'
+    | '/rules'
     | '/sign-in'
     | '/sign-up'
     | '/tournament'
@@ -300,6 +311,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/casting/'
     | '/d43fc9c5-1886-4db7-8e7d-07a782b35160/'
+    | '/rules/'
     | '/sign-in/'
     | '/sign-up/'
     | '/tournament/'
@@ -327,6 +339,7 @@ export interface RootRouteChildren {
   AdminIndexRoute: typeof AdminIndexRoute
   CastingIndexRoute: typeof CastingIndexRoute
   D43fc9c518864db78e7d07a782b35160IndexRoute: typeof D43fc9c518864db78e7d07a782b35160IndexRoute
+  RulesIndexRoute: typeof RulesIndexRoute
   SignInIndexRoute: typeof SignInIndexRoute
   SignUpIndexRoute: typeof SignUpIndexRoute
   TournamentIndexRoute: typeof TournamentIndexRoute
@@ -374,6 +387,13 @@ declare module '@tanstack/react-router' {
       path: '/sign-in'
       fullPath: '/sign-in/'
       preLoaderRoute: typeof SignInIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/rules/': {
+      id: '/rules/'
+      path: '/rules'
+      fullPath: '/rules/'
+      preLoaderRoute: typeof RulesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/d43fc9c5-1886-4db7-8e7d-07a782b35160/': {
@@ -574,6 +594,7 @@ const rootRouteChildren: RootRouteChildren = {
   CastingIndexRoute: CastingIndexRoute,
   D43fc9c518864db78e7d07a782b35160IndexRoute:
     D43fc9c518864db78e7d07a782b35160IndexRoute,
+  RulesIndexRoute: RulesIndexRoute,
   SignInIndexRoute: SignInIndexRoute,
   SignUpIndexRoute: SignUpIndexRoute,
   TournamentIndexRoute: TournamentIndexRoute,
