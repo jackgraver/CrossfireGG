@@ -100,11 +100,9 @@ function RouteComponent() {
         );
     };
 
-    const currentStage = tournament.stages[0];
-
     return (
-        <div className="mx-auto min-h-screen max-w-[1400px] p-6">
-            <div className="relative overflow-hidden pt-8 pb-8 md:pt-12 md:pb-8">
+        <div className="mx-auto min-h-screen max-w-350 p-6">
+            <div className="relative overflow-hidden pt-8 pb-8 md:pb-8">
                 <div className="relative z-10 flex flex-col justify-between gap-8 md:flex-row md:items-end">
                     <div className="space-y-6">
                         <span className="rounded-full bg-green-500 px-3 py-1 text-[10px] font-black tracking-widest text-white uppercase">
@@ -113,9 +111,9 @@ function RouteComponent() {
                         <h1 className="text-textPrimary mb-2 pt-2 text-5xl font-black tracking-tight md:text-6xl">
                             {tournament.name}
                         </h1>
-                        {tournament.status === "upcoming" && (
+                        {/*{tournament.status === "upcoming" && (
                             <SignUpButton tournamentId={tournamentId} />
-                        )}
+                        )}*/}
                         <div className="flex flex-wrap items-center gap-x-12 gap-y-6 pt-4">
                             <InfoTile
                                 icon={Calendar}
