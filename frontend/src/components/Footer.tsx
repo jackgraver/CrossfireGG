@@ -1,10 +1,15 @@
+import { Link } from "@tanstack/react-router";
+
 export default function Footer() {
     return (
         <footer className="">
             <div className="w-full px-4 py-4">
                 <div className="flex items-center justify-between">
                     <div className="text-textSecondary">
-                        Organized by CrossFireGG
+                        <h1>Organized by CrossFireGG</h1>
+                        <Link to={"/rules"} className="text-textSecondary hover:text-textPrimary">
+                            Rules
+                        </Link>
                     </div>
                     <div className="flex space-x-4">
                         <a

@@ -8,8 +8,12 @@ import {
 } from "./match.validation";
 import { parseOr400 } from "../../core/validation/parseOr400";
 import { sendContract } from "../../core/sendContract";
-import { MatchWithParticipantsAndMapsContract } from "@repo/contracts";
+import {
+    ClaimedAndUnclaimedMatchesContract,
+    MatchWithParticipantsAndMapsContract,
+} from "@repo/contracts";
 import { MatchPageContract } from "@repo/contracts";
+import { AuthRequest } from "../../core/middleware/auth.middleware";
 
 export const matchController = {
     getMatchById: async (req: Request, res: Response) => {
@@ -25,10 +29,7 @@ export const matchController = {
         try {
             const matches = await matchService.getAllMatchCasting();
 
-            res.json(matches);
-            // const payload = ClaimedAndUnclaimedMatchesContract.parse(matches);
-
-            // res.json(payload);
+            sendContract(res, ClaimedAndUnclaimedMatchesContract, matches);
         } catch (error: any) {
             logger.error("Error fetching casting matches:", error);
             res.status(500).json({ error: "Failed to fetch casting matches" });
@@ -39,7 +40,10 @@ export const matchController = {
             const data = parseOr400(res, ClaimMatchSchema, req.body);
             if (!data) return;
 
-            const match = await matchService.claimMatch(data.matchId, 1); // TODO: Get caster ID from user
+            const { user } = req as AuthRequest;
+            if (!user) return res.status(401).json({ error: "Unauthorized" });
+
+            const match = await matchService.claimMatch(data.matchId, user.id); // TODO: Get caster ID from user
             res.json(match);
         } catch (error: any) {
             logger.error("Error claiming match:", error);

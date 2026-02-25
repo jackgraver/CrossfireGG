@@ -83,7 +83,9 @@ const NavItem = ({
 };
 
 export default function NavBar() {
-    const { user } = useAuth();
+    const { user, isLoading } = useAuth();
+    if (isLoading) return null;
+
     const signOut = useSignOut();
 
     useEffect(() => {
@@ -119,25 +121,6 @@ export default function NavBar() {
                     )}
                 </div>
                 <div className="flex items-center gap-1">
-                    <NavItem
-                        icon={<Moon size={18} />}
-                        label="Theme"
-                        onClick={() => toggleDarkMode()}
-                        left={false}
-                    />
-                    {matchesRole(
-                        user?.roles,
-                        Roles.ADMIN,
-                        Roles.PRODUCTION_LEAD,
-                        Roles.PRODUCTION,
-                    ) && (
-                        <NavItem
-                            to="/casting"
-                            icon={<Video size={18} />}
-                            label="Casting"
-                            left={false}
-                        />
-                    )}
                     {matchesRole(user?.roles, Roles.ADMIN) && (
                         <NavItem
                             to="/admin"
@@ -147,44 +130,50 @@ export default function NavBar() {
                         />
                     )}
                     {user ? (
-                        <>
-                            <div className="group relative">
-                                <NavItem
-                                    left={false}
-                                    to="/user"
-                                    icon={
-                                        <TeamLogo
-                                            avatar={user.image ?? undefined}
-                                            styling={"h-8 w-8 rounded-md"}
+                        <div className="group relative">
+                            <NavItem
+                                left={false}
+                                to="/user"
+                                icon={
+                                    <TeamLogo
+                                        avatar={user.image ?? undefined}
+                                        styling={"h-8 w-8 rounded-md"}
+                                    />
+                                }
+                                label={user?.name}
+                            />
+                            <div className="bg-mainBg border-border invisible absolute right-0 z-20 mt-2 w-40 rounded border opacity-0 shadow-md transition-opacity duration-200 group-hover:visible group-hover:opacity-100">
+                                <ul className="flex flex-col py-2">
+                                    <li>
+                                        <NavItem
+                                            icon={<Moon size={18} />}
+                                            label="Theme"
+                                            onClick={() => toggleDarkMode()}
+                                            left={false}
                                         />
-                                    }
-                                    label={user?.name}
-                                />
-                                <div className="bg-mainBg border-border invisible absolute right-0 z-20 mt-2 w-40 rounded border opacity-0 shadow-md transition-opacity duration-200 group-hover:visible group-hover:opacity-100">
-                                    <ul className="flex flex-col py-2">
-                                        <li>
-                                            <NavItem
-                                                left={false}
-                                                to="/user"
-                                                icon={<User size={16} />}
-                                                label="Profile"
-                                            />
-                                        </li>
-                                        <li>
-                                            <NavItem
-                                                left={false}
-                                                to="/"
-                                                icon={<LogOut size={18} />}
-                                                label="Sign Out"
-                                                onClick={() => {
-                                                    signOut.mutate();
-                                                }}
-                                            />
-                                        </li>
-                                    </ul>
-                                </div>
+                                    </li>
+                                    <li>
+                                        <NavItem
+                                            left={false}
+                                            to="/user"
+                                            icon={<User size={16} />}
+                                            label="Profile"
+                                        />
+                                    </li>
+                                    <li>
+                                        <NavItem
+                                            left={false}
+                                            to="/"
+                                            icon={<LogOut size={18} />}
+                                            label="Sign Out"
+                                            onClick={() => {
+                                                signOut.mutate();
+                                            }}
+                                        />
+                                    </li>
+                                </ul>
                             </div>
-                        </>
+                        </div>
                     ) : (
                         <button
                             className="bg-faceit hover:bg-faceitSecondary flex cursor-pointer items-center gap-2 rounded-md py-2 pr-3 pl-2 text-sm font-bold text-black"

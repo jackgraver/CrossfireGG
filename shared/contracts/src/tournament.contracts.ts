@@ -11,6 +11,7 @@ export const TournamentContract = z.object({
     status: z.string().default("draft"),
     description: z.string().nullable().optional(),
     prize_pool: z.number().nullable().optional(),
+    is_vrs_enabled: z.boolean().default(false),
     start_date: z.date().nullable().optional(),
     end_date: z.date().nullable().optional(),
 });

@@ -130,7 +130,7 @@ export const TournamentGroup = ({
                         >
                             <img
                                 src={
-                                    tournament.id % 2 === 1
+                                    tournament.id % 2 === 0
                                         ? "ex2.jpg"
                                         : "SEASON_4_ANNOUNCEMENT.png"
                                 }
@@ -140,10 +140,7 @@ export const TournamentGroup = ({
                             />
                             <div className="flex flex-1 flex-col justify-between gap-4 p-6">
                                 <div className="flex flex-col gap-2">
-                                    <div className="flex items-center justify-between gap-2">
-                                        <h2 className="text-textPrimary line-clamp-2 text-2xl font-black tracking-tight">
-                                            {tournament.name}
-                                        </h2>
+                                    <div className="flex flex-col gap-2">
                                         <div className="flex shrink-0 items-center gap-2">
                                             {tournament.prize_pool != null && (
                                                 <span className="bg-cfRed/10 text-cfRed flex items-center gap-1 rounded-md px-2 py-1 text-xs font-bold">
@@ -151,19 +148,32 @@ export const TournamentGroup = ({
                                                     {tournament.prize_pool.toLocaleString()}
                                                 </span>
                                             )}
+                                            {tournament.is_vrs_enabled && (
+                                                <span className="flex items-center gap-1 rounded-md bg-blue-500/10 px-2 py-1 text-xs font-bold text-blue-500">
+                                                    <CheckCircle2 size={12} />
+                                                    VRS Enabled
+                                                </span>
+                                            )}
+                                            <span className="flex items-center gap-1 rounded-md bg-gray-400/10 px-2 py-1 text-xs font-bold text-gray-300">
+                                                <Users
+                                                    size={14}
+                                                    className="opacity-70"
+                                                />
+                                                {tournament?.stages[0]
+                                                    ?.teams_count || 0}{" "}
+                                                /{" "}
+                                                {
+                                                    tournament?.stages[0]
+                                                        ?.max_teams
+                                                }{" "}
+                                                Teams
+                                            </span>
                                         </div>
+                                        <h2 className="text-textPrimary line-clamp-2 text-4xl font-black tracking-tight">
+                                            {tournament.name}
+                                        </h2>
                                     </div>
                                     <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-                                        <span className="text-textSecondary flex items-center gap-1.5 text-xs font-bold">
-                                            <Users
-                                                size={14}
-                                                className="opacity-70"
-                                            />
-                                            {tournament?.stages[0]
-                                                ?.teams_count || 0}{" "}
-                                            / {tournament?.stages[0]?.max_teams}{" "}
-                                            Teams
-                                        </span>
                                         {tournament.start_date && (
                                             <div className="text-textSecondary flex items-center gap-1.5 text-xs font-medium opacity-60">
                                                 <Calendar size={14} />

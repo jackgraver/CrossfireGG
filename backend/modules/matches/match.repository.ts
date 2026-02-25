@@ -67,19 +67,23 @@ export const matchRepository = {
                 },
                 participants: {
                     with: {
-                        team: true,
+                        stageTeam: {
+                            with: {
+                                team: true,
+                            },
+                        },
                     },
                 },
             },
         });
     },
 
-    upsertCaster: async (matchId: number, casterId: number) => {
+    upsertCaster: async (matchId: number, casterId: string) => {
         return await db
             .insert(matchCasters)
             .values({
                 match_id: matchId,
-                caster_id: casterId.toString(),
+                caster_id: casterId,
                 assigned_at: new Date(),
             })
             .returning();

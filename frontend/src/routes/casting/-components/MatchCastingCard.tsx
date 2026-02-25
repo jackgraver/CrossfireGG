@@ -38,21 +38,21 @@ export default function MatchCastingCard({
                     <div className="mb-3 flex items-center gap-4">
                         <div className="flex items-center gap-2">
                             <TeamLogo
-                                team={match.participants[0].team}
+                                team={match.participants[0].stageTeam.team}
                                 styling="h-6 w-6 rounded"
                             />
                             <span className="text-textPrimary font-medium">
-                                {match.participants[0].team.name}
+                                {match.participants[0].stageTeam.team.name}
                             </span>
                         </div>
                         <span className="text-gray-400">vs</span>
                         <div className="flex items-center gap-2">
                             <TeamLogo
-                                team={match.participants[1].team}
+                                team={match.participants[1].stageTeam.team}
                                 styling="h-6 w-6 rounded"
                             />
                             <span className="text-textPrimary font-medium">
-                                {match.participants[1].team.name}
+                                {match.participants[1].stageTeam.team.name}
                             </span>
                         </div>
                     </div>

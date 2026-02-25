@@ -91,7 +91,7 @@ export const matchService = {
             unclaimed: unclaimedMatches,
         };
     },
-    claimMatch: async (matchId: number, casterId: number) => {
+    claimMatch: async (matchId: number, casterId: string) => {
         const match = await matchRepository.findById(matchId);
         if (!match) {
             throw new Error("Match not found");

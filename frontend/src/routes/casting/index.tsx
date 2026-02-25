@@ -40,7 +40,7 @@ function Casting() {
     };
 
     return (
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto py-8">
             <div className="mb-8">
                 <h1 className="text-textPrimary mb-2 text-4xl font-bold">
                     Match Casting
@@ -50,7 +50,8 @@ function Casting() {
                     casting
                 </p>
             </div>
-            <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+            <div className="relative grid grid-cols-1 gap-24 lg:grid-cols-2">
+                <div className="bg-border absolute top-0 left-1/2 hidden h-full w-px -translate-x-1/2 lg:block" />
                 <div>
                     <div className="mb-4">
                         <h2 className="text-textPrimary mb-2 text-2xl font-semibold">
