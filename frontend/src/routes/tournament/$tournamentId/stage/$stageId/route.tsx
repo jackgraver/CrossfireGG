@@ -6,31 +6,19 @@ import {
 } from "@tanstack/react-router";
 import { useTournamentById } from "../../../../../lib/api/tournament.queries";
 import { formatDateOnly, toUnixTimestamp } from "@/lib/date.utils";
-import { Calendar, LayoutDashboard, Users } from "lucide-react";
+import {
+    Calendar,
+    LayoutDashboard,
+    Users,
+    Trophy,
+    ShieldCheck,
+    CheckCircle2,
+    DollarSign,
+    Clock,
+} from "lucide-react";
 import { cn } from "@/utils/cn";
-import SignUpButton from "@/routes/tournament/-components/SignUpButton";
-
-const InfoTile = ({
-    icon: Icon,
-    label,
-    value,
-}: {
-    icon: any;
-    label: string;
-    value: string | number;
-}) => (
-    <div className="flex items-center gap-4 p-2 transition-all">
-        <div className="bg-cfRed/10 flex h-10 w-10 items-center justify-center rounded-lg">
-            <Icon className="text-cfRed" size={20} />
-        </div>
-        <div>
-            <p className="text-textSecondary text-[10px] font-bold tracking-widest uppercase">
-                {label}
-            </p>
-            <p className="text-textPrimary text-base font-bold">{value}</p>
-        </div>
-    </div>
-);
+import { InfoTile } from "../../-component/InfoTile";
+import Tile from "../../-component/Tile";
 
 export const Route = createFileRoute(
     "/tournament/$tournamentId/stage/$stageId",
@@ -101,81 +89,90 @@ function RouteComponent() {
     };
 
     return (
-        <div className="mx-auto min-h-screen max-w-350 p-6">
+        <div className="mx-auto min-h-screen max-w-350">
             <div className="relative overflow-hidden pt-8 pb-8 md:pb-8">
                 <div className="relative z-10 flex flex-col justify-between gap-8 md:flex-row md:items-end">
                     <div className="space-y-6">
-                        <span className="rounded-full bg-green-500 px-3 py-1 text-[10px] font-black tracking-widest text-white uppercase">
-                            Ongoing
-                        </span>
+                        <div className="m-0 flex items-center gap-2">
+                            <Tile
+                                color="gray-500"
+                                icon={Clock}
+                                label={tournament.status.toUpperCase()}
+                                fade={40}
+                            />
+
+                            <Tile
+                                color="green-500"
+                                icon={DollarSign}
+                                label={tournament.prize_pool?.toString() ?? "0"}
+                                fade={20}
+                            />
+                            {tournament.is_vrs_enabled && (
+                                <Tile
+                                    color="blue-500"
+                                    icon={CheckCircle2}
+                                    label={"VRS Enabled"}
+                                    fade={20}
+                                />
+                            )}
+                        </div>
+
                         <h1 className="text-textPrimary mb-2 pt-2 text-5xl font-black tracking-tight md:text-6xl">
                             {tournament.name}
                         </h1>
                         {/*{tournament.status === "upcoming" && (
                             <SignUpButton tournamentId={tournamentId} />
                         )}*/}
-                        <div className="flex flex-wrap items-center gap-x-12 gap-y-6 pt-4">
-                            <InfoTile
-                                icon={Calendar}
-                                label="Start Date"
-                                value={
-                                    tournament.start_date
-                                        ? formatDateOnly(
-                                              toUnixTimestamp(
-                                                  tournament.start_date,
-                                              )!,
-                                          )
-                                        : "TBD"
-                                }
-                            />
-                            <InfoTile
-                                icon={Calendar}
-                                label="Registration Deadline" //TODO: Change to Registration Deadline
-                                value={
-                                    tournament.start_date
-                                        ? formatDateOnly(
-                                              toUnixTimestamp(
-                                                  tournament.start_date,
-                                              )!,
-                                          )
-                                        : "TBD"
-                                }
-                            />
-                            <InfoTile
-                                icon={Calendar}
-                                label="End Date"
-                                value={
-                                    tournament.end_date
-                                        ? formatDateOnly(
-                                              toUnixTimestamp(
-                                                  tournament.start_date,
-                                              )!,
-                                          )
-                                        : "TBD"
-                                }
-                            />
-                            {/* <InfoTile
-                                icon={Users}
-                                label="RegisteredTeams"
-                                value={
-                                    currentStage
-                                        ? `${currentStage.teams_count ?? 0} / ${currentStage.max_teams}`
-                                        : "N/A"
-                                }
-                            /> */}
-                            <InfoTile
-                                icon={Calendar}
-                                label="Prize Pool"
-                                value={
-                                    tournament.prize_pool
-                                        ? formatDateOnly(
-                                              toUnixTimestamp(
-                                                  tournament.start_date,
-                                              )!,
-                                          )
-                                        : "TBD"
-                                }
-                            />
+                        <div className="flex flex-wrap items-center gap-6 pt-4">
+                            <div className="flex flex-wrap items-center gap-2 rounded-xl border-2 border-dashed border-white/10 px-4 py-2">
+                                <div className="bg-cfRed/10 flex h-10 w-10 items-center justify-center rounded-lg">
+                                    <Calendar
+                                        className="text-cfRed"
+                                        size={24}
+                                    />
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <InfoTile
+                                        icon={Calendar}
+                                        label="Registration"
+                                        value={
+                                            tournament.start_date
+                                                ? formatDateOnly(
+                                                      toUnixTimestamp(
+                                                          tournament.start_date,
+                                                      )!,
+                                                  )
+                                                : "TBD"
+                                        }
+                                    />
+                                    <InfoTile
+                                        icon={Calendar}
+                                        label="Start Date"
+                                        value={
+                                            tournament.start_date
+                                                ? formatDateOnly(
+                                                      toUnixTimestamp(
+                                                          tournament.start_date,
+                                                      )!,
+                                                  )
+                                                : "TBD"
+                                        }
+                                    />
+                                    <InfoTile
+                                        icon={Calendar}
+                                        label="End Date"
+                                        value={
+                                            tournament.end_date
+                                                ? formatDateOnly(
+                                                      toUnixTimestamp(
+                                                          tournament.end_date,
+                                                      )!,
+                                                  )
+                                                : "TBD"
+                                        }
+                                    />
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -12,6 +12,7 @@ import {
     CalendarFold,
 } from "lucide-react";
 import { TournamentWithStagesDTO } from "@repo/contracts";
+import Tile from "./$tournamentId/-component/Tile";
 
 export const Route = createFileRoute("/tournament/")({
     component: RouteComponent,
@@ -143,31 +144,31 @@ export const TournamentGroup = ({
                                     <div className="flex flex-col gap-2">
                                         <div className="flex shrink-0 items-center gap-2">
                                             {tournament.prize_pool != null && (
-                                                <span className="bg-cfRed/10 text-cfRed flex items-center gap-1 rounded-md px-2 py-1 text-xs font-bold">
-                                                    <DollarSign size={12} />
-                                                    {tournament.prize_pool.toLocaleString()}
-                                                </span>
+                                                <Tile
+                                                    color="cfRed"
+                                                    icon={DollarSign}
+                                                    label={tournament.prize_pool.toLocaleString()}
+                                                />
                                             )}
                                             {tournament.is_vrs_enabled && (
-                                                <span className="flex items-center gap-1 rounded-md bg-blue-500/10 px-2 py-1 text-xs font-bold text-blue-500">
-                                                    <CheckCircle2 size={12} />
-                                                    VRS Enabled
-                                                </span>
-                                            )}
-                                            <span className="flex items-center gap-1 rounded-md bg-gray-400/10 px-2 py-1 text-xs font-bold text-gray-300">
-                                                <Users
-                                                    size={14}
-                                                    className="opacity-70"
+                                                <Tile
+                                                    color="blue-500"
+                                                    icon={CheckCircle2}
+                                                    label={"VRS Enabled"}
                                                 />
-                                                {tournament?.stages[0]
-                                                    ?.teams_count || 0}{" "}
-                                                /{" "}
-                                                {
+                                            )}
+                                            <Tile
+                                                color="gray-400"
+                                                icon={Users}
+                                                label={
+                                                    (tournament?.stages[0]
+                                                        ?.teams_count || 0) +
+                                                    " / " +
                                                     tournament?.stages[0]
-                                                        ?.max_teams
-                                                }{" "}
-                                                Teams
-                                            </span>
+                                                        ?.max_teams +
+                                                    " Teams"
+                                                }
+                                            />
                                         </div>
                                         <h2 className="text-textPrimary line-clamp-2 text-4xl font-black tracking-tight">
                                             {tournament.name}
