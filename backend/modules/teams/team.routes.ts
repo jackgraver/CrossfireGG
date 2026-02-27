@@ -15,12 +15,8 @@ router.delete(
     teamController.removePlayerFromTeam,
 );
 
-/**
- * @deprecated
- */
-// router.get("/players/search", teamController.searchPlayers);
-
 router.get("/:teamId/tournament", teamController.getTeamTournaments);
+router.get("/:teamId/matches", teamController.getAllTeamMatches); //TODO: pagination later
 
 router.get(
     "/:teamId/stages/:stageId/matches",

@@ -77,8 +77,12 @@ export const teamService = {
 
     getTeamTournaments: async (teamId: number) => {
         const tournaments = await teamRepository.getTeamTournaments(teamId);
-
         return tournaments;
+    },
+
+    getTeamMatches: async (teamId: number) => {
+        const matches = await teamRepository.findMatchesByTeamId(teamId);
+        return matches;
     },
 
     getTeamMatchesByStage: async (

@@ -71,13 +71,19 @@ export const teamRepository = {
     },
 
     findMatchesByTeamId: async (teamId: number) => {
+        const stageTeam = await db.query.stageTeams.findFirst({
+            where: (st, { eq, and, isNull }) =>
+                and(eq(st.team_id, teamId), isNull(st.deleted_at)),
+        });
+        if (!stageTeam) return [];
+
         // Get all match IDs where this team participated
         const teamMatches = await db
             .select({ match_id: matchParticipants.match_id })
             .from(matchParticipants)
             .where(
                 and(
-                    eq(matchParticipants.team_id, teamId),
+                    eq(matchParticipants.team_id, stageTeam.id),
                     isNull(matchParticipants.deleted_at),
                 ),
             );
@@ -86,13 +92,20 @@ export const teamRepository = {
 
         if (matchIds.length === 0) return [];
 
-        // Get the actual matches
-        return await db
-            .select()
-            .from(matches)
-            .where(
-                and(inArray(matches.id, matchIds), isNull(matches.deleted_at)),
-            );
+        return await db.query.matches.findMany({
+            with: {
+                participants: {
+                    with: {
+                        stageTeam: {
+                            with: {
+                                team: true,
+                            },
+                        },
+                    },
+                },
+            },
+            where: inArray(matches.id, matchIds),
+        });
     },
 
     findMatchesByTeamIdAndStageId: async (teamId: number, stageId: number) => {
@@ -123,19 +136,33 @@ export const teamRepository = {
     },
 
     getTeamTournaments: async (teamId: number) => {
-        // return await db.query.stageTeams.findMany({
-        //     with: {
-        //         stage: {
-        //             with: {
-        //                 tournament: true,
-        //             },
-        //         },
-        //     },
-        //     where: eq(stageTeams.team_id, teamId),
-        // });
+        const teamStages = await db
+            .select({
+                stage_id: stageTeams.stage_id,
+                tournament_id: stages.tournament_id,
+            })
+            .from(stageTeams)
+            .innerJoin(stages, eq(stageTeams.stage_id, stages.id))
+            .where(
+                and(
+                    eq(stageTeams.team_id, teamId),
+                    isNull(stageTeams.deleted_at),
+                    isNull(stages.deleted_at),
+                ),
+            );
+
+        const stageIds = teamStages.map((s) => s.stage_id);
+        const tournamentIds = Array.from(
+            new Set(teamStages.map((s) => s.tournament_id)),
+        );
+
+        if (stageIds.length === 0 || tournamentIds.length === 0) return [];
+
         return await db.query.tournaments.findMany({
+            where: inArray(tournaments.id, tournamentIds),
             with: {
                 stages: {
+                    where: inArray(stages.id, stageIds),
                     with: {
                         stageTeams: {
                             where: eq(stageTeams.team_id, teamId),

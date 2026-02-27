@@ -50,6 +50,16 @@ export const teamController = {
         sendContract(res, TeamWithTournamentContract, tournaments);
     },
 
+    getAllTeamMatches: async (req: Request, res: Response) => {
+        const data = parseOr400(res, TeamParamsSchema, req.params);
+        if (!data) return;
+
+        const matches = await teamService.getTeamMatches(data.teamId);
+
+        res.json(matches);
+        // sendContract(res, TeamWithTournamentContract, tournaments);
+    },
+
     getTeamMatchesByStage: async (req: Request, res: Response) => {
         try {
             const teamId = parseInt(req.params.teamId);
@@ -97,30 +107,6 @@ export const teamController = {
                 error,
             );
             res.status(500).json({ error: "Failed to fetch team players" });
-        }
-    },
-
-    searchPlayers: async (req: Request, res: Response) => {
-        try {
-            const searchQuery = req.query.q as string;
-            const excludeTeamId = req.query.exclude_team_id
-                ? parseInt(req.query.exclude_team_id as string)
-                : undefined;
-
-            if (!searchQuery || searchQuery.trim().length === 0) {
-                return res
-                    .status(400)
-                    .json({ error: "Search query is required" });
-            }
-
-            const players = await teamService.searchPlayers(
-                searchQuery.trim(),
-                excludeTeamId,
-            );
-            res.json(players);
-        } catch (error: any) {
-            logger.error("Error in searchPlayers:", error);
-            res.status(500).json({ error: "Failed to search players" });
         }
     },
 
