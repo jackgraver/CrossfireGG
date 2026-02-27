@@ -25,18 +25,13 @@ function toggleDarkMode() {
     }
 }
 
-const preloadImage = (url: string) => {
-    if (typeof window === "undefined") return;
-    const img = new Image();
-    img.src = url;
-};
-
 interface NavItemProps {
     to?: string;
     params?: Record<string, string>;
     icon: React.ReactNode;
     label: string;
     left?: boolean;
+    padding?: string;
     onClick?: (e: React.MouseEvent) => void;
     onMouseEnter?: () => void;
 }
@@ -47,11 +42,13 @@ const NavItem = ({
     icon,
     label,
     left = true,
+    padding = "px-3 py-2",
     onClick,
     onMouseEnter,
 }: NavItemProps) => {
     const baseClasses =
-        "flex items-center gap-2 px-3 py-2 rounded-lg text-textSecondary hover:text-textPrimary hover:bg-white/5 transition-all duration-200 text-sm font-medium";
+        "flex items-center gap-2 rounded-lg text-textSecondary hover:text-textPrimary hover:bg-white/5 transition-all duration-200 text-sm font-medium " +
+        padding;
 
     if (to) {
         return (
@@ -106,6 +103,7 @@ export default function NavBar() {
                         to="/tournament"
                         icon={<Trophy size={18} />}
                         label="Tournaments"
+                        padding="pr-3 py-2"
                     />
                     {matchesRole(
                         user?.roles,
@@ -141,6 +139,7 @@ export default function NavBar() {
                                     />
                                 }
                                 label={user?.name}
+                                padding="pl-3 py-2"
                             />
                             <div className="bg-mainBg border-border invisible absolute right-0 z-20 mt-2 w-40 rounded border opacity-0 shadow-md transition-opacity duration-200 group-hover:visible group-hover:opacity-100">
                                 <ul className="flex flex-col py-2">

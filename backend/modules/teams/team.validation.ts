@@ -25,3 +25,10 @@ export const RegisterTeamSchema = z.object({
         discordConfirmation: z.boolean(),
     }),
 });
+
+export const TeamParamsSchema = z.object({
+    teamId: z
+        .string()
+        .regex(/^\d+$/, "Team ID must be a valid number")
+        .transform(Number),
+});

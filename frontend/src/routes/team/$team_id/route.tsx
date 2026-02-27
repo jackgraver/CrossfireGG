@@ -9,20 +9,6 @@ import { useTeam } from "@/lib/api/team.queries";
 
 export const Route = createFileRoute("/team/$team_id")({
     component: RouteComponent,
-    // loader: async ({ context, params }) => {
-    //     // const user = await fetchSession();
-    //     // console.log('loader, user:', user);
-    //     // if (!user) {
-    //     //     throw redirect({ to: "/" });
-    //     // }
-    //     // return {
-    //     //     user,
-    //     // };
-    //     await queryClient.prefetchQuery({
-    //         queryKey: ["team", params.team_id],
-    //         queryFn: () => apiGET<TeamDTO>(`/team/${params.team_id}`),
-    //     });
-    // },
 });
 
 function RouteComponent() {
@@ -67,7 +53,7 @@ function RouteComponent() {
     };
 
     return (
-        <div className="mx-auto min-h-screen max-w-[1200px] p-5">
+        <div className="min-h-screen max-w-300 min-w-full py-5">
             <div className="bg-firstBg mb-6 overflow-hidden rounded-xl shadow-md">
                 <div className="flex items-center gap-6 p-6">
                     <TeamLogo

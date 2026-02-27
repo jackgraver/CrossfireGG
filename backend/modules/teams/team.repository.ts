@@ -122,6 +122,31 @@ export const teamRepository = {
             );
     },
 
+    getTeamTournaments: async (teamId: number) => {
+        // return await db.query.stageTeams.findMany({
+        //     with: {
+        //         stage: {
+        //             with: {
+        //                 tournament: true,
+        //             },
+        //         },
+        //     },
+        //     where: eq(stageTeams.team_id, teamId),
+        // });
+        return await db.query.tournaments.findMany({
+            with: {
+                stages: {
+                    with: {
+                        stageTeams: {
+                            where: eq(stageTeams.team_id, teamId),
+                            limit: 1,
+                        },
+                    },
+                },
+            },
+        });
+    },
+
     findStagesByTeamId: async (teamId: number) => {
         return await db
             .select({

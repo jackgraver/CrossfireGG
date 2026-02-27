@@ -75,6 +75,12 @@ export const teamService = {
         // };
     },
 
+    getTeamTournaments: async (teamId: number) => {
+        const tournaments = await teamRepository.getTeamTournaments(teamId);
+
+        return tournaments;
+    },
+
     getTeamMatchesByStage: async (
         teamId: number,
         stageId: number,

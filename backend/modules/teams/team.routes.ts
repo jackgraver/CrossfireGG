@@ -10,13 +10,21 @@ router.get("/:teamId", teamController.getTeamById);
 router.get("/:teamId/players", teamController.getTeamPlayers);
 router.post("/:teamId/players", teamController.addPlayerToTeam);
 
-router.delete("/:teamId/players/:playerId", teamController.removePlayerFromTeam);
+router.delete(
+    "/:teamId/players/:playerId",
+    teamController.removePlayerFromTeam,
+);
 
 /**
  * @deprecated
  */
 // router.get("/players/search", teamController.searchPlayers);
 
-router.get("/:teamId/stages/:stageId/matches", teamController.getTeamMatchesByStage);
+router.get("/:teamId/tournament", teamController.getTeamTournaments);
+
+router.get(
+    "/:teamId/stages/:stageId/matches",
+    teamController.getTeamMatchesByStage,
+);
 
 export default router;

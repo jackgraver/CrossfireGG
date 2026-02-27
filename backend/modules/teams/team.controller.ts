@@ -1,13 +1,18 @@
 import { Request, Response } from "express";
 import { teamService } from "./team.service";
 import { logger } from "../../core/logger";
-import { RegisterTeamSchema } from "./team.validation";
+import { RegisterTeamSchema, TeamParamsSchema } from "./team.validation";
 import { faceitFetchUtil } from "../../utils/faceitFetch.util";
 import { FaceitTeamPlayersResponse } from "../faceit/faceit.types";
 import { teamRepository } from "./team.repository";
 import { playerRepository } from "../players/player.repository";
-import { PlayerContract, TeamContract } from "@repo/contracts";
+import {
+    PlayerContract,
+    TeamContract,
+    TeamWithTournamentContract,
+} from "@repo/contracts";
 import { parseOr400 } from "../../core/validation/parseOr400";
+import { sendContract } from "../../core/sendContract";
 
 export const teamController = {
     getTeamById: async (req: Request, res: Response) => {
@@ -34,6 +39,15 @@ export const teamController = {
             );
             res.status(500).json({ error: "Failed to fetch team details" });
         }
+    },
+
+    getTeamTournaments: async (req: Request, res: Response) => {
+        const data = parseOr400(res, TeamParamsSchema, req.params);
+        if (!data) return;
+
+        const tournaments = await teamService.getTeamTournaments(data.teamId);
+
+        sendContract(res, TeamWithTournamentContract, tournaments);
     },
 
     getTeamMatchesByStage: async (req: Request, res: Response) => {
@@ -175,8 +189,7 @@ export const teamController = {
             const data = parseOr400(res, RegisterTeamSchema, req.body);
             if (!data) return;
 
-            const { team, starters, subs, coach, agreements } =
-                data;
+            const { team, starters, subs, coach, agreements } = data;
 
             const teamInfoAndPlayers =
                 await faceitFetchUtil.fetchData<FaceitTeamPlayersResponse>(
@@ -218,7 +231,10 @@ export const teamController = {
             );
 
             const requestedPlayers = [
-                ...starters.map((p) => ({ ...p, base_role: "starter" as const })),
+                ...starters.map((p) => ({
+                    ...p,
+                    base_role: "starter" as const,
+                })),
                 ...subs.map((p) => ({ ...p, base_role: "sub" as const })),
                 { ...coach, base_role: "coach" as const },
             ];
@@ -268,15 +284,17 @@ export const teamController = {
                 });
             }
 
-            const captainPlayer = await playerRepository.upsertPlayerByFaceitId({
-                player_name: captainMember.nickname,
-                faceit_id: captainMember.user_id,
-                player_logo: captainMember.avatar,
-                country: captainMember.country,
-                base_role: captainRequest.base_role,
-                hltv_id: captainRequest.hltvLink,
-                discord_id: captainRequest.discordId,
-            });
+            const captainPlayer = await playerRepository.upsertPlayerByFaceitId(
+                {
+                    player_name: captainMember.nickname,
+                    faceit_id: captainMember.user_id,
+                    player_logo: captainMember.avatar,
+                    country: captainMember.country,
+                    base_role: captainRequest.base_role,
+                    hltv_id: captainRequest.hltvLink,
+                    discord_id: captainRequest.discordId,
+                },
+            );
 
             const social_links =
                 team.twitter && team.twitter.trim().length > 0
