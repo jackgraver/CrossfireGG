@@ -145,20 +145,23 @@ export const TournamentGroup = ({
                                         <div className="flex shrink-0 items-center gap-2">
                                             {tournament.prize_pool != null && (
                                                 <Tile
-                                                    color="cfRed"
+                                                    bg="bg-green-500/20"
+                                                    text="text-green-400"
                                                     icon={DollarSign}
                                                     label={tournament.prize_pool.toLocaleString()}
                                                 />
                                             )}
                                             {tournament.is_vrs_enabled && (
                                                 <Tile
-                                                    color="blue-500"
+                                                    bg="bg-blue-500/20"
+                                                    text="text-blue-400"
                                                     icon={CheckCircle2}
                                                     label={"VRS Enabled"}
                                                 />
                                             )}
                                             <Tile
-                                                color="gray-400"
+                                                bg="bg-gray-500/40"
+                                                text="text-gray-400"
                                                 icon={Users}
                                                 label={
                                                     (tournament?.stages[0]

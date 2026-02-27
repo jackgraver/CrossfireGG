@@ -3,19 +3,19 @@ import { cn } from "@/utils/cn";
 export default function Tile({
     icon: Icon,
     label,
-    color,
-    fade = 10,
+    bg = "bg-gray-500/10",
+    text = "bg-gray-600",
 }: {
     icon: any;
     label: string;
-    color: string;
-    fade?: number;
+    bg: string;
+    text: string;
 }) {
     return (
         <span
             className={cn(
-                "bg-" + color + "/" + fade,
-                "text-" + color,
+                bg ? bg : "",
+                text ? text : "",
                 "flex items-center gap-1 rounded-md px-2 py-1 text-xs font-bold",
             )}
         >

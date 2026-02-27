@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMatch } from "../../../lib/api/match.queries";
 import TeamLogo from "@/components/shared/bracket/atoms/TeamLogo";
 import { cn } from "@/utils/cn";
@@ -72,67 +72,43 @@ function MatchPage() {
                         </button>
                     ))}
                 </div>
-                {/*{currentMap && (
-                    <div className="ml-auto flex items-center gap-4 text-2xl font-black">
-                        <span>{currentMap.team1_score}</span>
-                        <span className="text-textSecondary/30">:</span>
-                        <span>{currentMap.team2_score}</span>
-                    </div>
-                )}
-                {selectedMapId === 0 && (
-                    <div className="ml-auto flex items-center gap-4 text-2xl font-black">
-                        <span>
-                            {maps.reduce(
-                                (sum: number, map: any) =>
-                                    sum + map.team1_score,
-                                0,
-                            )}
-                        </span>
-                        <span className="text-textSecondary/30">:</span>
-                        <span>
-                            {maps.reduce(
-                                (sum: number, map: any) =>
-                                    sum + map.team2_score,
-                                0,
-                            )}
-                        </span>
-                    </div>
-                )}*/}
             </div>
             {(currentMap || selectedMapId === 0) && (
                 <div className="flex flex-col gap-8">
                     <div className="flex flex-col gap-8">
                         <div className="flex flex-col gap-3">
                             <div className="flex items-center gap-2 px-1">
-                                <TeamLogo
-                                    team={team1.stageTeam.team}
-                                    styling="h-8 w-8 rounded-full"
-                                />
-                                <span className="text-textSecondary font-bold tracking-wider uppercase">
-                                    {team1.stageTeam.team.name}
-                                </span>
-                                {currentMap && (
-                                    <span
-                                        className={cn(
-                                            `text-sm font-black`,
-                                            currentMap.winner_id === team1.id
-                                                ? "text-green-500"
-                                                : "text-red-500",
-                                        )}
-                                    >
-                                        {currentMap.team1_score}
+                                <Link
+                                    to="/team/$team_id"
+                                    params={{
+                                        team_id: team1.stageTeam.team_id,
+                                    }}
+                                    className="flex items-center gap-2"
+                                >
+                                    <TeamLogo
+                                        team={team1.stageTeam.team}
+                                        styling="h-8 w-8 rounded-full"
+                                    />
+
+                                    <span className="text-textSecondary font-bold tracking-wider uppercase">
+                                        {team1.stageTeam.team.name}
                                     </span>
-                                )}
-                                {selectedMapId === 0 && (
+                                </Link>
+                                {(currentMap || selectedMapId === 0) && (
                                     <span
                                         className={cn(
-                                            `font-black`,
-                                            team1.winner
+                                            `text-lg font-black`,
+                                            currentMap?.winner_id ===
+                                                team1.id ||
+                                                (selectedMapId === 0 &&
+                                                    team1.winner)
                                                 ? "text-green-500"
                                                 : "text-red-500",
                                         )}
                                     >
-                                        {team1.score}
+                                        {selectedMapId === 0
+                                            ? team1.score
+                                            : currentMap?.team1_score}
                                     </span>
                                 )}
                             </div>
@@ -140,35 +116,37 @@ function MatchPage() {
                         </div>
                         <div className="flex flex-col gap-3">
                             <div className="flex items-center gap-2 px-1">
-                                <TeamLogo
-                                    team={team2.stageTeam.team}
-                                    styling="h-8 w-8 rounded-full"
-                                />
-                                <span className="text-textSecondary text-sm font-bold tracking-wider uppercase">
-                                    {team2.stageTeam.team.name}
-                                </span>
-                                {currentMap && (
-                                    <span
-                                        className={cn(
-                                            `text-sm font-black`,
-                                            currentMap.winner_id === team2.id
-                                                ? "text-green-500"
-                                                : "text-red-500",
-                                        )}
-                                    >
-                                        {currentMap.team2_score}
+                                <Link
+                                    to="/team/$team_id"
+                                    params={{
+                                        team_id: team2.stageTeam.team_id,
+                                    }}
+                                    className="flex items-center gap-2"
+                                >
+                                    <TeamLogo
+                                        team={team2.stageTeam.team}
+                                        styling="h-8 w-8 rounded-full"
+                                    />
+
+                                    <span className="text-textSecondary font-bold tracking-wider uppercase">
+                                        {team2.stageTeam.team.name}
                                     </span>
-                                )}
-                                {selectedMapId === 0 && (
+                                </Link>
+                                {(currentMap || selectedMapId === 0) && (
                                     <span
                                         className={cn(
                                             `font-black`,
-                                            team2.winner
+                                            currentMap?.winner_id ===
+                                                team2.id ||
+                                                (selectedMapId === 0 &&
+                                                    team2.winner)
                                                 ? "text-green-500"
                                                 : "text-red-500",
                                         )}
                                     >
-                                        {team2.score}
+                                        {selectedMapId === 0
+                                            ? team2.score
+                                            : currentMap?.team2_score}
                                     </span>
                                 )}
                             </div>

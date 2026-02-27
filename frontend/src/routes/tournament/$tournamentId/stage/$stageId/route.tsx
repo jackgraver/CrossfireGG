@@ -95,24 +95,24 @@ function RouteComponent() {
                     <div className="space-y-6">
                         <div className="m-0 flex items-center gap-2">
                             <Tile
-                                color="gray-500"
+                                bg="bg-gray-500/40"
+                                text="text-gray-400"
                                 icon={Clock}
                                 label={tournament.status.toUpperCase()}
-                                fade={40}
                             />
 
                             <Tile
-                                color="green-500"
+                                bg="bg-green-500/20"
+                                text="text-green-400"
                                 icon={DollarSign}
                                 label={tournament.prize_pool?.toString() ?? "0"}
-                                fade={20}
                             />
                             {tournament.is_vrs_enabled && (
                                 <Tile
-                                    color="blue-500"
+                                    bg="bg-blue-500/20"
+                                    text="text-blue-400"
                                     icon={CheckCircle2}
                                     label={"VRS Enabled"}
-                                    fade={20}
                                 />
                             )}
                         </div>
