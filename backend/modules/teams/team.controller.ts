@@ -7,12 +7,14 @@ import { FaceitTeamPlayersResponse } from "../faceit/faceit.types";
 import { teamRepository } from "./team.repository";
 import { playerRepository } from "../players/player.repository";
 import {
+    MatchWithParticipantsContract,
     PlayerContract,
     TeamContract,
     TeamWithTournamentContract,
 } from "@repo/contracts";
 import { parseOr400 } from "../../core/validation/parseOr400";
 import { sendContract } from "../../core/sendContract";
+import z from "zod";
 
 export const teamController = {
     getTeamById: async (req: Request, res: Response) => {
@@ -56,8 +58,8 @@ export const teamController = {
 
         const matches = await teamService.getTeamMatches(data.teamId);
 
-        res.json(matches);
-        // sendContract(res, TeamWithTournamentContract, tournaments);
+        // res.json(matches);
+        sendContract(res, z.array(MatchWithParticipantsContract), matches);
     },
 
     getTeamMatchesByStage: async (req: Request, res: Response) => {

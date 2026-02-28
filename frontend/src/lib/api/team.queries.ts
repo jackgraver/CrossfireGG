@@ -1,5 +1,10 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { PlayerDTO, TeamDTO, TeamWithTournamentDTO } from "@repo/contracts";
+import {
+    MatchWithParticipantsDTO,
+    PlayerDTO,
+    TeamDTO,
+    TeamWithTournamentDTO,
+} from "@repo/contracts";
 import { apiDELETE, apiGET, apiPOST } from "@/lib/api/client";
 
 export const useTeam = (teamId: string) => {
@@ -35,6 +40,15 @@ export const useTeamTournaments = (teamId: string) => {
         queryKey: ["team", teamId, "tournaments"],
         queryFn: () =>
             apiGET<TeamWithTournamentDTO>(`/team/${teamId}/tournament`),
+        enabled: !!teamId,
+    });
+};
+
+export const useTeamMatches = (teamId: string) => {
+    return useQuery<MatchWithParticipantsDTO[]>({
+        queryKey: ["team", teamId, "matches"],
+        queryFn: () =>
+            apiGET<MatchWithParticipantsDTO[]>(`/team/${teamId}/matches`),
         enabled: !!teamId,
     });
 };
