@@ -23,22 +23,8 @@ export const matchController = {
         const data = parseOr400(res, MatchParamsSchema, req.params);
         if (!data) return;
 
-        const cached = await redisGet(matchCacheKey(data.matchId));
-        if (cached) {
-            logger.debug("Redis cache hit");
-            try {
-                res.json(JSON.parse(cached));
-                return;
-            } catch (err) {
-                logger.debug("Redis cache parse failed", err);
-            }
-        }
-        logger.debug("Redis cache miss");
-
         const match = await matchService.getMatchById(data.matchId);
 
-        logger.debug("Redis cache set", match.match.id);
-        redisSet(matchCacheKey(data.matchId), JSON.stringify(match));
         sendContract(res, MatchPageContract, match);
     },
 
