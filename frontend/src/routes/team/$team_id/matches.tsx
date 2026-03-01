@@ -5,7 +5,11 @@ import {
     useTeamMatches,
     useTeamMatchesByStage,
 } from "@/lib/api/team.queries";
-import { formatMatchDate } from "@/lib/date.utils";
+import {
+    formatDateOnly,
+    formatFullDate,
+    formatMatchDate,
+} from "@/lib/date.utils";
 import { openInNewTab } from "@/utils/openInNewTab";
 import TeamLogo from "@/components/shared/bracket/atoms/TeamLogo";
 import ErrorComponent from "../-components/ErrorComponent";
@@ -85,19 +89,38 @@ function MatchCard({
     };
 
     return (
-        <Link to={"/match/$matchId"} params={{ matchId: opponent?.match_id }}>
+        <Link
+            to={"/match/$matchId"}
+            params={{ matchId: opponent?.match_id }}
+            className="group block"
+        >
             <div
                 className={cn(
-                    "flex flex-row rounded-md border-2 p-2",
+                    "flex flex-col gap-2 rounded-md border p-3 transition-colors",
                     opponent?.winner
-                        ? "border-red-500/20"
-                        : "border-green-500/20",
+                        ? "border-red-500/20 hover:border-red-500/40"
+                        : "border-green-500/20 hover:border-green-500/40",
                 )}
             >
-                <p>vs {opponent?.stageTeam.team.name}</p>
-                <p>
-                    {team?.score} - {opponent?.score}
-                </p>
+                {match.scheduled_at && (
+                    <span className="text-muted-foreground text-xs">
+                        {formatDateOnly(match.scheduled_at)}
+                    </span>
+                )}
+                <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-2 text-lg font-medium">
+                        <span>vs {opponent?.stageTeam.team.name}</span>
+                        <TeamLogo
+                            avatar={
+                                opponent?.stageTeam.team.team_logo ?? undefined
+                            }
+                            styling="h-8 w-8 rounded-full"
+                        />
+                    </div>
+                    <span className="text-lg font-semibold">
+                        {team?.score} – {opponent?.score}
+                    </span>
+                </div>
             </div>
         </Link>
     );

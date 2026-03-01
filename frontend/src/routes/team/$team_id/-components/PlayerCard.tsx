@@ -1,25 +1,21 @@
+import TeamLogo from "@/components/shared/bracket/atoms/TeamLogo";
+import { PlayerDTO } from "../../../../../../shared/contracts/dist/player.contracts";
+
 export default function PlayerCard({
     player,
     isCaptain,
     stageBadges,
 }: {
-    player: any;
+    player: PlayerDTO;
     isCaptain?: boolean;
     stageBadges?: { stage_name: string; tournament_name: string }[];
 }) {
     return (
         <div className="border-border bg-secondBg flex items-center gap-4 rounded-lg border p-4">
-            {player.player_logo ? (
-                <img
-                    src={player.player_logo}
-                    alt={player.player_name}
-                    className="h-12 w-12 rounded-full object-cover"
-                />
-            ) : (
-                <div className="bg-thirdBg text-textSecondary flex h-12 w-12 items-center justify-center rounded-full text-lg font-bold">
-                    {player.player_name.charAt(0).toUpperCase()}
-                </div>
-            )}
+            <TeamLogo
+                avatar={player.player_logo ?? undefined}
+                styling="h-12 w-12 rounded-full object-cover"
+            />
             <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                     <span className="text-textPrimary truncate font-semibold">

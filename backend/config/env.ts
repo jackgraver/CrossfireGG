@@ -11,7 +11,7 @@ type EnvVarInfo = {
 const _config: any = {};
 
 _config.redis = {
-    url: process.env.REDIS_URL || "redis://localhost:6379",
+    url: process.env.REDIS_URL,
 };
 
 const REQUIRED_VARS: EnvVarInfo[] = [

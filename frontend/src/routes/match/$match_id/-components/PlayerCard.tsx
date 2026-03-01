@@ -14,7 +14,11 @@ export default function PlayerCard({ player }: { player: Player }) {
                 <img
                     src={player.player_logo}
                     onError={(e) => {
-                        if (!e.currentTarget.src.includes("/oss-logo-placeholder.png")) {
+                        if (
+                            !e.currentTarget.src.includes(
+                                "/oss-logo-placeholder.png",
+                            )
+                        ) {
                             e.currentTarget.onerror = null;
                             e.currentTarget.src = "/oss-logo-placeholder.png";
                         }

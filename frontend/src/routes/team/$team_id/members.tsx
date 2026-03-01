@@ -17,15 +17,12 @@ function MembersPage() {
     const { data: teamData } = useTeam(team_id);
     const { data: players, isLoading } = useTeamPlayers(team_id);
 
-    // const stages =
-    //     teamData?.tournaments.flatMap((t) =>
-    //         t.stages.map((s) => ({ ...s, tournament_name: t.tournament_name })),
-    //     ) || [];
-
     return (
         <div className="bg-firstBg rounded-xl shadow-md">
             <div className="border-border flex items-center justify-between border-b p-4">
-                <h2 className="text-textPrimary text-lg font-semibold">Team Members</h2>
+                <h2 className="text-textPrimary text-lg font-semibold">
+                    Team Members
+                </h2>
                 <div className="bg-secondBg flex rounded-lg p-1">
                     <button
                         onClick={() => setViewMode("all")}
@@ -51,7 +48,9 @@ function MembersPage() {
             </div>
             <div className="p-4">
                 {isLoading ? (
-                    <div className="text-textSecondary py-8 text-center">Loading players...</div>
+                    <div className="text-textSecondary py-8 text-center">
+                        Loading players...
+                    </div>
                 ) : !players || players.length === 0 ? (
                     <div className="text-textSecondary py-8 text-center">
                         No players on this team
@@ -128,7 +127,11 @@ function ByStageView({
     );
 
     if (stages.length === 0) {
-        return <div className="text-textSecondary py-8 text-center">No stages available</div>;
+        return (
+            <div className="text-textSecondary py-8 text-center">
+                No stages available
+            </div>
+        );
     }
 
     return (
