@@ -4,7 +4,7 @@ import {
     useTournamentById,
 } from "@/lib/api/tournament.queries";
 import { createFileRoute, Outlet } from "@tanstack/react-router";
-import TeamsTable from "./teams_comp";
+import TeamsTable from "./-teams_comp";
 
 export const Route = createFileRoute("/admin/tournament/$tournament_id")({
     component: RouteComponent,
@@ -21,12 +21,13 @@ function StageRow({
 }) {
     const { mutate, isPending } = useRefreshMatches(faceitId, stageId);
 
-    const { mutate: mutateTeams, isPending: isPendingTeams } = useRefreshTeams();
+    const { mutate: mutateTeams, isPending: isPendingTeams } =
+        useRefreshTeams();
 
     return (
         <div className="bg-secondBg border-border flex items-center justify-between rounded-md border px-4 py-3">
             <h2 className="text-textPrimary text-lg font-semibold">{name}</h2>
-             <button
+            <button
                 disabled={isPendingTeams}
                 onClick={() => {
                     mutateTeams({
@@ -68,7 +69,7 @@ function RouteComponent() {
                     />
                 ))}
             </div>
-           
+
             <TeamsTable tournamentId={tournament?.id ?? 0} />
             <Outlet />
         </div>
