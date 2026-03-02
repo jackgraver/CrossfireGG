@@ -14,7 +14,6 @@ import {
 } from "@repo/contracts";
 import { MatchPageContract } from "@repo/contracts";
 import { AuthRequest } from "../../core/middleware/auth.middleware";
-import { redisGet, redisSet } from "../../core/redis";
 
 const matchCacheKey = (matchId: number) => `match:${matchId}`;
 

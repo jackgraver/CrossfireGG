@@ -1,5 +1,5 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
-import { isRedisAvailable, redisGet, redisSet } from "../redis";
+import { redisGet, redisSet } from "../redis";
 
 export const checkRedisCache =
     (
@@ -8,9 +8,6 @@ export const checkRedisCache =
     ): RequestHandler =>
     async (req: Request, res: Response, next: NextFunction) => {
         if (req.method !== "GET" || req.originalUrl === "/user/me") {
-            return next();
-        }
-        if (!(await isRedisAvailable())) {
             return next();
         }
 

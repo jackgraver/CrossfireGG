@@ -18,11 +18,23 @@ async function getClient(): Promise<RedisClientType | null> {
     if (redisDisabled()) return null;
 
     if (!client) {
-        client = createClient({ url: redisUrl });
+        try {
+            client = createClient({
+                url: redisUrl,
+                socket: {
+                    reconnectStrategy: () => false,
+                },
+            });
+        } catch (err) {
+            failureCount = maxFailures;
+            logger.warn("Redis client init failed.");
+            return null;
+        }
 
         client.on("error", (err) => {
+            if (redisDisabled()) return;
             failureCount++;
-            logger.warn("Redis client error");
+            logger.warn("Redis client error.");
         });
 
         client.on("ready", () => {
@@ -45,7 +57,7 @@ async function getClient(): Promise<RedisClientType | null> {
             .then(() => client!)
             .catch((err) => {
                 failureCount++;
-                logger.warn("Redis connect failed", err);
+                logger.warn("Redis connect failed. Not using redis.");
                 return null;
             })
             .finally(() => {
@@ -59,10 +71,6 @@ async function getClient(): Promise<RedisClientType | null> {
 
 function redisDisabled(): boolean {
     return !redisConfigured || failureCount >= maxFailures;
-}
-
-export function isRedisConfigured(): boolean {
-    return redisConfigured;
 }
 
 export async function isRedisAvailable(): Promise<boolean> {
