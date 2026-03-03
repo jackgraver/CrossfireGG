@@ -52,14 +52,7 @@ function RouteComponent() {
     return (
         <div className="min-h-screen py-6">
             {isLoading ? (
-                <div className="flex min-h-screen justify-center pt-24">
-                    <div className="text-textPrimary flex animate-pulse flex-col items-center gap-4">
-                        <div className="border-cfRed h-12 w-12 animate-spin rounded-full border-4 border-t-transparent"></div>
-                        <span className="text-sm font-bold tracking-widest uppercase">
-                            Loading tournaments...
-                        </span>
-                    </div>
-                </div>
+                <TournamentGroupSkeleton />
             ) : (
                 <>
                     {tournaments.length === 0 ? (
@@ -88,6 +81,35 @@ function RouteComponent() {
                 </>
             )}
         </div>
+    );
+}
+
+function TournamentGroupSkeleton() {
+    return (
+        <section className="flex flex-col gap-4">
+            <div className="flex items-center gap-2">
+                <div className="bg-thirdBg h-9 w-120 animate-pulse rounded" />
+            </div>
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
+                <article className="bg-firstBg border-border/10 flex min-w-125 flex-col rounded-2xl border p-0">
+                    <div className="bg-thirdBg h-48 w-full animate-pulse rounded-t-2xl" />
+                    <div className="flex flex-1 flex-col justify-between gap-4 p-6">
+                        <div className="flex flex-col gap-2">
+                            <div className="flex items-center gap-2">
+                                <div className="bg-thirdBg h-6 w-20 animate-pulse rounded-md" />
+                                <div className="bg-thirdBg h-6 w-24 animate-pulse rounded-md" />
+                                <div className="bg-thirdBg h-6 w-28 animate-pulse rounded-md" />
+                            </div>
+                            <div className="bg-thirdBg h-10 w-full animate-pulse rounded" />
+                            <div className="bg-thirdBg h-4 w-40 animate-pulse rounded" />
+                        </div>
+                    </div>
+                    <div className="flex flex-row gap-2 px-6 pb-6">
+                        <div className="bg-thirdBg h-9 w-full animate-pulse rounded-lg" />
+                    </div>
+                </article>
+            </div>
+        </section>
     );
 }
 
@@ -217,7 +239,6 @@ export const TournamentGroup = ({
                                 View Tournament
                             </Link>
                             {tournament.status === "upcoming" && (
-                                // !tournament.isRegistered && (
                                 <SignUpButton
                                     tournamentId={tournament.id.toString()}
                                 />

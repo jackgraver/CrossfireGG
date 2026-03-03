@@ -10,8 +10,6 @@ import {
     Calendar,
     LayoutDashboard,
     Users,
-    Trophy,
-    ShieldCheck,
     CheckCircle2,
     DollarSign,
     Clock,
@@ -37,8 +35,35 @@ function RouteComponent() {
 
     if (isLoading) {
         return (
-            <div className="flex min-h-screen items-center justify-center">
-                <div className="text-textPrimary">Loading tournament...</div>
+            <div className="mx-auto min-h-screen max-w-350">
+                <div className="relative overflow-hidden pt-8 pb-8 md:pb-8">
+                    <div className="relative z-10 flex flex-col justify-between gap-8 md:flex-row md:items-end">
+                        <div className="space-y-6">
+                            <div className="m-0 flex items-center gap-2">
+                                <div className="bg-thirdBg h-6 w-64 animate-pulse rounded-md" />
+                            </div>
+                            <div className="space-y-2 pt-2">
+                                <div className="bg-thirdBg h-16 w-130 animate-pulse rounded-md" />
+                                <div className="bg-thirdBg h-19 w-90 max-w-120 animate-pulse rounded-md" />
+                            </div>
+                        </div>
+                    </div>
+                    <div className="mt-8 space-y-8">
+                        <div className="flex flex-col justify-between gap-6 border-b border-white sm:flex-row sm:items-center">
+                            <div className="flex gap-10">
+                                <div className="relative flex items-center gap-2.5 pb-4 text-sm font-black transition-all">
+                                    <LayoutDashboard size={18} />
+                                    Bracket
+                                </div>
+                                <div className="relative flex items-center gap-2.5 pb-4 text-sm font-black transition-all">
+                                    <Users size={18} />
+                                    Teams
+                                </div>
+                            </div>
+                            <div className="bg-thirdBg h-9 w-35 animate-pulse rounded-md pb-4" />
+                        </div>
+                    </div>
+                </div>
             </div>
         );
     }

@@ -95,8 +95,6 @@ export default function NavBar() {
         }
     }, []);
 
-    if (isLoading) return null;
-
     return (
         <nav className="bg-mainBg/80 sticky top-0 z-50 backdrop-blur-md">
             <div className="mx-auto flex h-14 max-w-7xl items-center justify-between">
@@ -129,7 +127,9 @@ export default function NavBar() {
                             left={false}
                         />
                     )}
-                    {user ? (
+                    {isLoading ? (
+                        <div className="bg-thirdBg h-8 w-32 animate-pulse rounded-md" />
+                    ) : user ? (
                         <div className="group relative">
                             <NavItem
                                 left={false}
