@@ -1,29 +1,23 @@
 import { useEffect } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useRouter } from "@tanstack/react-router";
 import { matchesRole } from "@/utils/role.util";
 import { Roles } from "@repo/types";
 import {
     Trophy,
-    Users,
     Video,
     Settings,
     User,
-    LogIn,
     LogOut,
     Moon,
+    Sun,
+    Monitor,
 } from "lucide-react";
 import { useAuth } from "@/contexts/auth";
 import TeamLogo from "./shared/bracket/atoms/TeamLogo";
 import { useSignOut } from "@/contexts/auth";
 import { authClient } from "@/lib/auth/auth-client";
-
-function toggleDarkMode() {
-    if (typeof document === "undefined") return;
-    const isDark = document.documentElement.classList.toggle("dark");
-    if (typeof window !== "undefined") {
-        localStorage.setItem("theme", isDark ? "dark" : "light");
-    }
-}
+import { useRouteContext } from "@tanstack/react-router";
+import { setThemeServerFn } from "@/lib/theme";
 
 interface NavItemProps {
     to?: string;
@@ -81,9 +75,15 @@ const NavItem = ({
 
 export default function NavBar() {
     const { user, isLoading } = useAuth();
-    if (isLoading) return null;
-
     const signOut = useSignOut();
+    const { theme } = useRouteContext({ from: "__root__" });
+    const router = useRouter();
+
+    function toggleDarkMode() {
+        const themes = ["light", "dark", "auto"] as const;
+        const next = themes[(themes.indexOf(theme) + 1) % themes.length];
+        setThemeServerFn({ data: next }).then(() => router.invalidate());
+    }
 
     useEffect(() => {
         if (typeof window === "undefined") return;
@@ -94,6 +94,8 @@ export default function NavBar() {
             document.documentElement.classList.add("dark");
         }
     }, []);
+
+    if (isLoading) return null;
 
     return (
         <nav className="bg-mainBg/80 sticky top-0 z-50 backdrop-blur-md">
@@ -135,7 +137,7 @@ export default function NavBar() {
                                 icon={
                                     <TeamLogo
                                         avatar={user.image ?? undefined}
-                                        styling={"h-8 w-8 rounded-md"}
+                                        styling={"h-8 w-8 rounded-full"}
                                     />
                                 }
                                 label={user?.name}
@@ -145,7 +147,15 @@ export default function NavBar() {
                                 <ul className="flex flex-col py-2">
                                     <li>
                                         <NavItem
-                                            icon={<Moon size={18} />}
+                                            icon={
+                                                theme === "dark" ? (
+                                                    <Moon size={18} />
+                                                ) : theme === "light" ? (
+                                                    <Sun />
+                                                ) : (
+                                                    <Monitor />
+                                                )
+                                            }
                                             label="Theme"
                                             onClick={() => toggleDarkMode()}
                                             left={false}

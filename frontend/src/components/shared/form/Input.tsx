@@ -1,5 +1,5 @@
 import * as Label from "@radix-ui/react-label";
-import styles from "./Input.module.css";
+import styles from "./Input.module.css?url";
 import { cn } from "@/utils/cn";
 
 type InputProps = {

@@ -10,6 +10,7 @@ import { AuthProvider } from "@/contexts/auth";
 import { DialogProvider } from "@/lib/dialog/DialogProvider";
 import { NotFound } from "./not-found";
 import Footer from "@/components/Footer";
+import { getThemeServerFn } from "@/lib/theme";
 
 export const Route = createRootRoute({
     head: () => ({
@@ -25,31 +26,16 @@ export const Route = createRootRoute({
         ],
         links: [{ rel: "stylesheet", href: appCss }],
     }),
+    beforeLoad: async () => ({ theme: await getThemeServerFn() }),
     notFoundComponent: () => <NotFound />,
     shellComponent: RootDocument,
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+    const { theme } = Route.useRouteContext();
     return (
-        <html lang="en" suppressHydrationWarning>
+        <html className={theme} lang="en" suppressHydrationWarning>
             <head>
-                <script
-                    dangerouslySetInnerHTML={{
-                        __html: `
-                        (function() {
-                            try {
-                                const theme = localStorage.getItem('theme');
-                                if (theme === 'light') {
-                                    document.documentElement.classList.remove('dark');
-                                } else if (!theme || theme === 'dark') {
-                                    document.documentElement.classList.add('dark');
-                                }
-                            } catch (e) {}
-                        })();
-                    `,
-                    }}
-                />
-
                 <HeadContent />
             </head>
             <body>

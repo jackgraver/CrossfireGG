@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useAllTournaments } from "@/lib/api/tournament.queries";
 import { formatDateOnly, toUnixTimestamp } from "@/lib/date.utils";
 import SignUpButton from "./-components/SignUpButton";
@@ -106,9 +106,11 @@ export const TournamentGroup = ({
         ended: <CheckCircle2 size={28} />,
     };
 
+    const navigate = useNavigate();
+
     return (
-        <div className="mb-12 flex flex-col gap-4">
-            <h2 className="text-textSecondary border-border/10 flex items-center gap-2 border-b text-3xl font-black tracking-tight uppercase">
+        <section className="mb-12 flex flex-col gap-4">
+            <h2 className="text-textSecondary flex items-center gap-2 text-3xl font-black tracking-tight uppercase">
                 {iconMap[type]}
                 {type === "active"
                     ? "Active Tournaments"
@@ -118,111 +120,112 @@ export const TournamentGroup = ({
             </h2>
             <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
                 {tournaments.map((tournament: TournamentWithTeamCountDTO) => (
-                    <Link
-                        to={"/tournament/$tournamentId/stage/$stageId/bracket"}
-                        params={{
-                            tournamentId: tournament.id,
-                            stageId: tournament.entry_stage,
+                    <article
+                        key={tournament.id}
+                        onClick={() => {
+                            navigate({
+                                to: "/tournament/$tournamentId/stage/$stageId/bracket",
+                                params: {
+                                    tournamentId: tournament.id,
+                                    stageId: tournament.entry_stage,
+                                },
+                            });
                         }}
+                        className="bg-firstBg border-border/10 hover:border-cfRed/30 flex min-w-125 flex-col rounded-2xl border p-0 transition-all"
                     >
-                        <section
-                            key={tournament.id}
-                            className="bg-firstBg border-border/10 hover:border-cfRed/30 flex min-w-125 flex-col rounded-2xl border p-0 transition-all"
-                        >
-                            <img
-                                src={
-                                    tournament.id % 2 === 0
-                                        ? "ex2.jpg"
-                                        : "SEASON_4_ANNOUNCEMENT.png"
-                                }
-                                alt="Season 4 Announcement"
-                                className="h-48 w-full rounded-t-2xl object-cover"
-                                style={{ background: "#252628" }}
-                            />
-                            <div className="flex flex-1 flex-col justify-between gap-4 p-6">
+                        <img
+                            src={
+                                tournament.id % 2 === 0
+                                    ? "ex2.jpg"
+                                    : "SEASON_4_ANNOUNCEMENT.png"
+                            }
+                            alt="Season 4 Announcement"
+                            className="h-48 w-full rounded-t-2xl object-cover"
+                            style={{ background: "#252628" }}
+                        />
+                        <div className="flex flex-1 flex-col justify-between gap-4 p-6">
+                            <div className="flex flex-col gap-2">
                                 <div className="flex flex-col gap-2">
-                                    <div className="flex flex-col gap-2">
-                                        <div className="flex shrink-0 items-center gap-2">
-                                            {tournament.prize_pool != null && (
-                                                <Tile
-                                                    bg="bg-green-500/20"
-                                                    text="text-green-400"
-                                                    icon={DollarSign}
-                                                    label={tournament.prize_pool.toLocaleString()}
-                                                />
-                                            )}
-                                            {tournament.is_vrs_enabled && (
-                                                <Tile
-                                                    bg="bg-blue-500/20"
-                                                    text="text-blue-400"
-                                                    icon={CheckCircle2}
-                                                    label={"VRS Enabled"}
-                                                />
-                                            )}
+                                    <div className="flex shrink-0 items-center gap-2">
+                                        {tournament.prize_pool != null && (
                                             <Tile
-                                                bg="bg-gray-500/40"
-                                                text="text-gray-400"
-                                                icon={Users}
-                                                label={
-                                                    tournament.team_count +
-                                                    " / " +
-                                                    tournament.max_teams +
-                                                    " Teams"
-                                                }
+                                                bg="bg-green-500/20"
+                                                text="text-green-400"
+                                                icon={DollarSign}
+                                                label={tournament.prize_pool.toLocaleString()}
                                             />
-                                        </div>
-                                        <h2 className="text-textPrimary line-clamp-2 text-4xl font-black tracking-tight">
-                                            {tournament.name}
-                                        </h2>
-                                    </div>
-                                    <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-                                        {tournament.start_date && (
-                                            <div className="text-textSecondary flex items-center gap-1.5 text-xs font-medium opacity-60">
-                                                <Calendar size={14} />
-                                                {formatDateOnly(
-                                                    toUnixTimestamp(
-                                                        tournament.start_date,
-                                                    )!,
-                                                )}
-                                                {tournament.end_date && (
-                                                    <>
-                                                        {" - "}
-                                                        {formatDateOnly(
-                                                            toUnixTimestamp(
-                                                                tournament.end_date,
-                                                            )!,
-                                                        )}
-                                                    </>
-                                                )}
-                                            </div>
                                         )}
+                                        {tournament.is_vrs_enabled && (
+                                            <Tile
+                                                bg="bg-blue-500/20"
+                                                text="text-blue-400"
+                                                icon={CheckCircle2}
+                                                label={"VRS Enabled"}
+                                            />
+                                        )}
+                                        <Tile
+                                            bg="bg-gray-500/40"
+                                            text="text-gray-400"
+                                            icon={Users}
+                                            label={
+                                                tournament.team_count +
+                                                " / " +
+                                                tournament.max_teams +
+                                                " Teams"
+                                            }
+                                        />
                                     </div>
+                                    <h2 className="text-textPrimary line-clamp-2 text-4xl font-black tracking-tight">
+                                        {tournament.name}
+                                    </h2>
+                                </div>
+                                <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+                                    {tournament.start_date && (
+                                        <div className="text-textSecondary flex items-center gap-1.5 text-xs font-medium opacity-60">
+                                            <Calendar size={14} />
+                                            {formatDateOnly(
+                                                toUnixTimestamp(
+                                                    tournament.start_date,
+                                                )!,
+                                            )}
+                                            {tournament.end_date && (
+                                                <>
+                                                    {" - "}
+                                                    {formatDateOnly(
+                                                        toUnixTimestamp(
+                                                            tournament.end_date,
+                                                        )!,
+                                                    )}
+                                                </>
+                                            )}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
-                            <div className="flex flex-row gap-2 px-6 pb-6">
-                                <Link
-                                    to={
-                                        "/tournament/$tournamentId/stage/$stageId/bracket"
-                                    }
-                                    params={{
-                                        tournamentId: tournament.id,
-                                        stageId: tournament.entry_stage,
-                                    }}
-                                    className="bg-secondBg text-textPrimary hover:bg-secondBg/80 flex w-full items-center justify-center gap-2 rounded-lg py-2 text-xs font-black tracking-widest uppercase transition-all"
-                                >
-                                    View Tournament
-                                </Link>
-                                {tournament.status === "upcoming" && (
-                                    // !tournament.isRegistered && (
-                                    <SignUpButton
-                                        tournamentId={tournament.id.toString()}
-                                    />
-                                )}
-                            </div>
-                        </section>
-                    </Link>
+                        </div>
+                        <div className="flex flex-row gap-2 px-6 pb-6">
+                            <Link
+                                to={
+                                    "/tournament/$tournamentId/stage/$stageId/bracket"
+                                }
+                                params={{
+                                    tournamentId: tournament.id,
+                                    stageId: tournament.entry_stage,
+                                }}
+                                className="bg-secondBg text-textPrimary hover:bg-secondBg/80 flex w-full items-center justify-center gap-2 rounded-lg py-2 text-xs font-black tracking-widest uppercase transition-all"
+                            >
+                                View Tournament
+                            </Link>
+                            {tournament.status === "upcoming" && (
+                                // !tournament.isRegistered && (
+                                <SignUpButton
+                                    tournamentId={tournament.id.toString()}
+                                />
+                            )}
+                        </div>
+                    </article>
                 ))}
             </div>
-        </div>
+        </section>
     );
 };

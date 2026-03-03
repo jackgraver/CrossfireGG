@@ -9,6 +9,17 @@
 
 @import "tailwindcss";
 
+@custom-variant dark {
+    &:is(.dark *) {
+        @slot;
+    }
+    @media (prefers-color-scheme: dark) {
+        &:is(.auto *) {
+            @slot;
+        }
+    }
+}
+
 @theme {
     --font-sans:
         "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif,
@@ -54,6 +65,21 @@
     --color-border: hsl(0, 0%, 30%);
 }
 
+@media (prefers-color-scheme: dark) {
+    :root:is(.auto) {
+        --color-cf-red: hsl(0, 100%, 49%);
+        --color-cf-red-dark: hsl(0, 100%, 42%);
+        --color-main-bg: hsl(0, 0%, 5%);
+        --color-main-bg-transparent: hsla(0, 0%, 0%, 0.6);
+        --color-first-bg: hsl(0, 0%, 15%);
+        --color-second-bg: hsl(0, 0%, 25%);
+        --color-third-bg: hsl(0, 0%, 35%);
+        --color-text-primary: hsl(0, 0%, 95%);
+        --color-text-secondary: hsl(0, 0%, 70%);
+        --color-border: hsl(0, 0%, 30%);
+    }
+}
+
 html,
 body,
 #root {
@@ -64,24 +90,6 @@ body,
     margin: 0;
     padding: 0;
 }
-
-/* button {
-    background: #4b4a88;
-    padding: 0% 2%;
-    border-radius: 5px;
-}
-
-button:hover {
-    background-color: #373663;
-} */
-
-/* .grow {
-    transition: all 0.2s ease-in-out;
-}
-
-.grow:hover {
-    transform: scale(1.02);
-} */
 
 .city {
     background-image: url("/bg-city.png");
