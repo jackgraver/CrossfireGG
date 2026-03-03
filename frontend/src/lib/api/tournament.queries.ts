@@ -4,15 +4,15 @@ import {
     StageTeamSignUpDTO,
     StageTeamWithTeamDTO,
     TournamentWithMinimalStagesDTO,
-    TournamentWithStagesDTO,
+    TournamentWithTeamCountDTO,
 } from "@repo/contracts";
 
 import { apiGET, apiPOST } from "@/lib/api/client";
 
 export const useAllTournaments = () => {
-    return useQuery<TournamentWithStagesDTO[]>({
+    return useQuery<TournamentWithTeamCountDTO[]>({
         queryKey: ["tournaments"],
-        queryFn: () => apiGET<TournamentWithStagesDTO[]>("/tournament/all"),
+        queryFn: () => apiGET<TournamentWithTeamCountDTO[]>("/tournament/all"),
     });
 };
 

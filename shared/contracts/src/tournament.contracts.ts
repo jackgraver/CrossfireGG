@@ -16,6 +16,16 @@ export const TournamentContract = z.object({
     end_date: z.date().nullable().optional(),
 });
 
+export const TournamentWithTeamCountContract = TournamentContract.extend({
+    entry_stage: z.number(),
+    max_teams: z.number(),
+    team_count: z.number(),
+});
+
+export type TournamentWithTeamCountDTO = z.infer<
+    typeof TournamentWithTeamCountContract
+>;
+
 export type TournamentDTO = z.infer<typeof TournamentContract>;
 
 export const TournamentWithStagesContract = TournamentContract.extend({

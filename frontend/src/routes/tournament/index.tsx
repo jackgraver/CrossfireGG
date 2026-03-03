@@ -11,7 +11,7 @@ import {
     CheckCircle2,
     CalendarFold,
 } from "lucide-react";
-import { TournamentWithStagesDTO } from "@repo/contracts";
+import { TournamentWithTeamCountDTO } from "@repo/contracts";
 import Tile from "./$tournamentId/-component/Tile";
 
 export const Route = createFileRoute("/tournament/")({
@@ -96,7 +96,7 @@ export const TournamentGroup = ({
     tournaments,
 }: {
     type: "active" | "upcoming" | "ended";
-    tournaments: TournamentWithStagesDTO[];
+    tournaments: TournamentWithTeamCountDTO[];
 }) => {
     if (tournaments.length === 0) return null;
 
@@ -117,12 +117,12 @@ export const TournamentGroup = ({
                       : "Ended Tournaments"}
             </h2>
             <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
-                {tournaments.map((tournament: TournamentWithStagesDTO) => (
+                {tournaments.map((tournament: TournamentWithTeamCountDTO) => (
                     <Link
                         to={"/tournament/$tournamentId/stage/$stageId/bracket"}
                         params={{
-                            tournamentId: tournament.id.toString(),
-                            stageId: tournament.stages[0]?.id.toString(),
+                            tournamentId: tournament.id,
+                            stageId: tournament.entry_stage,
                         }}
                     >
                         <section
@@ -164,11 +164,9 @@ export const TournamentGroup = ({
                                                 text="text-gray-400"
                                                 icon={Users}
                                                 label={
-                                                    (tournament?.stages[0]
-                                                        ?.teams_count || 0) +
+                                                    tournament.team_count +
                                                     " / " +
-                                                    tournament?.stages[0]
-                                                        ?.max_teams +
+                                                    tournament.max_teams +
                                                     " Teams"
                                                 }
                                             />
@@ -207,20 +205,19 @@ export const TournamentGroup = ({
                                         "/tournament/$tournamentId/stage/$stageId/bracket"
                                     }
                                     params={{
-                                        tournamentId: tournament.id.toString(),
-                                        stageId:
-                                            tournament.stages[0]?.id.toString(),
+                                        tournamentId: tournament.id,
+                                        stageId: tournament.entry_stage,
                                     }}
                                     className="bg-secondBg text-textPrimary hover:bg-secondBg/80 flex w-full items-center justify-center gap-2 rounded-lg py-2 text-xs font-black tracking-widest uppercase transition-all"
                                 >
                                     View Tournament
                                 </Link>
-                                {tournament.status === "upcoming" &&
-                                    !tournament.isRegistered && (
-                                        <SignUpButton
-                                            tournamentId={tournament.id.toString()}
-                                        />
-                                    )}
+                                {tournament.status === "upcoming" && (
+                                    // !tournament.isRegistered && (
+                                    <SignUpButton
+                                        tournamentId={tournament.id.toString()}
+                                    />
+                                )}
                             </div>
                         </section>
                     </Link>

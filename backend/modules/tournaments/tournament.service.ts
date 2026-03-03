@@ -2,42 +2,9 @@ import { tournamentRepository } from "./tournament.repository";
 import { stagesRepository } from "./stages/stages.repository";
 
 export const tournamentService = {
-    getAllTournaments: async (teamId: number): Promise<any> => {
+    getAllTournaments: async () => {
         const allTournaments = await tournamentRepository.findAll();
-
-        const tournamentsWithStages = await Promise.all(
-            allTournaments.map(async (tournament) => {
-                const tournamentStages =
-                    await tournamentRepository.findStagesByTournamentId(
-                        tournament.id,
-                    );
-
-                const stageIds = tournamentStages.map((s: any) => s.id);
-                const teamsCountsMap =
-                    await tournamentRepository.countTeamsByStageIds(stageIds);
-
-                const stagesWithCounts = tournamentStages.map((stage: any) => ({
-                    ...stage,
-                    teams_count: teamsCountsMap.get(stage.id) || 0,
-                }));
-
-                const isRegistered =
-                    teamId && teamId > 0
-                        ? await tournamentRepository.isTeamRegistered(
-                              teamId,
-                              tournament.id,
-                          )
-                        : false;
-
-                return {
-                    ...tournament,
-                    stages: stagesWithCounts,
-                    isRegistered: isRegistered,
-                };
-            }),
-        );
-
-        return tournamentsWithStages;
+        return allTournaments;
     },
 
     getTournamentById: async (tournamentId: number) => {

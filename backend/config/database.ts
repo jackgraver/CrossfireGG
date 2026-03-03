@@ -14,3 +14,11 @@ const pool = new Pool({
 });
 
 export const db = drizzle(pool, { schema });
+
+export const timedQuery = async <T>(label: string, fn: () => Promise<T>) => {
+    const start = process.hrtime.bigint();
+    const result = await fn();
+    const ms = Number(process.hrtime.bigint() - start) / 1e6;
+    console.log(`[db] ${label} ${ms.toFixed(2)}ms`);
+    return result;
+};

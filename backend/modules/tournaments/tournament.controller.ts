@@ -13,7 +13,7 @@ import {
     StageTeamWithTeamContract,
     StageTeamSignUpContract,
     TournamentWithMinimalStagesContract,
-    TournamentWithStagesContract,
+    TournamentWithTeamCountContract,
     CreateTournamentContract,
 } from "@repo/contracts";
 import { AuthRequest } from "../../core/middleware/auth.middleware";
@@ -22,11 +22,8 @@ import { parseOr400 } from "../../core/validation/parseOr400";
 
 export const tournamentController = {
     getAllTournaments: async (req: Request, res: Response) => {
-        const authReq = req as AuthRequest;
-        const teamId = authReq.playerInfo?.team_id || 0;
-
-        const tournaments = await tournamentService.getAllTournaments(teamId);
-        sendContract(res, TournamentWithStagesContract.array(), tournaments);
+        const tournaments = await tournamentService.getAllTournaments();
+        sendContract(res, TournamentWithTeamCountContract.array(), tournaments);
     },
 
     getTournamentById: async (req: Request, res: Response) => {

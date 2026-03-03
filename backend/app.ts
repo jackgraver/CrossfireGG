@@ -64,6 +64,17 @@ app.use("/health", (_, res) => {
     res.status(200).json({ message: "OK" });
 });
 
+app.use((req, res, next) => {
+    const start = process.hrtime.bigint();
+
+    res.on("finish", () => {
+        const ms = Number(process.hrtime.bigint() - start) / 1e6;
+        console.log(`[req] ${ms.toFixed(2)}ms - ${req.url}`);
+    });
+
+    next();
+});
+
 app.use(checkRedisCache());
 
 app.use("/user", userRoutes);

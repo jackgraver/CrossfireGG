@@ -164,7 +164,7 @@ function GroupCard({
                 </div>
             </div>
 
-            <div className="mb-4 flex flex-col rounded-lg bg-black/20 p-1">
+            <div className="bg-firstBg mb-4 flex flex-col rounded-lg p-1">
                 <div className="text-textSecondary/40 flex items-center px-3 py-2 text-[10px] font-black tracking-widest uppercase">
                     <span className="w-6 text-center">#</span>
                     <span className="ml-3 flex-1">Team</span>

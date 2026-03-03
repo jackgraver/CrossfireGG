@@ -1,6 +1,24 @@
 import { db } from "../../../config/database";
+import { stages, stageTeams } from "../../../schemas";
+import { eq, sql, and } from "drizzle-orm";
 
 export const stagesRepository = {
+    findAllTournamentStages: async (tournamentId: number) => {
+        return await db
+            .select({
+                id: stages.id,
+                name: stages.name,
+                // add teams_count as a subquery
+                teams_count: sql<number>`
+                              (SELECT COUNT(*)
+                              FROM ${stageTeams}
+                              WHERE stage_id = ${stages.id})
+                            `.as("teams_count"),
+            })
+            .from(stages)
+            .where(eq(stages.tournament_id, tournamentId));
+    },
+
     findMatchesByStageId: async (stageId: number) => {
         return await db.query.matches.findMany({
             where: (m, { eq, and, isNull }) =>

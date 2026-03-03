@@ -7,6 +7,7 @@ export const checkRedisCache =
         getKey: (req: Request) => string = cacheKeyGenerator,
     ): RequestHandler =>
     async (req: Request, res: Response, next: NextFunction) => {
+        const start = process.hrtime.bigint();
         if (req.method !== "GET" || req.originalUrl === "/user/me") {
             return next();
         }
@@ -15,8 +16,12 @@ export const checkRedisCache =
         const found = await redisGet(cacheKey);
         if (found) {
             try {
+                const ms = Number(process.hrtime.bigint() - start) / 1e6;
+                console.log(`[cache] ${ms.toFixed(2)}ms - found`);
                 return res.json(JSON.parse(found));
             } catch {
+                const ms = Number(process.hrtime.bigint() - start) / 1e6;
+                console.log(`[cache] ${ms.toFixed(2)}ms - not found`);
                 return next();
             }
         }
