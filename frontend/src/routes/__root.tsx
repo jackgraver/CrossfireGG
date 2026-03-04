@@ -3,7 +3,6 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import NavBar from "@/components/NavBar";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/lib/api/queryClient";
-
 import "../styles.css";
 import appCss from "../styles.css?url";
 import { AuthProvider } from "@/contexts/auth";
@@ -11,6 +10,7 @@ import { DialogProvider } from "@/lib/dialog/DialogProvider";
 import { NotFound } from "./not-found";
 import Footer from "@/components/Footer";
 import { getThemeServerFn } from "@/lib/theme";
+import { getUserMeServerFn } from "@/lib/auth/auth.server";
 
 export const Route = createRootRoute({
     head: () => ({
@@ -26,13 +26,21 @@ export const Route = createRootRoute({
         ],
         links: [{ rel: "stylesheet", href: appCss }],
     }),
-    beforeLoad: async () => ({ theme: await getThemeServerFn() }),
+    beforeLoad: async () => {
+        const [theme, user] = await Promise.all([
+            getThemeServerFn(),
+            getUserMeServerFn(),
+        ]);
+        return { theme, user };
+    },
     notFoundComponent: () => <NotFound />,
     shellComponent: RootDocument,
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
     const { theme } = Route.useRouteContext();
+    const { user } = Route.useRouteContext();
+
     return (
         <html className={theme} lang="en" suppressHydrationWarning>
             <head>
@@ -44,7 +52,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                         <DialogProvider>
                             <div className="flex min-h-screen flex-col">
                                 <div className="mx-auto w-full max-w-8/12 flex-1">
-                                    <NavBar />
+                                    <NavBar user={user} />
                                     {children}
                                     <Footer />
                                 </div>

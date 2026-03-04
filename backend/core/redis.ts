@@ -12,7 +12,6 @@ const reconnectCooldownMs = 10_000;
 const maxFailures = 3;
 
 const redisUrl = (config.redis?.url ?? "").trim();
-console.log("redis", redisUrl);
 const redisConfigured = redisUrl.length > 0;
 
 async function getClient(): Promise<RedisClientType | null> {

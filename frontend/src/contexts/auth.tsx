@@ -4,7 +4,7 @@ import { api } from "@/lib/api/client";
 import { queryClient } from "@/lib/api/queryClient";
 import { authClient } from "@/lib/auth/auth-client";
 
-export type User = {
+export type UserType = {
     userId: string;
     name: string;
     image: string | null;
@@ -17,7 +17,7 @@ const useMe = () => {
     return useQuery({
         queryKey: ["me"],
         queryFn: async () => {
-            const res = await api.get<User | null>("/user/me");
+            const res = await api.get<UserType | null>("/user/me");
             return res.data;
         },
         staleTime: 1000 * 60 * 5,
@@ -39,7 +39,7 @@ export const useSignOut = () => {
 };
 
 type AuthContextType = {
-    user: User | null;
+    user: UserType | null;
     isLoading: boolean;
     refetch: () => void;
 };

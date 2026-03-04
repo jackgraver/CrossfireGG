@@ -18,6 +18,7 @@ import { useSignOut } from "@/contexts/auth";
 import { authClient } from "@/lib/auth/auth-client";
 import { useRouteContext } from "@tanstack/react-router";
 import { setThemeServerFn } from "@/lib/theme";
+import { UserType } from "../contexts/auth";
 
 interface NavItemProps {
     to?: string;
@@ -73,8 +74,7 @@ const NavItem = ({
     );
 };
 
-export default function NavBar() {
-    const { user, isLoading } = useAuth();
+export default function NavBar({ user }: { user: UserType }) {
     const signOut = useSignOut();
     const { theme } = useRouteContext({ from: "__root__" });
     const router = useRouter();
@@ -127,9 +127,7 @@ export default function NavBar() {
                             left={false}
                         />
                     )}
-                    {isLoading ? (
-                        <div className="bg-thirdBg h-8 w-32 animate-pulse rounded-md" />
-                    ) : user ? (
+                    {user ? (
                         <div className="group relative">
                             <NavItem
                                 left={false}

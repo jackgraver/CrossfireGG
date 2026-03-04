@@ -1,28 +1,31 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useAuth } from "@/contexts/auth";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Roles } from "@repo/types";
-import { useAllTournaments } from "@/lib/api/tournament.queries";
 import { Trophy, Users, Settings, Video, LogOut, Plus } from "lucide-react";
-import { useAllUsers } from "@/lib/api/user.queries";
 import { UserWithRolesDTO } from "@repo/contracts";
+import { redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/admin/")({
+    beforeLoad: async ({ context }) => {
+        const { user } = context;
+        if (!user || !user.roles || !user.roles.includes(Roles.ADMIN)) {
+            throw redirect({
+                to: "/",
+            });
+        }
+    },
+    loader: async () => {
+        // const { data: tournaments } = useAllTournaments();
+        const res = await fetch("http://localhost:5000/tournament/all");
+        const user = await res.json();
+        // const { data: users } = useAllUsers();
+        console.log("tournaments", user);
+        return { tournaments: user, users: [] };
+    },
     component: Admin,
 });
 
 function Admin() {
-    const { user, isLoading } = useAuth();
-    const { data: tournaments } = useAllTournaments();
-    const { data: users } = useAllUsers();
-
-    const navigate = useNavigate();
-    if (isLoading) {
-        return null;
-    }
-
-    if (!user || !user.roles || !user.roles.includes(Roles.ADMIN)) {
-        navigate({ to: "/" });
-    }
+    const { tournaments, users } = Route.useLoaderData();
 
     return (
         <div className="mx-auto min-h-screen max-w-7xl p-6">
@@ -43,7 +46,7 @@ function Admin() {
                     </Link>
                 </div>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                    {tournaments?.map((tournament) => (
+                    {tournaments?.map((tournament: any) => (
                         <Link
                             key={tournament.id}
                             to="/admin/tournament/$tournament_id"
