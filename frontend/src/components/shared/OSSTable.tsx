@@ -28,7 +28,6 @@ export default function OSSTable<T>({
     className = "",
     rowClassName,
 }: OSSTableProps<T>) {
-    console.log(data);
     const [sortColumn, setSortColumn] = useState<keyof T | string | null>(null);
     const [sortAscending, setSortAscending] = useState(true);
 

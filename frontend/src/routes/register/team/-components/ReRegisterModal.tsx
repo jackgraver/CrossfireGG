@@ -28,12 +28,10 @@ export default function ReRegisterModal({
 
         try {
             const id = extractFaceitIdFromLink(teamName);
-            console.log("id", id);
             const data: any = await api.post("/team/reregister", {
                 team_link: id,
             });
 
-            console.log(data);
             if (data.team_id) {
                 return { success: true, result: data.team_id };
             }

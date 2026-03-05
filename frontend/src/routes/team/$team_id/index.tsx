@@ -40,7 +40,6 @@ function TeamOverview() {
         );
     }
 
-    console.log(tournaments);
     return (
         <div className="flex flex-col gap-6">
             {loadingTournaments && <div>Loading...</div>}

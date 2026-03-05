@@ -182,12 +182,12 @@ export const TournamentGroup = ({
                                                 bg="bg-blue-500/20"
                                                 text="text-blue-400"
                                                 icon={CheckCircle2}
-                                                label={"VRS Enabled"}
+                                                label={"VRS Compliance"}
                                             />
                                         )}
                                         <Tile
                                             bg="bg-gray-500/40"
-                                            text="text-gray-400"
+                                            text="text-gray-200"
                                             icon={Users}
                                             label={
                                                 tournament.team_count +

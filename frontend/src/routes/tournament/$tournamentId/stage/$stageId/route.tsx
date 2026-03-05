@@ -121,7 +121,7 @@ function RouteComponent() {
                         <div className="m-0 flex items-center gap-2">
                             <Tile
                                 bg="bg-gray-500/40"
-                                text="text-gray-400"
+                                text="text-gray-200"
                                 icon={Clock}
                                 label={tournament.status.toUpperCase()}
                             />
@@ -137,7 +137,7 @@ function RouteComponent() {
                                     bg="bg-blue-500/20"
                                     text="text-blue-400"
                                     icon={CheckCircle2}
-                                    label={"VRS Enabled"}
+                                    label={"VRS Compliance"}
                                 />
                             )}
                         </div>

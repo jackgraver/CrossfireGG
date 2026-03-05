@@ -60,7 +60,6 @@ function RouteComponent() {
                     onSubmit={(e) => {
                         e.preventDefault();
                         form.handleSubmit();
-                        console.log("form meta", form.state);
                     }}
                     className="grid gap-6 lg:grid-cols-2"
                 >
@@ -143,7 +142,7 @@ function RouteComponent() {
                                     {(field: any) => (
                                         <Checkbox
                                             field={field}
-                                            label="Is VRS Enabled"
+                                            label="VRS Compliance"
                                             disabled={false}
                                         />
                                     )}
@@ -388,7 +387,7 @@ function RouteComponent() {
                                                 {(field: any) => (
                                                     <Checkbox
                                                         field={field}
-                                                        label="Is VRS Enabled"
+                                                        label="VRS Compliance"
                                                         disabled={false}
                                                     />
                                                 )}

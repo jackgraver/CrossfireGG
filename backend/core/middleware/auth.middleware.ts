@@ -39,6 +39,7 @@ export const fetchSession: RequestHandler = async (req, res, next) => {
         const session = await auth.api.getSession({
             headers: fromNodeHeaders(req.headers),
         });
+        console.log("session null ? ", session === null);
 
         if (!session?.user.id) {
             (req as AuthRequest).session = null;
@@ -48,6 +49,7 @@ export const fetchSession: RequestHandler = async (req, res, next) => {
         const user = await userRepository.findById(session.user.id);
         if (!user) {
             (req as AuthRequest).session = null;
+            console.log("no user");
             return next();
         }
 
@@ -63,6 +65,7 @@ export const fetchSession: RequestHandler = async (req, res, next) => {
         authReq.playerInfo = await userRepository.userPlayerInfo(
             session.user.id,
         );
+        console.log("set", authReq.user);
 
         next();
     } catch (error: any) {

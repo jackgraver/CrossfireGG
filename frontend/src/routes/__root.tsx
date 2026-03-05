@@ -5,7 +5,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "@/lib/api/queryClient";
 import "../styles.css";
 import appCss from "../styles.css?url";
-import { AuthProvider } from "@/contexts/auth";
+import { AuthProvider, useAuth } from "@/contexts/auth";
 import { DialogProvider } from "@/lib/dialog/DialogProvider";
 import { NotFound } from "./not-found";
 import Footer from "@/components/Footer";

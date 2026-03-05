@@ -1,4 +1,4 @@
-import { db, timedQuery } from "../../config/database";
+import { db } from "../../config/database";
 import {
     tournaments,
     stages,
@@ -11,57 +11,52 @@ import { eq, and, isNull, count, inArray, getTableColumns } from "drizzle-orm";
 
 export const tournamentRepository = {
     findAll: async () => {
-        return await timedQuery("getAllTournament", () =>
-            db
-                .select({
-                    ...getTableColumns(tournaments),
-                    entry_stage: db
-                        .select({ id: stages.id })
-                        .from(stages)
-                        .where(
-                            and(
-                                eq(stages.tournament_id, tournaments.id),
-                                eq(stages.is_entry_stage, true),
-                                isNull(stages.deleted_at),
-                            ),
-                        )
-                        .limit(1)
-                        .as("entry_stage"),
-                    max_teams: db
-                        .select({ max_teams: stages.max_teams })
-                        .from(stages)
-                        .where(
-                            and(
-                                eq(stages.tournament_id, tournaments.id),
-                                eq(stages.is_entry_stage, true),
-                                isNull(stages.deleted_at),
-                            ),
-                        )
-                        .limit(1)
-                        .as("max_teams"),
-                    team_count: db.$count(
-                        stageTeams,
-                        eq(
-                            stageTeams.stage_id,
-                            db
-                                .select({ id: stages.id })
-                                .from(stages)
-                                .where(
-                                    and(
-                                        eq(
-                                            stages.tournament_id,
-                                            tournaments.id,
-                                        ),
-                                        eq(stages.is_entry_stage, true),
-                                        isNull(stages.deleted_at),
-                                    ),
-                                )
-                                .limit(1),
+        return await db
+            .select({
+                ...getTableColumns(tournaments),
+                entry_stage: db
+                    .select({ id: stages.id })
+                    .from(stages)
+                    .where(
+                        and(
+                            eq(stages.tournament_id, tournaments.id),
+                            eq(stages.is_entry_stage, true),
+                            isNull(stages.deleted_at),
                         ),
+                    )
+                    .limit(1)
+                    .as("entry_stage"),
+                max_teams: db
+                    .select({ max_teams: stages.max_teams })
+                    .from(stages)
+                    .where(
+                        and(
+                            eq(stages.tournament_id, tournaments.id),
+                            eq(stages.is_entry_stage, true),
+                            isNull(stages.deleted_at),
+                        ),
+                    )
+                    .limit(1)
+                    .as("max_teams"),
+                team_count: db.$count(
+                    stageTeams,
+                    eq(
+                        stageTeams.stage_id,
+                        db
+                            .select({ id: stages.id })
+                            .from(stages)
+                            .where(
+                                and(
+                                    eq(stages.tournament_id, tournaments.id),
+                                    eq(stages.is_entry_stage, true),
+                                    isNull(stages.deleted_at),
+                                ),
+                            )
+                            .limit(1),
                     ),
-                })
-                .from(tournaments),
-        );
+                ),
+            })
+            .from(tournaments);
     },
 
     findTotalTeams: async (tournamentId: number) => {
@@ -95,39 +90,29 @@ export const tournamentRepository = {
     },
 
     findTournamentById: async (tournamentId: number) => {
-        return await timedQuery("tournament-" + tournamentId, () =>
-            db.query.tournaments.findFirst({
-                columns: {
-                    id: true,
-                    name: true,
-                    status: true,
-                    description: true,
-                    prize_pool: true,
-                    is_vrs_enabled: true,
-                    start_date: true,
-                    end_date: true,
-                },
-                where: (t, { eq, and, isNull }) =>
-                    and(eq(t.id, tournamentId), isNull(t.deleted_at)),
-                with: {
-                    stages: {
-                        columns: {
-                            id: true,
-                            faceit_id: true,
-                            name: true,
-                        },
+        return await db.query.tournaments.findFirst({
+            columns: {
+                id: true,
+                name: true,
+                status: true,
+                description: true,
+                prize_pool: true,
+                is_vrs_enabled: true,
+                start_date: true,
+                end_date: true,
+            },
+            where: (t, { eq, and, isNull }) =>
+                and(eq(t.id, tournamentId), isNull(t.deleted_at)),
+            with: {
+                stages: {
+                    columns: {
+                        id: true,
+                        faceit_id: true,
+                        name: true,
                     },
                 },
-            }),
-        );
-
-        // return await db.query.tournaments.findFirst({
-        //     where: (t, { eq, and, isNull }) =>
-        //         and(eq(t.id, tournamentId), isNull(t.deleted_at)),
-        //     with: {
-        //         stages: true,
-        //     },
-        // });
+            },
+        });
     },
 
     findStageMatchCountsByTournamentId: async (tournamentId: number) => {

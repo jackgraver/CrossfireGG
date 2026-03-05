@@ -12,9 +12,8 @@ import {
     Sun,
     Monitor,
 } from "lucide-react";
-import { useAuth } from "@/contexts/auth";
 import TeamLogo from "./shared/bracket/atoms/TeamLogo";
-import { useSignOut } from "@/contexts/auth";
+import { useAuth, useSignOut } from "@/contexts/auth";
 import { authClient } from "@/lib/auth/auth-client";
 import { useRouteContext } from "@tanstack/react-router";
 import { setThemeServerFn } from "@/lib/theme";
@@ -78,6 +77,9 @@ export default function NavBar({ user }: { user: UserType }) {
     const signOut = useSignOut();
     const { theme } = useRouteContext({ from: "__root__" });
     const router = useRouter();
+
+    const { user: u } = useAuth();
+    console.log("nb", u);
 
     function toggleDarkMode() {
         const themes = ["light", "dark", "auto"] as const;

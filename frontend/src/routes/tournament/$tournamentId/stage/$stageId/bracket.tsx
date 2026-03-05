@@ -2,7 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useStageBracket } from "../../../../../lib/api/tournament.queries";
 import TopLevelBracket from "@/components/shared/bracket/TopLevelBracket";
 
-export const Route = createFileRoute("/tournament/$tournamentId/stage/$stageId/bracket")({
+export const Route = createFileRoute(
+    "/tournament/$tournamentId/stage/$stageId/bracket",
+)({
     component: BracketPage,
 });
 
@@ -10,7 +12,6 @@ function BracketPage() {
     const { tournamentId, stageId } = Route.useParams();
 
     const { data, isLoading, error } = useStageBracket(Number(stageId));
-    console.log("data", data);
 
     if (error) {
         return <div>Error loading standings</div>;

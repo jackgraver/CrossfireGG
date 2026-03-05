@@ -18,7 +18,6 @@ export const Route = createFileRoute("/admin/")({
         const res = await fetch("http://localhost:5000/tournament/all");
         const user = await res.json();
         // const { data: users } = useAllUsers();
-        console.log("tournaments", user);
         return { tournaments: user, users: [] };
     },
     component: Admin,

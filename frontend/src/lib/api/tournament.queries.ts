@@ -85,7 +85,6 @@ export const useRefreshMatches = (faceitId: string, stageId: number) => {
                 stageId,
             }),
         onSuccess: (result) => {
-            console.log(result);
             return result;
         },
         onError: (error) => {
@@ -104,14 +103,12 @@ export const useRefreshTeams = () => {
             faceitId: string;
             tournamentId: number;
         }) => {
-            console.log(faceitId, tournamentId);
             return apiPOST(`/faceit/import/stage/teams`, {
                 faceitChampionshipId: faceitId,
                 cfTournamentId: tournamentId,
             });
         },
         onSuccess: (result) => {
-            console.log(result);
             return result;
         },
         onError: (error) => {
@@ -125,9 +122,7 @@ export const useCreateTournament = () => {
     return useMutation({
         mutationFn: (payload: any) =>
             apiPOST<any>(`/tournament/create`, payload),
-        onSuccess: () => {
-            console.log("Tournament created successfully");
-        },
+        onSuccess: () => {},
         onError: (error) => {
             console.error("Error creating tournament:", error);
         },

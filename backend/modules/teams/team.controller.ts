@@ -91,7 +91,6 @@ export const teamController = {
 
     getTeamPlayers: async (req: Request, res: Response) => {
         try {
-            console.log("getTeamPlayers", req.params.teamId);
             const teamId = parseInt(req.params.teamId);
 
             if (isNaN(teamId)) {
