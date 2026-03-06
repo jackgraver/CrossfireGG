@@ -76,7 +76,6 @@ function RouteComponent() {
                             <button
                                 onClick={async (e) => {
                                     e.preventDefault();
-                                    console.log(form.state.values);
                                     form.handleSubmit();
                                 }}
                                 disabled={

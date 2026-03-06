@@ -7,6 +7,19 @@ import { db } from "../config/database";
 import { users, session, account, verification } from "../schemas";
 import { playerRepository } from "../modules/players/player.repository";
 
+function getRootDomain(origin: string): string | undefined {
+    try {
+        const parts = new URL(origin).hostname.split(".");
+        return parts.length > 2 ? parts.slice(-2).join(".") : parts.join(".");
+    } catch {
+        return undefined;
+    }
+}
+
+const cookieDomain = config.appOrigin
+    ? getRootDomain(config.appOrigin)
+    : undefined;
+
 export const auth = betterAuth({
     database: drizzleAdapter(db, {
         provider: "pg",
@@ -18,6 +31,13 @@ export const auth = betterAuth({
         },
     }),
     trustedOrigins: config.auth.trustedOrigins || [config.appOrigin],
+    advanced: {
+        useSecureCookies: config.nodeEnv === "production",
+        crossSubDomainCookies:
+            config.nodeEnv === "production" && cookieDomain
+                ? { enabled: true, domain: cookieDomain }
+                : { enabled: false },
+    },
     emailAndPassword: {
         enabled: true,
     },

@@ -1,25 +1,34 @@
 import { createMiddleware, createServerFn } from "@tanstack/react-start";
-import { getRequestHeaders } from "@tanstack/react-start/server";
+import { getRequestHeader } from "@tanstack/react-start/server";
 
 export const authMiddleware = createMiddleware().server(async ({ next }) => {
-    const headers = getRequestHeaders();
+    const cookie = getRequestHeader("cookie");
+    const userAgent = getRequestHeader("user-agent");
     const base = import.meta.env.VITE_API_BASE_URL;
-    const res = await fetch(`${base}/user/me`, {
-        headers: {
-            ...headers,
-            accept: "application/json",
-        },
-    });
 
-    const text = await res.text();
-    const user = text ? JSON.parse(text) : null;
-    console.log("user", user);
+    try {
+        const res = await fetch(`${base}/user/me`, {
+            headers: {
+                ...(cookie ? { cookie } : {}),
+                ...(userAgent ? { "user-agent": userAgent } : {}),
+                accept: "application/json",
+            },
+        });
 
-    return await next({
-        context: {
-            user: user,
-        },
-    });
+        if (!res.ok) {
+            return await next({ context: { user: null } });
+        }
+
+        const user = await res.json();
+
+        return await next({
+            context: {
+                user: user,
+            },
+        });
+    } catch (err) {
+        return await next({ context: { user: null } });
+    }
 });
 
 export const getUserMeServerFn = createServerFn({ method: "GET" })

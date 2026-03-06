@@ -9,9 +9,7 @@ export const userController = {
     getMe: (async (req, res: Response) => {
         try {
             const authReq = req as AuthRequest;
-            console.log("/me authReq", authReq.user);
             if (!authReq.user) {
-                console.log("\tno user");
                 return res.json(null);
             }
             let playerInfo = authReq.playerInfo;
@@ -35,14 +33,6 @@ export const userController = {
                 }
             }
 
-            console.log("/me ret", {
-                userId: authReq.user.id,
-                name: authReq.user.name,
-                image: authReq.user.image,
-                faceitId: playerInfo?.faceit_id,
-                teamId: playerInfo?.team_id,
-                roles: authReq.roles ?? [],
-            });
             res.json({
                 userId: authReq.user.id,
                 name: authReq.user.name,

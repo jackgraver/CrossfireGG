@@ -14,9 +14,9 @@ services:
             NODE_ENV: production
             PORT: "5000"
             DATABASE_URL: postgresql://${POSTGRES_USER:-app_user}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-cf_db}
-            CORS_ALLOWED_ORIGINS: ${APP_ORIGIN}
+            CORS_ALLOWED_ORIGINS: ${APP_ORIGIN},https://crossfiregg.com
             APP_ORIGIN: ${APP_ORIGIN}
-            AUTH_TRUSTED_ORIGINS: ${APP_ORIGIN}
+            AUTH_TRUSTED_ORIGINS: ${APP_ORIGIN},https://crossfiregg.com
             FACEIT_REDIRECT_URI: ${APP_ORIGIN}/api/auth/callback/faceit
             FACEIT_CLIENT_ID: ${FACEIT_CLIENT_ID}
             FACEIT_CLIENT_SECRET: ${FACEIT_CLIENT_SECRET}

@@ -78,24 +78,11 @@ export default function NavBar({ user }: { user: UserType }) {
     const { theme } = useRouteContext({ from: "__root__" });
     const router = useRouter();
 
-    const { user: u } = useAuth();
-    console.log("nb", u);
-
     function toggleDarkMode() {
         const themes = ["light", "dark", "auto"] as const;
         const next = themes[(themes.indexOf(theme) + 1) % themes.length];
         setThemeServerFn({ data: next }).then(() => router.invalidate());
     }
-
-    useEffect(() => {
-        if (typeof window === "undefined") return;
-        const darkPref = localStorage.getItem("theme");
-        if (darkPref === "light") {
-            document.documentElement.classList.remove("dark");
-        } else if (!darkPref || darkPref === "dark") {
-            document.documentElement.classList.add("dark");
-        }
-    }, []);
 
     return (
         <nav className="bg-mainBg/80 sticky top-0 z-50 backdrop-blur-md">
