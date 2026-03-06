@@ -1,31 +1,15 @@
-import { createContext, useContext, ReactNode } from "react";
+import { createContext, useContext as useReactContext, ReactNode } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { api } from "@/lib/api/client";
+import { useRouteContext } from "@tanstack/react-router";
 import { queryClient } from "@/lib/api/queryClient";
 import { authClient } from "@/lib/auth/auth-client";
+import { meQueryOptions, UserType } from "@/lib/auth/auth.query";
 
-export type UserType = {
-    userId: string;
-    name: string;
-    image: string | null;
-    faceitId: string;
-    teamId: number;
-    roles: string[];
-};
-
-const useMe = () => {
-    return useQuery({
-        queryKey: ["me"],
-        queryFn: async () => {
-            const res = await api.get<UserType | null>("/user/me");
-            return res.data;
-        },
-        staleTime: 1000 * 60 * 5,
-        refetchOnWindowFocus: false,
-        refetchOnMount: true,
-        refetchOnReconnect: true,
+const useMe = (initialUser: UserType | null) =>
+    useQuery({
+        ...meQueryOptions(),
+        initialData: initialUser,
     });
-};
 
 export const useSignOut = () => {
     return useMutation({
@@ -46,7 +30,8 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-    const { data: user, isPending: isLoading, refetch } = useMe();
+    const { user: initialUser } = useRouteContext({ from: "__root__" });
+    const { data: user, isPending: isLoading, refetch } = useMe(initialUser);
 
     return (
         <AuthContext.Provider
@@ -62,7 +47,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 }
 
 export function useAuth() {
-    const context = useContext(AuthContext);
+    const context = useReactContext(AuthContext);
     if (!context) {
         throw new Error("useAuth must be used within AuthProvider");
     }

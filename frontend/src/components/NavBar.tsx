@@ -16,7 +16,7 @@ import { useSignOut } from "@/contexts/auth";
 import { authClient } from "@/lib/auth/auth-client";
 import { useRouteContext } from "@tanstack/react-router";
 import { setThemeServerFn } from "@/lib/theme";
-import { UserType } from "../contexts/auth";
+import { UserType } from "@/lib/auth/auth.query";
 
 interface NavItemProps {
     to?: string;
@@ -72,7 +72,7 @@ const NavItem = ({
     );
 };
 
-export default function NavBar({ user }: { user: UserType }) {
+export default function NavBar({ user }: { user: UserType | null }) {
     const signOut = useSignOut();
     const { theme } = useRouteContext({ from: "__root__" });
     const router = useRouter();

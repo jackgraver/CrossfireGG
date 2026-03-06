@@ -11,6 +11,7 @@ import { NotFound } from "./not-found";
 import Footer from "@/components/Footer";
 import { getThemeServerFn } from "@/lib/theme";
 import { getUserMeServerFn } from "@/lib/auth/auth.server";
+import { meQueryOptions } from "@/lib/auth/auth.query";
 
 export const Route = createRootRoute({
     head: () => ({
@@ -29,7 +30,9 @@ export const Route = createRootRoute({
     beforeLoad: async () => {
         const [theme, user] = await Promise.all([
             getThemeServerFn(),
-            getUserMeServerFn(),
+            typeof window === "undefined"
+                ? getUserMeServerFn()
+                : queryClient.ensureQueryData(meQueryOptions()),
         ]);
         return { theme, user };
     },
