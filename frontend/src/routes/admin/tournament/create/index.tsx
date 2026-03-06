@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCreateTournamentForm } from "./-hooks/useCreateTournamentForm";
-import { Check, Plus, SaveIcon, Trash2 } from "lucide-react";
+import { Plus, SaveIcon, Trash2 } from "lucide-react";
 import { useStore } from "@tanstack/react-form";
 import { Input } from "@/components/shared/form/Input";
 import { Checkbox, Select } from "@/components/shared/form";
@@ -63,7 +63,7 @@ function RouteComponent() {
                     }}
                     className="grid gap-6 lg:grid-cols-2"
                 >
-                    <section className="border-secondBg bg-firstBg max-h-[575px] rounded-lg border p-6 shadow-lg">
+                    <section className="border-secondBg bg-firstBg max-h-143.75 rounded-lg border p-6 shadow-lg">
                         <div className="flex items-center justify-between gap-4">
                             <div className="mb-4">
                                 <h2 className="text-lg font-semibold">
@@ -197,7 +197,7 @@ function RouteComponent() {
                             </button>
                         </div>
                         {stages.length === 0 ? (
-                            <div className="border-secondBg bg-secondBg/30 mt-4 flex min-h-[140px] items-center justify-center rounded-lg border border-dashed text-sm text-gray-400">
+                            <div className="border-secondBg bg-secondBg/30 mt-4 flex min-h-35 items-center justify-center rounded-lg border border-dashed text-sm text-gray-400">
                                 No stages yet.
                             </div>
                         ) : (

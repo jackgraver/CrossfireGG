@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { Link, useRouter } from "@tanstack/react-router";
 import { matchesRole } from "@/utils/role.util";
 import { Roles } from "@repo/types";
@@ -13,7 +12,7 @@ import {
     Monitor,
 } from "lucide-react";
 import TeamLogo from "./shared/bracket/atoms/TeamLogo";
-import { useAuth, useSignOut } from "@/contexts/auth";
+import { useSignOut } from "@/contexts/auth";
 import { authClient } from "@/lib/auth/auth-client";
 import { useRouteContext } from "@tanstack/react-router";
 import { setThemeServerFn } from "@/lib/theme";
@@ -92,7 +91,7 @@ export default function NavBar({ user }: { user: UserType }) {
                         to="/tournament"
                         icon={<Trophy size={18} />}
                         label="Tournaments"
-                        padding="pr-3 py-2"
+                        padding="px-3 py-2 -ml-3"
                     />
                     {matchesRole(
                         user?.roles,
@@ -128,7 +127,7 @@ export default function NavBar({ user }: { user: UserType }) {
                                     />
                                 }
                                 label={user?.name}
-                                padding="pl-3 py-2"
+                                padding="px-3 py-2 -mr-3"
                             />
                             <div className="bg-mainBg border-border invisible absolute right-0 z-20 mt-2 w-40 rounded border opacity-0 shadow-md transition-opacity duration-200 group-hover:visible group-hover:opacity-100">
                                 <ul className="flex flex-col py-2">

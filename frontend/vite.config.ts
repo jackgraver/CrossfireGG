@@ -14,6 +14,11 @@ const config = defineConfig({
             "@": fileURLToPath(new URL("./src", import.meta.url)),
         },
     },
+    server: {
+        warmup: {
+            clientFiles: ["./src/**/*.module.css"],
+        },
+    },
     plugins: [
         devtools(),
         nitro(),
