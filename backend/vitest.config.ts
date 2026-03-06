@@ -13,6 +13,10 @@ export default defineConfig({
                 __dirname,
                 "../shared/contracts/src",
             ),
+            "@repo/types": path.resolve(
+                __dirname,
+                "../shared/types/src",
+            ),
         },
     },
 });

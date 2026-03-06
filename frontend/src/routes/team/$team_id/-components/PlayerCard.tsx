@@ -1,5 +1,5 @@
 import TeamLogo from "@/components/shared/bracket/atoms/TeamLogo";
-import { PlayerDTO } from "../../../../../../shared/contracts/dist/player.contracts";
+import { PlayerDTO } from "@repo/contracts";
 
 export default function PlayerCard({
     player,

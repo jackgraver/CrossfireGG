@@ -13,7 +13,7 @@ import {
 import { openInNewTab } from "@/utils/openInNewTab";
 import TeamLogo from "@/components/shared/bracket/atoms/TeamLogo";
 import ErrorComponent from "../-components/ErrorComponent";
-import { MatchWithParticipantsDTO } from "../../../../../shared/contracts/dist/match.contracts";
+import { MatchWithParticipantsDTO } from "@repo/contracts";
 import { cn } from "@/utils/cn";
 
 export const Route = createFileRoute("/team/$team_id/matches")({
