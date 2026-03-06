@@ -1,11 +1,8 @@
 import TeamLogo from "@/components/shared/bracket/atoms/TeamLogo";
-import {
-    createFileRoute,
-    Link,
-    Outlet,
-    useMatchRoute,
-} from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 import { useTeam } from "@/lib/api/team.queries";
+import { CalendarDays, Home, Users } from "lucide-react";
+import TabGroup, { Tab } from "@/components/shared/TabGroup";
 
 export const Route = createFileRoute("/team/$team_id")({
     component: RouteComponent,
@@ -14,8 +11,6 @@ export const Route = createFileRoute("/team/$team_id")({
 function RouteComponent() {
     const { team_id } = Route.useParams();
     const { data: team, isLoading, error } = useTeam(team_id);
-    const matchRoute = useMatchRoute();
-
     if (isLoading) {
         return (
             <div className="flex min-h-screen items-center justify-center">
@@ -39,31 +34,44 @@ function RouteComponent() {
         );
     }
 
-    const tabs = [
-        { to: "/team/$team_id", label: "Overview", exact: true },
-        { to: "/team/$team_id/members", label: "Members", exact: false },
-        { to: "/team/$team_id/matches", label: "Matches", exact: false },
+    const tabs: Tab[] = [
+        {
+            nav: { to: "/team/$team_id" },
+            label: "Overview",
+            icon: Home,
+            exact: true,
+        },
+        {
+            nav: { to: "/team/$team_id/members" },
+            label: "Members",
+            icon: Users,
+            exact: false,
+        },
+        {
+            nav: { to: "/team/$team_id/matches" },
+            label: "Matches",
+            icon: CalendarDays,
+            exact: false,
+        },
     ] as const;
 
-    const isActiveTab = (to: string, exact: boolean) => {
-        if (exact) {
-            return matchRoute({ to, params: { team_id } }) !== false;
-        }
-        return matchRoute({ to, params: { team_id }, fuzzy: true }) !== false;
-    };
-
     return (
-        <div className="min-h-screen max-w-300 min-w-full py-5">
-            <div className="bg-firstBg mb-6 overflow-hidden rounded-xl shadow-md">
+        <div className="min-h-screen py-5">
+            <div className="mb-6 overflow-hidden rounded-xl shadow-md">
                 <div className="flex items-center gap-6 p-6">
                     <TeamLogo
                         team={team}
-                        styling="h-24 w-24 rounded-lg border-2 border-border object-cover"
+                        styling="h-24 w-24 rounded-full object-cover"
                     />
                     <div className="flex flex-col gap-1">
-                        <h1 className="text-textPrimary text-3xl font-bold">
-                            {team.name}
-                        </h1>
+                        <div className="flex flex-row items-center gap-2">
+                            <h1 className="text-textPrimary text-4xl font-bold">
+                                {team.name}
+                            </h1>
+                            <span className="flex justify-center text-2xl">
+                                🇺🇸
+                            </span>
+                        </div>
                         {team.faceit_id && (
                             <a
                                 href={`https://www.faceit.com/en/teams/${team.faceit_id}`}
@@ -76,28 +84,30 @@ function RouteComponent() {
                         )}
                     </div>
                 </div>
-                <div className="border-border flex border-t">
-                    {tabs.map(({ to, label, exact }) => {
-                        const active = isActiveTab(to, exact);
-                        return (
+                {/*<div className="flex flex-col justify-between gap-6 border-b border-white sm:flex-row sm:items-center">
+                    <div className="flex gap-10">*/}
+                {/*{tabs.map((tab) => (
                             <Link
-                                key={to}
-                                to={to}
-                                params={{ team_id }}
-                                className={`relative px-6 py-3 text-sm font-medium transition-colors ${
-                                    active
+                                key={tab.to}
+                                to={tab.to}
+                                // params={{ tournamentId, stageId }}
+                                className={cn(
+                                    "relative flex items-center gap-2.5 pb-4 text-sm font-black transition-all",
+                                    isActiveTab(tab.to, tab.exact)
                                         ? "text-textPrimary"
-                                        : "text-textSecondary hover:text-textPrimary"
-                                }`}
-                            >
-                                {label}
-                                {active && (
-                                    <span className="absolute bottom-0 left-0 h-0.5 w-full bg-blue-500" />
+                                        : "text-textSecondary hover:text-textPrimary",
                                 )}
+                            >
+                                <tab.icon size={18} />
+                                {tab.label}
                             </Link>
-                        );
-                    })}
+                        ))}*/}
+                <div className="pb-4">
+                    <TabGroup tabs={tabs} />
                 </div>
+
+                {/*</div>
+                </div>*/}
             </div>
             <Outlet />
         </div>

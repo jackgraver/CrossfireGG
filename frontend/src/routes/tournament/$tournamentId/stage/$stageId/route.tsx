@@ -17,6 +17,7 @@ import {
 import { cn } from "@/utils/cn";
 import { InfoTile } from "../../-component/InfoTile";
 import Tile from "../../-component/Tile";
+import TabGroup, { Tab } from "@/components/shared/TabGroup";
 
 export const Route = createFileRoute(
     "/tournament/$tournamentId/stage/$stageId",
@@ -83,35 +84,20 @@ function RouteComponent() {
         );
     }
 
-    const tabs = [
+    const tabs: Tab[] = [
         {
-            to: "/tournament/$tournamentId/stage/$stageId/bracket",
+            nav: { to: "/tournament/$tournamentId/stage/$stageId/bracket" },
             label: "Bracket",
             icon: LayoutDashboard,
             exact: false,
         },
         {
-            to: "/tournament/$tournamentId/stage/$stageId/teams",
+            nav: { to: "/tournament/$tournamentId/stage/$stageId/teams" },
             label: "Teams",
             icon: Users,
             exact: false,
         },
     ] as const;
-
-    const isActiveTab = (to: string, exact: boolean) => {
-        if (exact) {
-            return (
-                matchRoute({ to, params: { tournamentId, stageId } }) !== false
-            );
-        }
-        return (
-            matchRoute({
-                to,
-                params: { tournamentId, stageId },
-                fuzzy: true,
-            }) !== false
-        );
-    };
 
     return (
         <div className="mx-auto min-h-screen max-w-350">
@@ -202,7 +188,9 @@ function RouteComponent() {
                     </div>
                 </div>
                 <div className="mt-8 space-y-8">
-                    <div className="flex flex-col justify-between gap-6 border-b border-white sm:flex-row sm:items-center">
+                    <TabGroup tabs={tabs} />
+
+                    {/*<div className="flex flex-col justify-between gap-6 border-b border-white sm:flex-row sm:items-center">
                         <div className="flex gap-10">
                             {tabs.map((tab) => (
                                 <Link
@@ -242,7 +230,7 @@ function RouteComponent() {
                                 ))}
                             </div>
                         )}
-                    </div>
+                        </div>*/}
                 </div>
             </div>
             <Outlet />

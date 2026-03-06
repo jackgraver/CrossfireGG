@@ -42,16 +42,17 @@ function TeamOverview() {
 
     return (
         <div className="flex flex-col gap-6">
+            <h1 className="text-4xl">Events Played In</h1>
             {loadingTournaments && <div>Loading...</div>}
             {tournaments?.map((tournament) => (
-                <div
-                    key={tournament.id}
-                    className="bg-firstBg rounded-xl shadow-md"
-                >
-                    <div className="border-border border-b p-4">
+                <div key={tournament.id} className="rounded-xl shadow-md">
+                    <div className="border-border flex flex-row gap-4 border-b p-4">
                         <h2 className="text-textPrimary text-lg font-semibold">
                             {tournament.name}
                         </h2>
+                        <span className="text-textSecondary pt-1 font-semibold">
+                            8-12th
+                        </span>
                     </div>
                     <div className="grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-3">
                         {tournament.stages.map((stage) => (

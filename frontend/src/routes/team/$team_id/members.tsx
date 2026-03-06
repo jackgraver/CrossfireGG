@@ -18,7 +18,7 @@ function MembersPage() {
     const { data: players, isLoading } = useTeamPlayers(team_id);
 
     return (
-        <div className="bg-firstBg rounded-xl shadow-md">
+        <>
             <div className="border-border flex items-center justify-between border-b p-4">
                 <h2 className="text-textPrimary text-lg font-semibold">
                     Team Members
@@ -65,7 +65,7 @@ function MembersPage() {
                     <ByStageView players={players} stages={[]} />
                 )}
             </div>
-        </div>
+        </>
     );
 }
 

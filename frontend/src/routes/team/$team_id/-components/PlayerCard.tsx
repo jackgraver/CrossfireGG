@@ -11,7 +11,7 @@ export default function PlayerCard({
     stageBadges?: { stage_name: string; tournament_name: string }[];
 }) {
     return (
-        <div className="border-border bg-secondBg flex items-center gap-4 rounded-lg border p-4">
+        <div className="border-border bg-firstBg flex items-center gap-4 rounded-lg border p-4">
             <TeamLogo
                 avatar={player.player_logo ?? undefined}
                 styling="h-12 w-12 rounded-full object-cover"
