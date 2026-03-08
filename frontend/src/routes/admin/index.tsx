@@ -3,6 +3,8 @@ import { Roles } from "@repo/types";
 import { Trophy, Users, Settings, Video, LogOut, Plus } from "lucide-react";
 import { UserWithRolesDTO } from "@repo/contracts";
 import { redirect } from "@tanstack/react-router";
+import { useAllTournaments } from "@/lib/api/tournament.queries";
+import { useAllUsers } from "@/lib/api/user.queries";
 
 export const Route = createFileRoute("/admin/")({
     beforeLoad: async ({ context }) => {
@@ -13,18 +15,12 @@ export const Route = createFileRoute("/admin/")({
             });
         }
     },
-    loader: async () => {
-        // const { data: tournaments } = useAllTournaments();
-        const res = await fetch("http://localhost:5000/tournament/all");
-        const user = await res.json();
-        // const { data: users } = useAllUsers();
-        return { tournaments: user, users: [] };
-    },
     component: Admin,
 });
 
 function Admin() {
-    const { tournaments, users } = Route.useLoaderData();
+    const { data: tournaments } = useAllTournaments();
+    const { data: users } = useAllUsers();
 
     return (
         <div className="mx-auto min-h-screen max-w-7xl p-6">

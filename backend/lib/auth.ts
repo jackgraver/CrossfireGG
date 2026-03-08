@@ -32,11 +32,19 @@ export const auth = betterAuth({
     }),
     trustedOrigins: config.auth.trustedOrigins || [config.appOrigin],
     advanced: {
-        useSecureCookies: config.nodeEnv === "production",
         crossSubDomainCookies:
             config.nodeEnv === "production" && cookieDomain
                 ? { enabled: true, domain: cookieDomain }
                 : { enabled: false },
+        cookies: {
+            session_token: {
+                attributes: {
+                    sameSite: "none",
+                    secure: true,
+                    httpOnly: true,
+                },
+            },
+        },
     },
     emailAndPassword: {
         enabled: true,

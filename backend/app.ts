@@ -20,6 +20,8 @@ import {
 } from "./core/middleware/auth.middleware";
 import { Roles } from "@repo/types";
 import { checkRedisCache } from "./core/middleware/redis.middleware";
+import { invalidateCache } from "./core/redis";
+import { logger } from "./core/logger";
 
 const burstLimiter = rateLimit({
     windowMs: 10 * 1000,
@@ -65,6 +67,15 @@ app.use("/health", (_, res) => {
 });
 
 app.use(checkRedisCache());
+app.use("/redis/invalidate", async (_, res) => {
+    try {
+        await invalidateCache();
+        res.json({ success: true, message: "Cache invalidated" });
+    } catch (err) {
+        logger.error("Failed to invalidate cache:", err);
+        res.status(500).json({ error: "Failed to invalidate cache" });
+    }
+});
 
 app.use("/user", userRoutes);
 app.use("/tournament", tournamentRoutes);

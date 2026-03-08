@@ -1,4 +1,6 @@
 import axios from "axios";
+import { createIsomorphicFn } from "@tanstack/react-start";
+import { getRequestHeader } from "@tanstack/react-start/server";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || "/api";
 

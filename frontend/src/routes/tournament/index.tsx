@@ -90,8 +90,8 @@ function TournamentGroupSkeleton() {
             <div className="flex items-center gap-2">
                 <div className="bg-thirdBg h-9 w-120 animate-pulse rounded" />
             </div>
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
-                <article className="bg-firstBg border-border/10 flex min-w-125 flex-col rounded-2xl border p-0">
+            <div className="flex flex-wrap gap-8">
+                <article className="bg-firstBg border-border/10 flex w-full min-w-125 flex-col rounded-2xl border p-0 md:w-[calc(50%-1rem)] xl:w-[calc(33.333%-1.334rem)]">
                     <div className="bg-thirdBg h-48 w-full animate-pulse rounded-t-2xl" />
                     <div className="flex flex-1 flex-col justify-between gap-4 p-6">
                         <div className="flex flex-col gap-2">
@@ -140,7 +140,7 @@ export const TournamentGroup = ({
                       ? "Upcoming Tournaments"
                       : "Ended Tournaments"}
             </h2>
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
+            <div className="flex flex-wrap gap-8">
                 {tournaments.map((tournament: TournamentWithTeamCountDTO) => (
                     <article
                         key={tournament.id}
@@ -153,7 +153,7 @@ export const TournamentGroup = ({
                                 },
                             });
                         }}
-                        className="bg-firstBg border-border/10 hover:border-cfRed/30 flex min-w-125 flex-col rounded-2xl border p-0 transition-all"
+                        className="bg-firstBg border-border/10 hover:border-cfRed/30 flex w-full min-w-125 flex-col rounded-2xl border p-0 transition-all md:w-[calc(50%-1rem)] xl:w-[calc(33.333%-1.334rem)]"
                     >
                         <img
                             src={

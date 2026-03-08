@@ -12,7 +12,7 @@ import { stages } from "./stage.schema";
 export const tournaments = pgTable("tournaments", {
     id: serial("id").primaryKey(),
     name: text("name").notNull(),
-    status: text("status").default("upcoming"),
+    status: text("status").default("upcoming"), //"active" | "upcoming" | "ended";
     description: text("description"),
     prize_pool: integer("prize_pool"),
     is_vrs_enabled: boolean("is_vrs_enabled").default(false),

@@ -13,11 +13,13 @@ import {
     CheckCircle2,
     DollarSign,
     Clock,
+    ExternalLinkIcon,
 } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { InfoTile } from "../../-component/InfoTile";
 import Tile from "../../-component/Tile";
 import TabGroup, { Tab } from "@/components/shared/TabGroup";
+import { openInNewTab } from "@/utils/openInNewTab";
 
 export const Route = createFileRoute(
     "/tournament/$tournamentId/stage/$stageId",
@@ -189,50 +191,54 @@ function RouteComponent() {
                         </div>
                     </div>
                 </div>
-                <div className="mt-8 space-y-8">
-                    <TabGroup tabs={tabs} />
-
-                    {/*<div className="flex flex-col justify-between gap-6 border-b border-white sm:flex-row sm:items-center">
-                        <div className="flex gap-10">
-                            {tabs.map((tab) => (
+                <div className="mt-8 flex w-full flex-wrap items-center gap-2 rounded-2xl p-2">
+                    {tournament.stages.map((stage) => {
+                        const isActive = stageId === stage.id.toString();
+                        return (
+                            <div
+                                key={stage.id}
+                                className={cn(
+                                    "flex min-w-50 flex-1 items-center gap-2 rounded-xl p-1 transition-all",
+                                    isActive
+                                        ? "bg-white/5 shadow-sm"
+                                        : "hover:bg-white/5",
+                                )}
+                            >
                                 <Link
-                                    key={tab.to}
-                                    to={tab.to}
-                                    params={{ tournamentId, stageId }}
+                                    to="."
+                                    params={(prev: any) => ({
+                                        ...prev,
+                                        stageId: stage.id,
+                                    })}
                                     className={cn(
-                                        "relative flex items-center gap-2.5 pb-4 text-sm font-black transition-all",
-                                        isActiveTab(tab.to, tab.exact)
+                                        "flex flex-1 items-center justify-center py-2.5 text-sm font-bold transition-all",
+                                        isActive
                                             ? "text-textPrimary"
                                             : "text-textSecondary hover:text-textPrimary",
                                     )}
                                 >
-                                    <tab.icon size={18} />
-                                    {tab.label}
+                                    {stage.name}
                                 </Link>
-                            ))}
-                        </div>
-                        {tournament.stages.length > 1 && (
-                            <div className="flex gap-10">
-                                {tournament.stages.map((stage) => (
-                                    <Link
-                                        key={stage.id}
-                                        to="."
-                                        params={(prev: any) => ({
-                                            ...prev,
-                                            stageId: stage.id,
-                                        })}
-                                        className={`relative flex items-center gap-2.5 pb-4 text-sm font-black transition-all ${
-                                            stageId === stage.id.toString()
-                                                ? "text-textPrimary"
-                                                : "text-textSecondary hover:text-textPrimary"
-                                        }`}
-                                    >
-                                        {stage.name}
-                                    </Link>
-                                ))}
+                                <button
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        openInNewTab(
+                                            "https://www.faceit.com/en/championship/" +
+                                                stage.faceit_id,
+                                        );
+                                    }}
+                                    className="bg-faceit/10 hover:bg-faceit/20 text-faceit flex h-9 w-9 items-center justify-center rounded-lg transition-colors"
+                                    title="View on Faceit"
+                                >
+                                    <ExternalLinkIcon />
+                                </button>
                             </div>
-                        )}
-                        </div>*/}
+                        );
+                    })}
+                </div>
+                <div className="mt-8 space-y-8">
+                    <TabGroup tabs={tabs} />
                 </div>
             </div>
             <Outlet />

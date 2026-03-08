@@ -115,7 +115,7 @@ export default function PlayoffBracket({ matches }: PlayoffBracketProps) {
     return (
         <div
             ref={containerRef}
-            className="relative flex min-h-[800px] flex-row"
+            className="scrollbar-hide relative flex min-h-200 flex-row overflow-x-auto"
         >
             {renderConnections()}
             {rounds.mainRounds.map((round, roundIndex) => (

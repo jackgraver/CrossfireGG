@@ -9,7 +9,7 @@ export const Route = createFileRoute(
 });
 
 function BracketPage() {
-    const { tournamentId, stageId } = Route.useParams();
+    const { _, stageId } = Route.useParams();
 
     const { data, isLoading, error } = useStageBracket(Number(stageId));
 

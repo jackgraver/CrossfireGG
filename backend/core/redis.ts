@@ -108,3 +108,13 @@ export async function redisDel(key: string) {
         logger.warn("Redis DEL failed", err);
     }
 }
+
+export async function invalidateCache() {
+    try {
+        const c = await getClient();
+        if (!c) return;
+        await c.flushDb();
+    } catch (err) {
+        logger.warn("Redis flushDb failed", err);
+    }
+}
