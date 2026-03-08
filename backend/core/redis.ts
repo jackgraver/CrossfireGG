@@ -98,3 +98,13 @@ export async function redisSet(key: string, value: string, ttl: number = 900) {
         logger.warn("Redis SET failed", err);
     }
 }
+
+export async function redisDel(key: string) {
+    try {
+        const c = await getClient();
+        if (!c) return;
+        await c.del(key);
+    } catch (err) {
+        logger.warn("Redis DEL failed", err);
+    }
+}

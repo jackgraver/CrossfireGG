@@ -15,7 +15,10 @@ import {
 import { MatchPageContract } from "@repo/contracts";
 import { AuthRequest } from "../../core/middleware/auth.middleware";
 
+import { redisDel } from "../../core/redis";
+
 const matchCacheKey = (matchId: number) => `match:${matchId}`;
+const castingMatchesCacheKey = "casting:matches";
 
 export const matchController = {
     getMatchById: async (req: Request, res: Response) => {
@@ -46,6 +49,12 @@ export const matchController = {
             if (!user) return res.status(401).json({ error: "Unauthorized" });
 
             const match = await matchService.claimMatch(data.matchId, user.id); // TODO: Get caster ID from user
+            
+            await Promise.all([
+                redisDel(matchCacheKey(data.matchId)),
+                redisDel(castingMatchesCacheKey),
+            ]);
+
             res.json(match);
         } catch (error: any) {
             logger.error("Error claiming match:", error);
@@ -58,6 +67,12 @@ export const matchController = {
             if (!data) return;
 
             const match = await matchService.unclaimMatch(data.matchId, 1); // TODO: Get caster ID from user
+            
+            await Promise.all([
+                redisDel(matchCacheKey(data.matchId)),
+                redisDel(castingMatchesCacheKey),
+            ]);
+
             res.json(match);
         } catch (error: any) {
             logger.error("Error unclaiming match:", error);

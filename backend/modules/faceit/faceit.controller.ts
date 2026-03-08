@@ -16,6 +16,10 @@ import {
 import { playerRepository } from "../players/player.repository";
 import { parseOr400 } from "../../core/validation/parseOr400";
 import { FaceitAPITournamentTeam } from "../../utils/transformFaceitData";
+import { redisDel } from "../../core/redis";
+
+const stageMatchesCacheKey = (stageId: number) => `matches:stage:${stageId}`;
+const stageBracketCacheKey = (stageId: number) => `stageStandings:${stageId}`;
 
 export const faceitController = {
     testFaceitRoute: async (req: Request, res: Response) => {
@@ -120,6 +124,13 @@ export const faceitController = {
             matchesData,
             stageId,
         );
+
+        if (result && result.newMatchesCount > 0) {
+            await Promise.all([
+                redisDel(stageMatchesCacheKey(stageId)),
+                redisDel(stageBracketCacheKey(stageId)),
+            ]);
+        }
 
         res.json({
             success: result !== undefined,

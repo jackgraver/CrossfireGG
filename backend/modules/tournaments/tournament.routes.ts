@@ -28,10 +28,13 @@ router.get(
     tournamentController.getRegistrationsByTournamentId,
 );
 
-router.post(
-    "/:tournamentId/register",
-    tournamentController.registerForTournament,
-);
+/**
+ * Now unused?
+ */
+// router.post(
+//     "/:tournamentId/register",
+//     tournamentController.registerForTournament,
+// );
 
 router.post(
     "/create",
