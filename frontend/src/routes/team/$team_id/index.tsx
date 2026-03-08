@@ -56,12 +56,9 @@ function TeamOverview() {
                     </div>
                     <div className="grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-3">
                         {tournament.stages.map((stage) => (
-                            <>
+                            <div key={stage.id}>
                                 {stage.stageTeams.length === 1 && (
-                                    <div
-                                        key={stage.id}
-                                        className="border-border bg-secondBg rounded-lg border p-4"
-                                    >
+                                    <div className="border-border bg-secondBg rounded-lg border p-4">
                                         <h3 className="text-textPrimary mb-3 font-medium">
                                             {stage.name}
                                         </h3>
@@ -112,7 +109,7 @@ function TeamOverview() {
                                         </div>
                                     </div>
                                 )}
-                            </>
+                            </div>
                         ))}
                     </div>
                 </div>

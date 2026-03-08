@@ -4,6 +4,7 @@ import { useLayoutEffect, useRef, useState } from "react";
 
 export interface Tab {
     nav: { to: string; params?: string };
+    preload?: boolean;
     label: string;
     icon?: any;
     exact: boolean;
@@ -17,7 +18,11 @@ export default function TabGroup({ tabs }: TabGroupProps) {
     const matchRoute = useMatchRoute();
     const tabsRef = useRef<(HTMLAnchorElement | null)[]>([]);
     const containerRef = useRef<HTMLDivElement>(null);
-    const [indicator, setIndicator] = useState({ left: 0, width: 0, opacity: 0 });
+    const [indicator, setIndicator] = useState({
+        left: 0,
+        width: 0,
+        opacity: 0,
+    });
 
     const isActiveTab = (to: string, params: string, exact: boolean) => {
         if (exact) {
@@ -42,7 +47,7 @@ export default function TabGroup({ tabs }: TabGroupProps) {
 
     return (
         <div className="flex flex-col justify-between gap-6 border-b border-white sm:flex-row sm:items-center">
-            <div ref={containerRef} className="relative flex gap-6">
+            <div ref={containerRef} className="relative flex gap-2">
                 <span
                     className="pointer-events-none absolute inset-y-0 mb-2 rounded-md bg-gray-400/20 transition-[left,width] duration-300 ease-in-out"
                     style={indicator}
@@ -55,6 +60,7 @@ export default function TabGroup({ tabs }: TabGroupProps) {
                         }}
                         to={tab.nav.to}
                         params={tab.nav.params}
+                        preload={tab.preload && "intent"}
                         className={cn(
                             "relative z-10 mb-2 flex items-center gap-2.5 rounded-md px-4 py-2 text-sm font-black transition-colors",
                             activeIndex === i

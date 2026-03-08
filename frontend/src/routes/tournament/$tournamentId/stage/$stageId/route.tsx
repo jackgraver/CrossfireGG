@@ -88,12 +88,14 @@ function RouteComponent() {
         {
             nav: { to: "/tournament/$tournamentId/stage/$stageId/bracket" },
             label: "Bracket",
+            preload: true,
             icon: LayoutDashboard,
             exact: false,
         },
         {
             nav: { to: "/tournament/$tournamentId/stage/$stageId/teams" },
             label: "Teams",
+            preload: true,
             icon: Users,
             exact: false,
         },
