@@ -1,4 +1,7 @@
-import { MatchWithParticipantsDTO } from "@repo/contracts";
+import {
+    MatchWithParticipantAndMinifiedMapsDTO,
+    MatchWithParticipantsDTO,
+} from "@repo/contracts";
 import { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import { getPlayoffRounds } from "./playoff_utils";
 import { BracketMatch } from "../components/BracketMatch";
@@ -151,11 +154,11 @@ export default function PlayoffBracket({ matches }: PlayoffBracketProps) {
                                                     Third Place
                                                 </h2>
                                             </div>
-                                            <div className="flex min-h-[100px] items-center">
+                                            <div className="flex min-h-25 items-center">
                                                 <MatchCard
                                                     match={
                                                         rounds.thirdPlaceRound
-                                                            ?.matches[0]
+                                                            ?.matches[0] as MatchWithParticipantAndMinifiedMapsDTO
                                                     }
                                                     margin={false}
                                                 />

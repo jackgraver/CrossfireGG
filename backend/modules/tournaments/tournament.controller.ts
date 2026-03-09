@@ -20,6 +20,12 @@ import { AuthRequest } from "../../core/middleware/auth.middleware";
 import { sendContract } from "../../core/sendContract";
 import { parseOr400 } from "../../core/validation/parseOr400";
 
+async function syncTournamentMatches(tournamentId: number) {
+    setTimeout(() => {
+        console.log("[WIP] Check for updates on", tournamentId);
+    }, 5000);
+}
+
 export const tournamentController = {
     getAllTournaments: async (req: Request, res: Response) => {
         const tournaments = await tournamentService.getAllTournaments();
@@ -33,6 +39,10 @@ export const tournamentController = {
         const tournament = await tournamentService.getTournamentById(
             data.tournamentId,
         );
+
+        syncTournamentMatches(data.tournamentId)
+            .catch((error) => console.error("sync matches error", error))
+            .finally(() => {});
 
         sendContract(res, TournamentWithMinimalStagesContract, tournament);
     },

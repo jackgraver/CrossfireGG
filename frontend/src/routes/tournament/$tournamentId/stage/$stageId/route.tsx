@@ -1,9 +1,4 @@
-import {
-    createFileRoute,
-    Link,
-    Outlet,
-    useMatchRoute,
-} from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 import { useTournamentById } from "../../../../../lib/api/tournament.queries";
 import { formatDateOnly, toUnixTimestamp } from "@/lib/date.utils";
 import {
@@ -200,7 +195,7 @@ function RouteComponent() {
                                     "flex min-w-50 flex-1 items-center gap-2 rounded-xl p-1 transition-all",
                                     isActive
                                         ? "bg-secondBg shadow-sm"
-                                        : "bg-firstBg hover:bg-firstBg/80",
+                                        : "bg-firstBg/80 hover:bg-firstBg",
                                 )}
                             >
                                 <Link
