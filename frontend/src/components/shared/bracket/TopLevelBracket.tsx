@@ -1,6 +1,6 @@
 import { GroupWithMatchesDTO, StageFormatDTO } from "@repo/contracts";
 import RegularSeasonBracket from "./bracket_types/RegularSeasonBracket";
-import Groups from "./bracket_types/Groups";
+import Groups from "./bracket_types/Groups/Groups";
 import PlayoffBracket from "./bracket_types/PlayoffBracket";
 import { useMemo } from "react";
 import { MatchDropdownProvider } from "./components/MatchDropdownProvider";

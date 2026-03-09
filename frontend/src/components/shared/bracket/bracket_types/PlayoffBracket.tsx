@@ -1,6 +1,6 @@
 import { MatchWithParticipantsDTO } from "@repo/contracts";
 import { useState, useCallback, useMemo, useRef, useEffect } from "react";
-import { getPlayoffRounds, BracketRound } from "./playoff_utils";
+import { getPlayoffRounds } from "./playoff_utils";
 import { BracketMatch } from "../components/BracketMatch";
 import MatchCard from "../components/MatchCard";
 import { cn } from "@/utils/cn";

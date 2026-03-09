@@ -6,12 +6,7 @@ import { MatchWithParticipantAndMinifiedMapsDTO } from "@repo/contracts";
 import { ExternalLink, Info } from "lucide-react";
 import { useMatchDropdown, MatchDropdownPortal } from "./MatchDropdownProvider";
 import { cn } from "@/utils/cn";
-import {
-    formatDateOnly,
-    formatFullDate,
-    formatMatchDate,
-    formatScheduledDate,
-} from "@/lib/date.utils";
+import { formatScheduledDate } from "@/lib/date.utils";
 
 type MatchCardProps = {
     match: MatchWithParticipantAndMinifiedMapsDTO | undefined;
