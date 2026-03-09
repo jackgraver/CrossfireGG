@@ -19,10 +19,7 @@ function MembersPage() {
 
     return (
         <>
-            <div className="border-border flex items-center justify-between border-b p-4">
-                <h2 className="text-textPrimary text-lg font-semibold">
-                    Team Members
-                </h2>
+            {/*<div className="border-border flex items-center justify-between border-b p-4">
                 <div className="bg-secondBg flex rounded-lg p-1">
                     <button
                         onClick={() => setViewMode("all")}
@@ -45,26 +42,24 @@ function MembersPage() {
                         By Stage
                     </button>
                 </div>
-            </div>
-            <div className="p-4">
-                {isLoading ? (
-                    <div className="text-textSecondary py-8 text-center">
-                        Loading players...
-                    </div>
-                ) : !players || players.length === 0 ? (
-                    <div className="text-textSecondary py-8 text-center">
-                        No players on this team
-                    </div>
-                ) : viewMode === "all" ? (
-                    <AllPlayersView
-                        players={players}
-                        stages={[]}
-                        teamCaptainId={teamData?.team_captain_id}
-                    />
-                ) : (
-                    <ByStageView players={players} stages={[]} />
-                )}
-            </div>
+            </div>*/}
+            {isLoading ? (
+                <div className="text-textSecondary py-8 text-center">
+                    Loading players...
+                </div>
+            ) : !players || players.length === 0 ? (
+                <div className="text-textSecondary py-8 text-center">
+                    No players on this team
+                </div>
+            ) : viewMode === "all" ? (
+                <AllPlayersView
+                    players={players}
+                    stages={[]}
+                    teamCaptainId={teamData?.team_captain_id}
+                />
+            ) : (
+                <ByStageView players={players} stages={[]} />
+            )}
         </>
     );
 }

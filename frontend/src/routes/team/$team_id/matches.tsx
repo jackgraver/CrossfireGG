@@ -26,13 +26,8 @@ function MatchesPage() {
     const { data: matches, isLoading, error } = useTeamMatches(team_id);
 
     return (
-        <div className="bg-firstBg rounded-xl shadow-md">
-            <div className="border-border flex flex-col gap-4 border-b p-4 sm:flex-row sm:items-center sm:justify-between">
-                <h2 className="text-textPrimary text-lg font-semibold">
-                    Matches
-                </h2>
-            </div>
-            <div className="p-4">
+        <div className="rounded-xl shadow-md">
+            <div className="">
                 {isLoading ? (
                     <div className="text-textSecondary py-8 text-center">
                         Loading matches...
@@ -98,8 +93,8 @@ function MatchCard({
                 className={cn(
                     "flex flex-col gap-2 rounded-md border p-3 transition-colors",
                     opponent?.winner
-                        ? "border-red-500/20 hover:border-red-500/40"
-                        : "border-green-500/20 hover:border-green-500/40",
+                        ? "border-red-500/60 hover:border-red-500/80"
+                        : "border-green-500/60 hover:border-green-500/80",
                 )}
             >
                 {match.scheduled_at && (
