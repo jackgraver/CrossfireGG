@@ -29,6 +29,7 @@ async function syncTournamentMatches(tournamentId: number) {
 export const tournamentController = {
     getAllTournaments: async (req: Request, res: Response) => {
         const tournaments = await tournamentService.getAllTournaments();
+
         sendContract(res, TournamentWithTeamCountContract.array(), tournaments);
     },
 
@@ -36,13 +37,17 @@ export const tournamentController = {
         const data = parseOr400(res, TournamentParamsSchema, req.params);
         if (!data) return;
 
-        const tournament = await tournamentService.getTournamentById(
+        // const tournament = await tournamentService.getTournamentById(
+        //     data.tournamentId,
+        // );
+
+        const tournament = await tournamentService.getTournamentByName(
             data.tournamentId,
         );
 
-        syncTournamentMatches(data.tournamentId)
-            .catch((error) => console.error("sync matches error", error))
-            .finally(() => {});
+        // syncTournamentMatches(data.tournamentId)
+        //     .catch((error) => console.error("sync matches error", error))
+        //     .finally(() => {});
 
         sendContract(res, TournamentWithMinimalStagesContract, tournament);
     },

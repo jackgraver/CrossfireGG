@@ -27,6 +27,28 @@ export const tournamentService = {
         };
     },
 
+    getTournamentByName: async (tournamentId: string) => {
+        const tournament =
+            await tournamentRepository.findTournamentByName(tournamentId);
+
+        if (!tournament) return null;
+
+        const stagesWithCounts =
+            await tournamentRepository.findStageMatchCountsByTournamentId(
+                tournament.id,
+            );
+
+        return {
+            ...tournament,
+            stages: tournament?.stages.map((s) => ({
+                ...s,
+                teams_count:
+                    stagesWithCounts.find((sc) => sc.stageId === s.id)
+                        ?.teamsCount || 0,
+            })),
+        };
+    },
+
     getTeamsByTournamentId: async (tournamentId: number) => {
         const teams =
             await tournamentRepository.findTeamsByTournamentId(tournamentId);

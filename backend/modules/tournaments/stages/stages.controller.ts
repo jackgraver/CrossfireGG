@@ -14,7 +14,9 @@ export const stageController = {
         const data = parseOr400(res, StageParamsSchema, req.params);
         if (!data) return;
 
-        const matches = await stagesService.getMatchesByStageId(data.stageId);
+        const matches = await stagesService.getMatchesByStageId(
+            Number(data.stageId),
+        );
         res.json({ matches });
     },
 
@@ -36,7 +38,7 @@ export const stageController = {
         sendContract(res, GroupWithMatchesAndFormatContract, groups);
     },
 
-    getAllFormats: async (req: Request, res: Response) => {
+    getAllFormats: async (_: Request, res: Response) => {
         const formats = await stagesService.getAllFormats();
         sendContract(res, StageFormatContract.array(), formats);
     },

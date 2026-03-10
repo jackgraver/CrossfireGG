@@ -146,9 +146,9 @@ export const TournamentGroup = ({
                         key={tournament.id}
                         onClick={() => {
                             navigate({
-                                to: "/tournament/$tournamentId/stage/$stageId/bracket",
+                                to: "/tournament/$tournamentId/$stageId/bracket",
                                 params: {
-                                    tournamentId: tournament.id,
+                                    tournamentId: tournament.name,
                                     stageId: tournament.entry_stage,
                                 },
                             });

@@ -3,6 +3,13 @@ import { stages, stageTeams } from "../../../schemas";
 import { eq, sql, and } from "drizzle-orm";
 
 export const stagesRepository = {
+    findStageByName: async (name: string) => {
+        return await db.query.stages.findFirst({
+            where: (s, { eq, isNull }) =>
+                and(eq(s.name, name), isNull(s.deleted_at)),
+        });
+    },
+
     findAllTournamentStages: async (tournamentId: number) => {
         return await db
             .select({
@@ -32,10 +39,10 @@ export const stagesRepository = {
             },
         });
     },
-    findStageStandings: async (stageId: number) => {
+    findStageStandings: async (stageId: string) => {
         return await db.query.stages.findFirst({
             where: (s, { eq, and, isNull }) =>
-                and(eq(s.id, stageId), isNull(s.deleted_at)),
+                and(eq(s.name, stageId), isNull(s.deleted_at)),
             with: {
                 stageFormat: true,
                 groups: {
@@ -63,10 +70,14 @@ export const stagesRepository = {
         });
     },
 
-    findAllStageTeams: async (stageId: number) => {
+    findAllStageTeams: async (stageId: string) => {
+        const stage = await stagesRepository.findStageByName(stageId);
+
+        if (!stage) return [];
+
         return await db.query.stageTeams.findMany({
             where: (st, { eq, and, isNull }) =>
-                and(eq(st.stage_id, stageId), isNull(st.deleted_at)),
+                and(eq(st.stage_id, stage.id), isNull(st.deleted_at)),
             with: {
                 team: {
                     with: {

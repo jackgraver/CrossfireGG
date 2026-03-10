@@ -1,5 +1,5 @@
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
-import { useTournamentById } from "../../../../../lib/api/tournament.queries";
+import { useTournamentById } from "@/lib/api/tournament.queries";
 import { formatDateOnly, toUnixTimestamp } from "@/lib/date.utils";
 import {
     Calendar,
@@ -11,14 +11,12 @@ import {
     ExternalLinkIcon,
 } from "lucide-react";
 import { cn } from "@/utils/cn";
-import { InfoTile } from "../../-component/InfoTile";
-import Tile from "../../-component/Tile";
+import { InfoTile } from "../-component/InfoTile";
+import Tile from "../-component/Tile";
 import TabGroup, { Tab } from "@/components/shared/TabGroup";
 import { openInNewTab } from "@/utils/openInNewTab";
 
-export const Route = createFileRoute(
-    "/tournament/$tournamentId/stage/$stageId",
-)({
+export const Route = createFileRoute("/tournament/$tournamentId/$stageId")({
     component: RouteComponent,
 });
 

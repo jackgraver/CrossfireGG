@@ -15,7 +15,7 @@ export const tournamentRepository = {
             .select({
                 ...getTableColumns(tournaments),
                 entry_stage: db
-                    .select({ id: stages.id })
+                    .select({ name: stages.name })
                     .from(stages)
                     .where(
                         and(
@@ -103,6 +103,32 @@ export const tournamentRepository = {
             },
             where: (t, { eq, and, isNull }) =>
                 and(eq(t.id, tournamentId), isNull(t.deleted_at)),
+            with: {
+                stages: {
+                    columns: {
+                        id: true,
+                        faceit_id: true,
+                        name: true,
+                    },
+                },
+            },
+        });
+    },
+
+    findTournamentByName: async (tournamentName: string) => {
+        return await db.query.tournaments.findFirst({
+            columns: {
+                id: true,
+                name: true,
+                status: true,
+                description: true,
+                prize_pool: true,
+                is_vrs_enabled: true,
+                start_date: true,
+                end_date: true,
+            },
+            where: (t, { eq, and, isNull }) =>
+                and(eq(t.name, tournamentName), isNull(t.deleted_at)),
             with: {
                 stages: {
                     columns: {

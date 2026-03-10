@@ -17,7 +17,7 @@ export const TournamentContract = z.object({
 });
 
 export const TournamentWithTeamCountContract = TournamentContract.extend({
-    entry_stage: z.number(),
+    entry_stage: z.string(),
     max_teams: z.number(),
     team_count: z.number(),
 });

@@ -1,9 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMatchesByStage } from "../../../../../lib/api/tournament.queries";
+import { useMatchesByStage } from "@/lib/api/tournament.queries";
 
-export const Route = createFileRoute(
-    "/tournament/$tournamentId/stage/$stageId/",
-)({
+export const Route = createFileRoute("/tournament/$tournamentId/$stageId/")({
     component: StagePage,
 });
 
