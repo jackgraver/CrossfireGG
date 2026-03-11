@@ -80,14 +80,14 @@ function RouteComponent() {
 
     const tabs: Tab[] = [
         {
-            nav: { to: "/tournament/$tournamentId/stage/$stageId/bracket" },
+            nav: { to: `/tournament/${tournamentId}/${stageId}/bracket` },
             label: "Bracket",
             preload: true,
             icon: LayoutDashboard,
             exact: false,
         },
         {
-            nav: { to: "/tournament/$tournamentId/stage/$stageId/teams" },
+            nav: { to: `/tournament/${tournamentId}/${stageId}/teams` },
             label: "Teams",
             preload: true,
             icon: Users,

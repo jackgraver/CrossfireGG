@@ -21,9 +21,13 @@ export const stageController = {
     },
 
     getStageTeams: async (req: Request, res: Response) => {
+        console.log("?");
+        console.log(req.params);
         const data = parseOr400(res, StageParamsSchema, req.params);
+        console.log("no data", data);
         if (!data) return;
 
+        console.log(data.stageId);
         const teams = await stagesService.getStageTeams(data.stageId);
 
         sendContract(res, StageTeamWithTeamContract.array(), teams);

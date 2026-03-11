@@ -15,8 +15,10 @@ export const Route = createFileRoute(
 function TeamsPage() {
     const { _, stageId } = Route.useParams();
 
+    console.log("loading teams for", stageId);
     const { data: teams, isLoading } = useStageTeams(stageId);
 
+    console.log(teams);
     const sortedTeams = [...(teams || [])].sort((a, b) => a.seed - b.seed);
 
     return (

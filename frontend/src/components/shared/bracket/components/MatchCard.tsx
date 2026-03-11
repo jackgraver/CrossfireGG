@@ -11,9 +11,26 @@ import { formatScheduledDate } from "@/lib/date.utils";
 type MatchCardProps = {
     match: MatchWithParticipantAndMinifiedMapsDTO | undefined;
     margin?: boolean;
+    unroundedTop?: boolean;
 };
 
-export default function MatchCard({ match, margin }: MatchCardProps) {
+const shortenTeamName = (name: string | undefined) => {
+    if (!name) return "TBD";
+    if (name.length <= 8) return name;
+    return name
+        .split(" ")
+        .map((word, _) => {
+            return word.slice(0, 1);
+        })
+        .join("")
+        .toUpperCase();
+};
+
+export default function MatchCard({
+    match,
+    margin,
+    unroundedTop,
+}: MatchCardProps) {
     if (margin === undefined) {
         margin = true;
     }
@@ -28,7 +45,7 @@ export default function MatchCard({ match, margin }: MatchCardProps) {
     const team1 = match?.participants?.[0]?.stageTeam?.team;
     const team2 = match?.participants?.[1]?.stageTeam?.team;
 
-    const handleToggle = (e: React.MouseEvent) => {
+    const handleToggle = (_: React.MouseEvent) => {
         if (!match) return;
         if (isOpen) {
             closeDropdown();
@@ -40,9 +57,12 @@ export default function MatchCard({ match, margin }: MatchCardProps) {
     return (
         <div
             ref={triggerRef}
-            className={`group border-border bg-firstBg text-textPrimary relative flex grow flex-col overflow-hidden border transition-all duration-200 ${
-                margin ? "m-2 rounded-md" : "rounded-md"
-            } ${isOpen ? "ring-2 ring-blue-500/50" : ""}`}
+            className={cn(
+                `group border-border bg-firstBg text-textPrimary relative flex grow flex-col overflow-hidden border transition-all duration-200`,
+                margin ? "m-2 rounded-md" : "rounded-md",
+                isOpen ? "ring-2 ring-blue-500/50" : "",
+                unroundedTop && "rounded-tl-none",
+            )}
         >
             <div className="cursor-pointer" onClick={handleToggle}>
                 <MatchTeam
@@ -66,20 +86,25 @@ export default function MatchCard({ match, margin }: MatchCardProps) {
                             transform: "translateX(-50%)",
                             zIndex: 9999,
                         }}
-                        className="border-border bg-firstBg animate-in fade-in slide-in-from-top-2 flex min-w-[280px] flex-col gap-4 rounded-lg border p-4 shadow-2xl duration-200"
+                        className="border-border bg-firstBg animate-in fade-in slide-in-from-top-2 flex min-w-70 flex-col gap-4 rounded-lg border p-4 shadow-2xl duration-200"
                     >
-                        <div className="flex flex-col gap-3 border-b border-white/5 pb-3">
+                        <div
+                            className={cn(
+                                "flex flex-col gap-3 border-b border-white/5 pb-3",
+                                match.maps.length === 0 && "border-none pb-0",
+                            )}
+                        >
                             <div className="flex justify-center">
                                 <span className="text-textSecondary text-[10px] font-medium tracking-wider uppercase">
                                     {formatScheduledDate(match.scheduled_at!)}
                                 </span>
                             </div>
                             <div className="flex items-center justify-between gap-4">
-                                <span className="text-textPrimary max-w-[110px] truncate text-sm font-bold">
-                                    {team1?.name || "TBD"}
+                                <span className="text-textPrimary max-w-27.5 truncate text-sm font-bold">
+                                    {shortenTeamName(team1?.name) || "TBD"}
                                 </span>
-                                <span className="text-textPrimary max-w-[110px] truncate text-right text-sm font-bold">
-                                    {team2?.name || "TBD"}
+                                <span className="text-textPrimary max-w-27.5 truncate text-right text-sm font-bold">
+                                    {shortenTeamName(team2?.name) || "TBD"}
                                 </span>
                             </div>
                         </div>
@@ -102,11 +127,11 @@ export default function MatchCard({ match, margin }: MatchCardProps) {
                                         >
                                             {map.team1_score}
                                         </span>
-                                        <span className="h-3 w-[1px] bg-white/10" />
-                                        <span className="text-textPrimary flex-grow text-center text-xs font-medium">
+                                        <span className="h-3 w-px bg-white/10" />
+                                        <span className="text-textPrimary grow text-center text-xs font-medium">
                                             {map.map_name}
                                         </span>
-                                        <span className="h-3 w-[1px] bg-white/10" />
+                                        <span className="h-3 w-px bg-white/10" />
                                         <span
                                             className={cn(
                                                 "w-8 text-center text-xs font-bold",

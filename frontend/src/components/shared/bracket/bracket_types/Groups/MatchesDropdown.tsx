@@ -5,6 +5,7 @@ import {
 import { Calendar, ChevronDown, ChevronUp } from "lucide-react";
 import { useMemo, useState } from "react";
 import MatchCard from "../../components/MatchCard";
+import ScheduledCard from "../../components/ScheduledCard";
 
 export default function MatchesDropdown({
     matches,
@@ -62,13 +63,25 @@ export default function MatchesDropdown({
                                 </div>
                                 <div className="grid grid-cols-1 gap-3">
                                     {roundMatches.map((match, mIndex) => (
-                                        <MatchCard
-                                            key={mIndex}
-                                            match={
-                                                match as MatchWithParticipantAndMinifiedMapsDTO
-                                            }
-                                            margin={false}
-                                        />
+                                        <>
+                                            {match.status === "scheduled" && (
+                                                <ScheduledCard
+                                                    key={mIndex}
+                                                    match={
+                                                        match as MatchWithParticipantAndMinifiedMapsDTO
+                                                    }
+                                                />
+                                            )}
+                                            {match.status !== "scheduled" && (
+                                                <MatchCard
+                                                    key={mIndex}
+                                                    match={
+                                                        match as MatchWithParticipantAndMinifiedMapsDTO
+                                                    }
+                                                    margin={false}
+                                                />
+                                            )}
+                                        </>
                                     ))}
                                 </div>
                             </div>
