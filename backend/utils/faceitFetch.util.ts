@@ -36,7 +36,6 @@ export const faceitFetchUtil = {
     ): Promise<T> => {
         let url = `${faceitFetchUtil.baseUrl}/${endpoint.replace(/^\//, "")}`;
 
-        console.log("URL:", url);
         if (queryParams && Object.keys(queryParams).length > 0) {
             const params = new URLSearchParams();
             for (const [key, value] of Object.entries(queryParams)) {
@@ -51,6 +50,8 @@ export const faceitFetchUtil = {
                 url += `?${paramString}`;
             }
         }
+
+        console.log("URL:", url);
 
         const response = await fetch(url, {
             method: "GET",
@@ -141,6 +142,7 @@ export const faceitFetchUtil = {
 
     fetchMatchesData: async (
         championshipId: string,
+        type: "all" | "upcoming" | "ongoing" | "past",
         options: faceitFetchOptions = {},
     ): Promise<FaceitAPIMatch[]> => {
         const { readFileName, writeFileName } = options;
@@ -163,6 +165,7 @@ export const faceitFetchUtil = {
                 `championships/${championshipId}/matches`,
                 {
                     limit: 100,
+                    type,
                 },
             );
 
@@ -182,7 +185,6 @@ export const faceitFetchUtil = {
         options: faceitFetchOptions = {},
     ): Promise<FaceitAPIChampionship> => {
         const { readFileName, writeFileName } = options;
-
         // Only read from file in development environment
         if (config.nodeEnv === "development") {
             const cachedData =

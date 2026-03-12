@@ -2,29 +2,20 @@ import { Request, Response } from "express";
 import { tournamentService } from "./tournament.service";
 import {
     TournamentParamsSchema,
-    StageParamsSchema,
     RegisterForTournamentBodySchema,
 } from "./tournament.validation";
 import { teamRepository } from "../teams/team.repository";
 import { playerRepository } from "../players/player.repository";
 import { tournamentRepository } from "./tournament.repository";
 import {
-    GroupWithMatchesAndFormatContract,
-    StageTeamWithTeamContract,
     StageTeamSignUpContract,
     TournamentWithMinimalStagesContract,
     TournamentWithTeamCountContract,
     CreateTournamentContract,
 } from "@repo/contracts";
-import { AuthRequest } from "../../core/middleware/auth.middleware";
 import { sendContract } from "../../core/sendContract";
 import { parseOr400 } from "../../core/validation/parseOr400";
-
-async function syncTournamentMatches(tournamentId: number) {
-    setTimeout(() => {
-        console.log("[WIP] Check for updates on", tournamentId);
-    }, 5000);
-}
+import { syncTournamentMatches } from "./tournament.refetch";
 
 export const tournamentController = {
     getAllTournaments: async (req: Request, res: Response) => {
@@ -37,17 +28,14 @@ export const tournamentController = {
         const data = parseOr400(res, TournamentParamsSchema, req.params);
         if (!data) return;
 
-        // const tournament = await tournamentService.getTournamentById(
-        //     data.tournamentId,
-        // );
-
         const tournament = await tournamentService.getTournamentByName(
             data.tournamentId,
         );
 
-        // syncTournamentMatches(data.tournamentId)
-        //     .catch((error) => console.error("sync matches error", error))
-        //     .finally(() => {});
+        if (!tournament) return; //TODO: better handling
+        syncTournamentMatches(
+            tournament.stages as { id: number; faceit_id: string }[],
+        );
 
         sendContract(res, TournamentWithMinimalStagesContract, tournament);
     },
