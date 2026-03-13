@@ -7,6 +7,7 @@ interface faceitFetchOptions {
     readFileName?: string;
     writeFileName?: string;
     allow404?: boolean;
+    matchStatus?: "all" | "upcoming" | "ongoing" | "past";
 }
 
 class FaceitApiError extends Error {
@@ -142,7 +143,6 @@ export const faceitFetchUtil = {
 
     fetchMatchesData: async (
         championshipId: string,
-        type: "all" | "upcoming" | "ongoing" | "past",
         options: faceitFetchOptions = {},
     ): Promise<FaceitAPIMatch[]> => {
         const { readFileName, writeFileName } = options;
@@ -165,7 +165,7 @@ export const faceitFetchUtil = {
                 `championships/${championshipId}/matches`,
                 {
                     limit: 100,
-                    type,
+                    type: options.matchStatus ?? "all",
                 },
             );
 

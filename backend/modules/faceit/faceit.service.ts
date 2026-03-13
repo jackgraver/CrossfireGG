@@ -61,12 +61,26 @@ export const faceitImportService = {
         }
 
         const existingMatches = await matchRepository.findAllByStageId(stageId);
-        const existingFaceitIds = new Set(
-            existingMatches.map((m) => m.faceit_id),
+        const existingMatchesByFaceitId = new Map(
+            existingMatches.map((m) => [m.faceit_id, m]),
         );
 
         const newMatches = matches
-            .filter((match) => !existingFaceitIds.has(match.match_id))
+            .filter((match) => {
+                const existingMatch = existingMatchesByFaceitId.get(
+                    match.match_id,
+                );
+
+                if (!existingMatch) {
+                    return true;
+                }
+
+                if (existingMatch.status === "finished") {
+                    return false;
+                }
+
+                return existingMatch.status !== match.status.toLowerCase();
+            })
             .sort((a, b) => {
                 const timeA =
                     a.started_at ?? a.scheduled_at ?? a.configured_at ?? 0;
@@ -203,10 +217,6 @@ export const faceitImportService = {
         try {
             const stats = await faceitFetchUtil.fetchData<FaceitAPIMatchStats>(
                 `/matches/${faceitMatch.match_id}/stats`,
-                {
-                    readFileName: `match_stats/${faceitMatch.match_id}_stats.json`,
-                    allow404: true,
-                },
             );
 
             if (stats && stats.rounds && stats.rounds.length > 0) {

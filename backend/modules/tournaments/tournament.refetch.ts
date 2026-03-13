@@ -80,12 +80,8 @@ export async function syncTournamentMatches(
         await markStageSyncing(faceit_id);
 
         try {
-            const [upcomingMatches, ongoingMatches] = await Promise.all([
-                faceitFetchUtil.fetchMatchesData(faceit_id, "upcoming"),
-                faceitFetchUtil.fetchMatchesData(faceit_id, "ongoing"),
-            ]);
-
-            const matchesData = [...upcomingMatches, ...ongoingMatches];
+            const matchesData =
+                await faceitFetchUtil.fetchMatchesData(faceit_id);
 
             console.log(
                 `Processing matches for ${faceit_id}, found ${matchesData.length} matches`,
