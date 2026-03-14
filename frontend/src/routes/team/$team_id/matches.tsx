@@ -1,20 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
-import {
-    useTeam,
-    useTeamMatches,
-    useTeamMatchesByStage,
-} from "@/lib/api/team.queries";
-import {
-    formatDateOnly,
-    formatFullDate,
-    formatMatchDate,
-} from "@/lib/date.utils";
-import { openInNewTab } from "@/utils/openInNewTab";
+import { useTeamMatches } from "@/lib/api/team.queries";
+import { formatDateOnly } from "@/lib/date.utils";
 import TeamLogo from "@/components/shared/bracket/atoms/TeamLogo";
 import ErrorComponent from "../-components/ErrorComponent";
 import { MatchWithParticipantsDTO } from "@repo/contracts";
 import { cn } from "@/utils/cn";
+import { CalendarDays } from "lucide-react";
 
 export const Route = createFileRoute("/team/$team_id/matches")({
     component: MatchesPage,
@@ -23,18 +14,30 @@ export const Route = createFileRoute("/team/$team_id/matches")({
 
 function MatchesPage() {
     const { team_id } = Route.useParams();
-    const { data: matches, isLoading, error } = useTeamMatches(team_id);
+    const { data: matches, isLoading } = useTeamMatches(team_id);
 
     return (
         <div className="rounded-xl shadow-md">
-            <div className="">
+            <div>
                 {isLoading ? (
-                    <div className="text-textSecondary py-8 text-center">
-                        Loading matches...
+                    <div className="flex flex-col gap-3">
+                        {Array.from({ length: 4 }).map((_, i) => (
+                            <div key={i} className="border-border flex flex-col gap-2 rounded-md border p-3">
+                                <div className="bg-thirdBg h-3 w-20 animate-pulse rounded" />
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                        <div className="bg-thirdBg h-5 w-36 animate-pulse rounded" />
+                                        <div className="bg-thirdBg h-8 w-8 animate-pulse rounded-full" />
+                                    </div>
+                                    <div className="bg-thirdBg h-6 w-16 animate-pulse rounded" />
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 ) : matches?.length === 0 ? (
-                    <div className="text-textSecondary py-8 text-center">
-                        No matches found for this stage
+                    <div className="flex flex-col items-center gap-3 py-12 text-center">
+                        <CalendarDays className="text-textSecondary h-10 w-10" />
+                        <p className="text-textSecondary">No matches found</p>
                     </div>
                 ) : (
                     <div className="flex flex-col gap-3">
@@ -97,18 +100,23 @@ function MatchCard({
                         : "border-green-500/60 hover:border-green-500/80",
                 )}
             >
-                {match.scheduled_at && (
-                    <span className="text-muted-foreground text-xs">
-                        {formatDateOnly(match.scheduled_at)}
-                    </span>
-                )}
+                <div className="flex items-center gap-2">
+                    {match.scheduled_at && (
+                        <span className="text-textSecondary text-xs">
+                            {formatDateOnly(match.scheduled_at)}
+                        </span>
+                    )}
+                    {match.status && (
+                        <span className={cn("rounded px-1.5 py-0.5 text-xs font-medium", getStatusStyle())}>
+                            {match.status.toUpperCase()}
+                        </span>
+                    )}
+                </div>
                 <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-2 text-lg font-medium">
                         <span>vs {opponent?.stageTeam.team.name}</span>
                         <TeamLogo
-                            avatar={
-                                opponent?.stageTeam.team.team_logo ?? undefined
-                            }
+                            avatar={opponent?.stageTeam.team.team_logo ?? undefined}
                             styling="h-8 w-8 rounded-full"
                         />
                     </div>

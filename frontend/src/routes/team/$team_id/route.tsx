@@ -1,8 +1,9 @@
 import TeamLogo from "@/components/shared/bracket/atoms/TeamLogo";
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
-import { useTeam } from "@/lib/api/team.queries";
-import { CalendarDays, Home, Users } from "lucide-react";
+import { useTeam, useTeamTournaments } from "@/lib/api/team.queries";
+import { CalendarDays, Home, Trophy, Users } from "lucide-react";
 import TabGroup, { Tab } from "@/components/shared/TabGroup";
+import Tile from "@/routes/tournament/$tournamentId/-component/Tile";
 
 export const Route = createFileRoute("/team/$team_id")({
     component: RouteComponent,
@@ -11,10 +12,51 @@ export const Route = createFileRoute("/team/$team_id")({
 function RouteComponent() {
     const { team_id } = Route.useParams();
     const { data: team, isLoading, error } = useTeam(team_id);
+    const { data: tournaments } = useTeamTournaments(team_id);
+
+    const totalWins = tournaments?.reduce(
+        (sum, t) =>
+            sum +
+            t.stages.reduce(
+                (s, st) =>
+                    s + st.stageTeams.reduce((w, st2) => w + (st2.wins ?? 0), 0),
+                0,
+            ),
+        0,
+    ) ?? 0;
+    const totalLosses = tournaments?.reduce(
+        (sum, t) =>
+            sum +
+            t.stages.reduce(
+                (s, st) =>
+                    s + st.stageTeams.reduce((l, st2) => l + (st2.losses ?? 0), 0),
+                0,
+            ),
+        0,
+    ) ?? 0;
+
     if (isLoading) {
         return (
-            <div className="flex min-h-screen items-center justify-center">
-                <div className="text-textPrimary">Loading team...</div>
+            <div className="mx-auto min-h-screen max-w-350 py-5">
+                <div className="mb-6 overflow-hidden rounded-xl shadow-md">
+                    <div className="flex items-center gap-6 p-6">
+                        <div className="bg-thirdBg h-24 w-24 animate-pulse rounded-full" />
+                        <div className="flex flex-col gap-2">
+                            <div className="bg-thirdBg h-10 w-56 animate-pulse rounded-md" />
+                            <div className="bg-thirdBg h-4 w-32 animate-pulse rounded-md" />
+                        </div>
+                    </div>
+                    <div className="flex gap-2 px-6 pb-4">
+                        <div className="bg-thirdBg h-9 w-28 animate-pulse rounded-md" />
+                        <div className="bg-thirdBg h-9 w-28 animate-pulse rounded-md" />
+                        <div className="bg-thirdBg h-9 w-28 animate-pulse rounded-md" />
+                    </div>
+                </div>
+                <div className="flex flex-col gap-4">
+                    <div className="bg-thirdBg h-10 w-64 animate-pulse rounded-md" />
+                    <div className="bg-thirdBg h-32 w-full animate-pulse rounded-xl" />
+                    <div className="bg-thirdBg h-32 w-full animate-pulse rounded-xl" />
+                </div>
             </div>
         );
     }
@@ -59,7 +101,7 @@ function RouteComponent() {
     ] as const;
 
     return (
-        <div className="min-h-screen py-5">
+        <div className="mx-auto min-h-screen max-w-350 py-5">
             <div className="mb-6 overflow-hidden rounded-xl shadow-md">
                 <div className="flex items-center gap-6 p-6">
                     <TeamLogo
@@ -67,13 +109,26 @@ function RouteComponent() {
                         styling="h-24 w-24 rounded-full object-cover"
                     />
                     <div className="flex flex-col gap-1">
-                        <div className="flex flex-row items-center gap-2">
-                            <h1 className="text-textPrimary text-4xl font-bold">
-                                {team.name}
-                            </h1>
-                            <span className="flex justify-center text-2xl">
-                                🇺🇸
-                            </span>
+                        <h1 className="text-textPrimary text-4xl font-bold">
+                            {team.name}
+                        </h1>
+                        <div className="flex items-center gap-2">
+                            {tournaments && tournaments.length > 0 && (
+                                <Tile
+                                    bg="bg-blue-500/20"
+                                    text="text-blue-400"
+                                    icon={Trophy}
+                                    label={`${tournaments.length} Tournament${tournaments.length !== 1 ? "s" : ""}`}
+                                />
+                            )}
+                            {(totalWins > 0 || totalLosses > 0) && (
+                                <Tile
+                                    bg="bg-green-500/20"
+                                    text="text-green-400"
+                                    icon={CalendarDays}
+                                    label={`${totalWins}W - ${totalLosses}L`}
+                                />
+                            )}
                         </div>
                         {team.faceit_id && (
                             <a
@@ -87,30 +142,9 @@ function RouteComponent() {
                         )}
                     </div>
                 </div>
-                {/*<div className="flex flex-col justify-between gap-6 border-b border-white sm:flex-row sm:items-center">
-                    <div className="flex gap-10">*/}
-                {/*{tabs.map((tab) => (
-                            <Link
-                                key={tab.to}
-                                to={tab.to}
-                                // params={{ tournamentId, stageId }}
-                                className={cn(
-                                    "relative flex items-center gap-2.5 pb-4 text-sm font-black transition-all",
-                                    isActiveTab(tab.to, tab.exact)
-                                        ? "text-textPrimary"
-                                        : "text-textSecondary hover:text-textPrimary",
-                                )}
-                            >
-                                <tab.icon size={18} />
-                                {tab.label}
-                            </Link>
-                        ))}*/}
                 <div className="pb-4">
                     <TabGroup tabs={tabs} />
                 </div>
-
-                {/*</div>
-                </div>*/}
             </div>
             <Outlet />
         </div>

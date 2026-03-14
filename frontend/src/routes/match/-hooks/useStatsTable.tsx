@@ -6,6 +6,7 @@ import {
     SortingState,
     useReactTable,
 } from "@tanstack/react-table";
+import TeamLogo from "@/components/shared/bracket/atoms/TeamLogo";
 
 export function useStatsTable(data: any[] | undefined) {
     const [sorting, setSorting] = useState<SortingState>([]);
@@ -15,7 +16,17 @@ export function useStatsTable(data: any[] | undefined) {
     const columns = [
         columnHelper.accessor("stagePlayer.player.player_name", {
             header: "Player",
-            cell: (info) => info.getValue(),
+            cell: (info) => (
+                <div className="flex items-center gap-2">
+                    <TeamLogo
+                        avatar={
+                            info.row.original.stagePlayer?.player?.player_logo
+                        }
+                        styling="h-6 w-6 rounded-full object-cover"
+                    />
+                    <span>{info.getValue()}</span>
+                </div>
+            ),
             size: 200,
         }),
         columnHelper.accessor("kills", {
