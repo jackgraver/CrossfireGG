@@ -3,11 +3,13 @@ import {
     GroupWithMatchesAndFormatDTO,
     StageTeamSignUpDTO,
     StageTeamWithTeamDTO,
+    TournamentForEditDTO,
     TournamentWithMinimalStagesDTO,
     TournamentWithTeamCountDTO,
 } from "@repo/contracts";
 
-import { apiGET, apiPOST } from "@/lib/api/client";
+import { apiGET, apiPOST, apiPUT } from "@/lib/api/client";
+import { queryClient } from "@/lib/api/queryClient";
 
 export const useAllTournaments = () => {
     return useQuery<TournamentWithTeamCountDTO[]>({
@@ -122,9 +124,40 @@ export const useCreateTournament = () => {
     return useMutation({
         mutationFn: (payload: any) =>
             apiPOST<any>(`/tournament/create`, payload),
-        onSuccess: () => {},
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["tournaments"] });
+        },
         onError: (error) => {
             console.error("Error creating tournament:", error);
+        },
+    });
+};
+
+export const useTournamentForEdit = (tournamentId: string | undefined) => {
+    return useQuery<TournamentForEditDTO>({
+        queryKey: ["tournament-edit", tournamentId],
+        queryFn: () =>
+            apiGET<TournamentForEditDTO>(
+                `/tournament/${tournamentId}/edit`,
+            ),
+        enabled: !!tournamentId,
+    });
+};
+
+export const useUpdateTournament = () => {
+    return useMutation({
+        mutationFn: ({
+            tournamentId,
+            payload,
+        }: {
+            tournamentId: string;
+            payload: any;
+        }) => apiPUT<any>(`/tournament/${tournamentId}`, payload),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["tournaments"] });
+        },
+        onError: (error) => {
+            console.error("Error updating tournament:", error);
         },
     });
 };

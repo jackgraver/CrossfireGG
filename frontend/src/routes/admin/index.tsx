@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Roles } from "@repo/types";
-import { Trophy, Users, Settings, Video, LogOut, Plus } from "lucide-react";
+import { Trophy, Users, Settings, Video, LogOut, Plus, Pencil } from "lucide-react";
 import { UserWithRolesDTO } from "@repo/contracts";
 import { redirect } from "@tanstack/react-router";
 import { useAllTournaments } from "@/lib/api/tournament.queries";
@@ -42,21 +42,32 @@ function Admin() {
                 </div>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                     {tournaments?.map((tournament: any) => (
-                        <Link
+                        <div
                             key={tournament.id}
-                            to="/admin/tournament/$tournament_id"
-                            params={{ tournament_id: tournament.id.toString() }}
-                            className="group bg-firstBg border-border hover:border-cfRed hover:shadow-cfRed/5 rounded-xl border p-4 transition-all duration-200 hover:shadow-lg"
+                            className="group bg-firstBg border-border hover:border-cfRed hover:shadow-cfRed/5 relative rounded-xl border p-4 transition-all duration-200 hover:shadow-lg"
                         >
-                            <div className="flex flex-col gap-1">
+                            <Link
+                                to="/admin/tournament/$tournament_id"
+                                params={{ tournament_id: tournament.id.toString() }}
+                                className="flex flex-col gap-1"
+                            >
                                 <span className="group-hover:text-cfRed text-lg font-bold transition-colors">
                                     {tournament.name}
                                 </span>
                                 <span className="text-textSecondary text-sm tracking-wider uppercase">
                                     Manage Tournament
                                 </span>
-                            </div>
-                        </Link>
+                            </Link>
+                            <Link
+                                to="/admin/tournament/create"
+                                search={{ tournamentId: tournament.id.toString() }}
+                                className="text-textSecondary hover:text-cfRed hover:bg-cfRed/10 absolute top-3 right-3 rounded-lg p-2 opacity-0 transition-all group-hover:opacity-100"
+                                title="Edit tournament"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <Pencil size={16} />
+                            </Link>
+                        </div>
                     ))}
                 </div>
             </div>

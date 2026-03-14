@@ -11,7 +11,9 @@ import {
     StageTeamSignUpContract,
     TournamentWithMinimalStagesContract,
     TournamentWithTeamCountContract,
+    TournamentForEditContract,
     CreateTournamentContract,
+    UpdateTournamentContract,
 } from "@repo/contracts";
 import { sendContract } from "../../core/sendContract";
 import { parseOr400 } from "../../core/validation/parseOr400";
@@ -195,6 +197,64 @@ export const tournamentController = {
             console.error("Error creating tournament:", error);
             res.status(500).json({
                 error: "Failed to create tournament",
+                message: error.message,
+            });
+        }
+    },
+
+    getTournamentForEdit: async (req: Request, res: Response) => {
+        const data = parseOr400(res, TournamentParamsSchema, req.params);
+        if (!data) return;
+
+        const tournamentId = Number(data.tournamentId);
+        if (isNaN(tournamentId)) {
+            return res.status(400).json({ error: "Invalid tournament ID" });
+        }
+
+        const tournament =
+            await tournamentRepository.findTournamentForEdit(tournamentId);
+
+        if (!tournament) {
+            return res.status(404).json({ error: "Tournament not found" });
+        }
+
+        sendContract(res, TournamentForEditContract, tournament);
+    },
+
+    updateTournament: async (req: Request, res: Response) => {
+        const params = parseOr400(res, TournamentParamsSchema, req.params);
+        if (!params) return;
+
+        const tournamentId = Number(params.tournamentId);
+        if (isNaN(tournamentId)) {
+            return res.status(400).json({ error: "Invalid tournament ID" });
+        }
+
+        const data = parseOr400(res, UpdateTournamentContract, req.body);
+        if (!data) return;
+
+        try {
+            const existing =
+                await tournamentRepository.findById(tournamentId);
+            if (!existing) {
+                return res
+                    .status(404)
+                    .json({ error: "Tournament not found" });
+            }
+
+            const tournament = await tournamentRepository.updateTournament(
+                tournamentId,
+                data,
+            );
+            res.json({
+                success: true,
+                message: "Tournament updated successfully",
+                tournamentId: tournament.id,
+            });
+        } catch (error: any) {
+            console.error("Error updating tournament:", error);
+            res.status(500).json({
+                error: "Failed to update tournament",
                 message: error.message,
             });
         }

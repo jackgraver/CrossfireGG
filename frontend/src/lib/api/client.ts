@@ -23,6 +23,11 @@ export const apiPOST = async <T = any>(url: string, data: any): Promise<T> => {
     return response.data as T;
 };
 
+export const apiPUT = async <T = any>(url: string, data: any): Promise<T> => {
+    const response = await api.put<T>(url, data);
+    return response.data as T;
+};
+
 export const apiDELETE = async <T = any>(url: string): Promise<T> => {
     const response = await api.delete<T>(url);
     return response.data as T;

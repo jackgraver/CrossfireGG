@@ -7,7 +7,16 @@ import {
     stageFormats,
     stagePlayers,
 } from "../../schemas";
-import { eq, and, isNull, count, inArray, getTableColumns } from "drizzle-orm";
+import {
+    eq,
+    and,
+    isNull,
+    count,
+    inArray,
+    notInArray,
+    getTableColumns,
+} from "drizzle-orm";
+import type { UpdateTournamentDTO } from "@repo/contracts";
 
 export const tournamentRepository = {
     findAll: async () => {
@@ -535,14 +544,14 @@ export const tournamentRepository = {
 
             if (tournamentData.stages && tournamentData.stages.length > 0) {
                 await tx.insert(stages).values(
-                    tournamentData.stages.map((stage: any, index: number) => ({
+                    tournamentData.stages.map((stage: any) => ({
                         tournament_id: tournament.id,
                         name: stage.name,
                         faceit_id: stage.faceit_id || "",
                         max_teams: stage.max_teams || 32,
                         format_id: stage.format_id || 1,
                         is_current: stage.is_current || false,
-                        is_entry_stage: index === 0, // First stage is entry stage by default
+                        is_entry_stage: stage.is_entry_stage || false,
                         start_date: stage.start_date || tournament.start_date,
                         end_date: stage.end_date || tournament.end_date,
                         registration_deadline:
@@ -552,6 +561,128 @@ export const tournamentRepository = {
                         updated_at: new Date(),
                     })),
                 );
+            }
+
+            return tournament;
+        });
+    },
+
+    findTournamentForEdit: async (tournamentId: number) => {
+        return await db.query.tournaments.findFirst({
+            columns: {
+                id: true,
+                name: true,
+                status: true,
+                description: true,
+                prize_pool: true,
+                is_vrs_enabled: true,
+                start_date: true,
+                end_date: true,
+            },
+            where: (t, { eq, and, isNull }) =>
+                and(eq(t.id, tournamentId), isNull(t.deleted_at)),
+            with: {
+                stages: {
+                    columns: {
+                        id: true,
+                        name: true,
+                        faceit_id: true,
+                        max_teams: true,
+                        format_id: true,
+                        is_current: true,
+                        is_entry_stage: true,
+                        start_date: true,
+                        end_date: true,
+                        registration_deadline: true,
+                    },
+                    where: (s, { isNull }) => isNull(s.deleted_at),
+                },
+            },
+        });
+    },
+
+    updateTournament: async (
+        tournamentId: number,
+        data: UpdateTournamentDTO,
+    ) => {
+        return await db.transaction(async (tx) => {
+            const [tournament] = await tx
+                .update(tournaments)
+                .set({
+                    name: data.name,
+                    description: data.description,
+                    prize_pool: data.prize_pool,
+                    is_vrs_enabled: data.is_vrs_enabled,
+                    start_date: data.start_date,
+                    end_date: data.end_date,
+                    updated_at: new Date(),
+                })
+                .where(eq(tournaments.id, tournamentId))
+                .returning();
+
+            const existingStageIds = data.stages
+                .map((s) => s.id)
+                .filter((id): id is number => id !== undefined);
+
+            if (existingStageIds.length > 0) {
+                await tx
+                    .update(stages)
+                    .set({ deleted_at: new Date(), updated_at: new Date() })
+                    .where(
+                        and(
+                            eq(stages.tournament_id, tournamentId),
+                            notInArray(stages.id, existingStageIds),
+                            isNull(stages.deleted_at),
+                        ),
+                    );
+            } else {
+                await tx
+                    .update(stages)
+                    .set({ deleted_at: new Date(), updated_at: new Date() })
+                    .where(
+                        and(
+                            eq(stages.tournament_id, tournamentId),
+                            isNull(stages.deleted_at),
+                        ),
+                    );
+            }
+
+            for (let i = 0; i < data.stages.length; i++) {
+                const stage = data.stages[i];
+                if (stage.id) {
+                    await tx
+                        .update(stages)
+                        .set({
+                            name: stage.name,
+                            faceit_id: stage.faceit_id || "",
+                            max_teams: stage.max_teams,
+                            format_id: stage.format_id,
+                            is_current: stage.is_current,
+                            is_entry_stage: stage.is_entry_stage || false,
+                            start_date: stage.start_date,
+                            end_date: stage.end_date,
+                            registration_deadline: stage.registration_deadline,
+                            updated_at: new Date(),
+                        })
+                        .where(eq(stages.id, stage.id));
+                } else {
+                    await tx.insert(stages).values({
+                        tournament_id: tournamentId,
+                        name: stage.name,
+                        faceit_id: stage.faceit_id || "",
+                        max_teams: stage.max_teams || 32,
+                        format_id: stage.format_id || 1,
+                        is_current: stage.is_current || false,
+                        is_entry_stage: stage.is_entry_stage || false,
+                        start_date: stage.start_date || tournament.start_date,
+                        end_date: stage.end_date || tournament.end_date,
+                        registration_deadline:
+                            stage.registration_deadline ||
+                            tournament.start_date,
+                        created_at: new Date(),
+                        updated_at: new Date(),
+                    });
+                }
             }
 
             return tournament;

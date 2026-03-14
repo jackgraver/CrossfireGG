@@ -6,17 +6,24 @@ import styles from "./Checkbox.module.css";
 type CheckboxProps = {
     field: AnyFieldApi;
     label: React.ReactNode;
+    topLabel?: string;
     disabled?: boolean;
 };
 
-export function Checkbox({ field, label, disabled }: CheckboxProps) {
+export function Checkbox({ field, label, topLabel, disabled }: CheckboxProps) {
     const { isTouched, errors } = field.state.meta;
     const error =
         isTouched && errors.length > 0 ? String(errors[0]) : undefined;
 
     return (
         <div className={styles.wrapper}>
-            <div className={styles.row}>
+            <span className={styles.topLabel}>
+                {topLabel ?? "\u00A0"}
+            </span>
+            <label
+                htmlFor={field.name}
+                className={`${styles.container}${disabled ? ` ${styles.containerDisabled}` : ""}`}
+            >
                 <RadixCheckbox.Root
                     id={field.name}
                     checked={field.state.value}
@@ -31,11 +38,15 @@ export function Checkbox({ field, label, disabled }: CheckboxProps) {
                         <Check className={styles.checkIcon} />
                     </RadixCheckbox.Indicator>
                 </RadixCheckbox.Root>
-                <label htmlFor={field.name} className={styles.label}>
-                    {label}
-                </label>
-            </div>
-            {error && <div className={styles.errorText}>{error}</div>}
+                <span className={styles.label}>{label}</span>
+            </label>
+            <em
+                role="alert"
+                className={styles.errorText}
+                style={{ visibility: error ? "visible" : "hidden" }}
+            >
+                {error ?? "\u00A0"}
+            </em>
         </div>
     );
 }

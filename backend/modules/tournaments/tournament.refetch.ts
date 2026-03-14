@@ -1,8 +1,6 @@
-import { db } from "../../config/database";
 import { redisGet, redisSet, redisDel } from "../../core/redis";
 import { faceitFetchUtil } from "../../utils/faceitFetch.util";
 import { faceitImportService } from "../faceit/faceit.service";
-import { tournamentService } from "./tournament.service";
 
 let LAST_REFETCH_TIME = new Map<string, number>();
 const SYNCING_STAGES = new Set<string>();

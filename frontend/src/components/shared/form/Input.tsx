@@ -40,70 +40,58 @@ export function Input({
         errors && errors.length > 1 ? errors.slice(1).join(", ") : undefined;
 
     return (
-        <div className={cn(styles.wrapper, "flex flex-1 flex-col", className)}>
-            <div className="flex flex-col gap-1.5">
-                {label && (
-                    <Label.Root
-                        htmlFor={name}
+        <div className={cn(styles.wrapper, className)}>
+            {label && (
+                <Label.Root htmlFor={name} className={styles.label}>
+                    {label}
+                </Label.Root>
+            )}
+            <div className="relative w-full">
+                {type === "textarea" ? (
+                    <textarea
+                        id={name}
+                        placeholder={placeholder}
+                        value={value}
+                        onChange={(e) => onChange(e.target.value)}
+                        onBlur={onBlur}
+                        disabled={disabled}
+                        title={title}
+                        rows={4}
                         className={cn(
-                            styles.label,
-                            "pl-1 text-xs font-medium tracking-wider text-gray-400 uppercase",
+                            styles.input,
+                            "border-firstBg w-full rounded-md border p-2 text-white transition-colors",
+                            isInvalid
+                                ? "border-red-500 focus:ring-red-500"
+                                : "focus:border-orange-500 focus:ring-orange-500",
+                            "disabled:cursor-not-allowed disabled:border-none disabled:opacity-50",
                         )}
-                    >
-                        {label}
-                    </Label.Root>
+                    />
+                ) : (
+                    <input
+                        id={name}
+                        type={type}
+                        placeholder={placeholder}
+                        value={value}
+                        onChange={(e) => onChange(e.target.value)}
+                        onBlur={onBlur}
+                        disabled={disabled}
+                        title={title}
+                        className={cn(
+                            styles.input,
+                            "border-firstBg w-full rounded-md border p-2 text-white transition-colors",
+                            isInvalid
+                                ? "border-red-500 focus:ring-red-500"
+                                : "focus:border-orange-500 focus:ring-orange-500",
+                            "disabled:cursor-not-allowed disabled:border-none disabled:opacity-50",
+                        )}
+                    />
                 )}
-                <div className={cn(styles.inputContainer, "relative w-full")}>
-                    {type === "textarea" ? (
-                        <textarea
-                            id={name}
-                            placeholder={placeholder}
-                            value={value}
-                            onChange={(e) => onChange(e.target.value)}
-                            onBlur={onBlur}
-                            disabled={disabled}
-                            title={title}
-                            rows={4}
-                            className={cn(
-                                styles.input,
-                                "border-firstBg w-full rounded-md border p-2 text-white transition-colors",
-                                isInvalid
-                                    ? "border-red-500 focus:ring-red-500"
-                                    : "focus:border-orange-500 focus:ring-orange-500",
-                                "disabled:cursor-not-allowed disabled:border-none disabled:opacity-50",
-                            )}
-                        />
-                    ) : (
-                        <input
-                            id={name}
-                            type={type}
-                            placeholder={placeholder}
-                            value={value}
-                            onChange={(e) => onChange(e.target.value)}
-                            onBlur={onBlur}
-                            disabled={disabled}
-                            title={title}
-                            className={cn(
-                                styles.input,
-                                "border-firstBg w-full rounded-md border p-2 text-white transition-colors",
-                                isInvalid
-                                    ? "border-red-500 focus:ring-red-500"
-                                    : "focus:border-orange-500 focus:ring-orange-500",
-                                "disabled:cursor-not-allowed disabled:border-none disabled:opacity-50",
-                            )}
-                        />
-                    )}
-
-                    {children}
-                </div>
+                {children}
             </div>
             <em
                 role="alert"
-                className={cn(
-                    styles.errorText,
-                    "mt-[0.5px] min-h-5 text-sm font-medium",
-                    isInvalid ? "visible text-red-500" : "invisible",
-                )}
+                className={styles.errorText}
+                style={{ visibility: isInvalid ? "visible" : "hidden" }}
             >
                 {firstError}
                 {extraErrors && (

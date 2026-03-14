@@ -19,6 +19,27 @@ router.get(
 
 router.use("/stage", stagesRoutes);
 
+router.post(
+    "/create",
+    ...authMiddleware,
+    requireRoles(Roles.ADMIN),
+    tournamentController.createTournament,
+);
+
+router.get(
+    "/:tournamentId/edit",
+    ...authMiddleware,
+    requireRoles(Roles.ADMIN),
+    asyncHandler(tournamentController.getTournamentForEdit),
+);
+
+router.put(
+    "/:tournamentId",
+    ...authMiddleware,
+    requireRoles(Roles.ADMIN),
+    asyncHandler(tournamentController.updateTournament),
+);
+
 router.get("/:tournamentId", tournamentController.getTournamentById);
 
 router.get("/:tournamentId/teams", tournamentController.getTeamsByTournamentId);
@@ -26,21 +47,6 @@ router.get("/:tournamentId/teams", tournamentController.getTeamsByTournamentId);
 router.get(
     "/:tournamentId/registrations",
     tournamentController.getRegistrationsByTournamentId,
-);
-
-/**
- * Now unused?
- */
-// router.post(
-//     "/:tournamentId/register",
-//     tournamentController.registerForTournament,
-// );
-
-router.post(
-    "/create",
-    ...authMiddleware,
-    requireRoles(Roles.ADMIN),
-    tournamentController.createTournament,
 );
 
 export default router;

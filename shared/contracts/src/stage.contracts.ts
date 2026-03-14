@@ -42,9 +42,40 @@ export const CreateStageContract = z.object({
     max_teams: z.coerce.number().min(1, "Max teams is required"),
     format_id: z.coerce.number().min(1, "Format is required"),
     is_current: z.boolean().default(false),
+    is_entry_stage: z.boolean().default(false),
     start_date: z.coerce.date().min(new Date()),
     end_date: z.coerce.date().min(new Date()),
     registration_deadline: z.coerce.date().min(new Date()),
 });
 
 export type CreateStageDTO = z.infer<typeof CreateStageContract>;
+
+export const UpdateStageContract = z.object({
+    id: z.number().optional(),
+    name: z.string().min(2, "Stage name is required"),
+    faceit_id: z.string().optional(),
+    max_teams: z.coerce.number().min(1, "Max teams is required"),
+    format_id: z.coerce.number().min(1, "Format is required"),
+    is_current: z.boolean().default(false),
+    is_entry_stage: z.boolean().default(false),
+    start_date: z.coerce.date(),
+    end_date: z.coerce.date(),
+    registration_deadline: z.coerce.date(),
+});
+
+export type UpdateStageDTO = z.infer<typeof UpdateStageContract>;
+
+export const StageForEditContract = z.object({
+    id: z.number(),
+    name: z.string(),
+    faceit_id: z.string(),
+    max_teams: z.number(),
+    format_id: z.number(),
+    is_current: z.boolean(),
+    is_entry_stage: z.boolean(),
+    start_date: z.coerce.date(),
+    end_date: z.coerce.date(),
+    registration_deadline: z.coerce.date(),
+});
+
+export type StageForEditDTO = z.infer<typeof StageForEditContract>;
