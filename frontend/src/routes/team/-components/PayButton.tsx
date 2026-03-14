@@ -31,11 +31,11 @@ export default function PayButton() {
                                     res.success
                                 ) {
                                     toastService.success(
+                                        "Team Marked Paid",
                                         <p>
                                             Updated paid status, waiting for
                                             confirmation
                                         </p>,
-                                        "Team Marked Paid",
                                         {
                                             durationMs: 3000,
                                         },
@@ -49,8 +49,8 @@ export default function PayButton() {
                                             ? res.message
                                             : "Unknown error";
                                     toastService.error(
-                                        <p>{message}</p>,
                                         "Update failed",
+                                        <p>{message}</p>,
                                         {
                                             durationMs: 3000,
                                         },
@@ -58,8 +58,8 @@ export default function PayButton() {
                                 }
                             } catch (error) {
                                 toastService.error(
-                                    <p>Failed to update payment status</p>,
                                     "Update failed",
+                                    <p>Failed to update payment status</p>,
                                     {
                                         durationMs: 3000,
                                     },

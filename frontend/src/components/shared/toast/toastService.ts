@@ -1,72 +1,58 @@
-/** Visual status of the toast. */
 export type ToastStatus = "default" | "success" | "error" | "info";
-/** Placement where the toast should render. */
 export type ToastVariant = "bottom-right" | "center";
 
-/** Options to display a toast. */
 export type ToastOptions = {
-    /** Optional heading shown above the body. */
-    title?: string;
-    /** Toast content (text or JSX). */
-    body: React.ReactNode;
-    /** Visual status (default/success/error/info). */
+    title: string;
+    body?: React.ReactNode;
     status?: ToastStatus;
-    /** Placement variant (bottom-right/center). */
     variant?: ToastVariant;
-    /** Auto-dismiss timeout in milliseconds. Omit or set to 0 to persist. */
     durationMs?: number;
 };
 
-/** Represents a toast stored by the provider with an assigned id. */
-export type ToastInstance = Required<ToastOptions> & { id: string };
+export type ToastInstance = {
+    id: string;
+    title: string;
+    body: React.ReactNode;
+    status: ToastStatus;
+    variant: ToastVariant;
+    durationMs: number;
+};
 
-/** Events emitted by the toast service to the provider. */
-type ToastEvent = { type: "show"; toast: ToastInstance } | { type: "dismiss"; id?: string };
+type ToastEvent =
+    | { type: "show"; toast: ToastInstance }
+    | { type: "dismiss"; id?: string };
 
-/** Listener called whenever a toast event occurs. */
 type Listener = (event: ToastEvent) => void;
 
 const listeners = new Set<Listener>();
 let idCounter = 0;
 const pendingToasts: ToastInstance[] = [];
 
-/** Generates a unique toast id. */
 function nextId(): string {
     idCounter += 1;
     return `toast_${Date.now()}_${idCounter}`;
 }
 
-/**
- * Global toast service for showing/dismissing toasts from anywhere.
- *
- * Usage:
- *   toastService.display({ body: "Saved!", status: "success" })
- *   const id = toastService.info("Working...", "Please wait", { durationMs: 0 })
- *   toastService.dismiss(id)
- */
 export const toastService = {
-    /** Subscribe to toast events. Used by the provider. */
     subscribe(listener: Listener) {
         listeners.add(listener);
-        // Flush any pending toasts that were emitted before a listener existed
         if (pendingToasts.length > 0) {
-            for (const toast of pendingToasts) {
+            const queued = pendingToasts.splice(0);
+            for (const toast of queued) {
                 listener({ type: "show", toast });
             }
-            pendingToasts.length = 0;
         }
         return () => {
             listeners.delete(listener);
         };
     },
 
-    /** Display a toast with the given options. Returns the toast id. */
     display(options: ToastOptions): string {
         const id = nextId();
         const toast: ToastInstance = {
             id,
-            title: options.title ?? "",
-            body: options.body,
+            title: options.title,
+            body: options.body ?? "",
             status: options.status ?? "default",
             variant: options.variant ?? "bottom-right",
             durationMs: options.durationMs ?? 5000,
@@ -79,27 +65,22 @@ export const toastService = {
         return id;
     },
 
-    /** Convenience: success toast. */
-    success(body: React.ReactNode, title?: string, opts?: Partial<ToastOptions>) {
-        return this.display({
-            body,
-            title,
-            status: "success",
-            ...(opts || {}),
-        });
+    success(
+        title: string,
+        body?: React.ReactNode,
+        opts?: Partial<ToastOptions>,
+    ) {
+        return this.display({ ...opts, title, body, status: "success" });
     },
 
-    /** Convenience: error toast. */
-    error(body: React.ReactNode, title?: string, opts?: Partial<ToastOptions>) {
-        return this.display({ body, title, status: "error", ...(opts || {}) });
+    error(title: string, body?: React.ReactNode, opts?: Partial<ToastOptions>) {
+        return this.display({ ...opts, title, body, status: "error" });
     },
 
-    /** Convenience: info toast. */
-    info(body: React.ReactNode, title?: string, opts?: Partial<ToastOptions>) {
-        return this.display({ body, title, status: "info", ...(opts || {}) });
+    info(title: string, body?: React.ReactNode, opts?: Partial<ToastOptions>) {
+        return this.display({ ...opts, title, body, status: "info" });
     },
 
-    /** Dismiss a toast by id. If id is omitted, dismisses all. */
     dismiss(id?: string) {
         listeners.forEach((l) => l({ type: "dismiss", id }));
     },

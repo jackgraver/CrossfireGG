@@ -1,102 +1,102 @@
-import { X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { CheckCircle, AlertCircle, Info, X } from "lucide-react";
+import type { ToastStatus } from "./toastService";
 
-/**
- * Visual status of a toast. Controls background/text color styles.
- * - default: neutral styling
- * - success: green
- * - error: red
- * - info: blue
- */
-type ToastStatus = "default" | "success" | "error" | "info";
-/** Placement variant for where the toast appears. */
-type ToastVariant = "bottom-right" | "center";
-
-/**
- * Props for the Toast component.
- * - title: Optional heading displayed above the body
- * - body: Toast content (text or JSX)
- * - onClose: Called when the close button is pressed
- * - status: Visual status (default/success/error/info)
- * - variant: Placement (bottom-right/center)
- * - className: Extra CSS classes to extend styling
- */
 export type ToastProps = {
-    title?: string;
-    body: React.ReactNode;
+    title: string;
+    body?: React.ReactNode;
     onClose: () => void;
     status?: ToastStatus;
-    variant?: ToastVariant;
-    className?: string;
 };
 
-/** Returns Tailwind classes based on toast status. */
-function statusClasses(status: ToastStatus = "default"): string {
-    switch (status) {
-        case "success":
-            return "bg-green-600 text-white";
-        case "error":
-            return "bg-red-600 text-white";
-        case "info":
-            return "bg-blue-600 text-white";
-        default:
-            return "bg-neutral-800 text-white";
-    }
-}
+const statusConfig: Record<
+    ToastStatus,
+    { bg: string; accent: string; icon: React.ReactNode }
+> = {
+    success: {
+        bg: "bg-secondBg border-emerald-500/30",
+        accent: "text-emerald-400",
+        icon: <CheckCircle size={16} />,
+    },
+    error: {
+        bg: "bg-secondBg border-red-500/30",
+        accent: "text-red-400",
+        icon: <AlertCircle size={16} />,
+    },
+    info: {
+        bg: "bg-secondBg border-blue-500/30",
+        accent: "text-blue-400",
+        icon: <Info size={16} />,
+    },
+    default: {
+        bg: "bg-neutral-900 border-neutral-700/50",
+        accent: "text-neutral-300",
+        icon: null,
+    },
+};
 
-/** Returns positioning classes for the specified variant. */
-function positionClasses(variant: ToastVariant = "bottom-right"): string {
-    if (variant === "center") {
-        return "fixed left-1/2 top-[25%] -translate-x-1/2";
-    }
-    return "fixed bottom-4 right-4";
-}
-
-/**
- * Base Toast component. Usually used via the convenience exports
- * `BottomRightToast` and `CenterToast`.
- */
 export default function Toast({
     title,
     body,
     onClose,
     status = "default",
-    variant = "bottom-right",
-    className = "",
 }: ToastProps) {
+    const [visible, setVisible] = useState(false);
+    const config = statusConfig[status];
+    const hasBody = body !== "" && body != null;
+
+    useEffect(() => {
+        const frame = requestAnimationFrame(() => setVisible(true));
+        return () => cancelAnimationFrame(frame);
+    }, []);
+
+    function handleClose() {
+        setVisible(false);
+        setTimeout(onClose, 200);
+    }
+
     return (
         <div
-            className={`${positionClasses(variant)} z-50 max-w-sm rounded-lg shadow-lg ${statusClasses(status)} ${className}`}
+            className={`${config.bg} w-full rounded-lg border shadow-lg shadow-black/30 transition-all duration-300 ${visible ? "translate-x-0 opacity-100" : "translate-x-[120%] opacity-0"}`}
             role="status"
             aria-live="polite"
         >
-            <div className="flex items-start gap-3 p-4">
-                <div className="flex-1">
-                    {title && (
-                        <h3 className="mb-1 text-lg leading-snug font-semibold">
-                            {title}
-                        </h3>
+            <div
+                className={`flex gap-3 px-4 ${hasBody ? "items-start py-3" : "items-center py-2"}`}
+            >
+                {config.icon && (
+                    <span
+                        className={`${hasBody ? "mt-0.5" : ""} shrink-0 ${config.accent} flex items-center`}
+                    >
+                        {config.icon}
+                    </span>
+                )}
+                <div className="min-w-0 flex-1">
+                    <p className="text-sm leading-snug font-medium text-white">
+                        {title}
+                    </p>
+                    {hasBody && (
+                        <p className="mt-0.5 text-[13px] leading-relaxed text-neutral-400">
+                            {body}
+                        </p>
                     )}
-                    <div className="text-sm leading-relaxed">{body}</div>
                 </div>
                 <button
                     type="button"
-                    onClick={onClose}
-                    className="ml-2 rounded transition-colors hover:bg-white/20"
+                    onClick={handleClose}
+                    className={`${hasBody ? "mt-0.5" : ""} relative flex shrink-0 cursor-pointer items-center rounded p-1 text-neutral-500 transition-colors hover:bg-white/10 hover:text-neutral-300`}
                     aria-label="Close"
+                    style={{}}
                 >
-                    <X />
+                    <span
+                        className="absolute inset-[-6px] rounded"
+                        style={{
+                            pointerEvents: "none",
+                        }}
+                    />
+                    <X size={14} />
                 </button>
             </div>
         </div>
     );
-}
-
-/** Convenience component for a bottom-right positioned toast. */
-export function BottomRightToast(props: Omit<ToastProps, "variant">) {
-    return <Toast {...props} variant="bottom-right" />;
-}
-
-/** Convenience component for a centered toast. */
-export function CenterToast(props: Omit<ToastProps, "variant">) {
-    return <Toast {...props} variant="center" />;
 }

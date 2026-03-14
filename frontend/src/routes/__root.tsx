@@ -12,6 +12,7 @@ import Footer from "@/components/Footer";
 import { getThemeServerFn } from "@/lib/theme";
 import { getUserMeServerFn } from "@/lib/auth/auth.server";
 import { meQueryOptions } from "@/lib/auth/auth.query";
+import ToastProvider from "@/components/shared/toast/ToastProvider";
 
 export const Route = createRootRoute({
     head: () => ({
@@ -53,6 +54,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                 <QueryClientProvider client={queryClient}>
                     <AuthProvider>
                         <DialogProvider>
+                            <ToastProvider />
                             <div className="flex min-h-screen flex-col">
                                 <div className="mx-auto w-full max-w-8/12 flex-1">
                                     <NavBar user={user} />
