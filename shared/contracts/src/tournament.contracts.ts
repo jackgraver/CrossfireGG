@@ -19,7 +19,7 @@ export const TournamentContract = z.object({
 });
 
 export const TournamentWithTeamCountContract = TournamentContract.extend({
-    entry_stage: z.string(),
+    entry_stage: z.number(),
     max_teams: z.number(),
     team_count: z.number(),
 });
@@ -45,6 +45,7 @@ export type TournamentWithStagesDTO = z.infer<
 
 export const TournamentWithMinimalStagesContract = TournamentContract.extend({
     stages: z.array(MinimalStageContract),
+    syncStatus: z.enum(["processing", "idle"]).default("idle"),
 });
 
 export type TournamentWithMinimalStagesDTO = z.infer<

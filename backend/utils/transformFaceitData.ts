@@ -149,11 +149,9 @@ export type FaceitAPITournamentTeam = {
     team: {
         team_id: string;
         name: string;
-        team_type: string;
+        avatar: string;
         members: FaceitAPIMember[];
         leader: string;
-        chat_room_id: string;
-        faceit_url: string;
     };
     group: number;
     substitutes: string[];

@@ -35,6 +35,8 @@ export const useTournamentById = (tournamentId: string) => {
                 `/tournament/${tournamentId}`,
             ),
         enabled: !!tournamentId,
+        refetchInterval: (query) =>
+            query.state.data?.syncStatus === "processing" ? 3_000 : 300_000,
     });
 };
 
@@ -46,7 +48,10 @@ export const useMatchesByStage = (stageId: number | null) => {
     });
 };
 
-export const useStageTeams = (stageId: number) => {
+export const useStageTeams = (
+    stageId: number,
+    opts?: { refetchInterval?: number },
+) => {
     return useQuery<StageTeamWithTeamDTO[]>({
         queryKey: ["stageTeams", stageId],
         queryFn: () =>
@@ -54,10 +59,14 @@ export const useStageTeams = (stageId: number) => {
                 `/tournament/stage/${stageId}/teams`,
             ),
         enabled: !!stageId,
+        refetchInterval: opts?.refetchInterval,
     });
 };
 
-export const useStageBracket = (stageId: number | null) => {
+export const useStageBracket = (
+    stageId: number | null,
+    opts?: { refetchInterval?: number },
+) => {
     return useQuery<GroupWithMatchesAndFormatDTO>({
         queryKey: ["stageStandings", stageId],
         queryFn: () =>
@@ -65,6 +74,7 @@ export const useStageBracket = (stageId: number | null) => {
                 `/tournament/stage/${stageId}/bracket`,
             ),
         enabled: !!stageId,
+        refetchInterval: opts?.refetchInterval,
     });
 };
 
@@ -137,9 +147,7 @@ export const useTournamentForEdit = (tournamentId: string | undefined) => {
     return useQuery<TournamentForEditDTO>({
         queryKey: ["tournament-edit", tournamentId],
         queryFn: () =>
-            apiGET<TournamentForEditDTO>(
-                `/tournament/${tournamentId}/edit`,
-            ),
+            apiGET<TournamentForEditDTO>(`/tournament/${tournamentId}/edit`),
         enabled: !!tournamentId,
     });
 };

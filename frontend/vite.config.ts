@@ -20,7 +20,10 @@ const config = defineConfig({
         },
     },
     plugins: [
-        devtools(),
+        devtools({
+            enhancedLogs: { enabled: false },
+            removeDevtoolsOnBuild: true,
+        }),
         nitro(),
         // this is the plugin that enables path aliases
         viteTsConfigPaths({

@@ -2,9 +2,15 @@ import { redisGet, redisSet, redisDel } from "../../core/redis";
 import { faceitFetchUtil } from "../../utils/faceitFetch.util";
 import { faceitImportService } from "../faceit/faceit.service";
 
+const stageCacheKeys = (stageId: number) => [
+    `cache:GET:/tournament/stage/${stageId}/matches`,
+    `cache:GET:/tournament/stage/${stageId}/bracket`,
+    `cache:GET:/tournament/stage/${stageId}/teams`,
+];
+
 let LAST_REFETCH_TIME = new Map<string, number>();
 const SYNCING_STAGES = new Set<string>();
-const CHECK_INTERVAL = 60 * 60 * 1000;
+const CHECK_INTERVAL = 10000; //60 * 60 * 1000;
 const LAST_REFETCH_TTL = Math.ceil(CHECK_INTERVAL / 1000);
 const SYNC_LOCK_TTL = 300;
 
@@ -51,32 +57,40 @@ async function clearStageSyncing(faceitId: string) {
 }
 
 export async function syncTournamentMatches(
-    stages: {
-        id: number;
-        faceit_id: string;
-    }[],
-) {
+    stages: { id: number; faceit_id: string }[],
+): Promise<"processing" | "idle"> {
+    const stagesToSync: typeof stages = [];
+    let anySyncing = false;
+
     for (const stage of stages) {
-        const { id, faceit_id } = stage;
+        if (!stage.faceit_id) continue;
 
-        if (!faceit_id) continue;
-
-        const lastRefetchTime = await getLastRefetchTime(faceit_id);
-        const timeSinceLastRefetch = Date.now() - lastRefetchTime;
-        if (timeSinceLastRefetch < CHECK_INTERVAL) {
-            console.log(
-                `Refetch interval not met, skipping sync for ${faceit_id}. Time remaining: ${Math.ceil((CHECK_INTERVAL - timeSinceLastRefetch) / 1000)}s`,
-            );
+        if (await isStageSyncing(stage.faceit_id)) {
+            anySyncing = true;
             continue;
         }
 
-        if (await isStageSyncing(faceit_id)) {
-            console.log(`Stage ${faceit_id} is already syncing, skipping.`);
-            continue;
-        }
+        const last = await getLastRefetchTime(stage.faceit_id);
+        if (Date.now() - last < CHECK_INTERVAL) continue;
 
+        stagesToSync.push(stage);
+    }
+
+    if (stagesToSync.length === 0) {
+        return anySyncing ? "processing" : "idle";
+    }
+
+    for (const { faceit_id } of stagesToSync) {
         await markStageSyncing(faceit_id);
+    }
 
+    syncStages(stagesToSync).catch(console.error);
+
+    return "processing";
+}
+
+async function syncStages(stages: { id: number; faceit_id: string }[]) {
+    for (const { id, faceit_id } of stages) {
         try {
             const matchesData =
                 await faceitFetchUtil.fetchMatchesData(faceit_id);
@@ -93,6 +107,7 @@ export async function syncTournamentMatches(
 
             await setLastRefetchTime(faceit_id, Date.now());
         } finally {
+            await Promise.all(stageCacheKeys(id).map(redisDel));
             await clearStageSyncing(faceit_id);
         }
     }

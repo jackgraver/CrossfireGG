@@ -56,7 +56,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                         <DialogProvider>
                             <ToastProvider />
                             <div className="flex min-h-screen flex-col">
-                                <div className="mx-auto w-full max-w-8/12 flex-1">
+                                <div className="mx-auto w-full flex-1 lg:max-w-8/12">
                                     <NavBar user={user} />
                                     {children}
                                     <Footer />

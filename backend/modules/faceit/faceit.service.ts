@@ -119,25 +119,39 @@ export const faceitImportService = {
                     continue;
                 }
 
-                const players1 = await playerRepository.findByFaceitIds(
-                    match.teams.faction1.roster.map((p) => p.player_id),
-                );
-                if (players1.length !== match.teams.faction1.roster.length) {
-                    logger.warn(
-                        `Not all players found for team ${match.teams.faction1.faction_id} in match ${match.match_id}. Skipping.`,
-                    );
-                    continue;
-                }
+                [
+                    match.teams.faction1.roster,
+                    match.teams.faction2.roster,
+                ].forEach(async (roster) => {
+                    for (const player of roster) {
+                        await playerRepository.upsertPlayerByFaceitId({
+                            player_name: player.nickname,
+                            faceit_id: player.player_id,
+                            player_logo: player.avatar,
+                            country: "",
+                        });
+                    }
+                });
 
-                const players2 = await playerRepository.findByFaceitIds(
-                    match.teams.faction2.roster.map((p) => p.player_id),
-                );
-                if (players2.length !== match.teams.faction2.roster.length) {
-                    logger.warn(
-                        `Not all players found for team ${match.teams.faction2.faction_id} in match ${match.match_id}. Skipping.`,
-                    );
-                    continue;
-                }
+                // const players1 = await playerRepository.findByFaceitIds(
+                //     match.teams.faction1.roster.map((p) => p.player_id),
+                // );
+                // if (players1.length !== match.teams.faction1.roster.length) {
+                //     logger.warn(
+                //         `Not all players found for team ${match.teams.faction1.faction_id} in match ${match.match_id}. Skipping.`,
+                //     );
+                //     continue;
+                // }
+
+                // const players2 = await playerRepository.findByFaceitIds(
+                //     match.teams.faction2.roster.map((p) => p.player_id),
+                // );
+                // if (players2.length !== match.teams.faction2.roster.length) {
+                //     logger.warn(
+                //         `Not all players found for team ${match.teams.faction2.faction_id} in match ${match.match_id}. Skipping.`,
+                //     );
+                //     continue;
+                // }
 
                 let groupId: number | null = null;
                 if (match.group !== undefined && match.group !== null) {
@@ -328,7 +342,7 @@ export const faceitImportService = {
 
             const insertedTeam = await teamRepository.upsertTeamByFaceitId({
                 name: team.team.name,
-                team_logo: "",
+                team_logo: team.team.avatar || "",
                 faceit_id: team.team.team_id,
                 team_captain_id: null,
             });

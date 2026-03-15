@@ -16,7 +16,7 @@ export default function TeamStandingsRow({
         <Link
             to="/team/$team_id"
             params={{ team_id: team.stageTeam.team.id.toString() }}
-            className={`group border-border/50 relative flex items-center gap-3 border-b px-2 py-3 transition-all duration-200 last:border-b-0 hover:bg-white/5 ${isQualifying ? "before:absolute before:top-1 before:bottom-1 before:left-0 before:w-1 before:rounded-full before:bg-green-500" : ""}`}
+            className={`group relative flex items-center gap-3 rounded-md px-3 py-3 transition-all duration-200 hover:bg-white/5 ${isQualifying ? "before:absolute before:top-1 before:bottom-1 before:left-0 before:w-1 before:rounded-full before:bg-green-500" : ""}`}
         >
             <div className="text-textSecondary/50 flex w-6 justify-center text-xs font-bold">
                 {index + 1}

@@ -6,7 +6,7 @@ export const stagesService = {
         return matches;
     },
 
-    getStageBracket: async (stageId: string) => {
+    getStageBracket: async (stageId: number) => {
         const stage = await stagesRepository.findStageStandings(stageId);
 
         return {
@@ -15,7 +15,7 @@ export const stagesService = {
         };
     },
 
-    getStageTeams: async (stageId: string) => {
+    getStageTeams: async (stageId: number) => {
         return await stagesRepository.findAllStageTeams(stageId);
     },
 

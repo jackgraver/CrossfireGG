@@ -146,9 +146,9 @@ export const TournamentGroup = ({
                         key={tournament.id}
                         onClick={() => {
                             navigate({
-                                to: "/tournament/$tournamentId/$stageId/bracket",
+                                to: "/tournament/$tournamentId/stage/$stageId/bracket",
                                 params: {
-                                    tournamentId: tournament.name,
+                                    tournamentId: tournament.id,
                                     stageId: tournament.entry_stage,
                                 },
                             });
@@ -231,7 +231,7 @@ export const TournamentGroup = ({
                                     "/tournament/$tournamentId/stage/$stageId/bracket"
                                 }
                                 params={{
-                                    tournamentId: tournament.name,
+                                    tournamentId: tournament.id,
                                     stageId: tournament.entry_stage,
                                 }}
                                 className="bg-secondBg text-textPrimary hover:bg-secondBg/80 flex w-full items-center justify-center gap-2 rounded-lg py-2 text-xs font-black tracking-widest uppercase transition-all"

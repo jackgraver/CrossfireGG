@@ -1,9 +1,17 @@
 import TeamLogo from "@/components/shared/bracket/atoms/TeamLogo";
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 import { useTeam, useTeamTournaments } from "@/lib/api/team.queries";
-import { CalendarDays, Home, Trophy, Users } from "lucide-react";
+import {
+    CalendarDays,
+    ExternalLinkIcon,
+    Home,
+    Medal,
+    Trophy,
+    Users,
+} from "lucide-react";
 import TabGroup, { Tab } from "@/components/shared/TabGroup";
 import Tile from "@/routes/tournament/$tournamentId/-component/Tile";
+import { openInNewTab } from "@/utils/openInNewTab";
 
 export const Route = createFileRoute("/team/$team_id")({
     component: RouteComponent,
@@ -14,46 +22,56 @@ function RouteComponent() {
     const { data: team, isLoading, error } = useTeam(team_id);
     const { data: tournaments } = useTeamTournaments(team_id);
 
-    const totalWins = tournaments?.reduce(
-        (sum, t) =>
-            sum +
-            t.stages.reduce(
-                (s, st) =>
-                    s + st.stageTeams.reduce((w, st2) => w + (st2.wins ?? 0), 0),
-                0,
-            ),
-        0,
-    ) ?? 0;
-    const totalLosses = tournaments?.reduce(
-        (sum, t) =>
-            sum +
-            t.stages.reduce(
-                (s, st) =>
-                    s + st.stageTeams.reduce((l, st2) => l + (st2.losses ?? 0), 0),
-                0,
-            ),
-        0,
-    ) ?? 0;
+    const totalWins =
+        tournaments?.reduce(
+            (sum, t) =>
+                sum +
+                t.stages.reduce(
+                    (s, st) =>
+                        s +
+                        st.stageTeams.reduce(
+                            (w, st2) => w + (st2.wins ?? 0),
+                            0,
+                        ),
+                    0,
+                ),
+            0,
+        ) ?? 0;
+    const totalLosses =
+        tournaments?.reduce(
+            (sum, t) =>
+                sum +
+                t.stages.reduce(
+                    (s, st) =>
+                        s +
+                        st.stageTeams.reduce(
+                            (l, st2) => l + (st2.losses ?? 0),
+                            0,
+                        ),
+                    0,
+                ),
+            0,
+        ) ?? 0;
 
     if (isLoading) {
         return (
-            <div className="mx-auto min-h-screen max-w-350 py-5">
+            <div className="mx-auto min-h-screen max-w-350 px-4 py-5 md:px-6">
                 <div className="mb-6 overflow-hidden rounded-xl shadow-md">
                     <div className="flex items-center gap-6 p-6">
-                        <div className="bg-thirdBg h-24 w-24 animate-pulse rounded-full" />
-                        <div className="flex flex-col gap-2">
-                            <div className="bg-thirdBg h-10 w-56 animate-pulse rounded-md" />
+                        <div className="bg-thirdBg h-24 w-24 shrink-0 animate-pulse rounded-full" />
+                        <div className="flex min-w-0 flex-col gap-2">
+                            <div className="bg-thirdBg h-10 w-full max-w-56 animate-pulse rounded-md" />
                             <div className="bg-thirdBg h-4 w-32 animate-pulse rounded-md" />
                         </div>
                     </div>
-                    <div className="flex gap-2 px-6 pb-4">
+                    <div className="flex flex-wrap gap-2 px-6 pb-4">
                         <div className="bg-thirdBg h-9 w-28 animate-pulse rounded-md" />
                         <div className="bg-thirdBg h-9 w-28 animate-pulse rounded-md" />
                         <div className="bg-thirdBg h-9 w-28 animate-pulse rounded-md" />
                     </div>
                 </div>
                 <div className="flex flex-col gap-4">
-                    <div className="bg-thirdBg h-10 w-64 animate-pulse rounded-md" />
+                    <div className="bg-thirdBg h-10 w-full max-w-64 animate-pulse rounded-md" />
                     <div className="bg-thirdBg h-32 w-full animate-pulse rounded-xl" />
                     <div className="bg-thirdBg h-32 w-full animate-pulse rounded-xl" />
                 </div>
@@ -101,44 +119,53 @@ function RouteComponent() {
     ] as const;
 
     return (
-        <div className="mx-auto min-h-screen max-w-350 py-5">
+        <div className="mx-auto min-h-screen max-w-350 px-4 py-5 md:px-6">
             <div className="mb-6 overflow-hidden rounded-xl shadow-md">
-                <div className="flex items-center gap-6 p-6">
-                    <TeamLogo
-                        team={team}
-                        styling="h-24 w-24 rounded-full object-cover"
-                    />
-                    <div className="flex flex-col gap-1">
-                        <h1 className="text-textPrimary text-4xl font-bold">
-                            {team.name}
-                        </h1>
-                        <div className="flex items-center gap-2">
-                            {tournaments && tournaments.length > 0 && (
-                                <Tile
-                                    bg="bg-blue-500/20"
-                                    text="text-blue-400"
-                                    icon={Trophy}
-                                    label={`${tournaments.length} Tournament${tournaments.length !== 1 ? "s" : ""}`}
-                                />
-                            )}
-                            {(totalWins > 0 || totalLosses > 0) && (
-                                <Tile
-                                    bg="bg-green-500/20"
-                                    text="text-green-400"
-                                    icon={CalendarDays}
-                                    label={`${totalWins}W - ${totalLosses}L`}
-                                />
-                            )}
+                <div className="flex flex-col gap-4 p-4 sm:p-6">
+                    <div className="flex flex-wrap items-center gap-2">
+                        <Tile
+                            icon={Medal}
+                            label={`Season 4 Winners`}
+                            bg="bg-yellow-500/20"
+                            text="text-yellow-400"
+                        />
+                        <Tile
+                            icon={Medal}
+                            label={`Season 3 Runner-up`}
+                            bg="bg-gray-500/20"
+                            text="text-gray-400"
+                        />
+                        <Tile
+                            icon={Medal}
+                            label={`Season 2 3rd Place`}
+                            bg="bg-yellow-900/20"
+                            text="text-yellow-900"
+                        />
+                    </div>
+                    <div className="flex items-center justify-between gap-4">
+                        <div className="flex min-w-0 items-center gap-2">
+                            <TeamLogo
+                                team={team}
+                                styling="h-16 w-16 sm:h-24 sm:w-24 shrink-0 rounded-full object-cover"
+                            />
+                            <h1 className="text-textPrimary truncate text-2xl font-bold sm:text-4xl">
+                                {team.name}
+                            </h1>
                         </div>
                         {team.faceit_id && (
-                            <a
-                                href={`https://www.faceit.com/en/teams/${team.faceit_id}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-textSecondary text-sm hover:text-blue-400"
+                            <button
+                                className="bg-faceit/10 text-faceit hover:bg-faceit/20 flex shrink-0 items-center gap-2 rounded-md px-3 py-2 text-sm"
+                                onClick={() =>
+                                    openInNewTab(
+                                        `https://www.faceit.com/en/teams/${team.faceit_id}`,
+                                    )
+                                }
                             >
-                                View on FACEIT →
-                            </a>
+                                <ExternalLinkIcon className="h-4 w-4" />
+                                <span className="hidden sm:inline">
+                                    View on Faceit
+                                </span>
+                            </button>
                         )}
                     </div>
                 </div>

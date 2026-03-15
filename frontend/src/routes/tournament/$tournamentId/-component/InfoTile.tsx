@@ -12,10 +12,12 @@ export const InfoTile = ({
             <Icon className="text-cfRed" size={20} />
         </div>*/}
         <div>
-            <p className="text-textSecondary text-[10px] font-bold tracking-widest uppercase">
+            <p className="text-textSecondary text-[6px] font-bold tracking-widest uppercase lg:text-[10px]">
                 {label}
             </p>
-            <p className="text-textPrimary text-base font-bold">{value}</p>
+            <p className="text-textPrimary text-[10px] font-bold lg:text-base">
+                {value}
+            </p>
         </div>
     </div>
 );

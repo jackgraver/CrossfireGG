@@ -1,24 +1,29 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { useStageTeams } from "@/lib/api/tournament.queries";
+import {
+    useStageTeams,
+    useTournamentById,
+} from "@/lib/api/tournament.queries";
 import TeamLogo from "@/components/shared/bracket/atoms/TeamLogo";
 import { MoveUpRight } from "lucide-react";
 import { StageTeamWithTeamDTO } from "@repo/contracts";
 import { cn } from "@/utils/cn";
 
 export const Route = createFileRoute(
-    "/tournament/$tournamentId/$stageId/teams",
+    "/tournament/$tournamentId/stage/$stageId/teams",
 )({
     component: TeamsPage,
 });
 
 function TeamsPage() {
-    const { _, stageId } = Route.useParams();
+    const { tournamentId, stageId } = Route.useParams();
+    const { data: tournament } = useTournamentById(tournamentId);
 
-    console.log("loading teams for", stageId);
-    const { data: teams, isLoading } = useStageTeams(stageId);
+    const { data: teams, isLoading } = useStageTeams(stageId, {
+        refetchInterval:
+            tournament?.syncStatus === "processing" ? 3_000 : undefined,
+    });
 
-    console.log(teams);
     const sortedTeams = [...(teams || [])].sort((a, b) => a.seed - b.seed);
 
     return (

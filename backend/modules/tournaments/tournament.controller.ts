@@ -18,6 +18,7 @@ import {
 import { sendContract } from "../../core/sendContract";
 import { parseOr400 } from "../../core/validation/parseOr400";
 import { syncTournamentMatches } from "./tournament.refetch";
+import { redisGet } from "../../core/redis";
 
 export const tournamentController = {
     getAllTournaments: async (req: Request, res: Response) => {
@@ -30,16 +31,47 @@ export const tournamentController = {
         const data = parseOr400(res, TournamentParamsSchema, req.params);
         if (!data) return;
 
-        const tournament = await tournamentService.getTournamentByName(
-            data.tournamentId,
-        );
+        let tournament:
+            | {
+                  stages:
+                      | {
+                            teams_count: number;
+                            name: string;
+                            id: number;
+                            faceit_id: string;
+                        }[]
+                      | undefined;
+                  name?: string | undefined;
+                  description?: string | null | undefined;
+                  prize_pool?: number | null | undefined;
+                  start_date?: Date | null | undefined;
+                  end_date?: Date | null | undefined;
+                  is_vrs_enabled?: boolean | null | undefined;
+                  id?: number | undefined;
+                  status?: string | null | undefined;
+              }
+            | undefined = undefined;
+
+        const cacheKey = `tournament:${data.tournamentId}`;
+        const found = await redisGet(cacheKey);
+        if (found) {
+            tournament = JSON.parse(found);
+        } else {
+            tournament = await tournamentService.getTournamentById(
+                data.tournamentId,
+            );
+        }
 
         if (!tournament) return; //TODO: better handling
-        syncTournamentMatches(
+
+        const syncStatus = await syncTournamentMatches(
             tournament.stages as { id: number; faceit_id: string }[],
         );
 
-        sendContract(res, TournamentWithMinimalStagesContract, tournament);
+        sendContract(res, TournamentWithMinimalStagesContract, {
+            ...tournament,
+            syncStatus,
+        });
     },
 
     getTeamsByTournamentId: async (req: Request, res: Response) => {
@@ -206,13 +238,13 @@ export const tournamentController = {
         const data = parseOr400(res, TournamentParamsSchema, req.params);
         if (!data) return;
 
-        const tournamentId = Number(data.tournamentId);
-        if (isNaN(tournamentId)) {
+        if (isNaN(data.tournamentId)) {
             return res.status(400).json({ error: "Invalid tournament ID" });
         }
 
-        const tournament =
-            await tournamentRepository.findTournamentForEdit(tournamentId);
+        const tournament = await tournamentRepository.findTournamentForEdit(
+            data.tournamentId,
+        );
 
         if (!tournament) {
             return res.status(404).json({ error: "Tournament not found" });
@@ -234,12 +266,9 @@ export const tournamentController = {
         if (!data) return;
 
         try {
-            const existing =
-                await tournamentRepository.findById(tournamentId);
+            const existing = await tournamentRepository.findById(tournamentId);
             if (!existing) {
-                return res
-                    .status(404)
-                    .json({ error: "Tournament not found" });
+                return res.status(404).json({ error: "Tournament not found" });
             }
 
             const tournament = await tournamentRepository.updateTournament(
