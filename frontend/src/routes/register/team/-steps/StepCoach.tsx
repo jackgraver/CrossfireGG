@@ -112,7 +112,10 @@ export default function StepCoach({
                 </div>
             )}
             {coach.map((player: any, index: number) => (
-                <div key={`${index}-${player.faceitId}`} className="rounded-lg transition-all duration-200">
+                <div
+                    key={player.faceitId}
+                    className="rounded-lg transition-all duration-200"
+                >
                     <PlayerFormFields
                         form={form}
                         namePrefix={`coach[${index}]`}

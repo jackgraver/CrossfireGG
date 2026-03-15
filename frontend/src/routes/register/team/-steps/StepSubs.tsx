@@ -126,7 +126,7 @@ export default function StepSubs({
                 )}
                 {subs.map((player: any, index: number) => (
                     <div
-                        key={`${index}-${player.faceitId}`}
+                        key={player.faceitId}
                         className="rounded-lg transition-all duration-200"
                     >
                         <PlayerFormFields

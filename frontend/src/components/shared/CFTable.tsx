@@ -22,6 +22,24 @@ export default function CFTable<T>({ table }: { table: Table<T> }) {
                                             : ""
                                     }
                                     onClick={header.column.getToggleSortingHandler()}
+                                    onKeyDown={(e) => {
+                                        if (
+                                            header.column.getCanSort() &&
+                                            (e.key === "Enter" || e.key === " ")
+                                        ) {
+                                            header.column.getToggleSortingHandler()?.(
+                                                e as unknown as React.MouseEvent,
+                                            );
+                                        }
+                                    }}
+                                    role={
+                                        header.column.getCanSort()
+                                            ? "button"
+                                            : undefined
+                                    }
+                                    tabIndex={
+                                        header.column.getCanSort() ? 0 : undefined
+                                    }
                                 >
                                     {header.isPlaceholder
                                         ? null

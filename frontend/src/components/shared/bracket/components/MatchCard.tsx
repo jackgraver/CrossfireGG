@@ -64,7 +64,17 @@ export default function MatchCard({
                 unroundedTop && "rounded-tl-none",
             )}
         >
-            <div className="cursor-pointer" onClick={handleToggle}>
+            <div
+                className="cursor-pointer"
+                role="button"
+                tabIndex={0}
+                onClick={handleToggle}
+                onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                        handleToggle(e as unknown as React.MouseEvent);
+                    }
+                }}
+            >
                 <MatchTeam
                     team={team1}
                     winner={match?.participants?.[0]?.winner}

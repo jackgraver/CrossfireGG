@@ -19,6 +19,53 @@ interface MatchPosition {
     width: number;
 }
 
+const Connections = ({
+    mainRounds,
+    positions,
+}: {
+    mainRounds: any[];
+    positions: Record<string, MatchPosition>;
+}) => {
+    const paths: React.ReactNode[] = [];
+
+    mainRounds.forEach((round, roundIndex) => {
+        if (roundIndex === mainRounds.length - 1) return;
+
+        round.matches.forEach((_: any, matchIndex: number) => {
+            const currentKey = `${roundIndex}-${matchIndex}`;
+            const nextMatchIndex = Math.floor(matchIndex / 2);
+            const nextKey = `${roundIndex + 1}-${nextMatchIndex}`;
+
+            const currentPos = positions[currentKey];
+            const nextPos = positions[nextKey];
+
+            if (currentPos && nextPos) {
+                const startX = currentPos.x + currentPos.width;
+                const startY = currentPos.y + currentPos.height / 2;
+                const endX = nextPos.x;
+                const endY = nextPos.y + nextPos.height / 2;
+                const midX = startX + (endX - startX) / 2;
+
+                paths.push(
+                    <path
+                        key={`path-${currentKey}`}
+                        d={`M ${startX} ${startY} L ${midX} ${startY} L ${midX} ${endY} L ${endX} ${endY}`}
+                        fill="none"
+                        stroke="var(--color-second-bg)"
+                        strokeWidth="2"
+                    />,
+                );
+            }
+        });
+    });
+
+    return (
+        <svg className="pointer-events-none absolute inset-0 h-full w-full">
+            {paths}
+        </svg>
+    );
+};
+
 export default function PlayoffBracket({ matches }: PlayoffBracketProps) {
     const rounds = useMemo(() => {
         const allRounds = getPlayoffRounds(matches);
@@ -74,53 +121,14 @@ export default function PlayoffBracket({ matches }: PlayoffBracketProps) {
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
-    const renderConnections = () => {
-        const paths: React.ReactNode[] = [];
-
-        rounds.mainRounds.forEach((round, roundIndex) => {
-            if (roundIndex === rounds.mainRounds.length - 1) return;
-
-            round.matches.forEach((_, matchIndex) => {
-                const currentKey = `${roundIndex}-${matchIndex}`;
-                const nextMatchIndex = Math.floor(matchIndex / 2);
-                const nextKey = `${roundIndex + 1}-${nextMatchIndex}`;
-
-                const currentPos = positions[currentKey];
-                const nextPos = positions[nextKey];
-
-                if (currentPos && nextPos) {
-                    const startX = currentPos.x + currentPos.width;
-                    const startY = currentPos.y + currentPos.height / 2;
-                    const endX = nextPos.x;
-                    const endY = nextPos.y + nextPos.height / 2;
-                    const midX = startX + (endX - startX) / 2;
-
-                    paths.push(
-                        <path
-                            key={`path-${currentKey}`}
-                            d={`M ${startX} ${startY} L ${midX} ${startY} L ${midX} ${endY} L ${endX} ${endY}`}
-                            fill="none"
-                            stroke="var(--color-second-bg)"
-                            strokeWidth="2"
-                        />,
-                    );
-                }
-            });
-        });
-
-        return (
-            <svg className="pointer-events-none absolute inset-0 h-full w-full">
-                {paths}
-            </svg>
-        );
-    };
-
-    return (
         <div
             ref={containerRef}
             className="scrollbar-hide relative flex min-h-200 flex-row overflow-x-auto"
         >
-            {renderConnections()}
+            <Connections
+                mainRounds={rounds.mainRounds}
+                positions={positions}
+            />
             {rounds.mainRounds.map((round, roundIndex) => (
                 <div
                     key={round.name}

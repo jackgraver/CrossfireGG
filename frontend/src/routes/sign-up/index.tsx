@@ -93,10 +93,7 @@ function SignUp() {
                 </a>
             </p>
             <form
-                onSubmit={(e) => {
-                    e.preventDefault();
-                    form.handleSubmit();
-                }}
+                onSubmit={form.handleSubmit}
                 className="w-full"
             >
                 <form.Field name="email">

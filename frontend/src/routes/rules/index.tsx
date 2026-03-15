@@ -4,13 +4,24 @@ export const Route = createFileRoute("/rules/")({
     component: RouteComponent,
 });
 
+type RuleSectionProps = {
+    title: string;
+    children: React.ReactNode;
+};
+
+function RuleSection({ title, children }: RuleSectionProps) {
+    return (
+        <div className="space-y-4">
+            <h1 className="border-b pb-2 text-2xl font-bold">{title}</h1>
+            {children}
+        </div>
+    );
+}
+
 function RouteComponent() {
     return (
         <div className="mx-auto max-w-4xl space-y-8 p-6">
-            <div className="space-y-4">
-                <h1 className="border-b pb-2 text-2xl font-bold">
-                    1. General League Rules
-                </h1>
+            <RuleSection title="1. General League Rules">
                 <ul className="list-disc space-y-2 pl-6">
                     <li>
                         Crossfire GG reserves the right to modify, change,
@@ -38,13 +49,13 @@ function RouteComponent() {
                         FACEIT Anti-Cheat must be installed and active during
                         any Crossfire GG matches.
                     </li>
-                    <li>All Players must be from the North American region.</li>
+                    <li>
+                        All Players must be from the North American region.
+                    </li>
                 </ul>
-            </div>
-            <div className="space-y-4">
-                <h1 className="border-b pb-2 text-2xl font-bold">
-                    2. Tournament Structure & Schedule & Seeding
-                </h1>
+            </RuleSection>
+
+            <RuleSection title="2. Tournament Structure & Schedule & Seeding">
                 <ul className="list-disc space-y-4 pl-6">
                     <li>Total Teams: 32 Format: Tier 2 Ranked (VRS-Enabled)</li>
                     <li>
@@ -276,11 +287,9 @@ function RouteComponent() {
                         </ul>
                     </li>
                 </ul>
-            </div>
-            <div className="space-y-4">
-                <h1 className="border-b pb-2 text-2xl font-bold">
-                    3. Scheduling{" "}
-                </h1>
+            </RuleSection>
+
+            <RuleSection title="3. Scheduling">
                 <ul className="list-disc space-y-4 pl-6">
                     <li>All match times are first-come, first-served.</li>
                     <li>All times are displayed in EST/EDT.</li>
@@ -303,13 +312,13 @@ function RouteComponent() {
                         Matches must be scheduled and played between 12:00 PM
                         and 12:00 AM EST/EDT.
                     </li>
-                    <li>eams must submit conflicts 1 hour before the match.</li>
+                    <li>
+                        Teams must submit conflicts 1 hour before the match.
+                    </li>
                 </ul>
-            </div>
-            <div className="space-y-4">
-                <h1 className="border-b pb-2 text-2xl font-bold">
-                    4. Standings, Tiebreakers, Playoffs, & Qualification
-                </h1>
+            </RuleSection>
+
+            <RuleSection title="4. Standings, Tiebreakers, Playoffs, & Qualification">
                 <ul className="list-disc space-y-4 pl-6">
                     <li>
                         If a match must be replayed, the start money will be
@@ -333,10 +342,9 @@ function RouteComponent() {
                     </li>
                     <li>W/L Round Ratio will break tiebreakers</li>
                 </ul>
-            </div>
+            </RuleSection>
 
-            <div className="space-y-4">
-                <h1 className="border-b pb-2 text-2xl font-bold">5. Prizes</h1>
+            <RuleSection title="5. Prizes">
                 <ul className="list-disc space-y-2 pl-6">
                     <li>
                         Winners will be contacted within 14 days of Crossfire
@@ -353,12 +361,9 @@ function RouteComponent() {
                         captain or organization.
                     </li>
                 </ul>
-            </div>
+            </RuleSection>
 
-            <div className="space-y-4">
-                <h1 className="border-b pb-2 text-2xl font-bold">
-                    6. Eligibility & Rosters
-                </h1>
+            <RuleSection title="6. Eligibility & Rosters">
                 <ul className="list-disc space-y-2 pl-6">
                     <li>
                         During Crossfire registration, teams will be required to
@@ -382,7 +387,9 @@ function RouteComponent() {
                     </li>
                     <li>No multi-accounting is allowed.</li>
                     <li>Entry fees are non-refundable for any reason.</li>
-                    <li>Teams failing to pay the entry fee may be removed.</li>
+                    <li>
+                        Teams failing to pay the entry fee may be removed.
+                    </li>
                     <li>
                         Team Coaches are not permitted to substitute at any
                         point in the event.
@@ -414,12 +421,9 @@ function RouteComponent() {
                         discretion.
                     </li>
                 </ul>
-            </div>
+            </RuleSection>
 
-            <div className="space-y-4">
-                <h1 className="border-b pb-2 text-2xl font-bold">
-                    7. Game Settings
-                </h1>
+            <RuleSection title="7. Game Settings">
                 <ul className="list-disc space-y-2 pl-6">
                     <li>Freeze Time: 15 seconds</li>
                     <li>Round Time: 1:55 minutes</li>
@@ -435,12 +439,9 @@ function RouteComponent() {
                         removes, B removes, Decider
                     </li>
                 </ul>
-            </div>
+            </RuleSection>
 
-            <div className="space-y-4">
-                <h1 className="border-b pb-2 text-2xl font-bold">
-                    8. Forfeits
-                </h1>
+            <RuleSection title="8. Forfeits">
                 <ul className="list-disc space-y-2 pl-6">
                     <li>
                         Teams must have 5 players on the server within 15
@@ -463,12 +464,9 @@ function RouteComponent() {
                         Crossfire GG seasons.
                     </li>
                 </ul>
-            </div>
+            </RuleSection>
 
-            <div className="space-y-4">
-                <h1 className="border-b pb-2 text-2xl font-bold">
-                    9. Tech Problems & Resolutions
-                </h1>
+            <RuleSection title="9. Tech Problems & Resolutions">
                 <ul className="list-disc space-y-2 pl-6">
                     <li>
                         Vote for a pause for standard timeout (up to 3 uses per
@@ -488,12 +486,9 @@ function RouteComponent() {
                         or competitive reason.
                     </li>
                 </ul>
-            </div>
+            </RuleSection>
 
-            <div className="space-y-4">
-                <h1 className="border-b pb-2 text-2xl font-bold">
-                    10. Exploits, Bugs, Infractions, & Penalties
-                </h1>
+            <RuleSection title="10. Exploits, Bugs, Infractions, & Penalties">
                 <ul className="list-disc space-y-2 pl-6">
                     <li>
                         Exploiting known or unknown bugs for advantage is
@@ -515,14 +510,13 @@ function RouteComponent() {
                         All infractions will be handled case-by-case basis.
                         Penalties can include forfeits or disqualification.
                     </li>
-                    <li>Betting on your own matches is strictly prohibited.</li>
+                    <li>
+                        Betting on your own matches is strictly prohibited.
+                    </li>
                 </ul>
-            </div>
+            </RuleSection>
 
-            <div className="space-y-4">
-                <h1 className="border-b pb-2 text-2xl font-bold">
-                    11. Cheating, Stream Sniping, and Other Offenses
-                </h1>
+            <RuleSection title="11. Cheating, Stream Sniping, and Other Offenses">
                 <ul className="list-disc space-y-2 pl-6">
                     <li>
                         Cheating of any kind results in immediate expulsion from
@@ -553,12 +547,9 @@ function RouteComponent() {
                         offense leads to a tournament ban.
                     </li>
                 </ul>
-            </div>
+            </RuleSection>
 
-            <div className="space-y-4">
-                <h1 className="border-b pb-2 text-2xl font-bold">
-                    12. Support & Admins
-                </h1>
+            <RuleSection title="12. Support & Admins">
                 <ul className="list-disc space-y-2 pl-6">
                     <li>
                         Admins are contacted through the Support Channel in the
@@ -600,7 +591,7 @@ function RouteComponent() {
                         Discord.
                     </li>
                 </ul>
-            </div>
+            </RuleSection>
         </div>
     );
 }

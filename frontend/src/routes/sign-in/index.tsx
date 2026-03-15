@@ -83,10 +83,7 @@ function SignIn() {
                 </button>
             </h1>
             <form
-                onSubmit={(e) => {
-                    e.preventDefault();
-                    form.handleSubmit();
-                }}
+                onSubmit={form.handleSubmit}
                 className="w-full"
             >
                 <form.Field name="email">

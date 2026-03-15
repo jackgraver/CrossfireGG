@@ -61,13 +61,13 @@ export default function RoundCard({ round, matches }: RoundCardProps) {
                 </h1>
             </div>
 
-            {matches.map((match, i) => (
-                <MatchCard key={i} match={match} />
+            {matches.map((match) => (
+                <MatchCard key={match.id} match={match} />
             ))}
             {Array.from(
                 { length: numMatchesForRound(round) - matches.length },
                 (_, i) => (
-                    <MatchCard key={i} match={undefined} />
+                    <MatchCard key={`placeholder-${round}-${i}`} match={undefined} />
                 ),
             )}
         </div>

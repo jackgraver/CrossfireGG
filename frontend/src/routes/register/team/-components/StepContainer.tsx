@@ -16,10 +16,12 @@ type StepContainerProps = {
     isSubmitting?: boolean;
 };
 
+const EMPTY_ERRORS: StepValidationErrors = {};
+
 export default function StepContainer({
     left,
     right,
-    errors = {},
+    errors = EMPTY_ERRORS,
     canGoBack,
     canGoNext,
     onBack,

@@ -36,6 +36,13 @@ export default function SelectableCard({
         <div className="flex w-full flex-col items-center pr-2">
             <div
                 onClick={handleClick}
+                onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                        handleClick();
+                    }
+                }}
+                role="button"
+                tabIndex={0}
                 className={`group grid w-full grid-cols-[48px_1fr_32px] items-center rounded-lg border p-2 transition-colors duration-150 ${
                     disabled
                         ? "bg-thirdBg cursor-not-allowed opacity-50"

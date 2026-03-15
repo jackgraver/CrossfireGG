@@ -13,7 +13,8 @@ export default function TeamFormFields({ form }: TeamFormFieldsProps) {
                     onChange: ({ value }: any) =>
                         !value ? "Team Name is required" : undefined,
                 }}
-                children={(field: any) => (
+            >
+                {(field: any) => (
                     <Input
                         name={field.name}
                         value={field.state.value}
@@ -24,10 +25,9 @@ export default function TeamFormFields({ form }: TeamFormFieldsProps) {
                         disabled={true}
                     />
                 )}
-            />
-            <form.Field
-                name="team.twitter"
-                children={(field: any) => (
+            </form.Field>
+            <form.Field name="team.twitter">
+                {(field: any) => (
                     <Input
                         name={field.name}
                         value={field.state.value}
@@ -37,7 +37,7 @@ export default function TeamFormFields({ form }: TeamFormFieldsProps) {
                         label="Twitter / X (Optional)"
                     />
                 )}
-            />
+            </form.Field>
         </div>
     );
 }

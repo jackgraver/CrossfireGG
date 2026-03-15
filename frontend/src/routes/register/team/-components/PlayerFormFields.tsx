@@ -8,15 +8,32 @@ type PlayerFormFieldsProps = {
     onRemove?: () => void;
 };
 
-export default function PlayerFormFields({ form, namePrefix, onRemove }: PlayerFormFieldsProps) {
-    const renderField = (name: string, label: string, placeholder: string = "") => (
+type FieldWrapperProps = {
+    form: any;
+    namePrefix: string;
+    name: string;
+    label: string;
+    placeholder?: string;
+};
+
+function FieldWrapper({
+    form,
+    namePrefix,
+    name,
+    label,
+    placeholder = "",
+}: FieldWrapperProps) {
+    return (
         <form.Field
             name={`${namePrefix}.${name}`}
             validators={{
-                onChange: ({ value }: any) => (!value ? `${label} is required` : undefined),
-                onMount: ({ value }: any) => (!value ? `${label} is required` : undefined),
+                onChange: ({ value }: any) =>
+                    !value ? `${label} is required` : undefined,
+                onMount: ({ value }: any) =>
+                    !value ? `${label} is required` : undefined,
             }}
-            children={(field: any) => (
+        >
+            {(field: any) => (
                 <Input
                     name={field.name}
                     value={field.state.value}
@@ -26,19 +43,48 @@ export default function PlayerFormFields({ form, namePrefix, onRemove }: PlayerF
                     label={label}
                     placeholder={placeholder}
                     disabled={name === "playerName"}
-                    title={name === "playerName" ? "Cannot change player name" : ""}
+                    title={
+                        name === "playerName" ? "Cannot change player name" : ""
+                    }
                 />
             )}
-        />
+        </form.Field>
     );
+}
 
+export default function PlayerFormFields({
+    form,
+    namePrefix,
+    onRemove,
+}: PlayerFormFieldsProps) {
     return (
         <div className="flex items-start gap-4">
             <div className="flex flex-1 flex-row gap-4">
-                {renderField("playerName", "Name")}
-                {renderField("nationality", "Nationality", "American, Canadian, etc.")}
-                {renderField("hltvLink", "HLTV")}
-                {renderField("discordId", "Discord")}
+                <FieldWrapper
+                    form={form}
+                    namePrefix={namePrefix}
+                    name="playerName"
+                    label="Name"
+                />
+                <FieldWrapper
+                    form={form}
+                    namePrefix={namePrefix}
+                    name="nationality"
+                    label="Nationality"
+                    placeholder="American, Canadian, etc."
+                />
+                <FieldWrapper
+                    form={form}
+                    namePrefix={namePrefix}
+                    name="hltvLink"
+                    label="HLTV"
+                />
+                <FieldWrapper
+                    form={form}
+                    namePrefix={namePrefix}
+                    name="discordId"
+                    label="Discord"
+                />
             </div>
             <div className="flex h-[62px] items-center pt-5">
                 {onRemove ? (

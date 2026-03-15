@@ -113,13 +113,15 @@ function TournamentGroupSkeleton() {
     );
 }
 
-export const TournamentGroup = ({
+const TournamentGroup = ({
     type,
     tournaments,
 }: {
     type: "active" | "upcoming" | "ended";
     tournaments: TournamentWithTeamCountDTO[];
 }) => {
+    const navigate = useNavigate();
+
     if (tournaments.length === 0) return null;
 
     const iconMap = {
@@ -127,8 +129,6 @@ export const TournamentGroup = ({
         upcoming: <CalendarFold size={28} />,
         ended: <CheckCircle2 size={28} />,
     };
-
-    const navigate = useNavigate();
 
     return (
         <section className="mb-12 flex flex-col gap-4">
@@ -144,6 +144,8 @@ export const TournamentGroup = ({
                 {tournaments.map((tournament: TournamentWithTeamCountDTO) => (
                     <article
                         key={tournament.id}
+                        role="button"
+                        tabIndex={0}
                         onClick={() => {
                             navigate({
                                 to: "/tournament/$tournamentId/stage/$stageId/bracket",
@@ -152,6 +154,17 @@ export const TournamentGroup = ({
                                     stageId: tournament.entry_stage,
                                 },
                             });
+                        }}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                                navigate({
+                                    to: "/tournament/$tournamentId/stage/$stageId/bracket",
+                                    params: {
+                                        tournamentId: tournament.id,
+                                        stageId: tournament.entry_stage,
+                                    },
+                                });
+                            }
                         }}
                         className="bg-firstBg border-border/10 hover:border-cfRed/30 flex w-full min-w-125 flex-col rounded-2xl border p-0 transition-all md:w-[calc(50%-1rem)] xl:w-[calc(33.333%-1.334rem)]"
                     >

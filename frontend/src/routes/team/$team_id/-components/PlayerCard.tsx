@@ -44,9 +44,9 @@ export default function PlayerCard({
                 </div>
                 {stageBadges && stageBadges.length > 0 && (
                     <div className="mt-1 flex flex-wrap gap-1">
-                        {stageBadges.map((badge, idx) => (
+                        {stageBadges.map((badge) => (
                             <span
-                                key={idx}
+                                key={`${badge.tournament_name}-${badge.stage_name}`}
                                 className="bg-thirdBg text-textSecondary rounded px-1.5 py-0.5 text-xs"
                                 title={badge.tournament_name}
                             >
