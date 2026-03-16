@@ -3,10 +3,12 @@ import { relations } from "drizzle-orm";
 import { players } from "./player.schema";
 import { matchParticipants } from "./match_participant.schema";
 import { stageTeams } from "./stage_team.schema";
+import { should } from "vitest";
 
 export const teams = pgTable("teams", {
     id: serial("id").primaryKey(),
     name: text("name").notNull(),
+    short_name: text("short_name"),
     team_logo: text("team_logo"),
     faceit_id: text("faceit_id"),
     team_captain_id: integer("team_captain_id").references(

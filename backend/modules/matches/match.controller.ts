@@ -10,7 +10,7 @@ import { parseOr400 } from "../../core/validation/parseOr400";
 import { sendContract } from "../../core/sendContract";
 import {
     ClaimedAndUnclaimedMatchesContract,
-    MatchWithParticipantsAndMapsContract,
+    MatchWithParticipantAndMinifiedMapContract,
 } from "@repo/contracts";
 import { MatchPageContract } from "@repo/contracts";
 import { AuthRequest } from "../../core/middleware/auth.middleware";
@@ -28,6 +28,21 @@ export const matchController = {
         const match = await matchService.getMatchById(data.matchId);
 
         sendContract(res, MatchPageContract, match);
+    },
+
+    getUpcomingMatches: async (_: Request, res: Response) => {
+        try {
+            const matches = await matchService.getUpcomingMatches();
+
+            sendContract(
+                res,
+                MatchWithParticipantAndMinifiedMapContract.array(),
+                matches,
+            );
+        } catch (error: any) {
+            logger.error("Error fetching upcoming matches:", error);
+            res.status(500).json({ error: "Failed to fetch upcoming matches" });
+        }
     },
 
     getAllMatchCasting: async (_: Request, res: Response) => {
@@ -49,7 +64,7 @@ export const matchController = {
             if (!user) return res.status(401).json({ error: "Unauthorized" });
 
             const match = await matchService.claimMatch(data.matchId, user.id); // TODO: Get caster ID from user
-            
+
             await Promise.all([
                 redisDel(matchCacheKey(data.matchId)),
                 redisDel(castingMatchesCacheKey),
@@ -67,7 +82,7 @@ export const matchController = {
             if (!data) return;
 
             const match = await matchService.unclaimMatch(data.matchId, 1); // TODO: Get caster ID from user
-            
+
             await Promise.all([
                 redisDel(matchCacheKey(data.matchId)),
                 redisDel(castingMatchesCacheKey),

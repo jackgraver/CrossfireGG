@@ -1,7 +1,7 @@
 import { MatchWithParticipantsDTO } from "@repo/contracts";
 import { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import { getPlayoffRounds, BracketRound } from "./playoff_utils";
-import { BracketMatch } from "../components/BracketMatch";
+import { BracketMatch } from "@/components/shared/bracket/components/BracketMatch";
 
 type PlayoffBracketProps = {
     matches: MatchWithParticipantsDTO[];
@@ -16,28 +16,38 @@ interface MatchPosition {
 
 export default function PlayoffBracket({ matches }: PlayoffBracketProps) {
     const rounds = useMemo(() => getPlayoffRounds(matches), [matches]);
-    const [positions, setPositions] = useState<Record<string, MatchPosition>>({});
+    const [positions, setPositions] = useState<Record<string, MatchPosition>>(
+        {},
+    );
     const containerRef = useRef<HTMLDivElement>(null);
 
-    const handlePositionUpdate = useCallback((roundIndex: number, matchIndex: number, element: HTMLDivElement | null) => {
-        if (!element || !containerRef.current) return;
+    const handlePositionUpdate = useCallback(
+        (
+            roundIndex: number,
+            matchIndex: number,
+            element: HTMLDivElement | null,
+        ) => {
+            if (!element || !containerRef.current) return;
 
-        const containerRect = containerRef.current.getBoundingClientRect();
-        const rect = element.getBoundingClientRect();
+            const containerRect = containerRef.current.getBoundingClientRect();
+            const rect = element.getBoundingClientRect();
 
-        const newPos = {
-            x: rect.left - containerRect.left,
-            y: rect.top - containerRect.top,
-            width: rect.width,
-            height: rect.height
-        };
+            const newPos = {
+                x: rect.left - containerRect.left,
+                y: rect.top - containerRect.top,
+                width: rect.width,
+                height: rect.height,
+            };
 
-        const key = `${roundIndex}-${matchIndex}`;
-        setPositions(prev => {
-            if (prev[key]?.x === newPos.x && prev[key]?.y === newPos.y) return prev;
-            return { ...prev, [key]: newPos };
-        });
-    }, []);
+            const key = `${roundIndex}-${matchIndex}`;
+            setPositions((prev) => {
+                if (prev[key]?.x === newPos.x && prev[key]?.y === newPos.y)
+                    return prev;
+                return { ...prev, [key]: newPos };
+            });
+        },
+        [],
+    );
 
     // Force a re-render after initial mount to ensure positions are captured
     const [, forceUpdate] = useState({});
@@ -48,8 +58,8 @@ export default function PlayoffBracket({ matches }: PlayoffBracketProps) {
 
     useEffect(() => {
         const handleResize = () => forceUpdate({});
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
     }, []);
 
     const renderConnections = () => {
@@ -80,24 +90,36 @@ export default function PlayoffBracket({ matches }: PlayoffBracketProps) {
                             fill="none"
                             stroke="#4a5568"
                             strokeWidth="2"
-                        />
+                        />,
                     );
                 }
             });
         });
 
-        return <svg className="absolute inset-0 pointer-events-none w-full h-full">{paths}</svg>;
+        return (
+            <svg className="pointer-events-none absolute inset-0 h-full w-full">
+                {paths}
+            </svg>
+        );
     };
 
     return (
-        <div ref={containerRef} className="relative flex flex-row overflow-auto min-h-[800px] ">
+        <div
+            ref={containerRef}
+            className="relative flex min-h-[800px] flex-row overflow-auto"
+        >
             {renderConnections()}
             {rounds.map((round, roundIndex) => (
-                <div key={round.name} className="flex flex-col justify-around px-8 z-10">
-                    <div className="text-center mb-4">
-                        <h2 className="text-gray-400 font-bold uppercase tracking-wider">{round.name}</h2>
+                <div
+                    key={round.name}
+                    className="z-10 flex flex-col justify-around px-8"
+                >
+                    <div className="mb-4 text-center">
+                        <h2 className="font-bold tracking-wider text-gray-400 uppercase">
+                            {round.name}
+                        </h2>
                     </div>
-                    <div className="flex flex-col grow justify-around">
+                    <div className="flex grow flex-col justify-around">
                         {round.matches.map((match, matchIndex) => (
                             <BracketMatch
                                 key={`${roundIndex}-${matchIndex}`}

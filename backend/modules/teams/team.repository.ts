@@ -9,6 +9,7 @@ import {
     tournaments,
 } from "../../schemas";
 import { eq, and, isNull, inArray, like, or, ne, sql } from "drizzle-orm";
+import { shortName } from "./team.utils";
 
 export const teamRepository = {
     findAll: async () => {
@@ -296,6 +297,7 @@ export const teamRepository = {
                 .update(teams)
                 .set({
                     name: teamData.name,
+                    short_name: shortName(teamData.name),
                     team_logo: teamData.team_logo,
                     team_captain_id: teamData.team_captain_id,
                     social_links:

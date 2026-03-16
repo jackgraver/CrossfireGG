@@ -121,14 +121,12 @@ export default function PlayoffBracket({ matches }: PlayoffBracketProps) {
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
+    return (
         <div
             ref={containerRef}
             className="scrollbar-hide relative flex min-h-200 flex-row overflow-x-auto"
         >
-            <Connections
-                mainRounds={rounds.mainRounds}
-                positions={positions}
-            />
+            <Connections mainRounds={rounds.mainRounds} positions={positions} />
             {rounds.mainRounds.map((round, roundIndex) => (
                 <div
                     key={round.name}

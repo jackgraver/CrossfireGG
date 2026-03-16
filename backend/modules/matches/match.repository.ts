@@ -10,7 +10,7 @@ import {
     matchCasters,
     playerStats,
 } from "../../schemas";
-import { eq, and, isNull, desc, asc } from "drizzle-orm";
+import { eq, and, isNull, desc, asc, gte, lt, ne } from "drizzle-orm";
 
 export const matchRepository = {
     findById: async (matchId: number) => {
@@ -75,6 +75,48 @@ export const matchRepository = {
                     },
                 },
             },
+        });
+    },
+
+    findUpcomingMatches: async (
+        startOfToday: number,
+        startOfDayAfterTomorrow: number,
+    ) => {
+        return await db.query.matches.findMany({
+            where: and(
+                isNull(matches.deleted_at),
+                isNull(matchParticipants.deleted_at),
+                isNull(maps.deleted_at),
+                ne(matches.status, "finished"),
+                ne(matches.status, "cancelled"),
+                gte(matches.scheduled_at, startOfToday),
+                lt(matches.scheduled_at, startOfDayAfterTomorrow),
+            ),
+            with: {
+                participants: {
+                    where: isNull(matchParticipants.deleted_at),
+                    with: {
+                        stageTeam: {
+                            with: {
+                                team: true,
+                            },
+                        },
+                    },
+                    orderBy: asc(matchParticipants.position),
+                },
+                maps: {
+                    where: isNull(maps.deleted_at),
+                    columns: {
+                        id: true,
+                        map_name: true,
+                        team1_score: true,
+                        team2_score: true,
+                        winner_id: true,
+                    },
+                    orderBy: asc(maps.map_order),
+                },
+            },
+            orderBy: asc(matches.scheduled_at),
         });
     },
 

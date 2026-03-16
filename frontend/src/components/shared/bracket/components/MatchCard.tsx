@@ -111,10 +111,10 @@ export default function MatchCard({
                             </div>
                             <div className="flex items-center justify-between gap-4">
                                 <span className="text-textPrimary max-w-27.5 truncate text-sm font-bold">
-                                    {shortenTeamName(team1?.name) || "TBD"}
+                                    {team1?.short_name}
                                 </span>
                                 <span className="text-textPrimary max-w-27.5 truncate text-right text-sm font-bold">
-                                    {shortenTeamName(team2?.name) || "TBD"}
+                                    {team2?.short_name}
                                 </span>
                             </div>
                         </div>

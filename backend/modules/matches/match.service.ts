@@ -76,6 +76,49 @@ export const matchService = {
         };
     },
 
+    getUpcomingMatches: async () => {
+        const now = new Date();
+
+        const startOfToday = new Date(now);
+        startOfToday.setHours(0, 0, 0, 0);
+
+        const startOfTomorrow = new Date(startOfToday);
+        startOfTomorrow.setDate(startOfTomorrow.getDate() + 1);
+
+        const startOfDayAfterTomorrow = new Date(startOfTomorrow);
+        startOfDayAfterTomorrow.setDate(startOfDayAfterTomorrow.getDate() + 1);
+
+        const upcomingMatches = await matchRepository.findUpcomingMatches(
+            Math.floor(startOfToday.getTime() / 1000),
+            Math.floor(startOfDayAfterTomorrow.getTime() / 1000),
+        );
+
+        return upcomingMatches.sort((a, b) => {
+            const aScheduledAt = a.scheduled_at ?? 0;
+            const bScheduledAt = b.scheduled_at ?? 0;
+
+            const aIsToday =
+                aScheduledAt >= Math.floor(startOfToday.getTime() / 1000) &&
+                aScheduledAt < Math.floor(startOfTomorrow.getTime() / 1000);
+            const bIsToday =
+                bScheduledAt >= Math.floor(startOfToday.getTime() / 1000) &&
+                bScheduledAt < Math.floor(startOfTomorrow.getTime() / 1000);
+
+            if (aIsToday && !bIsToday) return -1;
+            if (!aIsToday && bIsToday) return 1;
+
+            const aIsLive = a.status === "live";
+            const bIsLive = b.status === "live";
+
+            if (aIsToday && bIsToday) {
+                if (aIsLive && !bIsLive) return -1;
+                if (!aIsLive && bIsLive) return 1;
+            }
+
+            return aScheduledAt - bScheduledAt;
+        });
+    },
+
     getAllMatchCasting: async () => {
         const allMatches = await matchRepository.findAllMatchCasting();
 

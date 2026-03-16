@@ -30,7 +30,7 @@ export const matches = pgTable(
         faceit_id: text("faceit_id"),
         match_number: integer("match_number"),
         round: text("round"),
-        status: text("status").default("scheduled"),
+        status: text("status").default("scheduled"), // scheduled, finished, ongoing
         best_of: integer("best_of").default(1),
         stream_url: text("stream_url"),
         scheduled_at: bigint("scheduled_at", { mode: "number" }),
