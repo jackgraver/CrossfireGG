@@ -10,6 +10,7 @@ import {
     Moon,
     Sun,
     Monitor,
+    Home,
 } from "lucide-react";
 import TeamLogo from "./shared/bracket/atoms/TeamLogo";
 import { useSignOut } from "@/contexts/auth";
@@ -87,6 +88,12 @@ export default function NavBar({ user }: { user: UserType | null }) {
         <nav className="bg-mainBg/80 sticky top-0 z-50 backdrop-blur-md">
             <div className="mx-auto flex h-14 max-w-7xl items-center justify-between">
                 <div className="flex items-center gap-1">
+                    <NavItem
+                        to="/"
+                        icon={<Home size={18} />}
+                        label="Home"
+                        padding="px-3 py-2 -ml-3"
+                    />
                     <NavItem
                         to="/tournament"
                         icon={<Trophy size={18} />}

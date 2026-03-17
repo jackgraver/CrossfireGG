@@ -19,11 +19,39 @@ export default function UpcomingMatches() {
     }, [upcomingMatches, startIndex]);
 
     if (isLoading) {
-        return null;
+        return (
+            <MatchDropdownProvider>
+                <div className="flex items-center gap-3">
+                    <button
+                        type="button"
+                        disabled
+                        aria-label="Show previous upcoming matches"
+                        className="bg-firstBg text-textPrimary border-border hover:bg-secondBg disabled:text-textSecondary/50 disabled:hover:bg-firstBg mt-6 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border transition-colors disabled:cursor-not-allowed"
+                    >
+                        <ChevronLeft className="h-5 w-5" />
+                    </button>
+                    <div className="flex-1 overflow-hidden">
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+                            {[1, 2, 3, 4, 5].map((i) => (
+                                <ScheduledCard key={i} match={undefined} />
+                            ))}
+                        </div>
+                    </div>
+                    <button
+                        type="button"
+                        disabled
+                        aria-label="Show next upcoming matches"
+                        className="bg-firstBg text-textPrimary border-border hover:bg-secondBg disabled:text-textSecondary/50 disabled:hover:bg-firstBg mt-6 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border transition-colors disabled:cursor-not-allowed"
+                    >
+                        <ChevronRight className="h-5 w-5" />
+                    </button>
+                </div>
+            </MatchDropdownProvider>
+        );
     }
 
     if (!upcomingMatches?.length) {
-        return null;
+        return <p>todo</p>;
     }
 
     const canGoPrevious = startIndex > 0;
@@ -58,11 +86,10 @@ export default function UpcomingMatches() {
                     onClick={goToPrevious}
                     disabled={!canGoPrevious}
                     aria-label="Show previous upcoming matches"
-                    className="bg-firstBg text-textPrimary border-border hover:bg-secondBg disabled:text-textSecondary/50 disabled:hover:bg-firstBg flex h-10 w-10 shrink-0 items-center justify-center rounded-full border transition-colors disabled:cursor-not-allowed"
+                    className="bg-firstBg text-textPrimary border-border hover:bg-secondBg disabled:text-textSecondary/50 disabled:hover:bg-firstBg mt-6 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border transition-colors disabled:cursor-not-allowed"
                 >
                     <ChevronLeft className="h-5 w-5" />
                 </button>
-
                 <div className="flex-1 overflow-hidden">
                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
                         {visibleMatches.map((match) => (
@@ -70,13 +97,12 @@ export default function UpcomingMatches() {
                         ))}
                     </div>
                 </div>
-
                 <button
                     type="button"
                     onClick={goToNext}
                     disabled={!canGoNext}
                     aria-label="Show next upcoming matches"
-                    className="bg-firstBg text-textPrimary border-border hover:bg-secondBg disabled:text-textSecondary/50 disabled:hover:bg-firstBg flex h-10 w-10 shrink-0 items-center justify-center rounded-full border transition-colors disabled:cursor-not-allowed"
+                    className="bg-firstBg text-textPrimary border-border hover:bg-secondBg disabled:text-textSecondary/50 disabled:hover:bg-firstBg mt-6 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border transition-colors disabled:cursor-not-allowed"
                 >
                     <ChevronRight className="h-5 w-5" />
                 </button>

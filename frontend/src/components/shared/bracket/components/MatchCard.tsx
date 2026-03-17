@@ -14,18 +14,6 @@ type MatchCardProps = {
     unroundedTop?: boolean;
 };
 
-const shortenTeamName = (name: string | undefined) => {
-    if (!name) return "TBD";
-    if (name.length <= 8) return name;
-    return name
-        .split(" ")
-        .map((word, _) => {
-            return word.slice(0, 1);
-        })
-        .join("")
-        .toUpperCase();
-};
-
 export default function MatchCard({
     match,
     margin,
@@ -53,6 +41,42 @@ export default function MatchCard({
             openDropdown(match.id, triggerRef.current);
         }
     };
+
+    if (!match) {
+        return (
+            <div
+                className={cn(
+                    `group border-border bg-firstBg text-textPrimary relative flex grow flex-col overflow-hidden border transition-all duration-200`,
+                    margin ? "m-2 rounded-md" : "rounded-md",
+                    isOpen ? "ring-2 ring-blue-500/50" : "",
+                    unroundedTop && "rounded-tl-none",
+                )}
+            >
+                <div
+                    className="cursor-pointer"
+                    role="button"
+                    tabIndex={0}
+                    onClick={handleToggle}
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                            handleToggle(e as unknown as React.MouseEvent);
+                        }
+                    }}
+                >
+                    <MatchTeam
+                        team={team1}
+                        winner={match?.participants?.[0]?.winner}
+                        score={match?.participants?.[0]?.score}
+                    />
+                    <MatchTeam
+                        team={team2}
+                        winner={match?.participants?.[1]?.winner}
+                        score={match?.participants?.[1]?.score}
+                    />
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div
@@ -109,16 +133,18 @@ export default function MatchCard({
                                     {formatScheduledDate(match.scheduled_at!)}
                                 </span>
                             </div>
-                            <div className="flex items-center justify-between gap-4">
-                                <span className="text-textPrimary max-w-27.5 truncate text-sm font-bold">
+                            <div className="grid grid-cols-3 items-center gap-4">
+                                <span className="text-textPrimary min-w-0 truncate text-sm font-bold">
                                     {team1?.short_name}
                                 </span>
-                                <span className="text-textPrimary max-w-27.5 truncate text-right text-sm font-bold">
+                                <span className="text-textSecondary text-center text-sm font-bold">
+                                    -
+                                </span>
+                                <span className="text-textPrimary min-w-0 truncate text-right text-sm font-bold">
                                     {team2?.short_name}
                                 </span>
                             </div>
                         </div>
-
                         {match.maps.length > 0 && (
                             <div className="flex flex-col gap-2">
                                 {match.maps.map((map) => (

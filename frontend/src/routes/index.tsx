@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import TournamentsSection from "./tournament/-components/TournamentsSection";
 import InfoBox from "./-components/InfoBox";
 import UpcomingMatches from "./-components/UpcomingMatches";
+import { Bot, CalendarFold, CircleQuestionMark } from "lucide-react";
 
 export const Route = createFileRoute("/")({
     component: App,
@@ -23,11 +24,12 @@ function App() {
                 <div className="flex flex-row gap-32 pt-24">
                     <InfoBox
                         title="See Crossfire Events"
+                        icon={<CalendarFold size={20} />}
                         description="Check out upcoming or previous events and matches"
                         clickAction={() => {
                             const section = document.querySelector("section");
                             if (section) {
-                                const topPadding = 64;
+                                const topPadding = 72;
                                 const y =
                                     section.getBoundingClientRect().top +
                                     window.scrollY -
@@ -40,9 +42,14 @@ function App() {
                             }
                         }}
                     />
-                    <InfoBox title="Bruh.. I forgor" description="" />
+                    <InfoBox
+                        title="Bruh.. I forgor"
+                        icon={<CircleQuestionMark size={20} />}
+                        description=""
+                    />
                     <InfoBox
                         title="Join the Community!"
+                        icon={<Bot size={20} />}
                         description="Check out our discord!"
                         clickAction={() =>
                             window.open("https://discord.gg/99tm9U5c", "_blank")
@@ -50,8 +57,10 @@ function App() {
                     />
                 </div>
             </div>
-            <UpcomingMatches />
-            <TournamentsSection />
+            <section>
+                <UpcomingMatches />
+                <TournamentsSection />
+            </section>
         </div>
     );
 }

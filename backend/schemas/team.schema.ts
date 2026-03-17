@@ -3,7 +3,6 @@ import { relations } from "drizzle-orm";
 import { players } from "./player.schema";
 import { matchParticipants } from "./match_participant.schema";
 import { stageTeams } from "./stage_team.schema";
-import { should } from "vitest";
 
 export const teams = pgTable("teams", {
     id: serial("id").primaryKey(),

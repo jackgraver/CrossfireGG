@@ -13,9 +13,10 @@ export default function ScheduledCard({ match }: ScheduledCardProps) {
             <div className="flex flex-col">
                 <div className="bg-firstBg w-fit max-w-full overflow-hidden rounded-t-md px-1 py-1 whitespace-nowrap">
                     <div className="text-textPrimary flex items-center gap-1 text-xs">
-                        <p className="">
-                            <CalendarFold />
+                        <p className="w-28">
+                            <CalendarFold size={14} />
                         </p>
+                        <span className="inline-block animate-pulse rounded dark:bg-gray-700" />
                     </div>
                 </div>
                 <MatchCard match={match} margin={false} />
@@ -26,7 +27,7 @@ export default function ScheduledCard({ match }: ScheduledCardProps) {
     return (
         <div className="flex flex-col">
             {match.status == "ONGOING" ? (
-                <div className="w-fit max-w-full overflow-hidden rounded-t-md bg-green-400 px-1 py-1 whitespace-nowrap">
+                <div className="w-fit max-w-full overflow-hidden rounded-t-md bg-green-500 px-1 py-0.5 whitespace-nowrap">
                     <div className="flex gap-1 text-xs text-black">
                         <p className="mx-2 font-bold">LIVE!</p>
                     </div>
@@ -35,7 +36,7 @@ export default function ScheduledCard({ match }: ScheduledCardProps) {
                 <div className="bg-firstBg flex w-fit max-w-full flex-row items-center overflow-hidden rounded-t-md px-1 py-1 text-ellipsis whitespace-nowrap">
                     <div className="text-textPrimary flex items-center gap-1 text-xs">
                         <p className="">
-                            <CalendarFold size={16} />
+                            <CalendarFold size={14} />
                         </p>
                         {formatMatchDate(match?.scheduled_at ?? 0)}
                     </div>
