@@ -292,13 +292,22 @@ export const teamRepository = {
             )
             .limit(1);
 
+        let teamLogo = "";
+        if (teamData.team_logo) {
+            await fetch(teamData.team_logo).then((res) => {
+                if (res.status !== 400) {
+                    teamLogo = teamData.team_logo!;
+                }
+            });
+        }
+
         if (existing.length > 0) {
             const result = await db
                 .update(teams)
                 .set({
                     name: teamData.name,
                     short_name: shortName(teamData.name),
-                    team_logo: teamData.team_logo,
+                    team_logo: teamLogo,
                     team_captain_id: teamData.team_captain_id,
                     social_links:
                         teamData.social_links !== undefined

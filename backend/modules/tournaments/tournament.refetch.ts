@@ -10,7 +10,7 @@ const stageCacheKeys = (stageId: number) => [
 
 let LAST_REFETCH_TIME = new Map<string, number>();
 const SYNCING_STAGES = new Set<string>();
-const CHECK_INTERVAL = 10000; //60 * 60 * 1000;
+const CHECK_INTERVAL = 60 * 60 * 1000;
 const LAST_REFETCH_TTL = Math.ceil(CHECK_INTERVAL / 1000);
 const SYNC_LOCK_TTL = 300;
 
@@ -71,7 +71,12 @@ export async function syncTournamentMatches(
         }
 
         const last = await getLastRefetchTime(stage.faceit_id);
-        if (Date.now() - last < CHECK_INTERVAL) continue;
+        if (Date.now() - last < CHECK_INTERVAL) {
+            console.log(
+                `Skipping ${stage.faceit_id}, last refetch was ${Date.now() - last}ms ago`,
+            );
+            continue;
+        }
 
         stagesToSync.push(stage);
     }

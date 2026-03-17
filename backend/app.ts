@@ -18,12 +18,11 @@ import {
     authMiddleware,
     requireRoles,
 } from "./core/middleware/auth.middleware";
-import { Roles } from "@repo/types";
 import { checkRedisCache } from "./core/middleware/redis.middleware";
 import { invalidateCache } from "./core/redis";
 import { logger } from "./core/logger";
 import { db } from "./config/database";
-import { shortName } from "./modules/teams/team.utils";
+import { Roles } from "@repo/types";
 
 const burstLimiter = rateLimit({
     windowMs: 10 * 1000,
@@ -83,7 +82,7 @@ app.use("/user", userRoutes);
 app.use("/tournament", tournamentRoutes);
 app.use("/match", matchRoutes);
 app.use("/team", teamRoutes);
-app.use("/faceit", faceitRoutes);
+app.use("/faceit", ...authMiddleware, requireRoles(Roles.ADMIN), faceitRoutes);
 
 app.use(errorHandler);
 

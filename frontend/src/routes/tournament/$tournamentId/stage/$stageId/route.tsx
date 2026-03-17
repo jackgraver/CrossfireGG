@@ -183,7 +183,7 @@ function RouteComponent() {
                 </div>
                 <div className="flex w-full gap-2 overflow-x-auto rounded-2xl py-2">
                     {tournament.stages.map((stage) => {
-                        const isActive = stageId === stage.name;
+                        const isActive = Number(stageId) === stage.id;
                         return (
                             <div
                                 key={stage.id}

@@ -10,7 +10,6 @@ export default function TeamLogo({
     styling: string | undefined;
 }) {
     if (!team && !avatar) return null;
-    if (team && !team.team_logo && !avatar) return null;
 
     const placeholder = "/crossfire.png";
 
