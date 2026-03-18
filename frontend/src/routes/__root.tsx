@@ -1,4 +1,9 @@
-import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router";
+import {
+    HeadContent,
+    Scripts,
+    createRootRoute,
+    useRouterState,
+} from "@tanstack/react-router";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import NavBar from "@/components/NavBar";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -13,6 +18,7 @@ import { getThemeServerFn } from "@/lib/theme";
 import { getUserMeServerFn } from "@/lib/auth/auth.server";
 import { meQueryOptions } from "@/lib/auth/auth.query";
 import ToastProvider from "@/components/shared/toast/ToastProvider";
+import { cn } from "@/utils/cn";
 
 export const Route = createRootRoute({
     head: () => ({
@@ -45,6 +51,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     const { theme } = Route.useRouteContext();
     const { user } = Route.useRouteContext();
 
+    const routerState = useRouterState();
+
+    const isHomePage = routerState.location.pathname === "/";
+
     return (
         <html className={theme} lang="en" suppressHydrationWarning>
             <head>
@@ -56,7 +66,12 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                         <DialogProvider>
                             <ToastProvider />
                             <div className="flex min-h-screen flex-col">
-                                <div className="mx-auto w-full flex-1 lg:max-w-8/12">
+                                <div
+                                    className={cn(
+                                        "mx-auto w-full",
+                                        !isHomePage && "lg:max-w-8/12",
+                                    )}
+                                >
                                     <NavBar user={user} />
                                     {children}
                                     <Footer />
