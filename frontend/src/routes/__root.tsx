@@ -72,7 +72,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                                         !isHomePage && "lg:max-w-8/12",
                                     )}
                                 >
-                                    <NavBar user={user} />
+                                    <NavBar user={user} isHomePage />
                                     {children}
                                     <Footer />
                                 </div>

@@ -1,4 +1,6 @@
+import { useEffect, useState } from "react";
 import { Link, useRouter } from "@tanstack/react-router";
+import { cn } from "@/utils/cn";
 import { matchesRole } from "@/utils/role.util";
 import { Roles } from "@repo/types";
 import {
@@ -73,10 +75,25 @@ const NavItem = ({
     );
 };
 
-export default function NavBar({ user }: { user: UserType | null }) {
+export default function NavBar({
+    user,
+    isHomePage,
+}: {
+    user: UserType | null;
+    isHomePage?: boolean;
+}) {
     const signOut = useSignOut();
     const { theme } = useRouteContext({ from: "__root__" });
     const router = useRouter();
+
+    const [scrolled, setScrolled] = useState(false);
+
+    useEffect(() => {
+        if (!isHomePage) return;
+        const onScroll = () => setScrolled(window.scrollY > 80);
+        window.addEventListener("scroll", onScroll, { passive: true });
+        return () => window.removeEventListener("scroll", onScroll);
+    }, [isHomePage]);
 
     function toggleDarkMode() {
         const themes = ["light", "dark", "auto"] as const;
@@ -85,8 +102,19 @@ export default function NavBar({ user }: { user: UserType | null }) {
     }
 
     return (
-        <nav className="bg-mainBg/80 sticky top-0 z-50 backdrop-blur-md">
-            <div className="mx-auto flex h-14 max-w-7xl items-center justify-between">
+        <nav
+            className={cn(
+                "top-0 z-50 backdrop-blur-md transition-colors duration-300",
+                isHomePage ? "fixed inset-x-0" : "bg-mainBg/80 sticky",
+                isHomePage && (scrolled ? "bg-mainBg/80" : "bg-black/20"),
+            )}
+        >
+            <div
+                className={cn(
+                    "mx-auto flex h-14 items-center justify-between transition-[max-width,padding] duration-300",
+                    isHomePage && !scrolled ? "max-w-full px-4" : "max-w-7xl",
+                )}
+            >
                 <div className="flex items-center gap-1">
                     <NavItem
                         to="/"
