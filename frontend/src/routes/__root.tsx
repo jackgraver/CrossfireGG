@@ -51,9 +51,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     const { theme } = Route.useRouteContext();
     const { user } = Route.useRouteContext();
 
-    const routerState = useRouterState();
-
-    const isHomePage = routerState.location.pathname === "/";
+    const isHomePage = useRouterState({
+        select: (state) =>
+            (state.resolvedLocation ?? state.location).pathname === "/",
+    });
 
     return (
         <html className={theme} lang="en" suppressHydrationWarning>
@@ -68,11 +69,14 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                             <div className="flex min-h-screen flex-col">
                                 <div
                                     className={cn(
-                                        "mx-auto w-full",
+                                        "mx-auto w-full transition-[max-width] duration-500",
                                         !isHomePage && "lg:max-w-8/12",
                                     )}
                                 >
-                                    <NavBar user={user} isHomePage />
+                                    <NavBar
+                                        user={user}
+                                        isHomePage={isHomePage}
+                                    />
                                     {children}
                                     <Footer />
                                 </div>

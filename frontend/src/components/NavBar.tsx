@@ -90,7 +90,8 @@ export default function NavBar({
 
     useEffect(() => {
         if (!isHomePage) return;
-        const onScroll = () => setScrolled(window.scrollY > 80);
+        const onScroll = () =>
+            setScrolled(window.scrollY > window.innerHeight / 2);
         window.addEventListener("scroll", onScroll, { passive: true });
         return () => window.removeEventListener("scroll", onScroll);
     }, [isHomePage]);
@@ -104,14 +105,19 @@ export default function NavBar({
     return (
         <nav
             className={cn(
-                "top-0 z-50 backdrop-blur-md transition-colors duration-300",
-                isHomePage ? "fixed inset-x-0" : "bg-mainBg/80 sticky",
-                isHomePage && (scrolled ? "bg-mainBg/80" : "bg-black/20"),
+                "top-0 z-50 backdrop-blur-md transition-colors duration-500",
+                isHomePage
+                    ? cn(
+                          "fixed inset-x-0",
+                          scrolled ? "bg-mainBg/80" : "bg-black/20",
+                      )
+                    : "bg-mainBg/80 sticky",
             )}
         >
             <div
                 className={cn(
-                    "mx-auto flex h-14 items-center justify-between transition-[max-width,padding] duration-300",
+                    "mx-auto flex h-14 items-center justify-between",
+                    isHomePage && "transition-[max-width,padding] duration-500",
                     isHomePage && !scrolled ? "max-w-full px-4" : "max-w-7xl",
                 )}
             >
