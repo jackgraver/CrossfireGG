@@ -49,7 +49,7 @@ export default function MatchCard({
                     `group border-border bg-firstBg text-textPrimary relative flex grow flex-col overflow-hidden border transition-all duration-200`,
                     margin ? "m-2 rounded-md" : "rounded-md",
                     isOpen ? "ring-2 ring-blue-500/50" : "",
-                    unroundedTop && "rounded-tl-none",
+                    unroundedTop && "rounded-tl-none border-t-0",
                 )}
             >
                 <div
@@ -63,16 +63,8 @@ export default function MatchCard({
                         }
                     }}
                 >
-                    <MatchTeam
-                        team={team1}
-                        winner={match?.participants?.[0]?.winner}
-                        score={match?.participants?.[0]?.score}
-                    />
-                    <MatchTeam
-                        team={team2}
-                        winner={match?.participants?.[1]?.winner}
-                        score={match?.participants?.[1]?.score}
-                    />
+                    <MatchTeam team={team1} winner={undefined} score={0} />
+                    <MatchTeam team={team2} winner={undefined} score={0} />
                 </div>
             </div>
         );

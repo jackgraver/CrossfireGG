@@ -46,7 +46,7 @@ function App() {
                             </p>
                         </div>
                     </div>
-                    <div className="mt-auto mb-[10vh] grid w-full max-w-5xl gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                    <div className="mt-auto mb-[10vh] grid w-full max-w-7xl gap-12 sm:grid-cols-2 xl:grid-cols-3">
                         <InfoBox
                             title="See Crossfire Events"
                             icon={<CalendarFold size={20} />}
@@ -55,7 +55,13 @@ function App() {
                                 const section =
                                     document.querySelector("section");
                                 if (section) {
-                                    section.scrollIntoView({
+                                    const topPadding = 72;
+                                    const y =
+                                        section.getBoundingClientRect().top +
+                                        window.scrollY -
+                                        topPadding;
+                                    window.scrollTo({
+                                        top: y,
                                         behavior: "smooth",
                                     });
                                 }
