@@ -27,6 +27,17 @@ export function formatTeamPlacementSummary(
     return `${tournamentName} ${t}`;
 }
 
+/**
+ * Single-elim 3rd-place (bronze) vs grand final: Faceit round numbers overlap (e.g. bronze round 4 / GF round 5, or GF round 4 when there is no bronze).
+ * Do not use round alone. Bronze is the only remaining match where either side already has a stage loss before kickoff (both SF losers with ≥1 loss).
+ */
+export function isThirdPlaceSingleElim(
+    lossesBefore1: number,
+    lossesBefore2: number,
+): boolean {
+    return lossesBefore1 > 0 || lossesBefore2 > 0;
+}
+
 export function computeRoundsFromFinal(
     round: number,
     totalTeams: number,

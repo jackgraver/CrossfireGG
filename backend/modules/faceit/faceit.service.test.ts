@@ -14,6 +14,7 @@ vi.mock("../players/player.repository", () => ({
         findByFaceitIds: vi.fn(),
         findByFaceitId: vi.fn(),
         upsertPlayerStats: vi.fn(),
+        upsertPlayerByFaceitId: vi.fn(),
     },
 }));
 
@@ -30,6 +31,15 @@ vi.mock("../teams/team.repository", () => ({
     teamRepository: {
         findStageTeamByFaceitId: vi.fn(),
         incrementStageTeamRecord: vi.fn(),
+        countStageTeams: vi.fn(),
+        upsertTournamentPlacementByTeamAndStage: vi.fn(),
+        updateTeamAvatarByFaceitId: vi.fn(),
+    },
+}));
+
+vi.mock("../tournaments/stages/stages.repository", () => ({
+    stagesRepository: {
+        findStageFormatById: vi.fn(),
     },
 }));
 
@@ -62,6 +72,7 @@ import { tournamentRepository } from "../tournaments/tournament.repository";
 import { teamRepository } from "../teams/team.repository";
 import { matchRepository } from "../matches/match.repository";
 import { faceitFetchUtil } from "../../utils/faceitFetch.util";
+import { stagesRepository } from "../tournaments/stages/stages.repository";
 import * as transformHelpers from "../../utils/transformFaceitData";
 
 // Fixture builders
@@ -85,6 +96,14 @@ const createMockFaceitMatch = (overrides = {}) => ({
 describe("faceitImportService", () => {
     beforeEach(() => {
         vi.clearAllMocks();
+        vi.mocked(teamRepository.countStageTeams).mockResolvedValue(16);
+        vi.mocked(stagesRepository.findStageFormatById).mockResolvedValue(
+            null,
+        );
+        vi.mocked(playerRepository.upsertPlayerByFaceitId).mockResolvedValue(
+            {} as any,
+        );
+        vi.mocked(faceitFetchUtil.fetchData).mockResolvedValue(null);
     });
 
     describe("importStage", () => {
@@ -145,7 +164,7 @@ describe("faceitImportService", () => {
                 id: 1,
             } as any);
             vi.mocked(matchRepository.findAllByStageId).mockResolvedValue([
-                { faceit_id: "existing" },
+                { faceit_id: "existing", status: "finished" },
             ] as any);
 
             const newMatch = createMockFaceitMatch({ match_id: "new" });
@@ -209,7 +228,7 @@ describe("faceitImportService", () => {
             );
         });
 
-        it("should skip match if player roster is incomplete in repository", async () => {
+        it("imports match even when full roster validation is not enforced in service", async () => {
             vi.mocked(tournamentRepository.findStageById).mockResolvedValue({
                 id: 1,
             } as any);
@@ -217,12 +236,18 @@ describe("faceitImportService", () => {
             vi.mocked(teamRepository.findStageTeamByFaceitId).mockResolvedValue(
                 { id: 100, team_id: 10 } as any,
             );
-
-            // Mock roster of 2 players but repository only finds 1
-            vi.mocked(playerRepository.findByFaceitIds).mockResolvedValueOnce([
-                { id: 1 },
-            ] as any); // Team 1 finds only 1/2
-
+            vi.mocked(transformHelpers.transformFaceitMatch).mockReturnValue(
+                {} as any,
+            );
+            vi.mocked(matchRepository.upsertMatchByFaceitId).mockResolvedValue({
+                id: 500,
+            } as any);
+            vi.mocked(
+                transformHelpers.transformFaceitMatchParticipants,
+            ).mockReturnValue([{}, {}] as any);
+            vi.mocked(matchRepository.upsertMatchParticipant).mockResolvedValue(
+                { id: 1 } as any,
+            );
             const match = createMockFaceitMatch({
                 teams: {
                     faction1: {
@@ -239,20 +264,69 @@ describe("faceitImportService", () => {
                 [match] as any,
                 1,
             );
+            expect(result.newMatchesCount).toBe(1);
+        });
 
-            expect(result.newMatchesCount).toBe(0);
-            expect(logger.warn).toHaveBeenCalledWith(
-                expect.stringContaining("Not all players found for team f1"),
+        it("assigns 3rd and 4th for single elim bronze when both teams have a loss before the match", async () => {
+            vi.mocked(tournamentRepository.findStageById).mockResolvedValue({
+                id: 1,
+                format_id: 1,
+            } as any);
+            vi.mocked(matchRepository.findAllByStageId).mockResolvedValue([]);
+            vi.mocked(teamRepository.countStageTeams).mockResolvedValue(16 as any);
+            vi.mocked(stagesRepository.findStageFormatById).mockResolvedValue({
+                name: "single elimination",
+            } as any);
+            vi.mocked(teamRepository.findStageTeamByFaceitId)
+                .mockResolvedValueOnce({
+                    id: 100,
+                    team_id: 10,
+                    losses: 1,
+                } as any)
+                .mockResolvedValueOnce({
+                    id: 101,
+                    team_id: 20,
+                    losses: 1,
+                } as any);
+            vi.mocked(matchRepository.upsertMatchByFaceitId).mockResolvedValue({
+                id: 500,
+            } as any);
+            vi.mocked(matchRepository.upsertMatchParticipant).mockResolvedValue(
+                { id: 1 } as any,
             );
+            vi.mocked(transformHelpers.transformFaceitMatch).mockReturnValue(
+                {} as any,
+            );
+            vi.mocked(
+                transformHelpers.transformFaceitMatchParticipants,
+            ).mockReturnValue([{}, {}] as any);
+            const match = createMockFaceitMatch({
+                match_id: "bronze",
+                round: 4,
+                status: "FINISHED",
+                results: { winner: "faction1" },
+            });
+            await faceitImportService.processNewStageMatches([match] as any, 1);
+            expect(
+                teamRepository.upsertTournamentPlacementByTeamAndStage,
+            ).toHaveBeenCalledWith(10, 1, "3rd");
+            expect(
+                teamRepository.upsertTournamentPlacementByTeamAndStage,
+            ).toHaveBeenCalledWith(20, 1, "4th");
         });
 
         it("should increment team records for finished matches with a winner", async () => {
             vi.mocked(tournamentRepository.findStageById).mockResolvedValue({
                 id: 1,
+                format_id: 1,
             } as any);
             vi.mocked(matchRepository.findAllByStageId).mockResolvedValue([]);
+            vi.mocked(teamRepository.countStageTeams).mockResolvedValue(16 as any);
+            vi.mocked(stagesRepository.findStageFormatById).mockResolvedValue({
+                name: "single elimination",
+            } as any);
             vi.mocked(teamRepository.findStageTeamByFaceitId).mockResolvedValue(
-                { id: 100, team_id: 10 } as any,
+                { id: 100, team_id: 10, losses: 0 } as any,
             );
             vi.mocked(playerRepository.findByFaceitIds).mockResolvedValue([
                 { id: 1 },
@@ -266,6 +340,12 @@ describe("faceitImportService", () => {
             vi.mocked(matchRepository.upsertMatchParticipant).mockResolvedValue(
                 { id: 1 } as any,
             );
+            vi.mocked(transformHelpers.transformFaceitMatch).mockReturnValue(
+                {} as any,
+            );
+            vi.mocked(
+                transformHelpers.transformFaceitMatchParticipants,
+            ).mockReturnValue([{}, {}] as any);
 
             const match = createMockFaceitMatch({
                 status: "FINISHED",

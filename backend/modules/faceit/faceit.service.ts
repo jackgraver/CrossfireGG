@@ -14,10 +14,15 @@ import {
 import { teamRepository } from "../teams/team.repository";
 import { matchRepository } from "../matches/match.repository";
 import { faceitFetchUtil } from "../../utils/faceitFetch.util";
+import {
+    mapFaceitFormatType,
+    type StageFormat,
+} from "../../utils/roundFormatter";
 import { stagesRepository } from "../tournaments/stages/stages.repository";
 import {
     computeRoundsFromFinal,
     formatLoserPlacementSingleElim,
+    isThirdPlaceSingleElim,
 } from "../teams/team.utils";
 
 export const faceitImportService = {
@@ -69,33 +74,44 @@ export const faceitImportService = {
             existingMatches.map((m) => [m.faceit_id, m]),
         );
 
-        const newMatches = matches
-            .filter((match) => {
-                const existingMatch = existingMatchesByFaceitId.get(
-                    match.match_id,
-                );
+        const totalTeams = await teamRepository.countStageTeams(stageId);
+        const stageFormatRow =
+            stage.format_id != null
+                ? await stagesRepository.findStageFormatById(stage.format_id)
+                : null;
+        const stageFormatMapped = stageFormatRow
+            ? mapFaceitFormatType(stageFormatRow.name)
+            : "unknown";
 
-                if (!existingMatch) {
-                    return true;
-                }
+        const newMatches = matches.filter((match) => {
+            const existingMatch = existingMatchesByFaceitId.get(match.match_id);
 
-                if (existingMatch.status === "finished") {
-                    return false;
-                }
+            if (!existingMatch) {
+                return true;
+            }
 
-                return existingMatch.status !== match.status.toLowerCase();
-            })
-            .sort((a, b) => {
-                const timeA =
-                    a.started_at ?? a.scheduled_at ?? a.configured_at ?? 0;
-                const timeB =
-                    b.started_at ?? b.scheduled_at ?? b.configured_at ?? 0;
-                return timeA - timeB;
-            });
+            if (existingMatch.status === "finished") {
+                return false;
+            }
+
+            return existingMatch.status !== match.status.toLowerCase();
+        });
+        // .sort((a, b) => {
+        //     const timeA =
+        //         a.started_at ?? a.scheduled_at ?? a.configured_at ?? 0;
+        //     const timeB =
+        //         b.started_at ?? b.scheduled_at ?? b.configured_at ?? 0;
+        //     if (timeA !== timeB) return timeA - timeB;
+        //     const ra = a.round ?? 0;
+        //     const rb = b.round ?? 0;
+        //     return ra - rb;
+        // });
 
         let newMatchesCount = 0;
 
-        for (const match of newMatches) {
+        // for (const match of newMatches) {
+        for (let i = newMatches.length - 1; i >= 0; i--) {
+            const match = newMatches[i];
             try {
                 const stageTeam1 = await teamRepository.findStageTeamByFaceitId(
                     match.teams.faction1.faction_id,
@@ -172,6 +188,7 @@ export const faceitImportService = {
                     groupId,
                     stageTeam1,
                     stageTeam2,
+                    { stageFormat: stageFormatMapped, totalTeams },
                 );
 
                 if (created) {
@@ -191,12 +208,8 @@ export const faceitImportService = {
                             winnerFaction === "faction2" ? 1 : 0,
                             winnerFaction === "faction2" ? 0 : 1,
                         );
-                        const stageFormat =
-                            await stagesRepository.findStageFormatById(
-                                stage.format_id,
-                            );
                         if (
-                            stageFormat?.name.toLowerCase() ===
+                            stageFormatRow?.name.toLowerCase() ===
                             "single elimination"
                         ) {
                             if (match.round == null) {
@@ -204,13 +217,11 @@ export const faceitImportService = {
                                     `Match ${match.match_id} has no round; skipping tournament placement`,
                                 );
                             } else {
-                                const totalTeams =
-                                    await teamRepository.countStageTeams(
-                                        stageId,
-                                    );
-                                const roundsFromFinal = computeRoundsFromFinal(
-                                    match.round,
-                                    totalTeams,
+                                const lossesBefore1 = stageTeam1.losses ?? 0;
+                                const lossesBefore2 = stageTeam2.losses ?? 0;
+                                const isThirdPlace = isThirdPlaceSingleElim(
+                                    lossesBefore1,
+                                    lossesBefore2,
                                 );
                                 const loserTeamId =
                                     winnerFaction === "faction1"
@@ -220,30 +231,48 @@ export const faceitImportService = {
                                     winnerFaction === "faction1"
                                         ? stageTeam1.team_id
                                         : stageTeam2.team_id;
-                                const loserPlacement =
-                                    formatLoserPlacementSingleElim(
-                                        roundsFromFinal,
-                                    );
-                                if (loserPlacement == null) {
-                                    logger.warn(
-                                        `Match ${match.match_id} round ${match.round} inconsistent with bracket size (teams=${totalTeams}); skipping placement`,
-                                    );
-                                } else {
-                                    await teamRepository.upsertTournamentPlacementByTeamAndStage(
-                                        loserTeamId,
-                                        stageId,
-                                        loserPlacement,
-                                    );
-                                }
-                                if (
-                                    roundsFromFinal === 1 &&
-                                    loserPlacement != null
-                                ) {
+                                if (isThirdPlace) {
                                     await teamRepository.upsertTournamentPlacementByTeamAndStage(
                                         winnerTeamId,
                                         stageId,
-                                        "1st",
+                                        "3rd",
                                     );
+                                    await teamRepository.upsertTournamentPlacementByTeamAndStage(
+                                        loserTeamId,
+                                        stageId,
+                                        "4th",
+                                    );
+                                } else {
+                                    const roundsFromFinal =
+                                        computeRoundsFromFinal(
+                                            match.round,
+                                            totalTeams,
+                                        );
+                                    const loserPlacement =
+                                        formatLoserPlacementSingleElim(
+                                            roundsFromFinal,
+                                        );
+                                    if (loserPlacement == null) {
+                                        logger.warn(
+                                            `Match ${match.match_id} round ${match.round} inconsistent with bracket size (teams=${totalTeams}); skipping placement`,
+                                        );
+                                    } else {
+                                        await teamRepository.upsertTournamentPlacementByTeamAndStage(
+                                            loserTeamId,
+                                            stageId,
+                                            loserPlacement,
+                                        );
+                                    }
+                                    if (
+                                        roundsFromFinal === 1 &&
+                                        loserPlacement != null
+                                    ) {
+                                        await teamRepository.upsertTournamentPlacementByTeamAndStage(
+                                            winnerTeamId,
+                                            stageId,
+                                            "1st",
+                                        );
+                                    }
                                 }
                             }
                         }
@@ -264,10 +293,28 @@ export const faceitImportService = {
         faceitMatch: FaceitAPIMatch,
         stageId: number,
         groupId: number | null,
-        stageTeam1: { id: number; team_id: number },
-        stageTeam2: { id: number; team_id: number },
+        stageTeam1: { id: number; team_id: number; losses?: number | null },
+        stageTeam2: { id: number; team_id: number; losses?: number | null },
+        matchContext?: { stageFormat: StageFormat; totalTeams: number },
     ): Promise<boolean> => {
-        const matchData = transformFaceitMatch(faceitMatch, stageId, groupId);
+        const singleElim =
+            matchContext &&
+            (matchContext.stageFormat === "single-elimination" ||
+                matchContext.stageFormat === "bracket")
+                ? {
+                      totalTeams: matchContext.totalTeams,
+                      lossesBeforeF1: stageTeam1.losses ?? 0,
+                      lossesBeforeF2: stageTeam2.losses ?? 0,
+                  }
+                : undefined;
+        const matchData = transformFaceitMatch(
+            faceitMatch,
+            stageId,
+            groupId,
+            matchContext?.stageFormat,
+            undefined,
+            singleElim,
+        );
 
         const createdMatch =
             await matchRepository.upsertMatchByFaceitId(matchData);

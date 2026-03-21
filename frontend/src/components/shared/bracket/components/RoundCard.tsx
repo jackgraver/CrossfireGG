@@ -22,26 +22,47 @@ const numMatchesForRound = (round: string): number => {
         case "2-2":
             return 6;
         case "RO16":
+        case "1":
             return 8;
         case "QF":
+        case "2":
             return 4;
         case "SF":
+        case "3":
             return 2;
-        case "F":
+        case "3RD":
+        case "4":
             return 1;
-        default:
+        case "GF":
+        case "F":
+        case "5":
+            return 1;
+        default: {
+            const ro = round.match(/^RO(\d+)$/);
+            if (ro) {
+                const n = parseInt(ro[1], 10);
+                return n / 2;
+            }
             return 0;
+        }
     }
 };
 
 const getDisplayRound = (round: string): string => {
     switch (round) {
         case "QF":
+        case "2":
             return "QUARTER FINALS";
         case "SF":
+        case "3":
             return "SEMI-FINALS";
+        case "GF":
         case "F":
+        case "5":
             return "FINAL";
+        case "3RD":
+        case "4":
+            return "3RD PLACE";
     }
     return round;
 };

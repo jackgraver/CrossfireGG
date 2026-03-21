@@ -41,17 +41,36 @@ export const filterAndSortMatchesByRound = (matches: Match[], round: string) => 
 
 export const getMatchesByGroup = (matches: Match[]) => {
     // Helper: compare rounds (numeric or alphabetical fallback)
-    const roundOrder = (a: Match, b: Match) => {
-        // Try to parse as numbers, fallback to string compare if needed
-        const aRound = a.round ?? "";
-        const bRound = b.round ?? "";
-        const aNum = Number(aRound);
-        const bNum = Number(bRound);
-        if (!isNaN(aNum) && !isNaN(bNum)) {
-            return aNum - bNum;
+    const bracketRoundSortKey = (round: string | null | undefined): number => {
+        const r = round ?? "";
+        const legacy: Record<string, number> = {
+            "1": 4,
+            "2": 5,
+            "3": 6,
+            "4": 7,
+            "5": 8,
+        };
+        if (r in legacy) return legacy[r]!;
+        if (r === "QF") return 5;
+        if (r === "SF") return 6;
+        if (r === "3RD") return 7;
+        if (r === "GF" || r === "F") return 8;
+        const ro = r.match(/^RO(\d+)$/);
+        if (ro) {
+            const n = parseInt(ro[1], 10);
+            const log = Math.log2(n);
+            if (Number.isInteger(log) && log >= 4) return 8 - log;
         }
-        // at least one is not a number, compare as strings
-        return aRound.localeCompare(bRound);
+        const aNum = Number(r);
+        if (!isNaN(aNum) && r !== "") return aNum;
+        return 1000;
+    };
+
+    const roundOrder = (a: Match, b: Match) => {
+        const ka = bracketRoundSortKey(a.round);
+        const kb = bracketRoundSortKey(b.round);
+        if (ka !== kb) return ka - kb;
+        return (a.round ?? "").localeCompare(b.round ?? "");
     };
 
     // Helper: get highest seed between participants

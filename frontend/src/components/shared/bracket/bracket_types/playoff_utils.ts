@@ -5,23 +5,40 @@ export interface BracketRound {
     matches: (MatchWithParticipantsDTO | undefined)[];
 }
 
+/** Legacy Faceit import round ids "1".."5" — same column as new abbrev labels */
+const LEGACY_IDS: Record<string, string[]> = {
+    RO16: ["1"],
+    QF: ["2"],
+    SF: ["3"],
+    "3RD": ["4"],
+    GF: ["5"],
+};
+
+function matchRoundColumn(
+    round: string | null | undefined,
+    columnId: string,
+): boolean {
+    if (!round) return false;
+    if (round === columnId) return true;
+    return LEGACY_IDS[columnId]?.includes(round) ?? false;
+}
+
 export function getPlayoffRounds(
     matches: MatchWithParticipantsDTO[],
 ): BracketRound[] {
     const rounds: BracketRound[] = [];
 
-    // Define the standard playoff rounds in order
     const roundConfigs = [
-        { id: "1", name: "RO16", count: 8 },
-        { id: "2", name: "Quarter-Finals", count: 4 },
-        { id: "3", name: "Semi-Finals", count: 2 },
-        { id: "4", name: "3rd Place", count: 1 },
-        { id: "5", name: "Grand Final", count: 1 },
+        { id: "RO16", name: "RO16", count: 8 },
+        { id: "QF", name: "Quarter-Finals", count: 4 },
+        { id: "SF", name: "Semi-Finals", count: 2 },
+        { id: "3RD", name: "3rd Place", count: 1 },
+        { id: "GF", name: "Grand Final", count: 1 },
     ];
 
     for (const config of roundConfigs) {
         const roundMatches = matches
-            .filter((m) => m.round === config.id)
+            .filter((m) => matchRoundColumn(m.round, config.id))
             .sort((a, b) => (a.match_number ?? 0) - (b.match_number ?? 0));
 
         // Fill with undefined if matches are missing to maintain structure

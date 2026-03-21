@@ -2,6 +2,8 @@
  * Utilities for formatting match rounds based on stage format type
  */
 
+import { computeRoundsFromFinal } from "../modules/teams/team.utils";
+
 export type StageFormat =
     | "swiss"
     | "single-elimination"
@@ -27,7 +29,11 @@ export function calculateSwissRecord(wins: number, losses: number): string {
  * @param losses - Number of losses for the team
  * @returns Formatted string like "Round 2 (1-0)" or "Round 3 (2-0)"
  */
-export function formatSwissRound(round: number, wins?: number, losses?: number): string {
+export function formatSwissRound(
+    round: number,
+    wins?: number,
+    losses?: number,
+): string {
     const baseRound = `Round ${round}`;
     if (wins !== undefined && losses !== undefined) {
         return `${calculateSwissRecord(wins, losses)}`;
@@ -43,7 +49,39 @@ export function formatSwissRound(round: number, wins?: number, losses?: number):
  * @param totalTeams - Total teams in the bracket (helps determine structure)
  * @returns Formatted string like "Quarterfinals", "Semifinals", "Grand Final"
  */
-export function formatSingleEliminationRound(round: number, totalTeams: number = 32): string {
+/** Short labels stored on matches (RO16, QF, SF, GF, 3RD). */
+export function formatSingleEliminationRoundAbbrev(
+    round: number,
+    totalTeams: number,
+    isThirdPlace: boolean,
+): string {
+    if (isThirdPlace) return "3RD";
+    const rf = computeRoundsFromFinal(round, totalTeams);
+    console.log("j--rf", rf);
+    switch (rf) {
+        case 1:
+            return "GF";
+        case 2:
+            return "SF";
+        case 3:
+            return "QF";
+        case 4:
+            return "RO16";
+        case 5:
+            return "RO32";
+        default:
+            if (rf > 5) {
+                const teamsInRound = Math.pow(2, rf);
+                return `RO${teamsInRound}`;
+            }
+            return `R${round}`;
+    }
+}
+
+export function formatSingleEliminationRound(
+    round: number,
+    totalTeams: number = 32,
+): string {
     // Calculate total rounds needed
     const totalRounds = Math.ceil(Math.log2(totalTeams));
 
@@ -89,7 +127,8 @@ export function formatDoubleEliminationRound(
     }
 
     const baseLabel = formatSingleEliminationRound(round, totalTeams);
-    const bracketLabel = bracket === "upper" ? "Upper Bracket" : "Lower Bracket";
+    const bracketLabel =
+        bracket === "upper" ? "Upper Bracket" : "Lower Bracket";
 
     return `${bracketLabel} - ${baseLabel}`;
 }
@@ -131,9 +170,11 @@ export function formatRound(
         case "bracket":
             return formatSingleEliminationRound(round, options?.totalTeams);
         case "double-elimination":
-            return formatDoubleEliminationRound(round, options?.bracket, options?.totalTeams);
-        case "roundRobin":
-            return formatRoundRobinRound(round);
+            return formatDoubleEliminationRound(
+                round,
+                options?.bracket,
+                options?.totalTeams,
+            );
         default:
             return `Round ${round}`;
     }

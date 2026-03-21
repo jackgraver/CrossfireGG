@@ -1,5 +1,10 @@
 import { tournamentRepository } from "../modules/tournaments/tournament.repository";
-import { formatRound, type StageFormat } from "./roundFormatter";
+import { isThirdPlaceSingleElim } from "../modules/teams/team.utils";
+import {
+    formatRound,
+    formatSingleEliminationRoundAbbrev,
+    type StageFormat,
+} from "./roundFormatter";
 
 export type FaceitAPIChampionship = {
     id: string;
@@ -248,13 +253,33 @@ export function transformFaceitMatch(
         faction1?: { wins: number; losses: number };
         faction2?: { wins: number; losses: number };
     },
+    singleElim?: {
+        totalTeams: number;
+        lossesBeforeF1: number;
+        lossesBeforeF2: number;
+    },
 ) {
     let formattedRound = faceitMatch.round?.toString() || null;
 
     // If we have format information, format the round nicely
     if (faceitMatch.round && stageFormat && stageFormat !== "unknown") {
-        // For Swiss format, try to include team records if available
-        if (stageFormat === "swiss" && teamRecords?.faction1) {
+        if (
+            (stageFormat === "single-elimination" ||
+                stageFormat === "bracket") &&
+            singleElim
+        ) {
+            console.log("j-- losses", singleElim.lossesBeforeF1);
+            console.log(singleElim.lossesBeforeF2);
+            const isThird = isThirdPlaceSingleElim(
+                singleElim.lossesBeforeF1,
+                singleElim.lossesBeforeF2,
+            );
+            formattedRound = formatSingleEliminationRoundAbbrev(
+                faceitMatch.round,
+                singleElim.totalTeams,
+                isThird,
+            );
+        } else if (stageFormat === "swiss" && teamRecords?.faction1) {
             formattedRound = formatRound(stageFormat, faceitMatch.round, {
                 wins: teamRecords.faction1.wins,
                 losses: teamRecords.faction1.losses,
