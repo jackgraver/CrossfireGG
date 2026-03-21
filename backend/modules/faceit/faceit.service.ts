@@ -15,6 +15,10 @@ import { teamRepository } from "../teams/team.repository";
 import { matchRepository } from "../matches/match.repository";
 import { faceitFetchUtil } from "../../utils/faceitFetch.util";
 import { stagesRepository } from "../tournaments/stages/stages.repository";
+import {
+    computeRoundsFromFinal,
+    formatLoserPlacementSingleElim,
+} from "../teams/team.utils";
 
 export const faceitImportService = {
     /**
@@ -187,6 +191,62 @@ export const faceitImportService = {
                             winnerFaction === "faction2" ? 1 : 0,
                             winnerFaction === "faction2" ? 0 : 1,
                         );
+                        const stageFormat =
+                            await stagesRepository.findStageFormatById(
+                                stage.format_id,
+                            );
+                        if (
+                            stageFormat?.name.toLowerCase() ===
+                            "single elimination"
+                        ) {
+                            if (match.round == null) {
+                                logger.warn(
+                                    `Match ${match.match_id} has no round; skipping tournament placement`,
+                                );
+                            } else {
+                                const totalTeams =
+                                    await teamRepository.countStageTeams(
+                                        stageId,
+                                    );
+                                const roundsFromFinal = computeRoundsFromFinal(
+                                    match.round,
+                                    totalTeams,
+                                );
+                                const loserTeamId =
+                                    winnerFaction === "faction1"
+                                        ? stageTeam2.team_id
+                                        : stageTeam1.team_id;
+                                const winnerTeamId =
+                                    winnerFaction === "faction1"
+                                        ? stageTeam1.team_id
+                                        : stageTeam2.team_id;
+                                const loserPlacement =
+                                    formatLoserPlacementSingleElim(
+                                        roundsFromFinal,
+                                    );
+                                if (loserPlacement == null) {
+                                    logger.warn(
+                                        `Match ${match.match_id} round ${match.round} inconsistent with bracket size (teams=${totalTeams}); skipping placement`,
+                                    );
+                                } else {
+                                    await teamRepository.upsertTournamentPlacementByTeamAndStage(
+                                        loserTeamId,
+                                        stageId,
+                                        loserPlacement,
+                                    );
+                                }
+                                if (
+                                    roundsFromFinal === 1 &&
+                                    loserPlacement != null
+                                ) {
+                                    await teamRepository.upsertTournamentPlacementByTeamAndStage(
+                                        winnerTeamId,
+                                        stageId,
+                                        "1st",
+                                    );
+                                }
+                            }
+                        }
                     }
                 }
             } catch (error) {

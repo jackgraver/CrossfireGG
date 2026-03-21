@@ -84,6 +84,12 @@ export const stagesRepository = {
         });
     },
 
+    findStageFormatById: async (stageFormatId: number) => {
+        return await db.query.stageFormats.findFirst({
+            where: (sf, { eq, and }) => and(eq(sf.id, stageFormatId)),
+        });
+    },
+
     findAllFormats: async () => {
         return await db.query.stageFormats.findMany();
     },

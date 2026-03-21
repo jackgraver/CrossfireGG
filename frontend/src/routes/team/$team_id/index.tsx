@@ -74,22 +74,23 @@ function TeamOverview() {
                 <div key={tournament.id} className="rounded-xl shadow-md">
                     <div className="gap flex flex-row items-center pb-2">
                         <Link
-                            to="/tournament/$tournamentId/$stageId/bracket"
+                            to="/tournament/$tournamentId/stage/$stageId/bracket"
                             params={{
-                                tournamentId: tournament.name,
-                                stageId: tournament.stages[0]?.name ?? "",
+                                tournamentId: tournament.id,
+                                stageId: tournament.stages[0]?.id ?? "",
                             }}
                             className="text-textPrimary hover:text-cfRed text-xl font-bold transition-colors"
                         >
                             {tournament.name}
                         </Link>
-                        {tournament.placement != null && (
-                            <div className="pl-4">
-                                <PlacementOrdinal
-                                    placement={tournament.placement}
-                                />
-                            </div>
-                        )}
+                        {tournament.placement != null &&
+                            tournament.placement !== "" && (
+                                <div className="pl-4">
+                                    <PlacementOrdinal
+                                        placement={tournament.placement}
+                                    />
+                                </div>
+                            )}
                     </div>
                     <div className="grid gap-3 pb-2 sm:grid-cols-2 lg:grid-cols-3">
                         {tournament.stages.map((stage) => (

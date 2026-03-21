@@ -1,11 +1,57 @@
+export function formatOrdinal(n: number): string {
+    const k = Math.abs(Math.floor(n));
+    const mod100 = k % 100;
+    if (mod100 >= 11 && mod100 <= 13) return `${k}th`;
+    switch (k % 10) {
+        case 1:
+            return `${k}st`;
+        case 2:
+            return `${k}nd`;
+        case 3:
+            return `${k}rd`;
+        default:
+            return `${k}th`;
+    }
+}
+
 export function formatTeamPlacementSummary(
     tournamentName: string,
-    placement: number,
+    placement: string,
+): string {
+    const t = placement.trim();
+    if (!t) return tournamentName;
+    const p = t.toLowerCase();
+    if (p === "1st") return `${tournamentName} Winners`;
+    if (p === "2nd") return `${tournamentName} Runners Up`;
+    if (p === "3rd") return `${tournamentName} 3rd Place`;
+    return `${tournamentName} ${t}`;
+}
+
+export function computeRoundsFromFinal(
+    round: number,
+    totalTeams: number,
+): number {
+    const totalRounds = Math.max(
+        1,
+        Math.ceil(Math.log2(Math.max(2, totalTeams))),
+    );
+    let rf = totalRounds - round + 1;
+    // Faceit often labels the grand-final match as round (totalRounds + 1), which makes rf === 0.
+    // Anything still "at or after" the nominal final round index is treated as one step from the trophy.
+    if (rf < 1 && round >= totalRounds) {
+        return 1;
+    }
+    return rf;
+}
+
+export function formatLoserPlacementSingleElim(
+    roundsFromFinal: number,
 ): string | null {
-    if (placement === 1) return `${tournamentName} Winners`;
-    if (placement === 2) return `${tournamentName} Runners Up`;
-    if (placement === 3) return `${tournamentName} 3rd Place`;
-    return null;
+    if (roundsFromFinal < 1) return null;
+    if (roundsFromFinal === 1) return "2nd";
+    const low = Math.pow(2, roundsFromFinal - 1) + 1;
+    const high = Math.pow(2, roundsFromFinal);
+    return `${formatOrdinal(low)}-${formatOrdinal(high)}`;
 }
 
 export function shortName(name: string): string {

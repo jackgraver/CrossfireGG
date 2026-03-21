@@ -5,6 +5,7 @@ import {
     timestamp,
     unique,
     index,
+    text,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { stageTeams } from "./stage_team.schema";
@@ -16,7 +17,7 @@ export const tournamentResults = pgTable(
         stage_team_id: integer("stage_team_id")
             .notNull()
             .references(() => stageTeams.id, { onDelete: "cascade" }),
-        placement: integer("placement").notNull(),
+        placement: text("placement").notNull().default(""),
         created_at: timestamp("created_at").notNull().defaultNow(),
         updated_at: timestamp("updated_at").notNull().defaultNow(),
     },

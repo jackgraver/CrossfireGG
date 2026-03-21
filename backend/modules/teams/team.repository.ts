@@ -7,8 +7,9 @@ import {
     players,
     stages,
     tournaments,
+    tournamentResults,
 } from "../../schemas";
-import { eq, and, isNull, inArray, like, or, ne, sql } from "drizzle-orm";
+import { eq, and, isNull, inArray, like, or, ne, sql, count } from "drizzle-orm";
 import { shortName } from "./team.utils";
 
 export const teamRepository = {
@@ -404,5 +405,59 @@ export const teamRepository = {
             .update(teams)
             .set({ team_logo: teamLogo, updated_at: new Date() })
             .where(eq(teams.faceit_id, faceitId));
+    },
+
+    countStageTeams: async (stageId: number) => {
+        const row = await db
+            .select({ n: count() })
+            .from(stageTeams)
+            .where(
+                and(
+                    eq(stageTeams.stage_id, stageId),
+                    isNull(stageTeams.deleted_at),
+                ),
+            );
+        return row[0]?.n ?? 0;
+    },
+
+    upsertTournamentPlacementByTeamAndStage: async (
+        teamId: number,
+        stageId: number,
+        placement: string,
+    ) => {
+        const st = await db.query.stageTeams.findFirst({
+            where: (st, { eq, and, isNull }) =>
+                and(
+                    eq(st.team_id, teamId),
+                    eq(st.stage_id, stageId),
+                    isNull(st.deleted_at),
+                ),
+        });
+        if (!st) {
+            return null;
+        }
+
+        const existing = await db.query.tournamentResults.findFirst({
+            where: (tr, { eq }) => eq(tr.stage_team_id, st.id),
+        });
+
+        if (existing) {
+            await db
+                .update(tournamentResults)
+                .set({
+                    placement,
+                    updated_at: new Date(),
+                })
+                .where(eq(tournamentResults.id, existing.id));
+        } else {
+            await db.insert(tournamentResults).values({
+                stage_team_id: st.id,
+                placement,
+                created_at: new Date(),
+                updated_at: new Date(),
+            });
+        }
+
+        return st;
     },
 };

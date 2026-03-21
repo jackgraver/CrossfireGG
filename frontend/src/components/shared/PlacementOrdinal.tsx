@@ -1,8 +1,16 @@
 import { Medal } from "lucide-react";
 import { formatOrdinal, placementMedalClassName } from "@/utils/placement";
 
-export function PlacementOrdinal({ placement }: { placement: number }) {
-    const showMedal = placement >= 1 && placement <= 3;
+export function PlacementOrdinal({
+    placement,
+}: {
+    placement: string | number;
+}) {
+    const text =
+        typeof placement === "number"
+            ? formatOrdinal(placement)
+            : placement;
+    const showMedal = placementMedalClassName(placement) !== "text-textSecondary";
     return (
         <span
             className={`inline-flex items-center gap-1 pt-[6px] text-sm font-semibold ${placementMedalClassName(placement)}`}
@@ -14,7 +22,7 @@ export function PlacementOrdinal({ placement }: { placement: number }) {
                     aria-hidden
                 />
             )}
-            {formatOrdinal(placement)}
+            {text}
         </span>
     );
 }

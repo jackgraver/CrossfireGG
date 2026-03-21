@@ -26,9 +26,11 @@ export const teamService = {
         const placement_summaries: string[] = [];
         for (const t of tournaments) {
             const p = t.placement;
-            if (p === 1 || p === 2 || p === 3) {
-                const line = formatTeamPlacementSummary(t.name, p);
-                if (line) placement_summaries.push(line);
+            if (p != null && String(p).trim() !== "") {
+                if (!["1st", "2nd", "3rd", "3rd-4th"].includes(p)) continue;
+                placement_summaries.push(
+                    formatTeamPlacementSummary(t.name, String(p)),
+                );
             }
         }
 
@@ -51,7 +53,7 @@ export const teamService = {
                 (stage) => stage.stageTeams[0]?.tournamentResult,
             );
 
-            let placement: number | undefined;
+            let placement: string | undefined;
 
             if (stagesWithResult.length > 0) {
                 const sortedStages = [...stagesWithResult].sort((a, b) => {
@@ -61,8 +63,12 @@ export const teamService = {
                     return b.id - a.id;
                 });
 
-                placement =
+                const raw =
                     sortedStages[0].stageTeams[0].tournamentResult?.placement;
+                placement =
+                    raw != null && String(raw).trim() !== ""
+                        ? String(raw)
+                        : undefined;
             }
 
             return {
