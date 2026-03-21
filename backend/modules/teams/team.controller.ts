@@ -18,29 +18,16 @@ import z from "zod";
 
 export const teamController = {
     getTeamById: async (req: Request, res: Response) => {
-        try {
-            const teamId = parseInt(req.params.teamId);
+        const data = parseOr400(res, TeamParamsSchema, req.params);
+        if (!data) return;
 
-            if (isNaN(teamId)) {
-                return res.status(400).json({ error: "Invalid team ID" });
-            }
+        const teamDetails = await teamService.getTeamById(data.teamId);
 
-            const teamDetails = await teamService.getTeamById(teamId);
-
-            if (!teamDetails) {
-                return res.status(404).json({ error: "Team not found" });
-            }
-
-            const payload = TeamContract.parse(teamDetails);
-
-            res.json(payload);
-        } catch (error: any) {
-            logger.error(
-                `Error in getTeamById for ID ${req.params.teamId}:`,
-                error,
-            );
-            res.status(500).json({ error: "Failed to fetch team details" });
+        if (!teamDetails) {
+            return res.status(404).json({ error: "Team not found" });
         }
+
+        sendContract(res, TeamContract, teamDetails);
     },
 
     getTeamTournaments: async (req: Request, res: Response) => {

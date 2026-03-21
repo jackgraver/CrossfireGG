@@ -8,6 +8,7 @@ export const TeamContract = z.object({
     faceit_id: z.string().nullable().optional(),
     team_captain_id: z.number(),
     social_links: z.string().nullable().optional(),
+    placement_summaries: z.array(z.string()).optional(),
 });
 
 export type TeamDTO = z.infer<typeof TeamContract>;

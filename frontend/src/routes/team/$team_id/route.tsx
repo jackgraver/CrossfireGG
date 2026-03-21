@@ -1,6 +1,13 @@
 import TeamLogo from "@/components/shared/bracket/atoms/TeamLogo";
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
-import { useTeam, useTeamTournaments } from "@/lib/api/team.queries";
+import { useTeam } from "@/lib/api/team.queries";
+import AchievementTilesRow, {
+    type AchievementTileItem,
+} from "@/routes/team/$team_id/-components/AchievementTilesRow";
+import {
+    achievementPlacementFromSummaryLabel,
+    achievementTileClassesForPlacement,
+} from "@/utils/placement";
 import {
     CalendarDays,
     ExternalLinkIcon,
@@ -9,8 +16,22 @@ import {
     Users,
 } from "lucide-react";
 import TabGroup, { Tab } from "@/components/shared/TabGroup";
-import AchievementTilesRow from "@/routes/team/$team_id/AchievementTilesRow";
 import { openInNewTab } from "@/utils/openInNewTab";
+
+function placementSummariesToTileItems(
+    summaries: string[],
+): AchievementTileItem[] {
+    return summaries.map((label) => {
+        const p = achievementPlacementFromSummaryLabel(label);
+        const { bg, text } = p
+            ? achievementTileClassesForPlacement(p)
+            : {
+                  bg: "bg-gray-500/10",
+                  text: "text-textSecondary",
+              };
+        return { icon: Medal, label, bg, text };
+    });
+}
 
 export const Route = createFileRoute("/team/$team_id")({
     component: RouteComponent,
@@ -19,54 +40,24 @@ export const Route = createFileRoute("/team/$team_id")({
 function RouteComponent() {
     const { team_id } = Route.useParams();
     const { data: team, isLoading, error } = useTeam(team_id);
-    const { data: tournaments } = useTeamTournaments(team_id);
-
-    const totalWins =
-        tournaments?.reduce(
-            (sum, t) =>
-                sum +
-                t.stages.reduce(
-                    (s, st) =>
-                        s +
-                        st.stageTeams.reduce(
-                            (w, st2) => w + (st2.wins ?? 0),
-                            0,
-                        ),
-                    0,
-                ),
-            0,
-        ) ?? 0;
-    const totalLosses =
-        tournaments?.reduce(
-            (sum, t) =>
-                sum +
-                t.stages.reduce(
-                    (s, st) =>
-                        s +
-                        st.stageTeams.reduce(
-                            (l, st2) => l + (st2.losses ?? 0),
-                            0,
-                        ),
-                    0,
-                ),
-            0,
-        ) ?? 0;
 
     if (isLoading) {
         return (
             <div className="mx-auto min-h-screen max-w-350 px-4 py-5 md:px-6">
                 <div className="mb-6 overflow-hidden rounded-xl shadow-md">
-                    <div className="flex items-center gap-6 p-6">
-                        <div className="bg-thirdBg h-24 w-24 shrink-0 animate-pulse rounded-full" />
-                        <div className="flex min-w-0 flex-col gap-2">
-                            <div className="bg-thirdBg h-10 w-full max-w-56 animate-pulse rounded-md" />
-                            <div className="bg-thirdBg h-4 w-32 animate-pulse rounded-md" />
+                    <div className="flex flex-col gap-4 py-6">
+                        <div className="flex flex-wrap gap-2">
+                            <div className="bg-thirdBg h-9 w-28 animate-pulse rounded-md" />
+                            <div className="bg-thirdBg h-9 w-28 animate-pulse rounded-md" />
+                            <div className="bg-thirdBg h-9 w-28 animate-pulse rounded-md" />
                         </div>
-                    </div>
-                    <div className="flex flex-wrap gap-2 px-6 pb-4">
-                        <div className="bg-thirdBg h-9 w-28 animate-pulse rounded-md" />
-                        <div className="bg-thirdBg h-9 w-28 animate-pulse rounded-md" />
-                        <div className="bg-thirdBg h-9 w-28 animate-pulse rounded-md" />
+                        <div className="flex items-center gap-6">
+                            <div className="bg-thirdBg h-24 w-24 shrink-0 animate-pulse rounded-full" />
+                            <div className="flex min-w-0 flex-col gap-2">
+                                <div className="bg-thirdBg h-10 w-full max-w-56 animate-pulse rounded-md" />
+                                <div className="bg-thirdBg h-4 w-32 animate-pulse rounded-md" />
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div className="flex flex-col gap-4">
@@ -117,38 +108,17 @@ function RouteComponent() {
         },
     ] as const;
 
-    const achievementTiles = [
-        {
-            icon: Medal,
-            label: "Season 4 Winners",
-            bg: "bg-yellow-500/20",
-            text: "text-yellow-400",
-        },
-        {
-            icon: Medal,
-            label: "Season 3 Runner-up",
-            bg: "bg-gray-500/20",
-            text: "text-gray-400",
-        },
-        {
-            icon: Medal,
-            label: "Season 2 3rd Place",
-            bg: "bg-yellow-900/20",
-            text: "text-yellow-900",
-        },
-        {
-            icon: Medal,
-            label: "Season 4 Winners",
-            bg: "bg-yellow-500/20",
-            text: "text-yellow-400",
-        },
-    ] as const;
+    const achievementItems = placementSummariesToTileItems(
+        team.placement_summaries ?? [],
+    );
 
     return (
         <div className="mx-auto min-h-screen max-w-350 px-4 py-5 md:px-6">
             <div className="mb-6 overflow-hidden rounded-xl shadow-md">
                 <div className="flex flex-col gap-4 py-6">
-                    <AchievementTilesRow items={[...achievementTiles]} />
+                    {achievementItems.length > 0 && (
+                        <AchievementTilesRow items={achievementItems} />
+                    )}
                     <div className="flex items-center justify-between gap-4">
                         <div className="flex min-w-0 items-center gap-4">
                             <TeamLogo

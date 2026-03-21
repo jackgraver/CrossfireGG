@@ -1,5 +1,6 @@
 import { playerRepository } from "../players/player.repository";
 import { teamRepository } from "./team.repository";
+import { formatTeamPlacementSummary } from "./team.utils";
 import type {
     TeamDetailResponse,
     FormattedTeam,
@@ -16,63 +17,31 @@ export const teamService = {
     },
 
     getTeamById: async (teamId: number) => {
-        return await teamRepository.findById(teamId);
+        const team = await teamRepository.findById(teamId);
+        if (!team) {
+            return null;
+        }
 
-        // if (!team) {
-        //     return null;
-        // }
+        const tournaments = await teamService.getTeamTournaments(teamId);
+        const placement_summaries: string[] = [];
+        for (const t of tournaments) {
+            const p = t.placement;
+            if (p === 1 || p === 2 || p === 3) {
+                const line = formatTeamPlacementSummary(t.name, p);
+                if (line) placement_summaries.push(line);
+            }
+        }
 
-        // const formattedTeam: FormattedTeam = {
-        //     team_id: team.id.toString(),
-        //     name: team.name,
-        //     team_logo: team.team_logo || null,
-        //     faceit_id: team.faceit_id || null,
-        //     team_captain_id: team.team_captain_id?.toString() || null,
-        // };
-
-        // const teamStages = await teamRepository.findStagesByTeamId(teamId);
-
-        // const tournamentMap = new Map<number, FormattedTournament>();
-
-        // teamStages.forEach((item) => {
-        //     const tournamentId = item.tournament.id;
-
-        //     if (!tournamentMap.has(tournamentId)) {
-        //         tournamentMap.set(tournamentId, {
-        //             tournament_id: tournamentId.toString(),
-        //             tournament_name: item.tournament.name,
-        //             stages: [],
-        //         });
-        //     }
-
-        //     const tournament = tournamentMap.get(tournamentId)!;
-        //     tournament.stages.push({
-        //         stage_id: item.stage.id.toString(),
-        //         stage_name: item.stage.name,
-        //         seed: item.stageTeam.seed ?? undefined,
-        //         wins: item.stageTeam.wins ?? undefined,
-        //         losses: item.stageTeam.losses ?? undefined,
-        //         paid:
-        //             item.stageTeam.paid !== undefined
-        //                 ? item.stageTeam.paid
-        //                     ? 1
-        //                     : 0
-        //                 : undefined,
-        //         joined_tournament:
-        //             item.stageTeam.signed_up !== undefined
-        //                 ? item.stageTeam.signed_up
-        //                     ? 1
-        //                     : 0
-        //                 : undefined,
-        //     });
-        // });
-
-        // const tournaments = Array.from(tournamentMap.values());
-
-        // return {
-        //     team: formattedTeam,
-        //     tournaments: tournaments,
-        // };
+        return {
+            id: team.id,
+            name: team.name,
+            short_name: team.short_name ?? "",
+            team_logo: team.team_logo ?? null,
+            faceit_id: team.faceit_id ?? null,
+            team_captain_id: team.team_captain_id!,
+            social_links: team.social_links ?? null,
+            placement_summaries,
+        };
     },
 
     getTeamTournaments: async (teamId: number) => {

@@ -1,3 +1,13 @@
+export function formatTeamPlacementSummary(
+    tournamentName: string,
+    placement: number,
+): string | null {
+    if (placement === 1) return `${tournamentName} Winners`;
+    if (placement === 2) return `${tournamentName} Runners Up`;
+    if (placement === 3) return `${tournamentName} 3rd Place`;
+    return null;
+}
+
 export function shortName(name: string): string {
     const clean = name.trim();
 
