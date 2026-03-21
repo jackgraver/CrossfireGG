@@ -268,8 +268,6 @@ export function transformFaceitMatch(
                 stageFormat === "bracket") &&
             singleElim
         ) {
-            console.log("j-- losses", singleElim.lossesBeforeF1);
-            console.log(singleElim.lossesBeforeF2);
             const isThird = isThirdPlaceSingleElim(
                 singleElim.lossesBeforeF1,
                 singleElim.lossesBeforeF2,

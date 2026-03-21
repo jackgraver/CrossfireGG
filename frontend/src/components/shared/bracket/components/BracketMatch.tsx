@@ -6,6 +6,7 @@ interface BracketMatchProps {
     match: MatchWithParticipantsDTO | undefined;
     roundIndex: number;
     matchIndex: number;
+    layoutKey: string;
     onPositionUpdate: (
         roundIndex: number,
         matchIndex: number,
@@ -18,13 +19,23 @@ export const BracketMatch = React.memo(
         match,
         roundIndex,
         matchIndex,
+        layoutKey,
         onPositionUpdate,
     }: BracketMatchProps) => {
         const containerRef = React.useRef<HTMLDivElement>(null);
 
-        React.useEffect(() => {
-            onPositionUpdate(roundIndex, matchIndex, containerRef.current);
-        }, [onPositionUpdate, roundIndex, matchIndex]);
+        React.useLayoutEffect(() => {
+            const el = containerRef.current;
+            if (!el) return;
+
+            const measure = () => onPositionUpdate(roundIndex, matchIndex, el);
+
+            measure();
+
+            const ro = new ResizeObserver(() => measure());
+            ro.observe(el);
+            return () => ro.disconnect();
+        }, [onPositionUpdate, roundIndex, matchIndex, layoutKey]);
 
         return (
             <div

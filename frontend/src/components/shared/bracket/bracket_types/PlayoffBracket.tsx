@@ -75,6 +75,25 @@ export default function PlayoffBracket({ matches }: PlayoffBracketProps) {
             thirdPlaceRound: allRounds.find((r) => r.name === "3rd Place"),
         };
     }, [matches]);
+
+    const bracketLayoutSignature = useMemo(
+        () =>
+            matches
+                .map((m) =>
+                    [
+                        m.id,
+                        m.status,
+                        m.participants
+                            ?.map(
+                                (p) =>
+                                    `${p.stageTeam?.team_id ?? ""}:${p.stageTeam?.team?.name ?? ""}`,
+                            )
+                            .join(",") ?? "",
+                    ].join(":"),
+                )
+                .join("|"),
+        [matches],
+    );
     const [positions, setPositions] = useState<Record<string, MatchPosition>>(
         {},
     );
@@ -100,7 +119,13 @@ export default function PlayoffBracket({ matches }: PlayoffBracketProps) {
 
             const key = `${roundIndex}-${matchIndex}`;
             setPositions((prev) => {
-                if (prev[key]?.x === newPos.x && prev[key]?.y === newPos.y)
+                const prevPos = prev[key];
+                if (
+                    prevPos?.x === newPos.x &&
+                    prevPos?.y === newPos.y &&
+                    prevPos?.width === newPos.width &&
+                    prevPos?.height === newPos.height
+                )
                     return prev;
                 return { ...prev, [key]: newPos };
             });
@@ -150,6 +175,7 @@ export default function PlayoffBracket({ matches }: PlayoffBracketProps) {
                                     match={match}
                                     roundIndex={roundIndex}
                                     matchIndex={matchIndex}
+                                    layoutKey={bracketLayoutSignature}
                                     onPositionUpdate={handlePositionUpdate}
                                 />
                                 {round.name === "Grand Final" &&

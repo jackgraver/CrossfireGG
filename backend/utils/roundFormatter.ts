@@ -57,7 +57,6 @@ export function formatSingleEliminationRoundAbbrev(
 ): string {
     if (isThirdPlace) return "3RD";
     const rf = computeRoundsFromFinal(round, totalTeams);
-    console.log("j--rf", rf);
     switch (rf) {
         case 1:
             return "GF";
