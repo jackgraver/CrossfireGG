@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { MatchTeam } from "./MatchTeam";
 import { openInNewTab } from "@/utils/openInNewTab";
 import { MatchWithParticipantAndMinifiedMapsDTO } from "@repo/contracts";
@@ -126,15 +126,35 @@ export default function MatchCard({
                                 </span>
                             </div>
                             <div className="grid grid-cols-3 items-center gap-4">
-                                <span className="text-textPrimary min-w-0 truncate text-sm font-bold">
+                                <Link
+                                    to="/team/$team_id"
+                                    params={{
+                                        team_id: team1!.id.toString(),
+                                    }}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        closeDropdown();
+                                    }}
+                                    className="text-textPrimary min-w-0 truncate text-left text-sm font-bold"
+                                >
                                     {team1?.short_name}
-                                </span>
+                                </Link>
                                 <span className="text-textSecondary text-center text-sm font-bold">
                                     -
                                 </span>
-                                <span className="text-textPrimary min-w-0 truncate text-right text-sm font-bold">
+                                <Link
+                                    to="/team/$team_id"
+                                    params={{
+                                        team_id: team2!.id.toString(),
+                                    }}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        closeDropdown();
+                                    }}
+                                    className="text-textPrimary min-w-0 truncate text-right text-sm font-bold"
+                                >
                                     {team2?.short_name}
-                                </span>
+                                </Link>
                             </div>
                         </div>
                         {match.maps.length > 0 && (

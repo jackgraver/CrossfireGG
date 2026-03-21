@@ -77,7 +77,30 @@ export const teamService = {
 
     getTeamTournaments: async (teamId: number) => {
         const tournaments = await teamRepository.getTeamTournaments(teamId);
-        return tournaments;
+        return tournaments.map((tournament) => {
+            const stagesWithResult = tournament.stages.filter(
+                (stage) => stage.stageTeams[0]?.tournamentResult,
+            );
+
+            let placement: number | undefined;
+
+            if (stagesWithResult.length > 0) {
+                const sortedStages = [...stagesWithResult].sort((a, b) => {
+                    const dateA = new Date(a.end_date).getTime();
+                    const dateB = new Date(b.end_date).getTime();
+                    if (dateB !== dateA) return dateB - dateA;
+                    return b.id - a.id;
+                });
+
+                placement =
+                    sortedStages[0].stageTeams[0].tournamentResult?.placement;
+            }
+
+            return {
+                ...tournament,
+                placement,
+            };
+        });
     },
 
     getTeamMatches: async (teamId: number) => {

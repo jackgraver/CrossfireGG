@@ -11,11 +11,21 @@ export const matchService = {
             const team1Id = teamIds[0];
             const team2Id = teamIds[1];
 
-            const team1Stats = map.playerStats.filter(
-                (s) => s.stagePlayer?.stage_team_id === team1Id,
+            const rosterPlayerIds = (stageTeamId: number) =>
+                new Set(
+                    (match.participants.find((p) => p.team_id === stageTeamId)
+                        ?.stageTeam?.players ?? []
+                    ).map((sp) => sp.player_id),
+                );
+
+            const team1Roster = rosterPlayerIds(team1Id);
+            const team2Roster = rosterPlayerIds(team2Id);
+
+            const team1Stats = map.playerStats.filter((s) =>
+                team1Roster.has(s.player_id),
             );
-            const team2Stats = map.playerStats.filter(
-                (s) => s.stagePlayer?.stage_team_id === team2Id,
+            const team2Stats = map.playerStats.filter((s) =>
+                team2Roster.has(s.player_id),
             );
 
             return {

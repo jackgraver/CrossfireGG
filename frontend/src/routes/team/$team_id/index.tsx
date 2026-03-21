@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useTeam, useTeamTournaments } from "@/lib/api/team.queries";
+import { PlacementOrdinal } from "@/components/shared/PlacementOrdinal";
 import { Trophy } from "lucide-react";
 
 export const Route = createFileRoute("/team/$team_id/")({
@@ -9,10 +10,8 @@ export const Route = createFileRoute("/team/$team_id/")({
 function TeamOverview() {
     const { team_id } = Route.useParams();
     const { data: team, isLoading, error } = useTeam(team_id);
-    const {
-        data: tournaments,
-        isLoading: loadingTournaments,
-    } = useTeamTournaments(team_id);
+    const { data: tournaments, isLoading: loadingTournaments } =
+        useTeamTournaments(team_id);
 
     if (isLoading) {
         return (
@@ -60,7 +59,6 @@ function TeamOverview() {
 
     return (
         <div className="flex flex-col gap-6">
-            <h1 className="text-4xl">Events Played In</h1>
             {loadingTournaments && (
                 <div className="rounded-xl shadow-md">
                     <div className="border-border border-b p-4">
@@ -74,46 +72,82 @@ function TeamOverview() {
             )}
             {tournaments?.map((tournament) => (
                 <div key={tournament.id} className="rounded-xl shadow-md">
-                    <div className="border-border flex flex-row items-center gap-4 border-b p-4">
+                    <div className="gap flex flex-row items-center pb-2">
                         <Link
                             to="/tournament/$tournamentId/$stageId/bracket"
                             params={{
                                 tournamentId: tournament.name,
                                 stageId: tournament.stages[0]?.name ?? "",
                             }}
-                            className="text-textPrimary hover:text-cfRed text-lg font-semibold transition-colors"
+                            className="text-textPrimary hover:text-cfRed text-xl font-bold transition-colors"
                         >
                             {tournament.name}
                         </Link>
-                        <span className="text-textSecondary pt-0.5 text-sm font-semibold">
-                            8-12th
-                        </span>
+                        {tournament.placement != null && (
+                            <div className="pl-4">
+                                <PlacementOrdinal
+                                    placement={tournament.placement}
+                                />
+                            </div>
+                        )}
                     </div>
-                    <div className="grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-3">
+                    <div className="grid gap-3 pb-2 sm:grid-cols-2 lg:grid-cols-3">
                         {tournament.stages.map((stage) => (
                             <div key={stage.id}>
                                 {stage.stageTeams.length === 1 && (
-                                    <div className="border-border bg-secondBg hover:bg-thirdBg rounded-lg border p-4 transition-colors">
+                                    <div className="border-border bg-firstBg hover:bg-secondBg rounded-lg border p-4 transition-colors">
                                         <h3 className="text-textPrimary mb-3 font-medium">
                                             {stage.name}
                                         </h3>
-                                        <div className="flex flex-wrap gap-3 text-sm">
-                                            {stage.stageTeams[0].wins !== undefined &&
-                                                stage.stageTeams[0].losses !== undefined && (
-                                                <div className="flex items-center gap-1.5">
-                                                    <span className="text-textSecondary">Record:</span>
-                                                    <span className="font-bold text-green-500">{stage.stageTeams[0].wins}W</span>
-                                                    <span className="text-textSecondary">-</span>
-                                                    <span className="font-bold text-red-500">{stage.stageTeams[0].losses}L</span>
-                                                </div>
-                                            )}
-                                            {stage.stageTeams[0]?.seed && stage.stageTeams[0].seed > 0 && (
-                                                <div className="flex items-center gap-1.5">
-                                                    <span className="text-textSecondary">Seed:</span>
-                                                    <span className="text-textPrimary font-medium">#{stage.stageTeams[0].seed}</span>
-                                                </div>
-                                            )}
-                                        </div>
+                                        <h2></h2>
+                                        <article className="flex flex-wrap gap-3 text-sm">
+                                            {stage.stageTeams[0].wins !==
+                                                undefined &&
+                                                stage.stageTeams[0].losses !==
+                                                    undefined && (
+                                                    <div className="flex items-center gap-1.5">
+                                                        <span className="text-textSecondary">
+                                                            Record:
+                                                        </span>
+                                                        <span className="font-bold text-green-500">
+                                                            {
+                                                                stage
+                                                                    .stageTeams[0]
+                                                                    .wins
+                                                            }
+                                                            W
+                                                        </span>
+                                                        <span className="text-textSecondary">
+                                                            -
+                                                        </span>
+                                                        <span className="font-bold text-red-500">
+                                                            {
+                                                                stage
+                                                                    .stageTeams[0]
+                                                                    .losses
+                                                            }
+                                                            L
+                                                        </span>
+                                                    </div>
+                                                )}
+                                            {stage.stageTeams[0]?.seed &&
+                                                stage.stageTeams[0].seed >
+                                                    0 && (
+                                                    <div className="flex items-center gap-1.5">
+                                                        <span className="text-textSecondary">
+                                                            Seed:
+                                                        </span>
+                                                        <span className="text-textPrimary font-medium">
+                                                            #
+                                                            {
+                                                                stage
+                                                                    .stageTeams[0]
+                                                                    .seed
+                                                            }
+                                                        </span>
+                                                    </div>
+                                                )}
+                                        </article>
                                     </div>
                                 )}
                             </div>

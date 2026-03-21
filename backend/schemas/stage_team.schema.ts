@@ -12,6 +12,7 @@ import { stagePlayers } from "./stage_player.schema";
 import { teams } from "./team.schema";
 import { groups } from "./group.schema";
 import { stages } from "./stage.schema";
+import { tournamentResults } from "./tournament_results.schema";
 
 export const stageTeams = pgTable(
     "stage_teams",
@@ -67,4 +68,5 @@ export const stageTeamsRelations = relations(stageTeams, ({ one, many }) => ({
         fields: [stageTeams.group_id],
         references: [groups.id],
     }),
+    tournamentResult: one(tournamentResults),
 }));

@@ -59,6 +59,8 @@ async function clearStageSyncing(faceitId: string) {
 export async function syncTournamentMatches(
     stages: { id: number; faceit_id: string }[],
 ): Promise<"processing" | "idle"> {
+    if (process.env.SKIP_SYNC === "true") return "idle";
+
     const stagesToSync: typeof stages = [];
     let anySyncing = false;
 

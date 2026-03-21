@@ -12,8 +12,6 @@ import { teams } from "./team.schema";
 import { users } from "./user.schemas";
 import { matches } from "./match.schema";
 import { maps } from "./map.schema";
-import { stagePlayers } from "./stage_player.schema";
-
 //TODO: have way to differentiate between players and subs and coach
 export const players = pgTable(
     "players",
@@ -52,7 +50,7 @@ export const playerStats = pgTable(
         id: serial("id").primaryKey(),
         player_id: integer("player_id")
             .notNull()
-            .references(() => stagePlayers.player_id, { onDelete: "cascade" }),
+            .references((): any => players.id, { onDelete: "cascade" }),
         match_id: integer("match_id")
             .notNull()
             .references((): any => matches.id, {
@@ -109,9 +107,9 @@ export const playersRelations = relations(players, ({ one, many }) => ({
  * Stores performance metrics: kills, deaths, assists, ADR, damage
  */
 export const playerStatsRelations = relations(playerStats, ({ one }) => ({
-    stagePlayer: one(stagePlayers, {
+    player: one(players, {
         fields: [playerStats.player_id],
-        references: [stagePlayers.player_id],
+        references: [players.id],
     }),
     match: one(matches, {
         fields: [playerStats.match_id],

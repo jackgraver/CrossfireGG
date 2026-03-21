@@ -168,10 +168,14 @@ export const teamRepository = {
                         stageTeams: {
                             where: eq(stageTeams.team_id, teamId),
                             limit: 1,
+                            with: {
+                                tournamentResult: true,
+                            },
                         },
                     },
                 },
             },
+            orderBy: (t, { desc }) => [desc(t.start_date)],
         });
     },
 

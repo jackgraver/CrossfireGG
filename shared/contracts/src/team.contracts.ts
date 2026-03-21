@@ -16,8 +16,8 @@ export const TeamWithTournamentContract = z.array(
     z.object({
         id: z.number(),
         name: z.string(),
-        short_name: z.string(),
         status: z.string(),
+        placement: z.number().optional(),
         stages: z.array(
             z.object({
                 id: z.number(),

@@ -6,11 +6,10 @@ import {
     ExternalLinkIcon,
     Home,
     Medal,
-    Trophy,
     Users,
 } from "lucide-react";
 import TabGroup, { Tab } from "@/components/shared/TabGroup";
-import Tile from "@/routes/tournament/$tournamentId/-component/Tile";
+import AchievementTilesRow from "@/routes/team/$team_id/AchievementTilesRow";
 import { openInNewTab } from "@/utils/openInNewTab";
 
 export const Route = createFileRoute("/team/$team_id")({
@@ -118,37 +117,45 @@ function RouteComponent() {
         },
     ] as const;
 
+    const achievementTiles = [
+        {
+            icon: Medal,
+            label: "Season 4 Winners",
+            bg: "bg-yellow-500/20",
+            text: "text-yellow-400",
+        },
+        {
+            icon: Medal,
+            label: "Season 3 Runner-up",
+            bg: "bg-gray-500/20",
+            text: "text-gray-400",
+        },
+        {
+            icon: Medal,
+            label: "Season 2 3rd Place",
+            bg: "bg-yellow-900/20",
+            text: "text-yellow-900",
+        },
+        {
+            icon: Medal,
+            label: "Season 4 Winners",
+            bg: "bg-yellow-500/20",
+            text: "text-yellow-400",
+        },
+    ] as const;
+
     return (
         <div className="mx-auto min-h-screen max-w-350 px-4 py-5 md:px-6">
             <div className="mb-6 overflow-hidden rounded-xl shadow-md">
-                <div className="flex flex-col gap-4 p-4 sm:p-6">
-                    <div className="flex flex-wrap items-center gap-2">
-                        <Tile
-                            icon={Medal}
-                            label={`Season 4 Winners`}
-                            bg="bg-yellow-500/20"
-                            text="text-yellow-400"
-                        />
-                        <Tile
-                            icon={Medal}
-                            label={`Season 3 Runner-up`}
-                            bg="bg-gray-500/20"
-                            text="text-gray-400"
-                        />
-                        <Tile
-                            icon={Medal}
-                            label={`Season 2 3rd Place`}
-                            bg="bg-yellow-900/20"
-                            text="text-yellow-900"
-                        />
-                    </div>
+                <div className="flex flex-col gap-4 py-6">
+                    <AchievementTilesRow items={[...achievementTiles]} />
                     <div className="flex items-center justify-between gap-4">
-                        <div className="flex min-w-0 items-center gap-2">
+                        <div className="flex min-w-0 items-center gap-4">
                             <TeamLogo
                                 team={team}
                                 styling="h-16 w-16 sm:h-24 sm:w-24 shrink-0 rounded-full object-cover"
                             />
-                            <h1 className="text-textPrimary truncate text-2xl font-bold sm:text-4xl">
+                            <h1 className="text-textPrimary text-2xl font-bold sm:text-4xl">
                                 {team.name}
                             </h1>
                         </div>

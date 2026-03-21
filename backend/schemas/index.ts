@@ -10,3 +10,4 @@ export * from "./match_participant.schema";
 export * from "./stage.schema";
 export * from "./stage_player.schema";
 export * from "./stage_team.schema";
+export * from "./tournament_results.schema";

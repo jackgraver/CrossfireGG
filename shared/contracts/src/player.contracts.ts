@@ -41,7 +41,5 @@ export type StagePlayerDTO = z.infer<typeof StagePlayerContract>;
 export type PlayerStatsDTO = z.infer<typeof PlayerStatsContract>;
 
 export const PlayerStatsWithPlayerContract = PlayerStatsContract.extend({
-    stagePlayer: StagePlayerContract.extend({
-        player: PlayerContract,
-    }),
+    player: PlayerContract,
 });

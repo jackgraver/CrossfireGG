@@ -58,7 +58,6 @@ export const teamController = {
 
         const matches = await teamService.getTeamMatches(data.teamId);
 
-        // res.json(matches);
         sendContract(res, z.array(MatchWithParticipantsContract), matches);
     },
 

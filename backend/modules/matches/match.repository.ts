@@ -22,6 +22,12 @@ export const matchRepository = {
                         stageTeam: {
                             with: {
                                 team: true,
+                                players: {
+                                    columns: {
+                                        player_id: true,
+                                        stage_team_id: true,
+                                    },
+                                },
                             },
                         },
                     },
@@ -30,11 +36,7 @@ export const matchRepository = {
                     with: {
                         playerStats: {
                             with: {
-                                stagePlayer: {
-                                    with: {
-                                        player: true,
-                                    },
-                                },
+                                player: true,
                             },
                             orderBy: [
                                 desc(playerStats.adr),

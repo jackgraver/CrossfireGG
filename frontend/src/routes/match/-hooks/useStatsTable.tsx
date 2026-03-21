@@ -14,14 +14,12 @@ export function useStatsTable(data: any[] | undefined) {
     const columnHelper = createColumnHelper<any>();
 
     const columns = [
-        columnHelper.accessor("stagePlayer.player.player_name", {
+        columnHelper.accessor("player.player_name", {
             header: "Player",
             cell: (info) => (
                 <div className="flex items-center gap-2">
                     <TeamLogo
-                        avatar={
-                            info.row.original.stagePlayer?.player?.player_logo
-                        }
+                        avatar={info.row.original.player?.player_logo}
                         styling="h-6 w-6 rounded-full object-cover"
                     />
                     <span>{info.getValue()}</span>
