@@ -11,6 +11,7 @@ import {
 } from "../../schemas";
 import { eq, and, isNull, inArray, like, or, ne, sql, count } from "drizzle-orm";
 import { shortName } from "./team.utils";
+import type { StageTeamFaceitLookup } from "./team.types";
 
 export const teamRepository = {
     findAll: async () => {
@@ -70,6 +71,32 @@ export const teamRepository = {
                     isNull(st.deleted_at),
                 ),
         });
+    },
+
+    findStageTeamsByFaceitIds: async (
+        faceitIds: string[],
+        stageId: number,
+    ): Promise<StageTeamFaceitLookup[]> => {
+        if (faceitIds.length === 0) return [];
+        return await db
+            .select({
+                faceit_id: teams.faceit_id,
+                team_id: teams.id,
+                team_logo: teams.team_logo,
+                id: stageTeams.id,
+                wins: stageTeams.wins,
+                losses: stageTeams.losses,
+            })
+            .from(stageTeams)
+            .innerJoin(teams, eq(stageTeams.team_id, teams.id))
+            .where(
+                and(
+                    eq(stageTeams.stage_id, stageId),
+                    inArray(teams.faceit_id, faceitIds),
+                    isNull(stageTeams.deleted_at),
+                    isNull(teams.deleted_at),
+                ),
+            );
     },
 
     findMatchesByTeamId: async (teamId: number) => {
@@ -405,6 +432,35 @@ export const teamRepository = {
             .update(teams)
             .set({ team_logo: teamLogo, updated_at: new Date() })
             .where(eq(teams.faceit_id, faceitId));
+    },
+
+    bulkUpdateAvatars: async (avatarMap: Map<string, string>) => {
+        if (avatarMap.size === 0) return;
+        const faceitIds = [...avatarMap.keys()];
+        const rows = await db
+            .select({
+                id: teams.id,
+                faceit_id: teams.faceit_id,
+                team_logo: teams.team_logo,
+            })
+            .from(teams)
+            .where(and(inArray(teams.faceit_id, faceitIds), isNull(teams.deleted_at)));
+        const toUpdate = rows.filter(
+            (r) =>
+                r.faceit_id != null &&
+                r.team_logo !== avatarMap.get(r.faceit_id),
+        );
+        await Promise.all(
+            toUpdate.map((r) =>
+                db
+                    .update(teams)
+                    .set({
+                        team_logo: avatarMap.get(r.faceit_id!)!,
+                        updated_at: new Date(),
+                    })
+                    .where(eq(teams.id, r.id)),
+            ),
+        );
     },
 
     countStageTeams: async (stageId: number) => {

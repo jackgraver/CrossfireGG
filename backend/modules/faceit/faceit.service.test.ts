@@ -30,6 +30,8 @@ vi.mock("../tournaments/tournament.repository", () => ({
 vi.mock("../teams/team.repository", () => ({
     teamRepository: {
         findStageTeamByFaceitId: vi.fn(),
+        findStageTeamsByFaceitIds: vi.fn(),
+        bulkUpdateAvatars: vi.fn(),
         incrementStageTeamRecord: vi.fn(),
         countStageTeams: vi.fn(),
         upsertTournamentPlacementByTeamAndStage: vi.fn(),
