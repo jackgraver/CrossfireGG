@@ -3,6 +3,16 @@ import { teams, stageTeams, matches, matchParticipants } from "../../schemas";
 
 export type TeamSchema = InferSelectModel<typeof teams>;
 export type StageTeamSchema = InferSelectModel<typeof stageTeams>;
+
+/** Row from {@link teamRepository.findStageTeamsByFaceitIds} for lookups by Faceit team id */
+export type StageTeamFaceitLookup = {
+    faceit_id: string | null;
+    team_id: number;
+    team_logo: string | null;
+    id: number;
+    wins: number | null;
+    losses: number | null;
+};
 export type MatchSchema = InferSelectModel<typeof matches>;
 export type MatchParticipantSchema = InferSelectModel<typeof matchParticipants>;
 
