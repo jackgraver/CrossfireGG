@@ -9,7 +9,17 @@ import {
     tournaments,
     tournamentResults,
 } from "../../schemas";
-import { eq, and, isNull, inArray, like, or, ne, sql, count } from "drizzle-orm";
+import {
+    eq,
+    and,
+    isNull,
+    inArray,
+    like,
+    or,
+    ne,
+    sql,
+    count,
+} from "drizzle-orm";
 import { shortName } from "./team.utils";
 import type { StageTeamFaceitLookup } from "./team.types";
 
@@ -444,7 +454,12 @@ export const teamRepository = {
                 team_logo: teams.team_logo,
             })
             .from(teams)
-            .where(and(inArray(teams.faceit_id, faceitIds), isNull(teams.deleted_at)));
+            .where(
+                and(
+                    inArray(teams.faceit_id, faceitIds),
+                    isNull(teams.deleted_at),
+                ),
+            );
         const toUpdate = rows.filter(
             (r) =>
                 r.faceit_id != null &&

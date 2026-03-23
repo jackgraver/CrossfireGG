@@ -6,7 +6,7 @@ import { computeRoundsFromFinal } from "../modules/teams/team.utils";
 
 export type StageFormat =
     | "swiss"
-    | "single-elimination"
+    | "single elimination"
     | "double-elimination"
     | "roundRobin"
     | "bracket"
@@ -165,7 +165,7 @@ export function formatRound(
         case "swiss":
         case "roundRobin":
             return formatSwissRound(round, options?.wins, options?.losses);
-        case "single-elimination":
+        case "single elimination":
         case "bracket":
             return formatSingleEliminationRound(round, options?.totalTeams);
         case "double-elimination":
@@ -185,8 +185,8 @@ export function formatRound(
 export function mapFaceitFormatType(faceitType: string): StageFormat {
     const formatMap: Record<string, StageFormat> = {
         swiss: "swiss",
-        "single elimination": "single-elimination",
-        singleElimination: "single-elimination",
+        "single elimination": "single elimination",
+        singleElimination: "single elimination",
         "double elimination": "double-elimination",
         doubleElimination: "double-elimination",
         roundRobin: "roundRobin",

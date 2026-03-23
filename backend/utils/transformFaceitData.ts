@@ -264,7 +264,7 @@ export function transformFaceitMatch(
     // If we have format information, format the round nicely
     if (faceitMatch.round && stageFormat && stageFormat !== "unknown") {
         if (
-            (stageFormat === "single-elimination" ||
+            (stageFormat === "single elimination" ||
                 stageFormat === "bracket") &&
             singleElim
         ) {
