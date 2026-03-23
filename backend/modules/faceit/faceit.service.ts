@@ -151,6 +151,8 @@ export const faceitImportService = {
             totalTeams,
             standingsSnapshots,
         );
+
+        return { newMatchesCount: validMatches.length };
     },
 
     /**
@@ -290,15 +292,19 @@ export const faceitImportService = {
     ): Promise<Map<string, number>> {
         const faceitToDbId = new Map<string, number>();
         const totalTeams = matchContext?.totalTeams ?? 0;
-        for (const match of matches) {
+        for (let i = matches.length - 1; i >= 0; i--) {
+            const match = matches[i];
             const f1 = match.teams.faction1.faction_id;
             const f2 = match.teams.faction2.faction_id;
-            const stageTeam1 =
-                stageTeamsByFaceitId?.get(f1) ??
-                (await teamRepository.findStageTeamByFaceitId(f1, stageId));
-            const stageTeam2 =
-                stageTeamsByFaceitId?.get(f2) ??
-                (await teamRepository.findStageTeamByFaceitId(f2, stageId));
+            // Always fetch stage teams from the database for freshest record
+            const stageTeam1 = await teamRepository.findStageTeamByFaceitId(
+                f1,
+                stageId,
+            );
+            const stageTeam2 = await teamRepository.findStageTeamByFaceitId(
+                f2,
+                stageId,
+            );
             if (!stageTeam1 || !stageTeam2) {
                 logger.warn(
                     `Skipping match ${match.match_id}: stage teams not found for factions ${f1}, ${f2}`,
@@ -318,9 +324,11 @@ export const faceitImportService = {
                 }
             }
 
+            console.log("stageTeam1", stageTeam1);
+            console.log("stageTeam2", stageTeam2);
             const singleElim =
                 matchContext &&
-                (matchContext.stageFormat === "single-elimination" ||
+                (matchContext.stageFormat === "single elimination" ||
                     matchContext.stageFormat === "bracket")
                     ? {
                           totalTeams,
@@ -328,7 +336,7 @@ export const faceitImportService = {
                           lossesBeforeF2: stageTeam2.losses ?? 0,
                       }
                     : undefined;
-
+            console.log("singleElim", singleElim);
             const matchData = transformFaceitMatch(
                 match,
                 stageId,
@@ -1066,7 +1074,7 @@ export const faceitImportService = {
     ): Promise<boolean> => {
         const singleElim =
             matchContext &&
-            (matchContext.stageFormat === "single-elimination" ||
+            (matchContext.stageFormat === "single elimination" ||
                 matchContext.stageFormat === "bracket")
                 ? {
                       totalTeams: matchContext.totalTeams,
