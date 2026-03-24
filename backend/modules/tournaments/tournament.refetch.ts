@@ -99,20 +99,16 @@ export async function syncTournamentMatches(
 async function syncStages(stages: { id: number; faceit_id: string }[]) {
     for (const { id, faceit_id } of stages) {
         try {
-            // const matchesData =
-            //     await faceitFetchUtil.fetchMatchesData(faceit_id);
+            const matchesData =
+                await faceitFetchUtil.fetchMatchesData(faceit_id);
 
-            // console.log(
-            //     `Processing matches for ${faceit_id}, found ${matchesData.length} matches`,
-            // );
+            console.log(
+                `Processing matches for ${faceit_id}, found ${matchesData.length} matches`,
+            );
 
-            // const result = await faceitImportService.processNewStageMatches(
-            //     matchesData,
-            //     id,
-            // );
-            const result = await faceitImportService.processMatchesSteps(
+            const result = await faceitImportService.processNewStageMatches(
+                matchesData,
                 id,
-                faceit_id,
             );
             console.log(
                 `Processed ${result?.newMatchesCount ?? -1} new matches`,

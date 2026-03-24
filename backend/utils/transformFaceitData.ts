@@ -374,21 +374,6 @@ export function transformFaceitMatchParticipants(
 }
 
 /**
- * Extract unique group names/numbers from matches
- */
-export function extractGroupsFromMatches(matches: FaceitAPIMatch[]): number[] {
-    const groups = new Set<number>();
-
-    for (const match of matches) {
-        if (match.group !== undefined && match.group !== null) {
-            groups.add(match.group);
-        }
-    }
-
-    return Array.from(groups).sort((a, b) => a - b);
-}
-
-/**
  * Extract all unique players from a match
  */
 export function extractPlayersFromMatch(
