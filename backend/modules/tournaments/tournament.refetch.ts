@@ -74,8 +74,10 @@ export async function syncTournamentMatches(
 
         const last = await getLastRefetchTime(stage.faceit_id);
         if (Date.now() - last < CHECK_INTERVAL) {
+            const msSinceLastRefetch = Date.now() - last;
+            const msUntilNextRefetch = CHECK_INTERVAL - msSinceLastRefetch;
             console.log(
-                `Skipping ${stage.faceit_id}, last refetch was ${Date.now() - last}ms ago`,
+                `Skipping ${stage.faceit_id}, last refetch was ${msSinceLastRefetch}ms ago. Next refetch in ${msUntilNextRefetch}ms`,
             );
             continue;
         }

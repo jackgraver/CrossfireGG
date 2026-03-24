@@ -14,6 +14,6 @@ export default {
     out: "./drizzle",
     dialect: "postgresql",
     dbCredentials: {
-        url: "postgres://app_user:app_password@host.docker.internal:5432/cf-db",
+        url: "postgres://app-user:defpass@165.232.131.108:5432/cf-db",
     },
 } satisfies Config;

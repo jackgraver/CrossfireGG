@@ -136,7 +136,7 @@ export const faceitFetchUtil = {
                 );
                 return undefined as unknown as T;
             }
-            console.error(`[Faceit API] Error fetching data:`, error);
+            console.error(`[Faceit API] Error fetching data`);
             throw error;
         }
     },

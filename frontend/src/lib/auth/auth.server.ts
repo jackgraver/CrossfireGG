@@ -4,7 +4,7 @@ import { getRequestHeader } from "@tanstack/react-start/server";
 export const authMiddleware = createMiddleware().server(async ({ next }) => {
     const cookie = getRequestHeader("cookie");
     const userAgent = getRequestHeader("user-agent");
-    const base = import.meta.env.VITE_API_BASE_URL;
+    const base = "http://backend:5000";
 
     try {
         const res = await fetch(`${base}/user/me`, {

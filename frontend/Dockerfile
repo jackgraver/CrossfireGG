@@ -21,7 +21,6 @@ ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 ENV PATH=/app/node_modules/.bin:$PATH
 
 RUN npm run build -w @repo/contracts && npm run build -w @repo/types
-RUN npm run build -w frontend_mig
 
 FROM base AS runner
 WORKDIR /app

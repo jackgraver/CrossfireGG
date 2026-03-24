@@ -6,22 +6,30 @@ FRONTEND_IMAGE="cf-frontend"
 BACKEND_IMAGE="cf-backend"
 TAG="latest"
 
+NO_CACHE=""
+for arg in "$@"; do
+  case "$arg" in
+    --no-cache) NO_CACHE=--no-cache ;;
+  esac
+done
+
 # ---------------------------
 # Parallel builds
 # ---------------------------
 
 echo "Building images in parallel..."
+[ -n "$NO_CACHE" ] && echo "(using --no-cache)"
 
 (
   echo "Building frontend..."
-  docker build -t ${FRONTEND_IMAGE}:${TAG} \
+  docker build $NO_CACHE -t ${FRONTEND_IMAGE}:${TAG} \
     --build-arg VITE_API_BASE_URL=https://api.crossfiregg.com \
     -f frontend/Dockerfile .
 ) &
 
 (
   echo "Building backend..."
-  docker build -t ${BACKEND_IMAGE}:${TAG} -f backend/Dockerfile .
+  docker build $NO_CACHE -t ${BACKEND_IMAGE}:${TAG} -f backend/Dockerfile .
 ) &
 
 wait
