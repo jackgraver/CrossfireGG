@@ -51,7 +51,7 @@ export default function UpcomingMatches() {
     }
 
     if (!upcomingMatches?.length) {
-        return <p>todo</p>;
+        return null;
     }
 
     const canGoPrevious = startIndex > 0;
