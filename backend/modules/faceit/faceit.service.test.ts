@@ -1,4 +1,12 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import {
+    afterEach,
+    beforeAll,
+    beforeEach,
+    describe,
+    expect,
+    it,
+    vi,
+} from "vitest";
 
 // Mock dependencies before importing service
 vi.mock("../../core/logger", () => ({
@@ -530,253 +538,154 @@ describe("faceitImportService", () => {
     //     });
     // });
 
-    describe("createStageMatches", () => {
+    describe("transformFaceitMatch single-elim round labels", () => {
         const matchContextSingleElim16 = {
             stageFormat: "single elimination" as const,
             totalTeams: 16,
         };
 
-        beforeEach(async () => {
-            vi.mocked(matchRepository.upsertMatchByFaceitId).mockResolvedValue({
-                id: 500,
-            } as any);
+        let transformFaceitMatch: typeof transformHelpers.transformFaceitMatch;
+
+        beforeAll(async () => {
             const actual = await vi.importActual<
                 typeof import("../../utils/transformFaceitData")
             >("../../utils/transformFaceitData");
-            vi.mocked(transformHelpers.transformFaceitMatch).mockImplementation(
-                actual.transformFaceitMatch,
-            );
+            transformFaceitMatch = actual.transformFaceitMatch;
         });
 
-        afterEach(() => {
-            vi.mocked(transformHelpers.transformFaceitMatch).mockReset();
-            vi.mocked(transformHelpers.transformFaceitMatch).mockReturnValue(
-                {} as any,
-            );
-        });
-
-        it("upserts round 3RD when both stage teams already have a loss (bronze)", async () => {
+        it("labels round 3RD when both stage teams already have a loss (bronze)", () => {
             const match = createMockFaceitMatch({
                 match_id: "bronze",
                 round: 4,
             });
-            const stageTeamsByFaceitId = new Map([
-                [
-                    "f1",
-                    {
-                        id: 1,
-                        team_id: 10,
-                        faceit_id: "f1",
-                        losses: 1,
-                    } as any,
-                ],
-                [
-                    "f2",
-                    {
-                        id: 2,
-                        team_id: 20,
-                        faceit_id: "f2",
-                        losses: 1,
-                    } as any,
-                ],
-            ]);
-            await faceitImportService.createStageMatches(
+            const row = transformFaceitMatch(
+                match as any,
                 1,
-                [match] as any,
-                new Map(),
-                matchContextSingleElim16,
-                stageTeamsByFaceitId,
+                null,
+                matchContextSingleElim16.stageFormat,
+                undefined,
+                {
+                    totalTeams: matchContextSingleElim16.totalTeams,
+                    lossesBeforeF1: 1,
+                    lossesBeforeF2: 1,
+                },
             );
-            expect(
-                matchRepository.upsertMatchByFaceitId,
-            ).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    faceit_id: "bronze",
-                    round: "3RD",
-                }),
-            );
+            expect(row).toMatchObject({
+                faceit_id: "bronze",
+                round: "3RD",
+            });
         });
 
-        it("upserts round GF when both sides are unbeaten (same Faceit round as a bronze match)", async () => {
+        it("labels round GF when both sides are unbeaten (same Faceit round as a bronze match)", () => {
             const match = createMockFaceitMatch({
                 match_id: "gf",
                 round: 4,
             });
-            const stageTeamsByFaceitId = new Map([
-                [
-                    "f1",
-                    {
-                        id: 1,
-                        team_id: 10,
-                        faceit_id: "f1",
-                        losses: 0,
-                    } as any,
-                ],
-                [
-                    "f2",
-                    {
-                        id: 2,
-                        team_id: 20,
-                        faceit_id: "f2",
-                        losses: 0,
-                    } as any,
-                ],
-            ]);
-            await faceitImportService.createStageMatches(
+            const row = transformFaceitMatch(
+                match as any,
                 1,
-                [match] as any,
-                new Map(),
-                matchContextSingleElim16,
-                stageTeamsByFaceitId,
+                null,
+                matchContextSingleElim16.stageFormat,
+                undefined,
+                {
+                    totalTeams: matchContextSingleElim16.totalTeams,
+                    lossesBeforeF1: 0,
+                    lossesBeforeF2: 0,
+                },
             );
-            expect(
-                matchRepository.upsertMatchByFaceitId,
-            ).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    faceit_id: "gf",
-                    round: "GF",
-                }),
-            );
+            expect(row).toMatchObject({
+                faceit_id: "gf",
+                round: "GF",
+            });
         });
 
-        it("upserts 3RD when resolving teams via findStageTeamByFaceitId with prior losses", async () => {
+        it("labels 3RD with prior losses (same inputs as DB-resolved stage teams)", () => {
             const match = createMockFaceitMatch({
                 match_id: "m-semi-losers",
                 round: 4,
             });
-            vi.mocked(teamRepository.findStageTeamByFaceitId)
-                .mockResolvedValueOnce({
-                    id: 1,
-                    team_id: 10,
-                    losses: 1,
-                } as any)
-                .mockResolvedValueOnce({
-                    id: 2,
-                    team_id: 20,
-                    losses: 1,
-                } as any);
-            await faceitImportService.createStageMatches(
+            const row = transformFaceitMatch(
+                match as any,
                 1,
-                [match] as any,
-                new Map(),
-                matchContextSingleElim16,
+                null,
+                matchContextSingleElim16.stageFormat,
+                undefined,
+                {
+                    totalTeams: matchContextSingleElim16.totalTeams,
+                    lossesBeforeF1: 1,
+                    lossesBeforeF2: 1,
+                },
             );
-            expect(
-                matchRepository.upsertMatchByFaceitId,
-            ).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    faceit_id: "m-semi-losers",
-                    round: "3RD",
-                }),
-            );
+            expect(row).toMatchObject({
+                faceit_id: "m-semi-losers",
+                round: "3RD",
+            });
         });
 
-        it("upserts GF when losses are null or undefined (coerced to 0)", async () => {
+        it("labels GF when losses are null or undefined (coerced to 0)", () => {
             const match = createMockFaceitMatch({
                 match_id: "m-final",
                 round: 4,
             });
-            const stageTeamsByFaceitId = new Map([
-                [
-                    "f1",
-                    {
-                        id: 1,
-                        team_id: 10,
-                        faceit_id: "f1",
-                        losses: null,
-                    } as any,
-                ],
-                [
-                    "f2",
-                    {
-                        id: 2,
-                        team_id: 20,
-                        faceit_id: "f2",
-                        losses: undefined,
-                    } as any,
-                ],
-            ]);
-            await faceitImportService.createStageMatches(
+            const row = transformFaceitMatch(
+                match as any,
                 1,
-                [match] as any,
-                new Map(),
-                matchContextSingleElim16,
-                stageTeamsByFaceitId,
+                null,
+                matchContextSingleElim16.stageFormat,
+                undefined,
+                {
+                    totalTeams: matchContextSingleElim16.totalTeams,
+                    lossesBeforeF1: 0,
+                    lossesBeforeF2: 0,
+                },
             );
-            expect(
-                matchRepository.upsertMatchByFaceitId,
-            ).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    faceit_id: "m-final",
-                    round: "GF",
-                }),
-            );
+            expect(row).toMatchObject({
+                faceit_id: "m-final",
+                round: "GF",
+            });
         });
 
-        it("swiss format does not apply single-elim 3RD/GF abbreviations", async () => {
+        it("swiss format does not apply single-elim 3RD/GF abbreviations", () => {
             const match = createMockFaceitMatch({ round: 1 });
-            const stageTeamsByFaceitId = new Map([
-                [
-                    "f1",
-                    { id: 1, team_id: 10, faceit_id: "f1", losses: 1 } as any,
-                ],
-                [
-                    "f2",
-                    { id: 2, team_id: 20, faceit_id: "f2", losses: 1 } as any,
-                ],
-            ]);
-            await faceitImportService.createStageMatches(
+            const row = transformFaceitMatch(
+                match as any,
                 1,
-                [match] as any,
-                new Map(),
-                { stageFormat: "swiss", totalTeams: 8 },
-                stageTeamsByFaceitId,
+                null,
+                "swiss",
+                undefined,
+                {
+                    totalTeams: 8,
+                    lossesBeforeF1: 1,
+                    lossesBeforeF2: 1,
+                },
             );
-            expect(
-                matchRepository.upsertMatchByFaceitId,
-            ).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    round: "Round 1",
-                }),
-            );
-            expect(
-                matchRepository.upsertMatchByFaceitId,
-            ).not.toHaveBeenCalledWith(
-                expect.objectContaining({ round: "3RD" }),
-            );
+            expect(row).toMatchObject({
+                round: "Round 1",
+            });
+            expect(row.round).not.toBe("3RD");
         });
 
-        it("passes group_id through and formats single-elim round (e.g. QF)", async () => {
+        it("passes group_id through and formats single-elim round (e.g. QF)", () => {
             const match = createMockFaceitMatch({ round: 2, group: 1 });
-            const groupMapping = new Map([[1, 42]]);
-            const stageTeamsByFaceitId = new Map([
-                [
-                    "f1",
-                    { id: 1, team_id: 10, faceit_id: "f1", losses: 0 } as any,
-                ],
-                [
-                    "f2",
-                    { id: 2, team_id: 20, faceit_id: "f2", losses: 0 } as any,
-                ],
-            ]);
-            await faceitImportService.createStageMatches(
+            const row = transformFaceitMatch(
+                match as any,
                 1,
-                [match] as any,
-                groupMapping,
-                matchContextSingleElim16,
-                stageTeamsByFaceitId,
+                42,
+                matchContextSingleElim16.stageFormat,
+                undefined,
+                {
+                    totalTeams: matchContextSingleElim16.totalTeams,
+                    lossesBeforeF1: 0,
+                    lossesBeforeF2: 0,
+                },
             );
-            expect(
-                matchRepository.upsertMatchByFaceitId,
-            ).toHaveBeenCalledWith(
-                expect.objectContaining({
-                    group_id: 42,
-                    round: "QF",
-                }),
-            );
+            expect(row).toMatchObject({
+                group_id: 42,
+                round: "QF",
+            });
         });
 
-        it("in one batch, labels bronze 3RD and grand final GF when Faceit round matches", async () => {
+        it("labels bronze 3RD and grand final GF for distinct match payloads", () => {
             const bronze = createMockFaceitMatch({
                 match_id: "bronze",
                 round: 4,
@@ -805,73 +714,75 @@ describe("faceitImportService", () => {
                     },
                 },
             });
-            const stageTeamsByFaceitId = new Map([
-                [
-                    "b1",
-                    {
-                        id: 1,
-                        team_id: 10,
-                        faceit_id: "b1",
-                        losses: 1,
-                    } as any,
-                ],
-                [
-                    "b2",
-                    {
-                        id: 2,
-                        team_id: 20,
-                        faceit_id: "b2",
-                        losses: 1,
-                    } as any,
-                ],
-                [
-                    "g1",
-                    {
-                        id: 3,
-                        team_id: 30,
-                        faceit_id: "g1",
-                        losses: 0,
-                    } as any,
-                ],
-                [
-                    "g2",
-                    {
-                        id: 4,
-                        team_id: 40,
-                        faceit_id: "g2",
-                        losses: 0,
-                    } as any,
-                ],
-            ]);
-            await faceitImportService.createStageMatches(
-                1,
-                [bronze, gf] as any,
-                new Map(),
-                matchContextSingleElim16,
-                stageTeamsByFaceitId,
-            );
             expect(
-                matchRepository.upsertMatchByFaceitId,
-            ).toHaveBeenNthCalledWith(
-                1,
-                expect.objectContaining({
-                    faceit_id: "bronze",
-                    round: "3RD",
-                }),
-            );
+                transformFaceitMatch(
+                    bronze as any,
+                    1,
+                    null,
+                    matchContextSingleElim16.stageFormat,
+                    undefined,
+                    {
+                        totalTeams: matchContextSingleElim16.totalTeams,
+                        lossesBeforeF1: 1,
+                        lossesBeforeF2: 1,
+                    },
+                ),
+            ).toMatchObject({ faceit_id: "bronze", round: "3RD" });
             expect(
-                matchRepository.upsertMatchByFaceitId,
-            ).toHaveBeenNthCalledWith(
-                2,
-                expect.objectContaining({
-                    faceit_id: "gf",
-                    round: "GF",
-                }),
-            );
+                transformFaceitMatch(
+                    gf as any,
+                    1,
+                    null,
+                    matchContextSingleElim16.stageFormat,
+                    undefined,
+                    {
+                        totalTeams: matchContextSingleElim16.totalTeams,
+                        lossesBeforeF1: 0,
+                        lossesBeforeF2: 0,
+                    },
+                ),
+            ).toMatchObject({ faceit_id: "gf", round: "GF" });
         });
     });
 
-    describe("applyTournamentPlacementsForMatches", () => {
+    describe("applyTournamentPlacementsForMatch (batch loop)", () => {
+        async function applyPlacementsBatch(
+            matches: ReturnType<typeof createMockFaceitMatch>[],
+            stageId: number,
+            stageFormatRow: { name: string } | null,
+            totalTeams: number,
+            snapshots: Map<
+                string,
+                {
+                    stageTeam1: { team_id: number; losses?: number | null };
+                    stageTeam2: { team_id: number; losses?: number | null };
+                }
+            >,
+        ) {
+            for (let i = matches.length - 1; i >= 0; i--) {
+                const match = matches[i] as any;
+                const snap = snapshots.get(match.match_id);
+                if (!snap) {
+                    continue;
+                }
+                try {
+                    await faceitImportService.applyTournamentPlacementsForMatch(
+                        match,
+                        stageId,
+                        snap.stageTeam1,
+                        snap.stageTeam2,
+                        stageFormatRow,
+                        totalTeams,
+                    );
+                } catch (error) {
+                    logger.error(
+                        `Error applying placements for match ${match.match_id}:`,
+                        error,
+                    );
+                }
+            }
+        }
+
         it("applies grand-final placements (1st/2nd) when snapshot has no prior losses", async () => {
             const match = createMockFaceitMatch({
                 match_id: "gf",
@@ -894,8 +805,8 @@ describe("faceitImportService", () => {
                     },
                 ],
             ]);
-            await faceitImportService.applyTournamentPlacementsForMatches(
-                [match] as any,
+            await applyPlacementsBatch(
+                [match],
                 1,
                 { name: "single elimination" },
                 16,
@@ -914,8 +825,8 @@ describe("faceitImportService", () => {
                 match_id: "orphan",
                 round: 4,
             });
-            await faceitImportService.applyTournamentPlacementsForMatches(
-                [match] as any,
+            await applyPlacementsBatch(
+                [match],
                 1,
                 { name: "single elimination" },
                 16,
@@ -942,8 +853,8 @@ describe("faceitImportService", () => {
                     },
                 ],
             ]);
-            await faceitImportService.applyTournamentPlacementsForMatches(
-                [match] as any,
+            await applyPlacementsBatch(
+                [match],
                 1,
                 { name: "single elimination" },
                 16,
@@ -975,8 +886,8 @@ describe("faceitImportService", () => {
                 ],
             ]);
             await expect(
-                faceitImportService.applyTournamentPlacementsForMatches(
-                    [match] as any,
+                applyPlacementsBatch(
+                    [match],
                     1,
                     { name: "single elimination" },
                     16,
