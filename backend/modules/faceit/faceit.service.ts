@@ -10,6 +10,7 @@ import {
     transformFaceitMatchParticipants,
     transformFaceitMaps,
     FaceitAPITournamentTeam,
+    extractPlayersFromMatch,
 } from "../../utils/transformFaceitData";
 import { teamRepository } from "../teams/team.repository";
 import { matchRepository } from "../matches/match.repository";
@@ -174,9 +175,6 @@ export const faceitImportService = {
         matches: FaceitAPIMatch[],
         stageId: number,
     ): Promise<{ newMatchesCount: number }> => {
-        console.log(
-            "==========================processNewStageMatches==========================",
-        );
         if (matches.length === 0) {
             logger.info("No matches to import");
             return { newMatchesCount: 0 };
@@ -452,6 +450,23 @@ export const faceitImportService = {
             [faceitMatch.teams.faction2.faction_id]: p2.id,
         };
 
+        const rosterByFaceitPlayerId = new Map(
+            extractPlayersFromMatch(faceitMatch).map((p) => [p.player_id, p]),
+        );
+        const faceitTeamIdToStageTeam = new Map<
+            string,
+            { id: number; team_id: number }
+        >([
+            [
+                faceitMatch.teams.faction1.faction_id,
+                { id: stageTeam1.id, team_id: stageTeam1.team_id },
+            ],
+            [
+                faceitMatch.teams.faction2.faction_id,
+                { id: stageTeam2.id, team_id: stageTeam2.team_id },
+            ],
+        ]);
+
         try {
             const stats = await faceitFetchUtil.fetchData<FaceitAPIMatchStats>(
                 `/matches/${faceitMatch.match_id}/stats`,
@@ -483,41 +498,62 @@ export const faceitImportService = {
                     });
 
                     for (const teamStats of round.teams) {
+                        const stageTeamCtx = faceitTeamIdToStageTeam.get(
+                            teamStats.team_id,
+                        );
+                        if (!stageTeamCtx) {
+                            logger.warn(
+                                `Match ${faceitMatch.match_id} map ${mapName}: unknown Faceit team_id ${teamStats.team_id} in stats; skipping player rows`,
+                            );
+                            continue;
+                        }
                         for (const playerStats of teamStats.players) {
-                            const player =
-                                await playerRepository.findByFaceitId(
-                                    playerStats.player_id,
-                                );
-                            if (player) {
-                                await playerRepository.upsertPlayerStats(
-                                    player.id,
-                                    createdMatch.id,
-                                    map.id,
-                                    {
-                                        kills:
-                                            parseInt(
-                                                playerStats.player_stats.Kills,
-                                            ) || 0,
-                                        deaths:
-                                            parseInt(
-                                                playerStats.player_stats.Deaths,
-                                            ) || 0,
-                                        assists:
-                                            parseInt(
-                                                playerStats.player_stats
-                                                    .Assists,
-                                            ) || 0,
-                                        adr:
-                                            parseInt(
-                                                playerStats.player_stats.ADR,
-                                            ) || 0,
-                                        damage:
-                                            parseInt(
-                                                playerStats.player_stats.Damage,
-                                            ) || 0,
-                                    },
-                                );
-                            }
+                            const rosterPlayer = rosterByFaceitPlayerId.get(
+                                playerStats.player_id,
+                            );
+                            const insertedPlayer =
+                                await playerRepository.upsertPlayerByFaceitId({
+                                    player_name:
+                                        rosterPlayer?.nickname ??
+                                        playerStats.player_id,
+                                    faceit_id: playerStats.player_id,
+                                    player_logo: rosterPlayer?.avatar ?? null,
+                                    country: "",
+                                    team_id: stageTeamCtx.team_id,
+                                    base_role: "starter",
+                                });
+                            await tournamentRepository.upsertStageRoster({
+                                stage_team_id: stageTeamCtx.id,
+                                player_id: insertedPlayer.id,
+                                role: "starter",
+                            });
+                            await playerRepository.upsertPlayerStats(
+                                insertedPlayer.id,
+                                createdMatch.id,
+                                map.id,
+                                {
+                                    kills:
+                                        parseInt(
+                                            playerStats.player_stats.Kills,
+                                        ) || 0,
+                                    deaths:
+                                        parseInt(
+                                            playerStats.player_stats.Deaths,
+                                        ) || 0,
+                                    assists:
+                                        parseInt(
+                                            playerStats.player_stats.Assists,
+                                        ) || 0,
+                                    adr:
+                                        parseInt(
+                                            playerStats.player_stats.ADR,
+                                        ) || 0,
+                                    damage:
+                                        parseInt(
+                                            playerStats.player_stats.Damage,
+                                        ) || 0,
+                                },
+                            );
                         }
                     }
                 }
