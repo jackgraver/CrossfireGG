@@ -1,12 +1,7 @@
 import { redisGet, redisSet, redisDel } from "../../core/redis";
+import { tournamentStageGetCacheKeys } from "../../core/middleware/redis.middleware";
 import { faceitFetchUtil } from "../../utils/faceitFetch.util";
 import { faceitImportService } from "../faceit/faceit.service";
-
-const stageCacheKeys = (stageId: number) => [
-    `cache:GET:/tournament/stage/${stageId}/matches`,
-    `cache:GET:/tournament/stage/${stageId}/bracket`,
-    `cache:GET:/tournament/stage/${stageId}/teams`,
-];
 
 let LAST_REFETCH_TIME = new Map<string, number>();
 const SYNCING_STAGES = new Set<string>();
@@ -41,17 +36,17 @@ async function setLastRefetchTime(faceitId: string, timestamp: number) {
     );
 }
 
-async function isStageSyncing(faceitId: string): Promise<boolean> {
+export async function isStageSyncing(faceitId: string): Promise<boolean> {
     if (SYNCING_STAGES.has(faceitId)) return true;
     return !!(await redisGet(syncingStageKey(faceitId)));
 }
 
-async function markStageSyncing(faceitId: string) {
+export async function markStageSyncing(faceitId: string) {
     SYNCING_STAGES.add(faceitId);
     await redisSet(syncingStageKey(faceitId), "1", SYNC_LOCK_TTL);
 }
 
-async function clearStageSyncing(faceitId: string) {
+export async function clearStageSyncing(faceitId: string) {
     SYNCING_STAGES.delete(faceitId);
     await redisDel(syncingStageKey(faceitId));
 }
@@ -118,7 +113,7 @@ async function syncStages(stages: { id: number; faceit_id: string }[]) {
 
             await setLastRefetchTime(faceit_id, Date.now());
         } finally {
-            await Promise.all(stageCacheKeys(id).map(redisDel));
+            await Promise.all(tournamentStageGetCacheKeys(id).map(redisDel));
             await clearStageSyncing(faceit_id);
         }
     }

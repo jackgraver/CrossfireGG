@@ -4,7 +4,10 @@ import { getRequestHeader } from "@tanstack/react-start/server";
 export const authMiddleware = createMiddleware().server(async ({ next }) => {
     const cookie = getRequestHeader("cookie");
     const userAgent = getRequestHeader("user-agent");
-    const base = "http://backend:5000";
+    const base =
+        process.env.NODE_ENV === "development"
+            ? "http://localhost:5000"
+            : "http://backend:5000";
 
     try {
         const res = await fetch(`${base}/user/me`, {

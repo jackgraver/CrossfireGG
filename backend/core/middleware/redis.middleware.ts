@@ -41,3 +41,12 @@ export const cacheKeyGenerator = (req: Request): string => {
     const { method, originalUrl } = req;
     return `cache:${method}:${originalUrl}`;
 };
+
+/** GET response keys for checkRedisCache on /tournament/stage/:stageId/* (must match cacheKeyGenerator). */
+export function tournamentStageGetCacheKeys(stageId: number): string[] {
+    return [
+        `cache:GET:/tournament/stage/${stageId}/matches`,
+        `cache:GET:/tournament/stage/${stageId}/bracket`,
+        `cache:GET:/tournament/stage/${stageId}/teams`,
+    ];
+}

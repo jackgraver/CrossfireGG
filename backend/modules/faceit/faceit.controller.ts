@@ -17,9 +17,12 @@ import { playerRepository } from "../players/player.repository";
 import { parseOr400 } from "../../core/validation/parseOr400";
 import { FaceitAPITournamentTeam } from "../../utils/transformFaceitData";
 import { redisDel } from "../../core/redis";
-
-const stageMatchesCacheKey = (stageId: number) => `matches:stage:${stageId}`;
-const stageBracketCacheKey = (stageId: number) => `stageStandings:${stageId}`;
+import { tournamentStageGetCacheKeys } from "../../core/middleware/redis.middleware";
+import {
+    clearStageSyncing,
+    isStageSyncing,
+    markStageSyncing,
+} from "../tournaments/tournament.refetch";
 
 export const faceitController = {
     testFaceitRoute: async (req: Request, res: Response) => {
@@ -112,31 +115,52 @@ export const faceitController = {
 
         const { stageId, championshipId, readFileName, writeFileName } = data;
 
-        const matchesData = await faceitFetchUtil.fetchMatchesData(
-            championshipId,
-            {
-                readFileName: readFileName,
-                writeFileName: writeFileName,
-            },
-        );
-
-        const result = await faceitImportService.processNewStageMatches(
-            matchesData,
-            stageId,
-        );
-
-        if (result && result.newMatchesCount > 0) {
-            await Promise.all([
-                redisDel(stageMatchesCacheKey(stageId)),
-                redisDel(stageBracketCacheKey(stageId)),
-            ]);
+        if (await isStageSyncing(championshipId)) {
+            res.status(409).json({
+                success: false,
+                message:
+                    "Match import already in progress for this championship",
+                newMatchesCount: 0,
+            });
+            return;
         }
 
-        res.json({
-            success: result !== undefined,
-            message: "Matches import completed",
-            newMatchesCount: result?.newMatchesCount ?? 0,
-        });
+        await markStageSyncing(championshipId);
+        try {
+            const matchesData = await faceitFetchUtil.fetchMatchesData(
+                championshipId,
+                {
+                    readFileName: readFileName,
+                    writeFileName: writeFileName,
+                },
+            );
+
+            const result = await faceitImportService.processNewStageMatches(
+                matchesData,
+                stageId,
+            );
+
+            if (result) {
+                await Promise.all(
+                    tournamentStageGetCacheKeys(stageId).map(redisDel),
+                );
+            }
+
+            res.json({
+                success: result !== undefined,
+                message: "Matches import completed",
+                newMatchesCount: result?.newMatchesCount ?? 0,
+            });
+        } catch (error) {
+            logger.error("importFaceitMatches failed", error);
+            res.status(500).json({
+                success: false,
+                message: "Matches import failed",
+                newMatchesCount: 0,
+            });
+        } finally {
+            await clearStageSyncing(championshipId);
+        }
     },
 
     getFaceitPlayerTeams: async (req: Request, res: Response) => {

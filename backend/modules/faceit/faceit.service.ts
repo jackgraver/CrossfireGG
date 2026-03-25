@@ -174,6 +174,9 @@ export const faceitImportService = {
         matches: FaceitAPIMatch[],
         stageId: number,
     ): Promise<{ newMatchesCount: number }> => {
+        console.log(
+            "==========================processNewStageMatches==========================",
+        );
         if (matches.length === 0) {
             logger.info("No matches to import");
             return { newMatchesCount: 0 };
@@ -187,9 +190,6 @@ export const faceitImportService = {
         }
 
         const existingMatches = await matchRepository.findAllByStageId(stageId);
-        const existingMatchesByFaceitId = new Map(
-            existingMatches.map((m) => [m.faceit_id, m]),
-        );
 
         const totalTeams = await teamRepository.countStageTeams(stageId);
         const stageFormatRow =
@@ -202,19 +202,27 @@ export const faceitImportService = {
             ? mapFaceitFormatType(stageFormatRow.name)
             : "unknown";
 
-        const newMatches = matches.filter((match) => {
-            const existingMatch = existingMatchesByFaceitId.get(match.match_id);
+        let newMatches = matches;
+        if (existingMatches.length > 0) {
+            const existingMatchesByFaceitId = new Map(
+                existingMatches.map((m) => [m.faceit_id, m]),
+            );
+            newMatches = matches.filter((match) => {
+                const existingMatch = existingMatchesByFaceitId.get(
+                    match.match_id,
+                );
 
-            if (!existingMatch) {
-                return true;
-            }
+                if (!existingMatch) {
+                    return true;
+                }
 
-            if (existingMatch.status === "finished") {
-                return false;
-            }
+                if (existingMatch.status === "finished") {
+                    return false;
+                }
 
-            return existingMatch.status !== match.status.toLowerCase();
-        });
+                return existingMatch.status !== match.status.toLowerCase();
+            });
+        }
 
         let newMatchesCount = 0;
 
@@ -268,7 +276,7 @@ export const faceitImportService = {
                 if (match.group !== undefined && match.group !== null) {
                     const group = await tournamentRepository.upsertGroupByName(
                         stageId,
-                        match.group.toString(),
+                        "Group " + match.group.toString(),
                     );
                     groupId = group.id;
                 }
