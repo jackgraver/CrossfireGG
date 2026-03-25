@@ -5,7 +5,7 @@ import { db } from "../config/database";
 import { roles, userRoles, users } from "../schemas";
 import { logger } from "./logger";
 
-const ROOT_EMAIL = "ROOT@a.com";
+export const ROOT_USER_EMAIL = "root@admin.com";
 const ROOT_NAME = "ROOT";
 
 export async function ensureRootUser() {
@@ -37,7 +37,7 @@ export async function ensureRootUser() {
             const [existingUser] = await tx
                 .select()
                 .from(users)
-                .where(eq(users.email, ROOT_EMAIL))
+                .where(eq(users.email, ROOT_USER_EMAIL))
                 .limit(1);
 
             let rootUserId: string;
@@ -46,18 +46,21 @@ export async function ensureRootUser() {
                 await tx.insert(users).values({
                     id: rootUserId,
                     name: ROOT_NAME,
-                    email: ROOT_EMAIL,
+                    email: ROOT_USER_EMAIL,
                     emailVerified: true,
                     deleted_at: null,
                 });
-                logger.info(`Created ROOT user (${ROOT_EMAIL})`);
+                logger.info(`Created ROOT user (${ROOT_USER_EMAIL})`);
             } else {
                 rootUserId = existingUser.id;
                 const updates: Partial<typeof users.$inferInsert> = {};
                 if (existingUser.name !== ROOT_NAME) updates.name = ROOT_NAME;
                 if (existingUser.deleted_at) updates.deleted_at = null;
                 if (Object.keys(updates).length > 0) {
-                    await tx.update(users).set(updates).where(eq(users.id, rootUserId));
+                    await tx
+                        .update(users)
+                        .set(updates)
+                        .where(eq(users.id, rootUserId));
                 }
             }
 
@@ -101,7 +104,7 @@ export async function ensureRootUser() {
             }
         });
 
-        logger.info(`ROOT user ensured (${ROOT_EMAIL}) with ADMIN role.`);
+        logger.info(`ROOT user ensured (${ROOT_USER_EMAIL}) with ADMIN role.`);
     } catch (error) {
         logger.error("Failed to ensure ROOT user:", error);
     }

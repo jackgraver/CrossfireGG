@@ -17,4 +17,25 @@ router.get(
     userController.getAllUsers,
 );
 
+router.get(
+    "/staff",
+    fetchSession,
+    requireRoles(Roles.ADMIN),
+    userController.getStaffUsers,
+);
+
+router.get(
+    "/search",
+    fetchSession,
+    requireRoles(Roles.ADMIN),
+    userController.searchUsers,
+);
+
+router.patch(
+    "/:userId/roles",
+    fetchSession,
+    requireRoles(Roles.ADMIN),
+    userController.patchUserRoles,
+);
+
 export default router;

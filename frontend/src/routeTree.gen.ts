@@ -15,7 +15,6 @@ import { Route as TournamentIndexRouteImport } from './routes/tournament/index'
 import { Route as SignUpIndexRouteImport } from './routes/sign-up/index'
 import { Route as SignInIndexRouteImport } from './routes/sign-in/index'
 import { Route as RulesIndexRouteImport } from './routes/rules/index'
-import { Route as D43fc9c518864db78e7d07a782b35160IndexRouteImport } from './routes/d43fc9c5-1886-4db7-8e7d-07a782b35160/index'
 import { Route as CastingIndexRouteImport } from './routes/casting/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as TeamTeam_idRouteRouteImport } from './routes/team/$team_id/route'
@@ -65,12 +64,6 @@ const RulesIndexRoute = RulesIndexRouteImport.update({
   path: '/rules/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const D43fc9c518864db78e7d07a782b35160IndexRoute =
-  D43fc9c518864db78e7d07a782b35160IndexRouteImport.update({
-    id: '/d43fc9c5-1886-4db7-8e7d-07a782b35160/',
-    path: '/d43fc9c5-1886-4db7-8e7d-07a782b35160/',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const CastingIndexRoute = CastingIndexRouteImport.update({
   id: '/casting/',
   path: '/casting/',
@@ -176,7 +169,6 @@ export interface FileRoutesByFullPath {
   '/team/$team_id': typeof TeamTeam_idRouteRouteWithChildren
   '/admin/': typeof AdminIndexRoute
   '/casting/': typeof CastingIndexRoute
-  '/d43fc9c5-1886-4db7-8e7d-07a782b35160/': typeof D43fc9c518864db78e7d07a782b35160IndexRoute
   '/rules/': typeof RulesIndexRoute
   '/sign-in/': typeof SignInIndexRoute
   '/sign-up/': typeof SignUpIndexRoute
@@ -202,7 +194,6 @@ export interface FileRoutesByTo {
   '/not-found': typeof NotFoundRoute
   '/admin': typeof AdminIndexRoute
   '/casting': typeof CastingIndexRoute
-  '/d43fc9c5-1886-4db7-8e7d-07a782b35160': typeof D43fc9c518864db78e7d07a782b35160IndexRoute
   '/rules': typeof RulesIndexRoute
   '/sign-in': typeof SignInIndexRoute
   '/sign-up': typeof SignUpIndexRoute
@@ -230,7 +221,6 @@ export interface FileRoutesById {
   '/team/$team_id': typeof TeamTeam_idRouteRouteWithChildren
   '/admin/': typeof AdminIndexRoute
   '/casting/': typeof CastingIndexRoute
-  '/d43fc9c5-1886-4db7-8e7d-07a782b35160/': typeof D43fc9c518864db78e7d07a782b35160IndexRoute
   '/rules/': typeof RulesIndexRoute
   '/sign-in/': typeof SignInIndexRoute
   '/sign-up/': typeof SignUpIndexRoute
@@ -259,7 +249,6 @@ export interface FileRouteTypes {
     | '/team/$team_id'
     | '/admin/'
     | '/casting/'
-    | '/d43fc9c5-1886-4db7-8e7d-07a782b35160/'
     | '/rules/'
     | '/sign-in/'
     | '/sign-up/'
@@ -285,7 +274,6 @@ export interface FileRouteTypes {
     | '/not-found'
     | '/admin'
     | '/casting'
-    | '/d43fc9c5-1886-4db7-8e7d-07a782b35160'
     | '/rules'
     | '/sign-in'
     | '/sign-up'
@@ -312,7 +300,6 @@ export interface FileRouteTypes {
     | '/team/$team_id'
     | '/admin/'
     | '/casting/'
-    | '/d43fc9c5-1886-4db7-8e7d-07a782b35160/'
     | '/rules/'
     | '/sign-in/'
     | '/sign-up/'
@@ -340,7 +327,6 @@ export interface RootRouteChildren {
   TeamTeam_idRouteRoute: typeof TeamTeam_idRouteRouteWithChildren
   AdminIndexRoute: typeof AdminIndexRoute
   CastingIndexRoute: typeof CastingIndexRoute
-  D43fc9c518864db78e7d07a782b35160IndexRoute: typeof D43fc9c518864db78e7d07a782b35160IndexRoute
   RulesIndexRoute: typeof RulesIndexRoute
   SignInIndexRoute: typeof SignInIndexRoute
   SignUpIndexRoute: typeof SignUpIndexRoute
@@ -396,13 +382,6 @@ declare module '@tanstack/react-router' {
       path: '/rules'
       fullPath: '/rules/'
       preLoaderRoute: typeof RulesIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/d43fc9c5-1886-4db7-8e7d-07a782b35160/': {
-      id: '/d43fc9c5-1886-4db7-8e7d-07a782b35160/'
-      path: '/d43fc9c5-1886-4db7-8e7d-07a782b35160'
-      fullPath: '/d43fc9c5-1886-4db7-8e7d-07a782b35160/'
-      preLoaderRoute: typeof D43fc9c518864db78e7d07a782b35160IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/casting/': {
@@ -594,8 +573,6 @@ const rootRouteChildren: RootRouteChildren = {
   TeamTeam_idRouteRoute: TeamTeam_idRouteRouteWithChildren,
   AdminIndexRoute: AdminIndexRoute,
   CastingIndexRoute: CastingIndexRoute,
-  D43fc9c518864db78e7d07a782b35160IndexRoute:
-    D43fc9c518864db78e7d07a782b35160IndexRoute,
   RulesIndexRoute: RulesIndexRoute,
   SignInIndexRoute: SignInIndexRoute,
   SignUpIndexRoute: SignUpIndexRoute,

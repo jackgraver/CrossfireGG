@@ -4,7 +4,8 @@ import { Trophy, Users, Settings, Video, LogOut, Plus, Pencil } from "lucide-rea
 import { UserWithRolesDTO } from "@repo/contracts";
 import { redirect } from "@tanstack/react-router";
 import { useAllTournaments } from "@/lib/api/tournament.queries";
-import { useAllUsers } from "@/lib/api/user.queries";
+import { useStaffUsers } from "@/lib/api/user.queries";
+import StaffRoleAssignmentForm from "@/routes/admin/-components/StaffRoleAssignmentForm";
 
 export const Route = createFileRoute("/admin/")({
     beforeLoad: async ({ context }) => {
@@ -20,7 +21,7 @@ export const Route = createFileRoute("/admin/")({
 
 function Admin() {
     const { data: tournaments } = useAllTournaments();
-    const { data: users } = useAllUsers();
+    const { data: users } = useStaffUsers();
 
     return (
         <div className="mx-auto min-h-screen max-w-7xl p-6">
@@ -76,18 +77,12 @@ function Admin() {
                     <Users size={20} />
                     Staff
                 </h2>
+                <StaffRoleAssignmentForm />
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                    {users?.map((user: UserWithRolesDTO) => {
-                        const isRoot = user.name.toLowerCase() === "root";
-
-                        return (
+                    {users?.map((user: UserWithRolesDTO) => (
                             <div
                                 key={user.id}
-                                className={`bg-firstBg border-border group relative flex flex-col rounded-xl border p-5 transition-all duration-200 ${
-                                    isRoot
-                                        ? "opacity-60 grayscale"
-                                        : "hover:border-cfRed/50 hover:shadow-cfRed/5 hover:shadow-xl"
-                                }`}
+                                className="bg-firstBg border-border hover:border-cfRed/50 hover:shadow-cfRed/5 group relative flex flex-col rounded-xl border p-5 transition-all duration-200 hover:shadow-xl"
                             >
                                 <div className="mb-4 flex items-start justify-between gap-2">
                                     <div className="min-w-0 flex-1">
@@ -95,31 +90,24 @@ function Admin() {
                                             <span className="text-textPrimary truncate text-lg font-bold">
                                                 {user.name}
                                             </span>
-                                            {isRoot && (
-                                                <span className="text-textSecondary rounded bg-white/10 px-1.5 py-0.5 text-[10px] font-black tracking-widest uppercase">
-                                                    System
-                                                </span>
-                                            )}
                                         </div>
                                         <div className="text-textSecondary/70 truncate text-sm">
                                             {user.email}
                                         </div>
                                     </div>
 
-                                    {!isRoot && (
-                                        <button
-                                            className="text-textSecondary hover:text-cfRed hover:bg-cfRed/10 rounded-lg p-2 opacity-0 transition-all group-hover:opacity-100"
-                                            title="Delete user"
-                                            onClick={() => {
-                                                // TODO: Implement delete logic
-                                            }}
-                                        >
-                                            <LogOut
-                                                size={16}
-                                                className="rotate-90"
-                                            />
-                                        </button>
-                                    )}
+                                    <button
+                                        className="text-textSecondary hover:text-cfRed hover:bg-cfRed/10 rounded-lg p-2 opacity-0 transition-all group-hover:opacity-100"
+                                        title="Delete user"
+                                        onClick={() => {
+                                            // TODO: Implement delete logic
+                                        }}
+                                    >
+                                        <LogOut
+                                            size={16}
+                                            className="rotate-90"
+                                        />
+                                    </button>
                                 </div>
 
                                 <div className="mt-auto flex flex-wrap gap-1.5">
@@ -156,8 +144,7 @@ function Admin() {
                                     })}
                                 </div>
                             </div>
-                        );
-                    })}
+                    ))}
                 </div>
             </div>
         </div>
