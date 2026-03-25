@@ -9,6 +9,7 @@ import {
     DollarSign,
     Clock,
     ExternalLinkIcon,
+    CalendarDays,
 } from "lucide-react";
 import { cn } from "@/utils/cn";
 import { InfoTile } from "../../-component/InfoTile";
@@ -86,6 +87,13 @@ function RouteComponent() {
             label: "Bracket",
             preload: true,
             icon: LayoutDashboard,
+            exact: false,
+        },
+        {
+            nav: { to: `/tournament/${tournamentId}/stage/${stageId}/matches` },
+            label: "Matches",
+            preload: true,
+            icon: CalendarDays,
             exact: false,
         },
         {

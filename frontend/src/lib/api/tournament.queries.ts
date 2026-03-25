@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
     GroupWithMatchesAndFormatDTO,
+    MatchesByStageResponseDTO,
     StageTeamSignUpDTO,
     StageTeamWithTeamDTO,
     TournamentForEditDTO,
@@ -41,9 +42,12 @@ export const useTournamentById = (tournamentId: string) => {
 };
 
 export const useMatchesByStage = (stageId: number | null) => {
-    return useQuery<any>({
+    return useQuery<MatchesByStageResponseDTO>({
         queryKey: ["matches", "stage", stageId],
-        queryFn: () => apiGET<any>(`/tournament/stage/${stageId}/matches`),
+        queryFn: () =>
+            apiGET<MatchesByStageResponseDTO>(
+                `/tournament/stage/${stageId}/matches`,
+            ),
         enabled: !!stageId,
     });
 };

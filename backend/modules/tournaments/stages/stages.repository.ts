@@ -1,6 +1,6 @@
 import { db } from "../../../config/database";
-import { stages, stageTeams } from "../../../schemas";
-import { eq, sql, and } from "drizzle-orm";
+import { stages, stageTeams, matchParticipants } from "../../../schemas";
+import { eq, sql, and, asc, isNull } from "drizzle-orm";
 
 export const stagesRepository = {
     findStageByName: async (name: string) => {
@@ -32,11 +32,18 @@ export const stagesRepository = {
                 and(eq(m.stage_id, stageId), isNull(m.deleted_at)),
             with: {
                 participants: {
+                    where: isNull(matchParticipants.deleted_at),
+                    orderBy: asc(matchParticipants.position),
                     with: {
-                        team: true,
+                        stageTeam: {
+                            with: {
+                                team: true,
+                            },
+                        },
                     },
                 },
             },
+            orderBy: (m) => [sql`${m.scheduled_at} DESC NULLS LAST`],
         });
     },
     findStageStandings: async (stageId: number) => {

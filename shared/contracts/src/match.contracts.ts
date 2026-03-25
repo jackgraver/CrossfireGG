@@ -32,6 +32,14 @@ export type MatchWithParticipantsDTO = z.infer<
     typeof MatchWithParticipantsContract
 >;
 
+export const MatchesByStageResponseContract = z.object({
+    matches: MatchWithParticipantsContract.array(),
+});
+
+export type MatchesByStageResponseDTO = z.infer<
+    typeof MatchesByStageResponseContract
+>;
+
 export const MatchWithParticipantAndMinifiedMapContract = MatchContract.extend({
     participants: MatchParticipantWithTeamContract.array(),
     maps: z.array(MinifiedMapContract),

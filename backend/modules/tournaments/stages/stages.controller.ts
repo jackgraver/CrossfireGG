@@ -3,6 +3,7 @@ import { StageParamsSchema } from "../tournament.validation";
 import { sendContract } from "../../../core/sendContract";
 import {
     GroupWithMatchesAndFormatContract,
+    MatchesByStageResponseContract,
     StageFormatContract,
     StageTeamWithTeamContract,
 } from "@repo/contracts";
@@ -17,7 +18,7 @@ export const stageController = {
         const matches = await stagesService.getMatchesByStageId(
             Number(data.stageId),
         );
-        res.json({ matches });
+        sendContract(res, MatchesByStageResponseContract, { matches });
     },
 
     getStageTeams: async (req: Request, res: Response) => {
