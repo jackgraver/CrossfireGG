@@ -8,6 +8,8 @@ import {
     stages,
     tournaments,
     tournamentResults,
+    stagePlayers,
+    playerStats,
 } from "../../schemas";
 import {
     eq,
@@ -19,6 +21,7 @@ import {
     ne,
     sql,
     count,
+    desc,
 } from "drizzle-orm";
 import { shortName } from "./team.utils";
 import type { StageTeamFaceitLookup } from "./team.types";
@@ -260,6 +263,206 @@ export const teamRepository = {
             where: (p, { eq, and, isNull }) =>
                 and(eq(p.team_id, teamId), isNull(p.deleted_at)),
         });
+    },
+
+    findMostRecentTournamentForTeam: async (teamId: number) => {
+        const row = await db
+            .select({
+                id: tournaments.id,
+                name: tournaments.name,
+            })
+            .from(stageTeams)
+            .innerJoin(stages, eq(stageTeams.stage_id, stages.id))
+            .innerJoin(tournaments, eq(stages.tournament_id, tournaments.id))
+            .where(
+                and(
+                    eq(stageTeams.team_id, teamId),
+                    isNull(stageTeams.deleted_at),
+                    isNull(stages.deleted_at),
+                    isNull(tournaments.deleted_at),
+                ),
+            )
+            .orderBy(desc(tournaments.start_date))
+            .limit(1);
+        return row[0] ?? null;
+    },
+
+    /** Distinct tournaments the team has a stage_team in, newest first. */
+    findTournamentsForTeamOrderedByStartDate: async (teamId: number) => {
+        return await db
+            .select({
+                id: tournaments.id,
+                name: tournaments.name,
+                start_date: tournaments.start_date,
+            })
+            .from(stageTeams)
+            .innerJoin(stages, eq(stageTeams.stage_id, stages.id))
+            .innerJoin(tournaments, eq(stages.tournament_id, tournaments.id))
+            .where(
+                and(
+                    eq(stageTeams.team_id, teamId),
+                    isNull(stageTeams.deleted_at),
+                    isNull(stages.deleted_at),
+                    isNull(tournaments.deleted_at),
+                ),
+            )
+            .groupBy(tournaments.id, tournaments.name, tournaments.start_date)
+            .orderBy(desc(tournaments.start_date));
+    },
+
+    /** Raw stage_players rows for a team in one tournament (service dedupes by player). */
+    findStagePlayersForTeamInTournament: async (
+        teamId: number,
+        tournamentId: number,
+    ) => {
+        return await db
+            .select({
+                player: players,
+                rosterRole: stagePlayers.role,
+                stageEndDate: stages.end_date,
+                stageId: stages.id,
+            })
+            .from(stagePlayers)
+            .innerJoin(stageTeams, eq(stagePlayers.stage_team_id, stageTeams.id))
+            .innerJoin(stages, eq(stageTeams.stage_id, stages.id))
+            .innerJoin(players, eq(stagePlayers.player_id, players.id))
+            .where(
+                and(
+                    eq(stageTeams.team_id, teamId),
+                    eq(stages.tournament_id, tournamentId),
+                    isNull(stagePlayers.deleted_at),
+                    isNull(stageTeams.deleted_at),
+                    isNull(stages.deleted_at),
+                    isNull(players.deleted_at),
+                ),
+            );
+    },
+
+    /** Stage roster rows for team in any tournament except `excludeTournamentId`. */
+    findStagePlayersForTeamExcludingTournament: async (
+        teamId: number,
+        excludeTournamentId: number,
+    ) => {
+        return await db
+            .select({
+                player: players,
+                rosterRole: stagePlayers.role,
+                stageEndDate: stages.end_date,
+                stageId: stages.id,
+            })
+            .from(stagePlayers)
+            .innerJoin(stageTeams, eq(stagePlayers.stage_team_id, stageTeams.id))
+            .innerJoin(stages, eq(stageTeams.stage_id, stages.id))
+            .innerJoin(players, eq(stagePlayers.player_id, players.id))
+            .where(
+                and(
+                    eq(stageTeams.team_id, teamId),
+                    ne(stages.tournament_id, excludeTournamentId),
+                    isNull(stagePlayers.deleted_at),
+                    isNull(stageTeams.deleted_at),
+                    isNull(stages.deleted_at),
+                    isNull(players.deleted_at),
+                ),
+            );
+    },
+
+    /** All stage_players rows for a team (for no-tournament / full historic dedupe). */
+    findAllStagePlayerRowsForTeam: async (teamId: number) => {
+        return await db
+            .select({
+                player: players,
+                rosterRole: stagePlayers.role,
+                stageEndDate: stages.end_date,
+                stageId: stages.id,
+                tournamentId: stages.tournament_id,
+            })
+            .from(stagePlayers)
+            .innerJoin(stageTeams, eq(stagePlayers.stage_team_id, stageTeams.id))
+            .innerJoin(stages, eq(stageTeams.stage_id, stages.id))
+            .innerJoin(players, eq(stagePlayers.player_id, players.id))
+            .where(
+                and(
+                    eq(stageTeams.team_id, teamId),
+                    isNull(stagePlayers.deleted_at),
+                    isNull(stageTeams.deleted_at),
+                    isNull(stages.deleted_at),
+                    isNull(players.deleted_at),
+                ),
+            );
+    },
+
+    findAllDistinctStagePlayerIdsForTeam: async (teamId: number) => {
+        const rows = await db
+            .selectDistinct({ player_id: stagePlayers.player_id })
+            .from(stagePlayers)
+            .innerJoin(stageTeams, eq(stagePlayers.stage_team_id, stageTeams.id))
+            .where(
+                and(
+                    eq(stageTeams.team_id, teamId),
+                    isNull(stagePlayers.deleted_at),
+                    isNull(stageTeams.deleted_at),
+                ),
+            );
+        return rows.map((r) => r.player_id);
+    },
+
+    countMatchesPlayedByPlayerIds: async (
+        teamId: number,
+        playerIds: number[],
+    ): Promise<Map<number, number>> => {
+        const result = new Map<number, number>();
+        if (playerIds.length === 0) return result;
+
+        const stRows = await db
+            .select({ id: stageTeams.id })
+            .from(stageTeams)
+            .where(
+                and(
+                    eq(stageTeams.team_id, teamId),
+                    isNull(stageTeams.deleted_at),
+                ),
+            );
+        const stageTeamIds = stRows.map((r) => r.id);
+        if (stageTeamIds.length === 0) {
+            for (const id of playerIds) result.set(id, 0);
+            return result;
+        }
+
+        const matchRows = await db
+            .selectDistinct({ match_id: matchParticipants.match_id })
+            .from(matchParticipants)
+            .where(
+                and(
+                    inArray(matchParticipants.team_id, stageTeamIds),
+                    isNull(matchParticipants.deleted_at),
+                ),
+            );
+        const teamMatchIds = matchRows.map((r) => r.match_id);
+        if (teamMatchIds.length === 0) {
+            for (const id of playerIds) result.set(id, 0);
+            return result;
+        }
+
+        const counts = await db
+            .select({
+                player_id: playerStats.player_id,
+                n: sql<number>`count(distinct ${playerStats.match_id})::int`,
+            })
+            .from(playerStats)
+            .where(
+                and(
+                    inArray(playerStats.player_id, playerIds),
+                    inArray(playerStats.match_id, teamMatchIds),
+                    isNull(playerStats.deleted_at),
+                ),
+            )
+            .groupBy(playerStats.player_id);
+
+        for (const id of playerIds) result.set(id, 0);
+        for (const row of counts) {
+            result.set(row.player_id, row.n);
+        }
+        return result;
     },
 
     searchPlayers: async (searchQuery: string, excludeTeamId?: number) => {

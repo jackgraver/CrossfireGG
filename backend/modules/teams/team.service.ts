@@ -8,6 +8,79 @@ import type {
     FormattedStage,
     FormattedTournament,
 } from "./team.types";
+import type { TeamMemberPlayerDTO } from "@repo/contracts";
+import { PlayerContract } from "@repo/contracts";
+
+type PlayerRow = NonNullable<
+    Awaited<ReturnType<typeof teamRepository.findPlayersByTeamId>>
+>[number];
+
+type StageRosterRow = {
+    player: PlayerRow;
+    rosterRole: string;
+    stageEndDate: Date;
+    stageId: number;
+};
+
+function parseRosterRole(role: string): "starter" | "sub" | "coach" {
+    if (role === "sub" || role === "coach") return role;
+    return "starter";
+}
+
+function dedupeStageRowsByLatestStage(
+    rows: StageRosterRow[],
+): Map<number, { player: PlayerRow; rosterRole: "starter" | "sub" | "coach" }> {
+    const byPlayer = new Map<number, StageRosterRow[]>();
+    for (const r of rows) {
+        const id = r.player.id;
+        const list = byPlayer.get(id) ?? [];
+        list.push(r);
+        byPlayer.set(id, list);
+    }
+    const out = new Map<
+        number,
+        { player: PlayerRow; rosterRole: "starter" | "sub" | "coach" }
+    >();
+    for (const [pid, list] of byPlayer) {
+        const sorted = [...list].sort((a, b) => {
+            const t = b.stageEndDate.getTime() - a.stageEndDate.getTime();
+            if (t !== 0) return t;
+            return b.stageId - a.stageId;
+        });
+        const pick = sorted[0];
+        out.set(pid, {
+            player: pick.player,
+            rosterRole: parseRosterRole(pick.rosterRole),
+        });
+    }
+    return out;
+}
+
+function playerToMember(
+    player: PlayerRow,
+    rosterRole: "starter" | "sub" | "coach",
+    matchesPlayed: number,
+): TeamMemberPlayerDTO {
+    const base = PlayerContract.parse({
+        id: player.id,
+        player_name: player.player_name,
+        faceit_id: player.faceit_id ?? null,
+        team_id: player.team_id ?? null,
+        user_id: player.user_id ?? null,
+        player_logo: player.player_logo ?? null,
+        country: player.country ?? null,
+        base_role: player.base_role ?? null,
+        hltv_id: player.hltv_id ?? null,
+        hltv_verified: player.hltv_verified ?? null,
+        discord_id: player.discord_id ?? null,
+        discord_verified: player.discord_verified ?? null,
+    });
+    return {
+        ...base,
+        matches_played: matchesPlayed,
+        roster_role: rosterRole,
+    };
+}
 
 export const teamService = {
     getAllTeams: async (): Promise<any> => {
@@ -150,6 +223,105 @@ export const teamService = {
 
     getTeamPlayers: async (teamId: number) => {
         return await teamRepository.findPlayersByTeamId(teamId);
+    },
+
+    getTeamMembersRoster: async (teamId: number) => {
+        const orderedTournaments =
+            await teamRepository.findTournamentsForTeamOrderedByStartDate(
+                teamId,
+            );
+
+        if (orderedTournaments.length > 0) {
+            type DedupedMap = Map<
+                number,
+                { player: PlayerRow; rosterRole: "starter" | "sub" | "coach" }
+            >;
+
+            const perTournament: {
+                tournament_id: number;
+                tournament_name: string;
+                deduped: DedupedMap;
+            }[] = [];
+
+            for (const t of orderedTournaments) {
+                const rows =
+                    await teamRepository.findStagePlayersForTeamInTournament(
+                        teamId,
+                        t.id,
+                    );
+                const stageRows: StageRosterRow[] = rows.map((r) => ({
+                    player: r.player,
+                    rosterRole: r.rosterRole,
+                    stageEndDate: r.stageEndDate,
+                    stageId: r.stageId,
+                }));
+                perTournament.push({
+                    tournament_id: t.id,
+                    tournament_name: t.name,
+                    deduped: dedupeStageRowsByLatestStage(stageRows),
+                });
+            }
+
+            const rosterPlayers =
+                await teamRepository.findPlayersByTeamId(teamId);
+            const rosterIds = rosterPlayers.map((p) => p.id);
+
+            const allIds = [
+                ...new Set([
+                    ...perTournament.flatMap((tr) => [...tr.deduped.keys()]),
+                    ...rosterIds,
+                ]),
+            ];
+            const matchCounts =
+                await teamRepository.countMatchesPlayedByPlayerIds(
+                    teamId,
+                    allIds,
+                );
+
+            const tournament_rosters = perTournament.map((tr) => ({
+                tournament_id: tr.tournament_id,
+                tournament_name: tr.tournament_name,
+                players: [...tr.deduped.values()].map(
+                    ({ player, rosterRole }) =>
+                        playerToMember(
+                            player,
+                            rosterRole,
+                            matchCounts.get(player.id) ?? 0,
+                        ),
+                ),
+            }));
+
+            const historic_players = rosterPlayers.map((p) =>
+                playerToMember(
+                    p,
+                    parseRosterRole(p.base_role ?? "starter"),
+                    matchCounts.get(p.id) ?? 0,
+                ),
+            );
+
+            return {
+                tournament_rosters,
+                historic_players,
+            };
+        }
+
+        const rosterPlayers =
+            await teamRepository.findPlayersByTeamId(teamId);
+        const matchCounts = await teamRepository.countMatchesPlayedByPlayerIds(
+            teamId,
+            rosterPlayers.map((p) => p.id),
+        );
+        const historic_players = rosterPlayers.map((p) =>
+            playerToMember(
+                p,
+                parseRosterRole(p.base_role ?? "starter"),
+                matchCounts.get(p.id) ?? 0,
+            ),
+        );
+        return {
+            tournament_rosters: [],
+            historic_players,
+        };
     },
 
     searchPlayers: async (searchQuery: string, excludeTeamId?: number) => {

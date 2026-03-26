@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { PlayerContract } from "./player.contracts";
 
 export const TeamContract = z.object({
     id: z.number(),
@@ -37,3 +38,27 @@ export const TeamWithTournamentContract = z.array(
 );
 
 export type TeamWithTournamentDTO = z.infer<typeof TeamWithTournamentContract>;
+
+export const TeamMemberPlayerContract = PlayerContract.extend({
+    matches_played: z.number(),
+    roster_role: z.enum(["starter", "sub", "coach"]),
+});
+
+export type TeamMemberPlayerDTO = z.infer<typeof TeamMemberPlayerContract>;
+
+export const TeamTournamentRosterEntryContract = z.object({
+    tournament_id: z.number(),
+    tournament_name: z.string(),
+    players: z.array(TeamMemberPlayerContract),
+});
+
+export type TeamTournamentRosterEntryDTO = z.infer<
+    typeof TeamTournamentRosterEntryContract
+>;
+
+export const TeamMembersRosterContract = z.object({
+    tournament_rosters: z.array(TeamTournamentRosterEntryContract),
+    historic_players: z.array(TeamMemberPlayerContract),
+});
+
+export type TeamMembersRosterDTO = z.infer<typeof TeamMembersRosterContract>;

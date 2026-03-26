@@ -1,6 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Roles } from "@repo/types";
-import { Trophy, Users, Settings, Video, LogOut, Plus, Pencil } from "lucide-react";
+import {
+    Trophy,
+    Users,
+    Settings,
+    Video,
+    LogOut,
+    Plus,
+    Pencil,
+} from "lucide-react";
 import { UserWithRolesDTO } from "@repo/contracts";
 import { redirect } from "@tanstack/react-router";
 import { useAllTournaments } from "@/lib/api/tournament.queries";
@@ -49,7 +57,9 @@ function Admin() {
                         >
                             <Link
                                 to="/admin/tournament/$tournament_id"
-                                params={{ tournament_id: tournament.id.toString() }}
+                                params={{
+                                    tournament_id: tournament.id.toString(),
+                                }}
                                 className="flex flex-col gap-1"
                             >
                                 <span className="group-hover:text-cfRed text-lg font-bold transition-colors">
@@ -61,7 +71,9 @@ function Admin() {
                             </Link>
                             <Link
                                 to="/admin/tournament/create"
-                                search={{ tournamentId: tournament.id.toString() }}
+                                search={{
+                                    tournamentId: tournament.id.toString(),
+                                }}
                                 className="text-textSecondary hover:text-cfRed hover:bg-cfRed/10 absolute top-3 right-3 rounded-lg p-2 opacity-0 transition-all group-hover:opacity-100"
                                 title="Edit tournament"
                                 onClick={(e) => e.stopPropagation()}
@@ -80,70 +92,66 @@ function Admin() {
                 <StaffRoleAssignmentForm />
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                     {users?.map((user: UserWithRolesDTO) => (
-                            <div
-                                key={user.id}
-                                className="bg-firstBg border-border hover:border-cfRed/50 hover:shadow-cfRed/5 group relative flex flex-col rounded-xl border p-5 transition-all duration-200 hover:shadow-xl"
-                            >
-                                <div className="mb-4 flex items-start justify-between gap-2">
-                                    <div className="min-w-0 flex-1">
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-textPrimary truncate text-lg font-bold">
-                                                {user.name}
-                                            </span>
-                                        </div>
-                                        <div className="text-textSecondary/70 truncate text-sm">
-                                            {user.email}
-                                        </div>
+                        <div
+                            key={user.id}
+                            className="bg-firstBg border-border group relative flex flex-col rounded-xl border p-5 transition-all duration-200 hover:shadow-xl"
+                        >
+                            <div className="mb-4 flex items-start justify-between gap-2">
+                                <div className="min-w-0 flex-1">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-textPrimary truncate text-lg font-bold">
+                                            {user.name}
+                                        </span>
                                     </div>
-
-                                    <button
-                                        className="text-textSecondary hover:text-cfRed hover:bg-cfRed/10 rounded-lg p-2 opacity-0 transition-all group-hover:opacity-100"
-                                        title="Delete user"
-                                        onClick={() => {
-                                            // TODO: Implement delete logic
-                                        }}
-                                    >
-                                        <LogOut
-                                            size={16}
-                                            className="rotate-90"
-                                        />
-                                    </button>
+                                    <div className="text-textSecondary/70 truncate text-sm">
+                                        {user.email}
+                                    </div>
                                 </div>
 
-                                <div className="mt-auto flex flex-wrap gap-1.5">
-                                    {user.userRoles.map((userRole) => {
-                                        const roleName = userRole.role.name;
-                                        return (
-                                            <span
-                                                key={userRole.id.toString()}
-                                                className={`flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-[10px] font-black tracking-wider uppercase ${
-                                                    roleName === "ADMIN"
-                                                        ? "bg-cfRed/10 text-cfRed border-cfRed/20"
-                                                        : roleName ===
-                                                            "PRODUCTION_LEAD"
-                                                          ? "border-yellow-500/20 bg-yellow-500/10 text-yellow-500"
-                                                          : roleName ===
-                                                              "PRODUCTION"
-                                                            ? "border-blue-500/20 bg-blue-500/10 text-blue-500"
-                                                            : "text-textSecondary border-white/10 bg-white/5"
-                                                }`}
-                                            >
-                                                {roleName === "ADMIN" && (
-                                                    <Settings size={10} />
-                                                )}
-                                                {roleName ===
-                                                    "PRODUCTION_LEAD" && (
-                                                    <Trophy size={10} />
-                                                )}
-                                                {roleName === "PRODUCTION" && (
-                                                    <Video size={10} />
-                                                )}
-                                                {roleName.replace("_", " ")}
-                                            </span>
-                                        );
-                                    })}
-                                </div>
+                                <button
+                                    className="text-textSecondary hover:text-cfRed hover:bg-cfRed/10 rounded-lg p-2 opacity-0 transition-all group-hover:opacity-100"
+                                    title="Delete user"
+                                    onClick={() => {
+                                        // TODO: Implement delete logic
+                                    }}
+                                >
+                                    <LogOut size={16} className="rotate-90" />
+                                </button>
                             </div>
+
+                            <div className="mt-auto flex flex-wrap gap-1.5">
+                                {user.userRoles.map((userRole) => {
+                                    const roleName = userRole.role.name;
+                                    return (
+                                        <span
+                                            key={userRole.id.toString()}
+                                            className={`flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-[10px] font-black tracking-wider uppercase ${
+                                                roleName === "ADMIN"
+                                                    ? "bg-cfRed/10 text-cfRed border-cfRed/20"
+                                                    : roleName ===
+                                                        "PRODUCTION_LEAD"
+                                                      ? "border-yellow-500/20 bg-yellow-500/10 text-yellow-500"
+                                                      : roleName ===
+                                                          "PRODUCTION"
+                                                        ? "border-blue-500/20 bg-blue-500/10 text-blue-500"
+                                                        : "text-textSecondary border-white/10 bg-white/5"
+                                            }`}
+                                        >
+                                            {roleName === "ADMIN" && (
+                                                <Settings size={10} />
+                                            )}
+                                            {roleName === "PRODUCTION_LEAD" && (
+                                                <Trophy size={10} />
+                                            )}
+                                            {roleName === "PRODUCTION" && (
+                                                <Video size={10} />
+                                            )}
+                                            {roleName.replace("_", " ")}
+                                        </span>
+                                    );
+                                })}
+                            </div>
+                        </div>
                     ))}
                 </div>
             </div>

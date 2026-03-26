@@ -5,11 +5,16 @@ export default function PlayerCard({
     player,
     isCaptain,
     stageBadges,
+    roleForBadges,
+    matchesPlayed,
 }: {
     player: PlayerDTO;
     isCaptain?: boolean;
     stageBadges?: { stage_name: string; tournament_name: string }[];
+    roleForBadges?: "starter" | "sub" | "coach";
+    matchesPlayed?: number;
 }) {
+    const role = roleForBadges ?? player.base_role;
     return (
         <div className="border-border bg-firstBg flex items-center gap-4 rounded-lg border p-4">
             <TeamLogo
@@ -17,7 +22,7 @@ export default function PlayerCard({
                 styling="h-12 w-12 rounded-full object-cover"
             />
             <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
                     <span className="text-textPrimary truncate font-semibold">
                         {player.player_name}
                     </span>
@@ -26,22 +31,28 @@ export default function PlayerCard({
                             Captain
                         </span>
                     )}
-                    {player.base_role === "starter" && (
+                    {role === "starter" && (
                         <span className="rounded bg-green-500/20 px-1.5 py-0.5 text-xs font-medium text-green-400">
                             Starter
                         </span>
                     )}
-                    {player.base_role === "sub" && (
+                    {role === "sub" && (
                         <span className="rounded bg-blue-500/20 px-1.5 py-0.5 text-xs font-medium text-blue-400">
                             Sub
                         </span>
                     )}
-                    {player.base_role === "coach" && (
+                    {role === "coach" && (
                         <span className="rounded bg-yellow-500/20 px-1.5 py-0.5 text-xs font-medium text-yellow-500">
                             Coach
                         </span>
                     )}
                 </div>
+                {matchesPlayed != null && matchesPlayed > 0 && (
+                    <p className="text-textSecondary mt-1 text-xs">
+                        {matchesPlayed} game{matchesPlayed === 1 ? "" : "s"}{" "}
+                        played
+                    </p>
+                )}
                 {stageBadges && stageBadges.length > 0 && (
                     <div className="mt-1 flex flex-wrap gap-1">
                         {stageBadges.map((badge) => (

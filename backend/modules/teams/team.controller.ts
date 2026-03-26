@@ -10,6 +10,7 @@ import {
     MatchWithParticipantsContract,
     PlayerContract,
     TeamContract,
+    TeamMembersRosterContract,
     TeamWithTournamentContract,
 } from "@repo/contracts";
 import { parseOr400 } from "../../core/validation/parseOr400";
@@ -37,6 +38,14 @@ export const teamController = {
         const tournaments = await teamService.getTeamTournaments(data.teamId);
 
         sendContract(res, TeamWithTournamentContract, tournaments);
+    },
+
+    getTeamMembers: async (req: Request, res: Response) => {
+        const data = parseOr400(res, TeamParamsSchema, req.params);
+        if (!data) return;
+
+        const roster = await teamService.getTeamMembersRoster(data.teamId);
+        sendContract(res, TeamMembersRosterContract, roster);
     },
 
     getAllTeamMatches: async (req: Request, res: Response) => {

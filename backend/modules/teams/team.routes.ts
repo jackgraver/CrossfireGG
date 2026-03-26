@@ -7,6 +7,7 @@ router.post("/register", teamController.registerTeam);
 
 router.get("/:teamId", teamController.getTeamById);
 
+router.get("/:teamId/members", teamController.getTeamMembers);
 router.get("/:teamId/players", teamController.getTeamPlayers);
 router.post("/:teamId/players", teamController.addPlayerToTeam);
 

@@ -14,7 +14,7 @@ import { AuthProvider } from "@/contexts/auth";
 import { DialogProvider } from "@/lib/dialog/DialogProvider";
 import { NotFound } from "./not-found";
 import Footer from "@/components/Footer";
-import { getThemeServerFn } from "@/lib/theme";
+import { getThemeFromBrowser, getThemeServerFn } from "@/lib/theme";
 import { getUserMeServerFn } from "@/lib/auth/auth.server";
 import { meQueryOptions } from "@/lib/auth/auth.query";
 import ToastProvider from "@/components/shared/toast/ToastProvider";
@@ -36,7 +36,9 @@ export const Route = createRootRoute({
     }),
     beforeLoad: async () => {
         const [theme, user] = await Promise.all([
-            getThemeServerFn(),
+            typeof window === "undefined"
+                ? getThemeServerFn()
+                : Promise.resolve(getThemeFromBrowser()),
             typeof window === "undefined"
                 ? getUserMeServerFn()
                 : queryClient.ensureQueryData(meQueryOptions()),

@@ -93,17 +93,17 @@ function RouteComponent() {
             exact: true,
         },
         {
-            nav: { to: "/team/$team_id/members" },
-            label: "Members",
-            preload: true,
-            icon: Users,
-            exact: false,
-        },
-        {
             nav: { to: "/team/$team_id/matches" },
             label: "Matches",
             preload: true,
             icon: CalendarDays,
+            exact: false,
+        },
+        {
+            nav: { to: "/team/$team_id/members" },
+            label: "Members",
+            preload: true,
+            icon: Users,
             exact: false,
         },
     ] as const;

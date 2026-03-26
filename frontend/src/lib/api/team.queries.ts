@@ -3,6 +3,7 @@ import {
     MatchWithParticipantsDTO,
     PlayerDTO,
     TeamDTO,
+    TeamMembersRosterDTO,
     TeamWithTournamentDTO,
 } from "@repo/contracts";
 import { apiDELETE, apiGET, apiPOST } from "@/lib/api/client";
@@ -31,6 +32,15 @@ export const useTeamPlayers = (teamId: string) => {
     return useQuery<PlayerDTO[]>({
         queryKey: ["team", teamId, "players"],
         queryFn: () => apiGET<PlayerDTO[]>(`/team/${teamId}/players`),
+        enabled: !!teamId,
+    });
+};
+
+export const useTeamMembersRoster = (teamId: string) => {
+    return useQuery<TeamMembersRosterDTO>({
+        queryKey: ["team", teamId, "members"],
+        queryFn: () =>
+            apiGET<TeamMembersRosterDTO>(`/team/${teamId}/members`),
         enabled: !!teamId,
     });
 };
@@ -65,6 +75,9 @@ export const useAddPlayerToTeam = (teamId: string) => {
             queryClient.invalidateQueries({
                 queryKey: ["team", teamId, "players"],
             });
+            queryClient.invalidateQueries({
+                queryKey: ["team", teamId, "members"],
+            });
         },
     });
 };
@@ -78,6 +91,9 @@ export const useRemovePlayerFromTeam = (teamId: string) => {
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: ["team", teamId, "players"],
+            });
+            queryClient.invalidateQueries({
+                queryKey: ["team", teamId, "members"],
             });
         },
     });
