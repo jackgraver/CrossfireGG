@@ -13,6 +13,8 @@ import {
     Sun,
     Monitor,
     Home,
+    Users,
+    Info,
 } from "lucide-react";
 import TeamLogo from "./shared/bracket/atoms/TeamLogo";
 import { useSignOut } from "@/contexts/auth";
@@ -131,9 +133,31 @@ export default function NavBar({
                     <NavItem
                         to="/tournament"
                         icon={<Trophy size={18} />}
-                        label="Tournaments"
+                        label="Season 5"
                         padding="px-3 py-2 -ml-3"
                     />
+                    <NavItem
+                        to="/"
+                        icon={<Info size={18} />}
+                        label="About Us"
+                        padding="px-3 py-2 -ml-3"
+                    />
+                    <NavItem
+                        to="/"
+                        icon={<Users size={18} />}
+                        label="Partners"
+                        padding="px-3 py-2 -ml-3"
+                    />
+                </div>
+                <div className="flex items-center gap-1">
+                    {matchesRole(user?.roles, Roles.ADMIN) && (
+                        <NavItem
+                            to="/admin"
+                            icon={<Settings size={18} />}
+                            label="Admin"
+                            left={false}
+                        />
+                    )}
                     {matchesRole(
                         user?.roles,
                         Roles.ADMIN,
@@ -144,16 +168,6 @@ export default function NavBar({
                             to="/casting"
                             icon={<Video size={18} />}
                             label="Casting"
-                        />
-                    )}
-                </div>
-                <div className="flex items-center gap-1">
-                    {matchesRole(user?.roles, Roles.ADMIN) && (
-                        <NavItem
-                            to="/admin"
-                            icon={<Settings size={18} />}
-                            label="Admin"
-                            left={false}
                         />
                     )}
                     {user ? (
