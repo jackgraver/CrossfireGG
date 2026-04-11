@@ -14,7 +14,6 @@ import { AuthProvider } from "@/contexts/auth";
 import { DialogProvider } from "@/lib/dialog/DialogProvider";
 import { NotFound } from "./not-found";
 import Footer from "@/components/Footer";
-import { getThemeFromBrowser, getThemeServerFn } from "@/lib/theme";
 import { getUserMeServerFn } from "@/lib/auth/auth.server";
 import { meQueryOptions } from "@/lib/auth/auth.query";
 import ToastProvider from "@/components/shared/toast/ToastProvider";
@@ -35,22 +34,17 @@ export const Route = createRootRoute({
         links: [{ rel: "stylesheet", href: appCss }],
     }),
     beforeLoad: async () => {
-        const [theme, user] = await Promise.all([
+        const user =
             typeof window === "undefined"
-                ? getThemeServerFn()
-                : Promise.resolve(getThemeFromBrowser()),
-            typeof window === "undefined"
-                ? getUserMeServerFn()
-                : queryClient.ensureQueryData(meQueryOptions()),
-        ]);
-        return { theme, user };
+                ? await getUserMeServerFn()
+                : await queryClient.ensureQueryData(meQueryOptions());
+        return { user };
     },
     notFoundComponent: () => <NotFound />,
     shellComponent: RootDocument,
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
-    const { theme } = Route.useRouteContext();
     const { user } = Route.useRouteContext();
 
     const isHomePage = useRouterState({
@@ -59,7 +53,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     });
 
     return (
-        <html className={theme} lang="en" suppressHydrationWarning>
+        <html className="dark" lang="en" suppressHydrationWarning>
             <head>
                 <HeadContent />
             </head>

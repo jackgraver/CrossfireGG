@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useRouter } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { cn } from "@/utils/cn";
 import { matchesRole } from "@/utils/role.util";
 import { Roles } from "@repo/types";
@@ -9,9 +9,6 @@ import {
     Settings,
     User,
     LogOut,
-    Moon,
-    Sun,
-    Monitor,
     Home,
     Users,
     Info,
@@ -19,8 +16,6 @@ import {
 import TeamLogo from "./shared/bracket/atoms/TeamLogo";
 import { useSignOut } from "@/contexts/auth";
 import { authClient } from "@/lib/auth/auth-client";
-import { useRouteContext } from "@tanstack/react-router";
-import { setThemeServerFn } from "@/lib/theme";
 import { UserType } from "@/lib/auth/auth.query";
 
 interface NavItemProps {
@@ -85,8 +80,6 @@ export default function NavBar({
     isHomePage?: boolean;
 }) {
     const signOut = useSignOut();
-    const { theme } = useRouteContext({ from: "__root__" });
-    const router = useRouter();
 
     const [scrolled, setScrolled] = useState(false);
 
@@ -97,12 +90,6 @@ export default function NavBar({
         window.addEventListener("scroll", onScroll, { passive: true });
         return () => window.removeEventListener("scroll", onScroll);
     }, [isHomePage]);
-
-    function toggleDarkMode() {
-        const themes = ["light", "dark", "auto"] as const;
-        const next = themes[(themes.indexOf(theme) + 1) % themes.length];
-        setThemeServerFn({ data: next }).then(() => router.invalidate());
-    }
 
     return (
         <nav
@@ -186,22 +173,6 @@ export default function NavBar({
                             />
                             <div className="bg-mainBg border-border invisible absolute right-0 z-20 mt-2 w-40 rounded border opacity-0 shadow-md transition-opacity duration-200 group-hover:visible group-hover:opacity-100">
                                 <ul className="flex flex-col py-2">
-                                    <li>
-                                        <NavItem
-                                            icon={
-                                                theme === "dark" ? (
-                                                    <Moon size={18} />
-                                                ) : theme === "light" ? (
-                                                    <Sun />
-                                                ) : (
-                                                    <Monitor />
-                                                )
-                                            }
-                                            label="Theme"
-                                            onClick={() => toggleDarkMode()}
-                                            left={false}
-                                        />
-                                    </li>
                                     <li>
                                         <NavItem
                                             left={false}
