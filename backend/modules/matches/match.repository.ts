@@ -7,10 +7,21 @@ import {
     maps,
     groups,
     stages,
+    tournaments,
     matchCasters,
     playerStats,
 } from "../../schemas";
-import { eq, and, isNull, desc, asc, gte, lt, ne } from "drizzle-orm";
+import {
+    eq,
+    and,
+    isNull,
+    desc,
+    asc,
+    gte,
+    ne,
+    or,
+    inArray,
+} from "drizzle-orm";
 
 export const matchRepository = {
     findById: async (matchId: number) => {
@@ -80,19 +91,31 @@ export const matchRepository = {
         });
     },
 
-    findUpcomingMatches: async (
-        startOfToday: number,
-        startOfDayAfterTomorrow: number,
-    ) => {
+    findUpcomingMatches: async () => {
+        const nowSeconds = Math.floor(Date.now() / 1000);
+
+        const stagesInActiveTournaments = db
+            .select({ id: stages.id })
+            .from(stages)
+            .innerJoin(tournaments, eq(stages.tournament_id, tournaments.id))
+            .where(
+                and(
+                    isNull(stages.deleted_at),
+                    isNull(tournaments.deleted_at),
+                    eq(tournaments.status, "active"),
+                ),
+            );
+
         return await db.query.matches.findMany({
             where: and(
                 isNull(matches.deleted_at),
-                isNull(matchParticipants.deleted_at),
-                isNull(maps.deleted_at),
+                inArray(matches.stage_id, stagesInActiveTournaments),
                 ne(matches.status, "finished"),
                 ne(matches.status, "cancelled"),
-                gte(matches.scheduled_at, startOfToday),
-                lt(matches.scheduled_at, startOfDayAfterTomorrow),
+                or(
+                    gte(matches.scheduled_at, nowSeconds),
+                    eq(matches.status, "live"),
+                ),
             ),
             with: {
                 participants: {

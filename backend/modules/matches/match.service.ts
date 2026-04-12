@@ -95,13 +95,7 @@ export const matchService = {
         const startOfTomorrow = new Date(startOfToday);
         startOfTomorrow.setDate(startOfTomorrow.getDate() + 1);
 
-        const startOfDayAfterTomorrow = new Date(startOfTomorrow);
-        startOfDayAfterTomorrow.setDate(startOfDayAfterTomorrow.getDate() + 1);
-
-        const upcomingMatches = await matchRepository.findUpcomingMatches(
-            Math.floor(startOfToday.getTime() / 1000),
-            Math.floor(startOfDayAfterTomorrow.getTime() / 1000),
-        );
+        const upcomingMatches = await matchRepository.findUpcomingMatches();
 
         return upcomingMatches.sort((a, b) => {
             const aScheduledAt = a.scheduled_at ?? 0;

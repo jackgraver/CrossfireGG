@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { cn } from "@/utils/cn";
 import { matchesRole } from "@/utils/role.util";
@@ -81,35 +80,16 @@ export default function NavBar({
 }) {
     const signOut = useSignOut();
 
-    const [scrolled, setScrolled] = useState(false);
-
-    useEffect(() => {
-        if (!isHomePage) return;
-        const onScroll = () =>
-            setScrolled(window.scrollY > window.innerHeight / 2);
-        window.addEventListener("scroll", onScroll, { passive: true });
-        return () => window.removeEventListener("scroll", onScroll);
-    }, [isHomePage]);
-
     return (
         <nav
             className={cn(
-                "top-0 z-50 backdrop-blur-md transition-colors duration-500",
+                "z-50 backdrop-blur-md transition-colors duration-500",
                 isHomePage
-                    ? cn(
-                          "fixed inset-x-0",
-                          scrolled ? "bg-mainBg/80" : "bg-black/20",
-                      )
-                    : "bg-mainBg/80 sticky",
+                    ? "fixed inset-x-0 top-0 mx-auto max-w-7xl bg-black/20"
+                    : "bg-mainBg/80 sticky top-0",
             )}
         >
-            <div
-                className={cn(
-                    "mx-auto flex h-14 items-center justify-between",
-                    isHomePage && "transition-[max-width,padding] duration-500",
-                    isHomePage && !scrolled ? "max-w-full px-4" : "max-w-7xl",
-                )}
-            >
+            <div className="flex h-14 items-center justify-between">
                 <div className="flex items-center gap-1">
                     <NavItem
                         to="/"
@@ -118,7 +98,7 @@ export default function NavBar({
                         padding="px-3 py-2 -ml-3"
                     />
                     <NavItem
-                        to="/tournament"
+                        to="/tournament/8/stage/16/bracket"
                         icon={<Trophy size={18} />}
                         label="Season 5"
                         padding="px-3 py-2 -ml-3"

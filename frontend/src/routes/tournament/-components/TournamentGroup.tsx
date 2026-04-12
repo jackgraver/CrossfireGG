@@ -100,7 +100,7 @@ export const TournamentGroup = ({
                             src={
                                 tournament.id % 2 === 0
                                     ? "ex2.jpg"
-                                    : "SEASON_4_ANNOUNCEMENT.png"
+                                    : "Background_Match_day.png"
                             }
                             alt="Season 4 Announcement"
                             className="h-48 w-full rounded-t-2xl object-cover"

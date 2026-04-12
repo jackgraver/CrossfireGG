@@ -1,0 +1,1 @@
+pgcli postgres://app_user:app_password@localhost:5432/cf-db
