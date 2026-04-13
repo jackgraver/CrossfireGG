@@ -11,17 +11,11 @@ router.get("/:teamId/members", teamController.getTeamMembers);
 router.get("/:teamId/players", teamController.getTeamPlayers);
 router.post("/:teamId/players", teamController.addPlayerToTeam);
 
-router.delete(
-    "/:teamId/players/:playerId",
-    teamController.removePlayerFromTeam,
-);
+router.delete("/:teamId/players/:playerId", teamController.removePlayerFromTeam);
 
 router.get("/:teamId/tournament", teamController.getTeamTournaments);
 router.get("/:teamId/matches", teamController.getAllTeamMatches); //TODO: pagination later
 
-router.get(
-    "/:teamId/stages/:stageId/matches",
-    teamController.getTeamMatchesByStage,
-);
+router.get("/:teamId/stages/:stageId/matches", teamController.getTeamMatchesByStage);
 
 export default router;

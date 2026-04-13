@@ -45,9 +45,7 @@ export default function StepSubs({
                     Choose up to 3 substitute players (optional).
                 </p>
             </div>
-            {error && (
-                <div className="text-red-500">Error: {error.message}</div>
-            )}
+            {error && <div className="text-red-500">Error: {error.message}</div>}
             {isLoading && (
                 <div className="flex items-center gap-x-2 py-4 text-gray-400">
                     <Loader className="h-5 w-5 animate-spin" />
@@ -65,9 +63,7 @@ export default function StepSubs({
                     if (existingIndex >= 0) {
                         form.setFieldValue(
                             "subs",
-                            subs.filter(
-                                (_: any, i: number) => i !== existingIndex,
-                            ),
+                            subs.filter((_: any, i: number) => i !== existingIndex),
                         );
                     } else {
                         form.setFieldValue("subs", [
@@ -89,10 +85,7 @@ export default function StepSubs({
                         ?.filter(
                             (player) =>
                                 !excludedIds.has(player.user_id) &&
-                                !subs.some(
-                                    (sub: any) =>
-                                        sub.faceitId === player.user_id,
-                                ),
+                                !subs.some((sub: any) => sub.faceitId === player.user_id),
                         )
                         .map((player) => (
                             <SelectableCard
@@ -110,9 +103,7 @@ export default function StepSubs({
     const right = (
         <div className="flex flex-col gap-y-6">
             <div className="border-b border-gray-700 pb-4">
-                <h2 className="text-xl font-semibold text-white">
-                    Subs Details
-                </h2>
+                <h2 className="text-xl font-semibold text-white">Subs Details</h2>
                 <p className="text-sm text-gray-400">
                     Complete the information for each selected substitute.
                 </p>
@@ -120,15 +111,11 @@ export default function StepSubs({
             <div className="flex flex-col gap-y-4">
                 {subs.length === 0 && (
                     <div className="flex h-32 items-center justify-center rounded-lg border-2 border-dashed border-gray-700 text-gray-500">
-                        Select players from the list to see their details
-                        (optional)
+                        Select players from the list to see their details (optional)
                     </div>
                 )}
                 {subs.map((player: any, index: number) => (
-                    <div
-                        key={player.faceitId}
-                        className="rounded-lg transition-all duration-200"
-                    >
+                    <div key={player.faceitId} className="rounded-lg transition-all duration-200">
                         <PlayerFormFields
                             form={form}
                             namePrefix={`subs[${index}]`}
@@ -138,10 +125,7 @@ export default function StepSubs({
                                     ? () =>
                                           form.setFieldValue(
                                               "subs",
-                                              subs.filter(
-                                                  (_: any, i: number) =>
-                                                      i !== index,
-                                              ),
+                                              subs.filter((_: any, i: number) => i !== index),
                                           )
                                     : undefined
                             }

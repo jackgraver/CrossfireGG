@@ -1,11 +1,4 @@
-import React, {
-    createContext,
-    useContext,
-    useState,
-    useCallback,
-    useEffect,
-    useRef,
-} from "react";
+import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 
 interface MatchDropdownContextType {
@@ -20,26 +13,18 @@ interface MatchDropdownContextType {
     } | null;
 }
 
-const MatchDropdownContext = createContext<
-    MatchDropdownContextType | undefined
->(undefined);
+const MatchDropdownContext = createContext<MatchDropdownContextType | undefined>(undefined);
 
 export const useMatchDropdown = () => {
     const context = useContext(MatchDropdownContext);
     if (!context) {
-        throw new Error(
-            "useMatchDropdown must be used within a MatchDropdownProvider",
-        );
+        throw new Error("useMatchDropdown must be used within a MatchDropdownProvider");
     }
     return context;
 };
 
-export const MatchDropdownProvider: React.FC<{ children: React.ReactNode }> = ({
-    children,
-}) => {
-    const [activeMatchId, setActiveMatchId] = useState<number | string | null>(
-        null,
-    );
+export const MatchDropdownProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const [activeMatchId, setActiveMatchId] = useState<number | string | null>(null);
     const [anchorRect, setAnchorRect] = useState<{
         top: number;
         left: number;
@@ -65,25 +50,21 @@ export const MatchDropdownProvider: React.FC<{ children: React.ReactNode }> = ({
         }
     }, []);
 
-    const openDropdown = useCallback(
-        (id: number | string, anchor: HTMLElement) => {
-            anchorRef.current = anchor;
-            setActiveMatchId(id);
+    const openDropdown = useCallback((id: number | string, anchor: HTMLElement) => {
+        anchorRef.current = anchor;
+        setActiveMatchId(id);
 
-            if (containerRef.current) {
-                const anchorBounds = anchor.getBoundingClientRect();
-                const containerBounds =
-                    containerRef.current.getBoundingClientRect();
-                setAnchorRect({
-                    top: anchorBounds.top - containerBounds.top,
-                    bottom: anchorBounds.bottom - containerBounds.top,
-                    left: anchorBounds.left - containerBounds.left,
-                    width: anchorBounds.width,
-                });
-            }
-        },
-        [],
-    );
+        if (containerRef.current) {
+            const anchorBounds = anchor.getBoundingClientRect();
+            const containerBounds = containerRef.current.getBoundingClientRect();
+            setAnchorRect({
+                top: anchorBounds.top - containerBounds.top,
+                bottom: anchorBounds.bottom - containerBounds.top,
+                left: anchorBounds.left - containerBounds.left,
+                width: anchorBounds.width,
+            });
+        }
+    }, []);
 
     const closeDropdown = useCallback(() => {
         setActiveMatchId(null);
@@ -96,17 +77,9 @@ export const MatchDropdownProvider: React.FC<{ children: React.ReactNode }> = ({
 
         const handleResize = () => updateRect();
         const handleClickOutside = (e: MouseEvent) => {
-            if (
-                anchorRef.current &&
-                !anchorRef.current.contains(e.target as Node)
-            ) {
-                const portalContent = document.getElementById(
-                    "match-dropdown-portal",
-                );
-                if (
-                    portalContent &&
-                    !portalContent.contains(e.target as Node)
-                ) {
+            if (anchorRef.current && !anchorRef.current.contains(e.target as Node)) {
+                const portalContent = document.getElementById("match-dropdown-portal");
+                if (portalContent && !portalContent.contains(e.target as Node)) {
                     closeDropdown();
                 }
             }
@@ -133,18 +106,13 @@ export const MatchDropdownProvider: React.FC<{ children: React.ReactNode }> = ({
         >
             <div ref={containerRef} className="relative">
                 {children}
-                <div
-                    id="match-dropdown-portal"
-                    className="absolute top-0 left-0 w-full"
-                />
+                <div id="match-dropdown-portal" className="absolute top-0 left-0 w-full" />
             </div>
         </MatchDropdownContext.Provider>
     );
 };
 
-export const MatchDropdownPortal: React.FC<{ children: React.ReactNode }> = ({
-    children,
-}) => {
+export const MatchDropdownPortal: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const portalRoot = document.getElementById("match-dropdown-portal");
     if (!portalRoot) return null;
     return createPortal(children, portalRoot);

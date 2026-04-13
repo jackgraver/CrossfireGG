@@ -24,9 +24,7 @@ export const TournamentWithTeamCountContract = TournamentContract.extend({
     team_count: z.number(),
 });
 
-export type TournamentWithTeamCountDTO = z.infer<
-    typeof TournamentWithTeamCountContract
->;
+export type TournamentWithTeamCountDTO = z.infer<typeof TournamentWithTeamCountContract>;
 
 export type TournamentDTO = z.infer<typeof TournamentContract>;
 
@@ -39,18 +37,14 @@ export const TournamentWithStagesContract = TournamentContract.extend({
     isRegistered: z.boolean(),
 });
 
-export type TournamentWithStagesDTO = z.infer<
-    typeof TournamentWithStagesContract
->;
+export type TournamentWithStagesDTO = z.infer<typeof TournamentWithStagesContract>;
 
 export const TournamentWithMinimalStagesContract = TournamentContract.extend({
     stages: z.array(MinimalStageContract),
     syncStatus: z.enum(["processing", "idle"]).default("idle"),
 });
 
-export type TournamentWithMinimalStagesDTO = z.infer<
-    typeof TournamentWithMinimalStagesContract
->;
+export type TournamentWithMinimalStagesDTO = z.infer<typeof TournamentWithMinimalStagesContract>;
 
 export const CreateTournamentContract = z
     .object({
@@ -62,14 +56,10 @@ export const CreateTournamentContract = z
         is_vrs_enabled: z.boolean().default(false),
         stages: z.array(CreateStageContract),
     })
-    .refine(
-        ({ start_date, end_date }) =>
-            !!start_date && !!end_date && end_date > start_date,
-        {
-            message: "End date must be after start date and not equal",
-            path: ["end_date"],
-        },
-    );
+    .refine(({ start_date, end_date }) => !!start_date && !!end_date && end_date > start_date, {
+        message: "End date must be after start date and not equal",
+        path: ["end_date"],
+    });
 
 export type CreateTournamentDTO = z.infer<typeof CreateTournamentContract>;
 
@@ -83,14 +73,10 @@ export const UpdateTournamentContract = z
         is_vrs_enabled: z.boolean().default(false),
         stages: z.array(UpdateStageContract),
     })
-    .refine(
-        ({ start_date, end_date }) =>
-            !!start_date && !!end_date && end_date > start_date,
-        {
-            message: "End date must be after start date and not equal",
-            path: ["end_date"],
-        },
-    );
+    .refine(({ start_date, end_date }) => !!start_date && !!end_date && end_date > start_date, {
+        message: "End date must be after start date and not equal",
+        path: ["end_date"],
+    });
 
 export type UpdateTournamentDTO = z.infer<typeof UpdateTournamentContract>;
 

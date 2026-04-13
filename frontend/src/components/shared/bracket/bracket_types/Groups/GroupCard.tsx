@@ -23,9 +23,7 @@ export default function GroupCard({
                 }
             });
         });
-        return Array.from(teamMap.values()).sort(
-            (a, b) => b.stageTeam.wins - a.stageTeam.wins,
-        );
+        return Array.from(teamMap.values()).sort((a, b) => b.stageTeam.wins - a.stageTeam.wins);
     }, [matches]);
 
     return (

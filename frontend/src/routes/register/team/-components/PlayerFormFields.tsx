@@ -16,21 +16,13 @@ type FieldWrapperProps = {
     placeholder?: string;
 };
 
-function FieldWrapper({
-    form,
-    namePrefix,
-    name,
-    label,
-    placeholder = "",
-}: FieldWrapperProps) {
+function FieldWrapper({ form, namePrefix, name, label, placeholder = "" }: FieldWrapperProps) {
     return (
         <form.Field
             name={`${namePrefix}.${name}`}
             validators={{
-                onChange: ({ value }: any) =>
-                    !value ? `${label} is required` : undefined,
-                onMount: ({ value }: any) =>
-                    !value ? `${label} is required` : undefined,
+                onChange: ({ value }: any) => (!value ? `${label} is required` : undefined),
+                onMount: ({ value }: any) => (!value ? `${label} is required` : undefined),
             }}
         >
             {(field: any) => (
@@ -43,29 +35,18 @@ function FieldWrapper({
                     label={label}
                     placeholder={placeholder}
                     disabled={name === "playerName"}
-                    title={
-                        name === "playerName" ? "Cannot change player name" : ""
-                    }
+                    title={name === "playerName" ? "Cannot change player name" : ""}
                 />
             )}
         </form.Field>
     );
 }
 
-export default function PlayerFormFields({
-    form,
-    namePrefix,
-    onRemove,
-}: PlayerFormFieldsProps) {
+export default function PlayerFormFields({ form, namePrefix, onRemove }: PlayerFormFieldsProps) {
     return (
         <div className="flex items-start gap-4">
             <div className="flex flex-1 flex-row gap-4">
-                <FieldWrapper
-                    form={form}
-                    namePrefix={namePrefix}
-                    name="playerName"
-                    label="Name"
-                />
+                <FieldWrapper form={form} namePrefix={namePrefix} name="playerName" label="Name" />
                 <FieldWrapper
                     form={form}
                     namePrefix={namePrefix}
@@ -73,12 +54,7 @@ export default function PlayerFormFields({
                     label="Nationality"
                     placeholder="American, Canadian, etc."
                 />
-                <FieldWrapper
-                    form={form}
-                    namePrefix={namePrefix}
-                    name="hltvLink"
-                    label="HLTV"
-                />
+                <FieldWrapper form={form} namePrefix={namePrefix} name="hltvLink" label="HLTV" />
                 <FieldWrapper
                     form={form}
                     namePrefix={namePrefix}

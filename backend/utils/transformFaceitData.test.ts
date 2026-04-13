@@ -27,10 +27,7 @@ describe("transformFaceitData", () => {
             };
 
             const tournamentId = 1;
-            const result = await transformFaceitTournament(
-                mockFaceitChampionship,
-                tournamentId,
-            );
+            const result = await transformFaceitTournament(mockFaceitChampionship, tournamentId);
 
             expect(result).toEqual({
                 tournament_id: 1,
@@ -60,10 +57,7 @@ describe("transformFaceitData", () => {
                 faceit_url: "",
             };
 
-            const result = await transformFaceitTournament(
-                mockFaceitChampionship,
-                2,
-            );
+            const result = await transformFaceitTournament(mockFaceitChampionship, 2);
 
             expect(result.start_date).toBeNull();
             expect(result.registration_deadline).toBeNull();

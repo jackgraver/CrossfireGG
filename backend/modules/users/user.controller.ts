@@ -3,17 +3,11 @@ import { AuthRequest } from "../../core/middleware/auth.middleware";
 import { userRepository } from "./user.repository";
 import { playerRepository } from "../players/player.repository";
 import { sendContract } from "../../core/sendContract";
-import {
-    UserWithRolesContract,
-    UpdateUserRolesBodyContract,
-} from "@repo/contracts";
+import { UserWithRolesContract, UpdateUserRolesBodyContract } from "@repo/contracts";
 import { parseOr400 } from "../../core/validation/parseOr400";
 import { ROOT_USER_EMAIL } from "../../core/rootUser";
 import { Role } from "@repo/types";
-import {
-    UserSearchQuerySchema,
-    normalizeUserSearchQuery,
-} from "./user.validation";
+import { UserSearchQuerySchema, normalizeUserSearchQuery } from "./user.validation";
 
 export const userController = {
     getMe: (async (req, res: Response) => {
@@ -24,10 +18,9 @@ export const userController = {
             }
             let playerInfo = authReq.playerInfo;
             if (!playerInfo?.faceit_id) {
-                const faceitAccountId =
-                    await userRepository.findFaceitAccountIdByUserId(
-                        authReq.user.id,
-                    );
+                const faceitAccountId = await userRepository.findFaceitAccountIdByUserId(
+                    authReq.user.id,
+                );
                 if (faceitAccountId) {
                     await playerRepository.upsertPlayerByFaceitId({
                         faceit_id: faceitAccountId,
@@ -37,9 +30,7 @@ export const userController = {
                         country: null,
                         base_role: "starter",
                     });
-                    playerInfo = await userRepository.userPlayerInfo(
-                        authReq.user.id,
-                    );
+                    playerInfo = await userRepository.userPlayerInfo(authReq.user.id);
                 }
             }
 
@@ -69,9 +60,7 @@ export const userController = {
     }) as RequestHandler,
 
     searchUsers: (async (req, res: Response) => {
-        const normalized = normalizeUserSearchQuery(
-            req.query as Record<string, unknown>,
-        );
+        const normalized = normalizeUserSearchQuery(req.query as Record<string, unknown>);
         const data = parseOr400(res, UserSearchQuerySchema, normalized);
         if (!data) {
             return;
@@ -98,15 +87,10 @@ export const userController = {
             }
 
             if (target.email === ROOT_USER_EMAIL) {
-                return res
-                    .status(403)
-                    .json({ error: "Cannot modify root user" });
+                return res.status(403).json({ error: "Cannot modify root user" });
             }
 
-            await userRepository.replaceStaffRolesForUser(
-                userId,
-                parsed.data.roles as Role[],
-            );
+            await userRepository.replaceStaffRolesForUser(userId, parsed.data.roles as Role[]);
 
             const updated = await userRepository.findWithRolesById(userId);
             if (!updated) {

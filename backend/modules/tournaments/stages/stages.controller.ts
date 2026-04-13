@@ -15,9 +15,7 @@ export const stageController = {
         const data = parseOr400(res, StageParamsSchema, req.params);
         if (!data) return;
 
-        const matches = await stagesService.getMatchesByStageId(
-            Number(data.stageId),
-        );
+        const matches = await stagesService.getMatchesByStageId(Number(data.stageId));
         sendContract(res, MatchesByStageResponseContract, { matches });
     },
 

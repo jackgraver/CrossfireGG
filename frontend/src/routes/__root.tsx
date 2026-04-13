@@ -1,9 +1,4 @@
-import {
-    HeadContent,
-    Scripts,
-    createRootRoute,
-    useRouterState,
-} from "@tanstack/react-router";
+import { HeadContent, Scripts, createRootRoute, useRouterState } from "@tanstack/react-router";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import NavBar from "@/components/NavBar";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -48,8 +43,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
     const { user } = Route.useRouteContext();
 
     const isHomePage = useRouterState({
-        select: (state) =>
-            (state.resolvedLocation ?? state.location).pathname === "/",
+        select: (state) => (state.resolvedLocation ?? state.location).pathname === "/",
     });
 
     return (
@@ -69,10 +63,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                                         !isHomePage && "lg:max-w-8/12",
                                     )}
                                 >
-                                    <NavBar
-                                        user={user}
-                                        isHomePage={isHomePage}
-                                    />
+                                    <NavBar user={user} isHomePage={isHomePage} />
                                     {children}
                                     <Footer />
                                 </div>

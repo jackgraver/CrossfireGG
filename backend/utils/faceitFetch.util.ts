@@ -14,11 +14,7 @@ class FaceitApiError extends Error {
     status: number;
     statusText: string;
     endpoint: string;
-    constructor(args: {
-        status: number;
-        statusText: string;
-        endpoint: string;
-    }) {
+    constructor(args: { status: number; statusText: string; endpoint: string }) {
         super(`Faceit API error: ${args.status} ${args.statusText}`);
         this.name = "FaceitApiError";
         this.status = args.status;
@@ -31,10 +27,7 @@ export const faceitFetchUtil = {
     baseUrl: "https://open.faceit.com/data/v4",
     DEBUG_DATA_DIR: path.join(__dirname, "..", "debug-data"),
 
-    _callApi: async <T = any>(
-        endpoint: string,
-        queryParams?: Record<string, any>,
-    ): Promise<T> => {
+    _callApi: async <T = any>(endpoint: string, queryParams?: Record<string, any>): Promise<T> => {
         let url = `${faceitFetchUtil.baseUrl}/${endpoint.replace(/^\//, "")}`;
 
         if (queryParams && Object.keys(queryParams).length > 0) {
@@ -88,9 +81,7 @@ export const faceitFetchUtil = {
         }
     },
 
-    _readFromFile: async <T = any>(
-        fileName?: string,
-    ): Promise<T | undefined> => {
+    _readFromFile: async <T = any>(fileName?: string): Promise<T | undefined> => {
         if (!fileName) return undefined;
         const filePath = path.join(faceitFetchUtil.DEBUG_DATA_DIR, fileName);
         if (!fs.existsSync(filePath)) {
@@ -102,10 +93,7 @@ export const faceitFetchUtil = {
         return JSON.parse(data) as T;
     },
 
-    fetchData: async <T = any>(
-        endpoint: string,
-        options: faceitFetchOptions = {},
-    ): Promise<T> => {
+    fetchData: async <T = any>(endpoint: string, options: faceitFetchOptions = {}): Promise<T> => {
         const { readFileName, writeFileName, allow404 } = options;
         if (config.nodeEnv === "development") {
             const cachedData = await faceitFetchUtil._readFromFile<{
@@ -126,11 +114,7 @@ export const faceitFetchUtil = {
 
             return data as T;
         } catch (error) {
-            if (
-                allow404 &&
-                error instanceof FaceitApiError &&
-                error.status === 404
-            ) {
+            if (allow404 && error instanceof FaceitApiError && error.status === 404) {
                 console.log(
                     `[Faceit API] ${endpoint} returned 404 (likely forfeit/no stats). Skipping.`,
                 );
@@ -158,16 +142,11 @@ export const faceitFetchUtil = {
         }
 
         try {
-            console.log(
-                `[Faceit API] Fetching matches for championship: ${championshipId}`,
-            );
-            const data = await faceitFetchUtil._callApi(
-                `championships/${championshipId}/matches`,
-                {
-                    limit: 100,
-                    type: options.matchStatus ?? "all",
-                },
-            );
+            console.log(`[Faceit API] Fetching matches for championship: ${championshipId}`);
+            const data = await faceitFetchUtil._callApi(`championships/${championshipId}/matches`, {
+                limit: 100,
+                type: options.matchStatus ?? "all",
+            });
 
             // Only write to file in development environment
             if (config.nodeEnv === "development") {
@@ -188,21 +167,15 @@ export const faceitFetchUtil = {
         // Only read from file in development environment
         if (config.nodeEnv === "development") {
             const cachedData =
-                await faceitFetchUtil._readFromFile<FaceitAPIChampionship>(
-                    readFileName,
-                );
+                await faceitFetchUtil._readFromFile<FaceitAPIChampionship>(readFileName);
             if (cachedData) {
                 return cachedData;
             }
         }
 
         try {
-            console.log(
-                `[Faceit API] Fetching championship data: ${championshipId}`,
-            );
-            const data = await faceitFetchUtil._callApi(
-                `championships/${championshipId}`,
-            );
+            console.log(`[Faceit API] Fetching championship data: ${championshipId}`);
+            const data = await faceitFetchUtil._callApi(`championships/${championshipId}`);
 
             // Only write to file in development environment
             if (config.nodeEnv === "development") {
@@ -211,10 +184,7 @@ export const faceitFetchUtil = {
 
             return data;
         } catch (error) {
-            console.error(
-                `[Faceit API] Error fetching championship data:`,
-                error,
-            );
+            console.error(`[Faceit API] Error fetching championship data:`, error);
             throw error;
         }
     },

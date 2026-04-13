@@ -1,11 +1,7 @@
 import { z } from "zod";
 import { MatchParticipantWithTeamContract } from "./match_participant.contracts";
 import { MatchCasterContract } from "./match_caster.contracts";
-import {
-    MapContract,
-    MapWithPlayerStatsContract,
-    MinifiedMapContract,
-} from "./map.contracts";
+import { MapContract, MapWithPlayerStatsContract, MinifiedMapContract } from "./map.contracts";
 import { PlayerStatsWithPlayerContract } from "./player.contracts";
 
 export const MatchContract = z.object({
@@ -28,17 +24,13 @@ export const MatchWithParticipantsContract = MatchContract.extend({
     participants: MatchParticipantWithTeamContract.array(),
 });
 
-export type MatchWithParticipantsDTO = z.infer<
-    typeof MatchWithParticipantsContract
->;
+export type MatchWithParticipantsDTO = z.infer<typeof MatchWithParticipantsContract>;
 
 export const MatchesByStageResponseContract = z.object({
     matches: MatchWithParticipantsContract.array(),
 });
 
-export type MatchesByStageResponseDTO = z.infer<
-    typeof MatchesByStageResponseContract
->;
+export type MatchesByStageResponseDTO = z.infer<typeof MatchesByStageResponseContract>;
 
 export const MatchWithParticipantAndMinifiedMapContract = MatchContract.extend({
     participants: MatchParticipantWithTeamContract.array(),
@@ -54,9 +46,7 @@ export const MatchWithParticipantsAndMapsContract = MatchContract.extend({
     maps: MapWithPlayerStatsContract.array(),
 });
 
-export type MatchWithParticipantsAndMapsDTO = z.infer<
-    typeof MatchWithParticipantsAndMapsContract
->;
+export type MatchWithParticipantsAndMapsDTO = z.infer<typeof MatchWithParticipantsAndMapsContract>;
 
 export const MatchWithCastersContract = MatchWithParticipantsContract.extend({
     casters: MatchCasterContract.array(),
@@ -69,9 +59,7 @@ export const ClaimedAndUnclaimedMatchesContract = z.object({
     unclaimed: MatchWithParticipantsContract.array(),
 });
 
-export type ClaimedAndUnclaimedMatchesDTO = z.infer<
-    typeof ClaimedAndUnclaimedMatchesContract
->;
+export type ClaimedAndUnclaimedMatchesDTO = z.infer<typeof ClaimedAndUnclaimedMatchesContract>;
 
 export const MatchPageContract = z.object({
     match: MatchWithParticipantsContract.extend({

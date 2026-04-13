@@ -13,9 +13,7 @@ function firstQueryString(value: unknown): string {
 /**
  * Normalizes Express `req.query` into a plain object for Zod (handles string | string[]).
  */
-export function normalizeUserSearchQuery(
-    query: Record<string, unknown>,
-): { q: string } {
+export function normalizeUserSearchQuery(query: Record<string, unknown>): { q: string } {
     return { q: firstQueryString(query.q) };
 }
 

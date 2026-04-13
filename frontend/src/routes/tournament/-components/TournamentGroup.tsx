@@ -1,13 +1,6 @@
 import { TournamentWithTeamCountDTO } from "@repo/contracts";
 import { Link, useNavigate } from "@tanstack/react-router";
-import {
-    Calendar,
-    CalendarFold,
-    CheckCircle2,
-    DollarSign,
-    PlayCircle,
-    Users,
-} from "lucide-react";
+import { Calendar, CalendarFold, CheckCircle2, DollarSign, PlayCircle, Users } from "lucide-react";
 import Tile from "../$tournamentId/-component/Tile";
 import { formatDateOnly, toUnixTimestamp } from "@/lib/date.utils";
 import SignUpButton from "./SignUpButton";
@@ -60,6 +53,7 @@ export const TournamentGroup = ({
 
     return (
         <section className="mb-12 flex flex-col gap-4">
+            <p className="text-orange-500">COMPETE</p>
             <h2 className="text-textSecondary flex items-center gap-2 text-3xl font-black tracking-tight uppercase">
                 {iconMap[type]}
                 {type === "active"
@@ -68,7 +62,7 @@ export const TournamentGroup = ({
                       ? "Upcoming Tournaments"
                       : "Ended Tournaments"}
             </h2>
-            <div className="flex flex-wrap gap-8">
+            <div className="flex flex-row flex-wrap gap-8">
                 {tournaments.map((tournament: TournamentWithTeamCountDTO) => (
                     <article
                         key={tournament.id}
@@ -97,11 +91,7 @@ export const TournamentGroup = ({
                         className="bg-firstBg border-border/10 hover:border-cfRed/30 flex w-full min-w-125 flex-col rounded-2xl border p-0 transition-all md:w-[calc(50%-1rem)] xl:w-[calc(33.333%-1.334rem)]"
                     >
                         <img
-                            src={
-                                tournament.id % 2 === 0
-                                    ? "ex2.jpg"
-                                    : "Background_Match_day.png"
-                            }
+                            src={tournament.id % 2 === 0 ? "ex2.jpg" : "Background_Match_day.png"}
                             alt="Season 4 Announcement"
                             className="h-48 w-full rounded-t-2xl object-cover"
                             style={{ background: "#252628" }}
@@ -147,17 +137,13 @@ export const TournamentGroup = ({
                                         <div className="text-textSecondary flex items-center gap-1.5 text-xs font-medium opacity-60">
                                             <Calendar size={14} />
                                             {formatDateOnly(
-                                                toUnixTimestamp(
-                                                    tournament.start_date,
-                                                )!,
+                                                toUnixTimestamp(tournament.start_date)!,
                                             )}
                                             {tournament.end_date && (
                                                 <>
                                                     {" - "}
                                                     {formatDateOnly(
-                                                        toUnixTimestamp(
-                                                            tournament.end_date,
-                                                        )!,
+                                                        toUnixTimestamp(tournament.end_date)!,
                                                     )}
                                                 </>
                                             )}
@@ -168,9 +154,7 @@ export const TournamentGroup = ({
                         </div>
                         <div className="flex flex-row gap-2 px-6 pb-6">
                             <Link
-                                to={
-                                    "/tournament/$tournamentId/stage/$stageId/bracket"
-                                }
+                                to={"/tournament/$tournamentId/stage/$stageId/bracket"}
                                 params={{
                                     tournamentId: tournament.id,
                                     stageId: tournament.entry_stage,
@@ -180,9 +164,7 @@ export const TournamentGroup = ({
                                 View Tournament
                             </Link>
                             {tournament.status === "upcoming" && (
-                                <SignUpButton
-                                    tournamentId={tournament.id.toString()}
-                                />
+                                <SignUpButton tournamentId={tournament.id.toString()} />
                             )}
                         </div>
                     </article>

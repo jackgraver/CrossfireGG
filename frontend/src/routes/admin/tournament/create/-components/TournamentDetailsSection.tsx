@@ -19,12 +19,8 @@ export default function TournamentDetailsSection({
         <section className="border-secondBg bg-firstBg max-h-143.75 rounded-lg border p-6 shadow-lg">
             <div className="flex items-center justify-between gap-4">
                 <div className="mb-4">
-                    <h2 className="text-lg font-semibold">
-                        Tournament details
-                    </h2>
-                    <p className="text-sm text-gray-400">
-                        Fill out the basics for the tournament.
-                    </p>
+                    <h2 className="text-lg font-semibold">Tournament details</h2>
+                    <p className="text-sm text-gray-400">Fill out the basics for the tournament.</p>
                 </div>
                 <button
                     onClick={async (e) => {

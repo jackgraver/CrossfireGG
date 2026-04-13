@@ -35,17 +35,11 @@ export default function PlayoffBracket({ matches }: PlayoffBracketProps) {
                 .join("|"),
         [matches],
     );
-    const [positions, setPositions] = useState<Record<string, MatchPosition>>(
-        {},
-    );
+    const [positions, setPositions] = useState<Record<string, MatchPosition>>({});
     const containerRef = useRef<HTMLDivElement>(null);
 
     const handlePositionUpdate = useCallback(
-        (
-            roundIndex: number,
-            matchIndex: number,
-            element: HTMLDivElement | null,
-        ) => {
+        (roundIndex: number, matchIndex: number, element: HTMLDivElement | null) => {
             if (!element || !containerRef.current) return;
 
             const containerRect = containerRef.current.getBoundingClientRect();
@@ -121,24 +115,14 @@ export default function PlayoffBracket({ matches }: PlayoffBracketProps) {
             });
         });
 
-        return (
-            <svg className="pointer-events-none absolute inset-0 h-full w-full">
-                {paths}
-            </svg>
-        );
+        return <svg className="pointer-events-none absolute inset-0 h-full w-full">{paths}</svg>;
     };
 
     return (
-        <div
-            ref={containerRef}
-            className="relative flex min-h-[800px] flex-row overflow-auto"
-        >
+        <div ref={containerRef} className="relative flex min-h-[800px] flex-row overflow-auto">
             {renderConnections()}
             {rounds.map((round, roundIndex) => (
-                <div
-                    key={round.name}
-                    className="z-10 flex flex-col justify-around px-8"
-                >
+                <div key={round.name} className="z-10 flex flex-col justify-around px-8">
                     <div className="mb-4 text-center">
                         <h2 className="font-bold tracking-wider text-gray-400 uppercase">
                             {round.name}

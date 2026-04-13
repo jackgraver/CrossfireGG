@@ -1,12 +1,4 @@
-import {
-    pgTable,
-    serial,
-    integer,
-    timestamp,
-    unique,
-    index,
-    text,
-} from "drizzle-orm/pg-core";
+import { pgTable, serial, integer, timestamp, unique, index, text } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { stageTeams } from "./stage_team.schema";
 
@@ -28,12 +20,9 @@ export const tournamentResults = pgTable(
     ],
 );
 
-export const tournamentResultsRelations = relations(
-    tournamentResults,
-    ({ one }) => ({
-        stageTeam: one(stageTeams, {
-            fields: [tournamentResults.stage_team_id],
-            references: [stageTeams.id],
-        }),
+export const tournamentResultsRelations = relations(tournamentResults, ({ one }) => ({
+    stageTeam: one(stageTeams, {
+        fields: [tournamentResults.stage_team_id],
+        references: [stageTeams.id],
     }),
-);
+}));

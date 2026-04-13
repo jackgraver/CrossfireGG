@@ -209,10 +209,7 @@ export function transformFaceitPlayer(faceitPlayer: FaceitAPIPlayer) {
  * Transform Faceit team/faction data to Team schema
  * Note: team_captain_id needs to be resolved after upserting the captain player
  */
-export function transformFaceitTeam(
-    faceitTeam: FaceitAPITeam,
-    captainPlayerId: number,
-) {
+export function transformFaceitTeam(faceitTeam: FaceitAPITeam, captainPlayerId: number) {
     return {
         name: faceitTeam.name,
         team_logo: faceitTeam.avatar || null,
@@ -263,11 +260,7 @@ export function transformFaceitMatch(
 
     // If we have format information, format the round nicely
     if (faceitMatch.round && stageFormat && stageFormat !== "unknown") {
-        if (
-            (stageFormat === "single elimination" ||
-                stageFormat === "bracket") &&
-            singleElim
-        ) {
+        if ((stageFormat === "single elimination" || stageFormat === "bracket") && singleElim) {
             const isThird = isThirdPlaceSingleElim(
                 singleElim.lossesBeforeF1,
                 singleElim.lossesBeforeF2,
@@ -310,10 +303,7 @@ export function transformFaceitMaps(
     participantMap: { faction1: number; faction2: number },
     formattedRound?: string,
 ) {
-    if (
-        !faceitMatch.detailed_results ||
-        faceitMatch.detailed_results.length === 0
-    ) {
+    if (!faceitMatch.detailed_results || faceitMatch.detailed_results.length === 0) {
         return [];
     }
 
@@ -376,9 +366,7 @@ export function transformFaceitMatchParticipants(
 /**
  * Extract all unique players from a match
  */
-export function extractPlayersFromMatch(
-    faceitMatch: FaceitAPIMatch,
-): FaceitAPIPlayer[] {
+export function extractPlayersFromMatch(faceitMatch: FaceitAPIMatch): FaceitAPIPlayer[] {
     const players: FaceitAPIPlayer[] = [];
 
     if (faceitMatch.teams.faction1?.roster) {
@@ -395,9 +383,7 @@ export function extractPlayersFromMatch(
 /**
  * Extract all unique teams from a match
  */
-export function extractTeamsFromMatch(
-    faceitMatch: FaceitAPIMatch,
-): FaceitAPITeam[] {
+export function extractTeamsFromMatch(faceitMatch: FaceitAPIMatch): FaceitAPITeam[] {
     const teams: FaceitAPITeam[] = [];
 
     if (faceitMatch.teams.faction1) {
@@ -414,9 +400,7 @@ export function extractTeamsFromMatch(
 /**
  * Extract all unique players from multiple matches
  */
-export function extractAllPlayers(
-    matches: FaceitAPIMatch[],
-): Map<string, FaceitAPIPlayer> {
+export function extractAllPlayers(matches: FaceitAPIMatch[]): Map<string, FaceitAPIPlayer> {
     const playersMap = new Map<string, FaceitAPIPlayer>();
 
     for (const match of matches) {
@@ -434,9 +418,7 @@ export function extractAllPlayers(
 /**
  * Extract all unique teams from multiple matches
  */
-export function extractAllTeams(
-    matches: FaceitAPIMatch[],
-): Map<string, FaceitAPITeam> {
+export function extractAllTeams(matches: FaceitAPIMatch[]): Map<string, FaceitAPITeam> {
     const teamsMap = new Map<string, FaceitAPITeam>();
 
     for (const match of matches) {

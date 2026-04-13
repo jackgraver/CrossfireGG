@@ -15,9 +15,7 @@ export const InfoTile = ({
             <p className="text-textSecondary text-[6px] font-bold tracking-widest uppercase lg:text-[10px]">
                 {label}
             </p>
-            <p className="text-textPrimary text-[10px] font-bold lg:text-base">
-                {value}
-            </p>
+            <p className="text-textPrimary text-[10px] font-bold lg:text-base">{value}</p>
         </div>
     </div>
 );

@@ -44,7 +44,11 @@ export function useStepValidation(values: RegistrationFormData) {
                     values.subs.length >= 0 && values.subs.length <= 3 && validateStep(step).isValid
                 );
             if (step === "coach")
-                return values.coach.length >= 0 && values.coach.length <= 1 && validateStep(step).isValid;
+                return (
+                    values.coach.length >= 0 &&
+                    values.coach.length <= 1 &&
+                    validateStep(step).isValid
+                );
             if (step === "agreements") return validateStep(step).isValid;
             if (step === "review") return true;
             return false;

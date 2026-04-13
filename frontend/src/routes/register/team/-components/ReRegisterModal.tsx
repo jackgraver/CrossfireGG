@@ -9,16 +9,11 @@ type ReRegisterModalProps = {
 };
 
 function extractFaceitIdFromLink(link: string): string | null {
-    const match = link.match(
-        /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i,
-    );
+    const match = link.match(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i);
     return match ? match[0] : null;
 }
 
-export default function ReRegisterModal({
-    setShowModal,
-    title,
-}: ReRegisterModalProps) {
+export default function ReRegisterModal({ setShowModal, title }: ReRegisterModalProps) {
     const navigate = useNavigate();
 
     const [teamName, setTeamName] = useState("");
@@ -61,9 +56,7 @@ export default function ReRegisterModal({
                         width={32}
                     />
                 </div>
-                <h2 className="text-textPrimary text-xl font-bold">
-                    Confirm Team Link
-                </h2>
+                <h2 className="text-textPrimary text-xl font-bold">Confirm Team Link</h2>
                 {/* <OSSForm
                     onSubmit={handleSubmit}
                     onSuccess={(id) => {

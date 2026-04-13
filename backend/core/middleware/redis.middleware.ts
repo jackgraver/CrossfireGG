@@ -4,15 +4,9 @@ import { redisGet, redisSet } from "../redis";
 const SKIP_ROUTES = ["/user/me", /^\/tournament\/[^\/]+$/];
 
 export const checkRedisCache =
-    (
-        ttl = 900,
-        getKey: (req: Request) => string = cacheKeyGenerator,
-    ): RequestHandler =>
+    (ttl = 900, getKey: (req: Request) => string = cacheKeyGenerator): RequestHandler =>
     async (req: Request, res: Response, next: NextFunction) => {
-        if (
-            req.method !== "GET" ||
-            SKIP_ROUTES.some((route) => req.originalUrl.match(route))
-        ) {
+        if (req.method !== "GET" || SKIP_ROUTES.some((route) => req.originalUrl.match(route))) {
             return next();
         }
 

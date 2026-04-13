@@ -7,9 +7,7 @@ type FaceitSyncStatusBadgeProps = {
 
 type Phase = "hidden" | "pending" | "success";
 
-export function FaceitSyncStatusBadge({
-    syncStatus,
-}: FaceitSyncStatusBadgeProps) {
+export function FaceitSyncStatusBadge({ syncStatus }: FaceitSyncStatusBadgeProps) {
     const [phase, setPhase] = useState<Phase>("hidden");
     const prevRef = useRef<string | undefined>(undefined);
 

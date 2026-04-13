@@ -5,12 +5,7 @@ interface InfoBoxProps {
     clickAction?: () => void;
 }
 
-export default function InfoBox({
-    title,
-    icon,
-    description,
-    clickAction,
-}: InfoBoxProps) {
+export default function InfoBox({ title, icon, description, clickAction }: InfoBoxProps) {
     const isClickable = typeof clickAction === "function";
 
     return isClickable ? (
@@ -23,9 +18,7 @@ export default function InfoBox({
                 <span>{icon}</span>
                 <h2 className="text-2xl font-bold">{title}</h2>
             </div>
-            {description ? (
-                <p className="pt-2 text-zinc-300">{description}</p>
-            ) : null}
+            {description ? <p className="pt-2 text-zinc-300">{description}</p> : null}
         </button>
     ) : (
         <article className="border-secondBg bg-firstBg flex w-full flex-col rounded-md border-2 p-4 text-left shadow-md backdrop-blur-sm">
@@ -33,9 +26,7 @@ export default function InfoBox({
                 <span>{icon}</span>
                 <h2 className="text-2xl font-bold">{title}</h2>
             </div>
-            {description ? (
-                <p className="pt-2 text-zinc-300">{description}</p>
-            ) : null}
+            {description ? <p className="pt-2 text-zinc-300">{description}</p> : null}
         </article>
     );
 }

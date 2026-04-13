@@ -14,10 +14,7 @@ export function formatOrdinal(n: number): string {
     }
 }
 
-export function formatTeamPlacementSummary(
-    tournamentName: string,
-    placement: string,
-): string {
+export function formatTeamPlacementSummary(tournamentName: string, placement: string): string {
     const t = placement.trim();
     if (!t) return tournamentName;
     const p = t.toLowerCase();
@@ -31,21 +28,12 @@ export function formatTeamPlacementSummary(
  * Single-elim 3rd-place (bronze) vs grand final: Faceit round numbers overlap (e.g. bronze round 4 / GF round 5, or GF round 4 when there is no bronze).
  * Do not use round alone. Bronze is the only remaining match where either side already has a stage loss before kickoff (both SF losers with ≥1 loss).
  */
-export function isThirdPlaceSingleElim(
-    lossesBefore1: number,
-    lossesBefore2: number,
-): boolean {
+export function isThirdPlaceSingleElim(lossesBefore1: number, lossesBefore2: number): boolean {
     return lossesBefore1 > 0 || lossesBefore2 > 0;
 }
 
-export function computeRoundsFromFinal(
-    round: number,
-    totalTeams: number,
-): number {
-    const totalRounds = Math.max(
-        1,
-        Math.ceil(Math.log2(Math.max(2, totalTeams))),
-    );
+export function computeRoundsFromFinal(round: number, totalTeams: number): number {
+    const totalRounds = Math.max(1, Math.ceil(Math.log2(Math.max(2, totalTeams))));
     let rf = totalRounds - round + 1;
     // Faceit often labels the grand-final match as round (totalRounds + 1), which makes rf === 0.
     // Anything still "at or after" the nominal final round index is treated as one step from the trophy.
@@ -55,9 +43,7 @@ export function computeRoundsFromFinal(
     return rf;
 }
 
-export function formatLoserPlacementSingleElim(
-    roundsFromFinal: number,
-): string | null {
+export function formatLoserPlacementSingleElim(roundsFromFinal: number): string | null {
     if (roundsFromFinal < 1) return null;
     if (roundsFromFinal === 1) return "2nd";
     const low = Math.pow(2, roundsFromFinal - 1) + 1;

@@ -14,18 +14,13 @@ const LEGACY_IDS: Record<string, string[]> = {
     GF: ["5"],
 };
 
-function matchRoundColumn(
-    round: string | null | undefined,
-    columnId: string,
-): boolean {
+function matchRoundColumn(round: string | null | undefined, columnId: string): boolean {
     if (!round) return false;
     if (round === columnId) return true;
     return LEGACY_IDS[columnId]?.includes(round) ?? false;
 }
 
-export function getPlayoffRounds(
-    matches: MatchWithParticipantsDTO[],
-): BracketRound[] {
+export function getPlayoffRounds(matches: MatchWithParticipantsDTO[]): BracketRound[] {
     const rounds: BracketRound[] = [];
 
     const roundConfigs = [

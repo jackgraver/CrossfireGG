@@ -70,10 +70,7 @@ export const teamController = {
                 return res.status(400).json({ error: "Invalid stage ID" });
             }
 
-            const matches = await teamService.getTeamMatchesByStage(
-                teamId,
-                stageId,
-            );
+            const matches = await teamService.getTeamMatchesByStage(teamId, stageId);
             res.json(matches);
         } catch (error: any) {
             logger.error(
@@ -98,10 +95,7 @@ export const teamController = {
 
             res.json(payload);
         } catch (error: any) {
-            logger.error(
-                `Error in getTeamPlayers for team ID ${req.params.teamId}:`,
-                error,
-            );
+            logger.error(`Error in getTeamPlayers for team ID ${req.params.teamId}:`, error);
             res.status(500).json({ error: "Failed to fetch team players" });
         }
     },
@@ -127,10 +121,7 @@ export const teamController = {
 
             res.json(player);
         } catch (error: any) {
-            logger.error(
-                `Error in addPlayerToTeam for team ID ${req.params.teamId}:`,
-                error,
-            );
+            logger.error(`Error in addPlayerToTeam for team ID ${req.params.teamId}:`, error);
             res.status(500).json({ error: "Failed to add player to team" });
         }
     },
@@ -156,10 +147,7 @@ export const teamController = {
 
             res.json(player);
         } catch (error: any) {
-            logger.error(
-                `Error in removePlayerFromTeam for team ID ${req.params.teamId}:`,
-                error,
-            );
+            logger.error(`Error in removePlayerFromTeam for team ID ${req.params.teamId}:`, error);
             res.status(500).json({
                 error: "Failed to remove player from team",
             });
@@ -173,14 +161,13 @@ export const teamController = {
 
             const { team, starters, subs, coach, agreements } = data;
 
-            const teamInfoAndPlayers =
-                await faceitFetchUtil.fetchData<FaceitTeamPlayersResponse>(
-                    `/teams/${team.teamId}`,
-                    {
-                        readFileName: `me.json`,
-                        // writeFileName: `team_players_${teamId}.json`,
-                    },
-                );
+            const teamInfoAndPlayers = await faceitFetchUtil.fetchData<FaceitTeamPlayersResponse>(
+                `/teams/${team.teamId}`,
+                {
+                    readFileName: `me.json`,
+                    // writeFileName: `team_players_${teamId}.json`,
+                },
+            );
 
             const norm = (s: string) => s.trim().toLowerCase();
 
@@ -208,9 +195,7 @@ export const teamController = {
                 });
             }
 
-            const memberMap = new Map(
-                teamInfoAndPlayers.members.map((m) => [m.user_id, m]),
-            );
+            const memberMap = new Map(teamInfoAndPlayers.members.map((m) => [m.user_id, m]));
 
             const requestedPlayers = [
                 ...starters.map((p) => ({
@@ -266,17 +251,15 @@ export const teamController = {
                 });
             }
 
-            const captainPlayer = await playerRepository.upsertPlayerByFaceitId(
-                {
-                    player_name: captainMember.nickname,
-                    faceit_id: captainMember.user_id,
-                    player_logo: captainMember.avatar,
-                    country: captainMember.country,
-                    base_role: captainRequest.base_role,
-                    hltv_id: captainRequest.hltvLink,
-                    discord_id: captainRequest.discordId,
-                },
-            );
+            const captainPlayer = await playerRepository.upsertPlayerByFaceitId({
+                player_name: captainMember.nickname,
+                faceit_id: captainMember.user_id,
+                player_logo: captainMember.avatar,
+                country: captainMember.country,
+                base_role: captainRequest.base_role,
+                hltv_id: captainRequest.hltvLink,
+                discord_id: captainRequest.discordId,
+            });
 
             const social_links =
                 team.twitter && team.twitter.trim().length > 0

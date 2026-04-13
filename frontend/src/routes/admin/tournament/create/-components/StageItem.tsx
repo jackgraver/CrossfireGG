@@ -10,13 +10,7 @@ type StageItemProps = {
     onRemove: () => void;
 };
 
-export default function StageItem({
-    form,
-    stage,
-    index,
-    stageFormats,
-    onRemove,
-}: StageItemProps) {
+export default function StageItem({ form, stage, index, stageFormats, onRemove }: StageItemProps) {
     return (
         <div className="border-secondBg bg-secondBg/40 rounded-lg border p-4 pb-0">
             <div className="mb-3 flex items-center justify-between gap-3">
@@ -24,14 +18,10 @@ export default function StageItem({
                     <div className="text-sm font-semibold">
                         Stage {index + 1}
                         {stage?.name ? (
-                            <span className="ml-2 font-normal text-gray-300">
-                                — {stage.name}
-                            </span>
+                            <span className="ml-2 font-normal text-gray-300">— {stage.name}</span>
                         ) : null}
                     </div>
-                    <div className="text-xs text-gray-400">
-                        Configure stage metadata.
-                    </div>
+                    <div className="text-xs text-gray-400">Configure stage metadata.</div>
                 </div>
                 <button
                     type="button"

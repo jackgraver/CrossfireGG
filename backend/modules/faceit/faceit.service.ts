@@ -15,10 +15,7 @@ import {
 import { teamRepository } from "../teams/team.repository";
 import { matchRepository } from "../matches/match.repository";
 import { faceitFetchUtil } from "../../utils/faceitFetch.util";
-import {
-    mapFaceitFormatType,
-    type StageFormat,
-} from "../../utils/roundFormatter";
+import { mapFaceitFormatType, type StageFormat } from "../../utils/roundFormatter";
 import { stagesRepository } from "../tournaments/stages/stages.repository";
 import {
     computeRoundsFromFinal,
@@ -30,22 +27,15 @@ export const faceitImportService = {
     /**
      * Import only the stage (championship) from Faceit data
      */
-    importStage: async (
-        championshipData: FaceitAPIChampionship,
-        tournamentId: number,
-    ) => {
+    importStage: async (championshipData: FaceitAPIChampionship, tournamentId: number) => {
         const tournament = await tournamentRepository.findById(tournamentId);
         if (!tournament) {
             throw new Error(`Tournament with ID ${tournamentId} not found`);
         }
 
-        const stageData = await transformFaceitTournament(
-            championshipData,
-            tournamentId,
-        );
+        const stageData = await transformFaceitTournament(championshipData, tournamentId);
 
-        const stage =
-            await tournamentRepository.upsertStageByFaceitId(stageData);
+        const stage = await tournamentRepository.upsertStageByFaceitId(stageData);
 
         return stage;
     },
@@ -108,26 +98,15 @@ export const faceitImportService = {
             return;
         }
         if (match.round == null) {
-            logger.warn(
-                `Match ${match.match_id} has no round; skipping tournament placement`,
-            );
+            logger.warn(`Match ${match.match_id} has no round; skipping tournament placement`);
             return;
         }
         const winnerFaction = match.results.winner;
         const lossesBefore1 = stageTeam1.losses ?? 0;
         const lossesBefore2 = stageTeam2.losses ?? 0;
-        const isThirdPlace = isThirdPlaceSingleElim(
-            lossesBefore1,
-            lossesBefore2,
-        );
-        const loserTeamId =
-            winnerFaction === "faction1"
-                ? stageTeam2.team_id
-                : stageTeam1.team_id;
-        const winnerTeamId =
-            winnerFaction === "faction1"
-                ? stageTeam1.team_id
-                : stageTeam2.team_id;
+        const isThirdPlace = isThirdPlaceSingleElim(lossesBefore1, lossesBefore2);
+        const loserTeamId = winnerFaction === "faction1" ? stageTeam2.team_id : stageTeam1.team_id;
+        const winnerTeamId = winnerFaction === "faction1" ? stageTeam1.team_id : stageTeam2.team_id;
         if (isThirdPlace) {
             await teamRepository.upsertTournamentPlacementByTeamAndStage(
                 winnerTeamId,
@@ -140,12 +119,8 @@ export const faceitImportService = {
                 "4th",
             );
         } else {
-            const roundsFromFinal = computeRoundsFromFinal(
-                match.round,
-                totalTeams,
-            );
-            const loserPlacement =
-                formatLoserPlacementSingleElim(roundsFromFinal);
+            const roundsFromFinal = computeRoundsFromFinal(match.round, totalTeams);
+            const loserPlacement = formatLoserPlacementSingleElim(roundsFromFinal);
             if (loserPlacement == null) {
                 logger.warn(
                     `Match ${match.match_id} round ${match.round} inconsistent with bracket size (teams=${totalTeams}); skipping placement`,
@@ -182,9 +157,7 @@ export const faceitImportService = {
 
         const stage = await tournamentRepository.findStageById(stageId);
         if (!stage) {
-            throw new Error(
-                `Stage with ID ${stageId} not found. Please import the stage first.`,
-            );
+            throw new Error(`Stage with ID ${stageId} not found. Please import the stage first.`);
         }
 
         const existingMatches = await matchRepository.findAllByStageId(stageId);
@@ -192,9 +165,7 @@ export const faceitImportService = {
         const totalTeams = await teamRepository.countStageTeams(stageId);
         const stageFormatRow =
             stage.format_id != null
-                ? ((await stagesRepository.findStageFormatById(
-                      stage.format_id,
-                  )) ?? null)
+                ? ((await stagesRepository.findStageFormatById(stage.format_id)) ?? null)
                 : null;
         const stageFormatMapped = stageFormatRow
             ? mapFaceitFormatType(stageFormatRow.name)
@@ -202,13 +173,9 @@ export const faceitImportService = {
 
         let newMatches = matches;
         if (existingMatches.length > 0) {
-            const existingMatchesByFaceitId = new Map(
-                existingMatches.map((m) => [m.faceit_id, m]),
-            );
+            const existingMatchesByFaceitId = new Map(existingMatches.map((m) => [m.faceit_id, m]));
             newMatches = matches.filter((match) => {
-                const existingMatch = existingMatchesByFaceitId.get(
-                    match.match_id,
-                );
+                const existingMatch = existingMatchesByFaceitId.get(match.match_id);
 
                 if (!existingMatch) {
                     return true;
@@ -238,14 +205,8 @@ export const faceitImportService = {
 
                 teamRepository.bulkUpdateAvatars(
                     new Map([
-                        [
-                            match.teams.faction1.faction_id,
-                            match.teams.faction1.avatar,
-                        ],
-                        [
-                            match.teams.faction2.faction_id,
-                            match.teams.faction2.avatar,
-                        ],
+                        [match.teams.faction1.faction_id, match.teams.faction1.avatar],
+                        [match.teams.faction2.faction_id, match.teams.faction2.avatar],
                     ]),
                 );
 
@@ -256,19 +217,18 @@ export const faceitImportService = {
                     continue;
                 }
 
-                [
-                    match.teams.faction1.roster,
-                    match.teams.faction2.roster,
-                ].forEach(async (roster) => {
-                    for (const player of roster) {
-                        await playerRepository.upsertPlayerByFaceitId({
-                            player_name: player.nickname,
-                            faceit_id: player.player_id,
-                            player_logo: player.avatar,
-                            country: "",
-                        });
-                    }
-                });
+                [match.teams.faction1.roster, match.teams.faction2.roster].forEach(
+                    async (roster) => {
+                        for (const player of roster) {
+                            await playerRepository.upsertPlayerByFaceitId({
+                                player_name: player.nickname,
+                                faceit_id: player.player_id,
+                                player_logo: player.avatar,
+                                country: "",
+                            });
+                        }
+                    },
+                );
 
                 let groupId: number | null = null;
                 if (match.group !== undefined && match.group !== null) {
@@ -431,14 +391,12 @@ export const faceitImportService = {
             singleElim,
         );
 
-        const createdMatch =
-            await matchRepository.upsertMatchByFaceitId(matchData);
+        const createdMatch = await matchRepository.upsertMatchByFaceitId(matchData);
 
-        const participants = transformFaceitMatchParticipants(
-            faceitMatch,
-            createdMatch.id,
-            { faction1: stageTeam1.id, faction2: stageTeam2.id },
-        );
+        const participants = transformFaceitMatchParticipants(faceitMatch, createdMatch.id, {
+            faction1: stageTeam1.id,
+            faction2: stageTeam2.id,
+        });
 
         const [p1, p2] = await Promise.all([
             matchRepository.upsertMatchParticipant(participants[0]),
@@ -453,10 +411,7 @@ export const faceitImportService = {
         const rosterByFaceitPlayerId = new Map(
             extractPlayersFromMatch(faceitMatch).map((p) => [p.player_id, p]),
         );
-        const faceitTeamIdToStageTeam = new Map<
-            string,
-            { id: number; team_id: number }
-        >([
+        const faceitTeamIdToStageTeam = new Map<string, { id: number; team_id: number }>([
             [
                 faceitMatch.teams.faction1.faction_id,
                 { id: stageTeam1.id, team_id: stageTeam1.team_id },
@@ -475,17 +430,15 @@ export const faceitImportService = {
             if (stats && stats.rounds && stats.rounds.length > 0) {
                 for (let i = 0; i < stats.rounds.length; i++) {
                     const round = stats.rounds[i];
-                    const [score1, score2] = round.round_stats.Score.split(
-                        "/",
-                    ).map((s) => parseInt(s.trim()));
+                    const [score1, score2] = round.round_stats.Score.split("/").map((s) =>
+                        parseInt(s.trim()),
+                    );
 
                     const winnerFaceitId = round.round_stats.Winner;
-                    const winnerParticipantId =
-                        participantMap[winnerFaceitId] || null;
+                    const winnerParticipantId = participantMap[winnerFaceitId] || null;
 
                     const mapPart = round.round_stats.Map.split("_")[1];
-                    const mapName =
-                        mapPart.charAt(0).toUpperCase() + mapPart.slice(1);
+                    const mapName = mapPart.charAt(0).toUpperCase() + mapPart.slice(1);
 
                     const map = await matchRepository.upsertMap({
                         match_id: createdMatch.id,
@@ -498,9 +451,7 @@ export const faceitImportService = {
                     });
 
                     for (const teamStats of round.teams) {
-                        const stageTeamCtx = faceitTeamIdToStageTeam.get(
-                            teamStats.team_id,
-                        );
+                        const stageTeamCtx = faceitTeamIdToStageTeam.get(teamStats.team_id);
                         if (!stageTeamCtx) {
                             logger.warn(
                                 `Match ${faceitMatch.match_id} map ${mapName}: unknown Faceit team_id ${teamStats.team_id} in stats; skipping player rows`,
@@ -508,20 +459,15 @@ export const faceitImportService = {
                             continue;
                         }
                         for (const playerStats of teamStats.players) {
-                            const rosterPlayer = rosterByFaceitPlayerId.get(
-                                playerStats.player_id,
-                            );
-                            const insertedPlayer =
-                                await playerRepository.upsertPlayerByFaceitId({
-                                    player_name:
-                                        rosterPlayer?.nickname ??
-                                        playerStats.player_id,
-                                    faceit_id: playerStats.player_id,
-                                    player_logo: rosterPlayer?.avatar ?? null,
-                                    country: "",
-                                    team_id: stageTeamCtx.team_id,
-                                    base_role: "starter",
-                                });
+                            const rosterPlayer = rosterByFaceitPlayerId.get(playerStats.player_id);
+                            const insertedPlayer = await playerRepository.upsertPlayerByFaceitId({
+                                player_name: rosterPlayer?.nickname ?? playerStats.player_id,
+                                faceit_id: playerStats.player_id,
+                                player_logo: rosterPlayer?.avatar ?? null,
+                                country: "",
+                                team_id: stageTeamCtx.team_id,
+                                base_role: "starter",
+                            });
                             await tournamentRepository.upsertStageRoster({
                                 stage_team_id: stageTeamCtx.id,
                                 player_id: insertedPlayer.id,
@@ -532,35 +478,17 @@ export const faceitImportService = {
                                 createdMatch.id,
                                 map.id,
                                 {
-                                    kills:
-                                        parseInt(
-                                            playerStats.player_stats.Kills,
-                                        ) || 0,
-                                    deaths:
-                                        parseInt(
-                                            playerStats.player_stats.Deaths,
-                                        ) || 0,
-                                    assists:
-                                        parseInt(
-                                            playerStats.player_stats.Assists,
-                                        ) || 0,
-                                    adr:
-                                        parseInt(
-                                            playerStats.player_stats.ADR,
-                                        ) || 0,
-                                    damage:
-                                        parseInt(
-                                            playerStats.player_stats.Damage,
-                                        ) || 0,
+                                    kills: parseInt(playerStats.player_stats.Kills) || 0,
+                                    deaths: parseInt(playerStats.player_stats.Deaths) || 0,
+                                    assists: parseInt(playerStats.player_stats.Assists) || 0,
+                                    adr: parseInt(playerStats.player_stats.ADR) || 0,
+                                    damage: parseInt(playerStats.player_stats.Damage) || 0,
                                 },
                             );
                         }
                     }
                 }
-            } else if (
-                faceitMatch.detailed_results &&
-                faceitMatch.detailed_results.length > 0
-            ) {
+            } else if (faceitMatch.detailed_results && faceitMatch.detailed_results.length > 0) {
                 const maps = transformFaceitMaps(
                     faceitMatch,
                     createdMatch.id,
@@ -572,19 +500,13 @@ export const faceitImportService = {
                 }
             }
         } catch (error) {
-            logger.warn(
-                `Failed to process stats for match ${faceitMatch.match_id}`,
-                error,
-            );
+            logger.warn(`Failed to process stats for match ${faceitMatch.match_id}`, error);
         }
 
         return true;
     },
 
-    processStageTeams: async (
-        teams: FaceitAPITournamentTeam[],
-        stageId: number,
-    ) => {
+    processStageTeams: async (teams: FaceitAPITournamentTeam[], stageId: number) => {
         const stage = await tournamentRepository.findStageById(stageId);
         if (!stage) {
             throw new Error(`Stage with ID ${stageId} not found`);
@@ -606,38 +528,34 @@ export const faceitImportService = {
                 faceit_id: team.team.team_id,
                 team_captain_id: null,
             });
-            const insertedStageTeam =
-                await tournamentRepository.upsertStageTeam({
-                    stage_id: stageId,
-                    team_id: insertedTeam.id,
-                    group_id: null, //TODO create group first?
-                    seed: 0,
-                    wins: 0,
-                    losses: 0,
-                });
+            const insertedStageTeam = await tournamentRepository.upsertStageTeam({
+                stage_id: stageId,
+                team_id: insertedTeam.id,
+                group_id: null, //TODO create group first?
+                seed: 0,
+                wins: 0,
+                losses: 0,
+            });
 
             for (const playerId of [...team.roster, ...team.substitutes]) {
                 const player = await playerRepository.findByFaceitId(playerId);
 
-                const member = team.team.members.find(
-                    (m) => m.user_id === playerId,
-                );
+                const member = team.team.members.find((m) => m.user_id === playerId);
 
                 if (!member) {
                     throw new Error(`Member with ID ${playerId} not found`);
                 }
 
-                const insertedPlayer =
-                    await playerRepository.upsertPlayerByFaceitId({
-                        player_name: member.nickname,
-                        faceit_id: member.user_id,
-                        player_logo: member.avatar,
-                        country: member.country,
-                        team_id: insertedTeam.id,
-                        base_role: "starter",
-                        hltv_id: "",
-                        discord_id: "",
-                    });
+                const insertedPlayer = await playerRepository.upsertPlayerByFaceitId({
+                    player_name: member.nickname,
+                    faceit_id: member.user_id,
+                    player_logo: member.avatar,
+                    country: member.country,
+                    team_id: insertedTeam.id,
+                    base_role: "starter",
+                    hltv_id: "",
+                    discord_id: "",
+                });
                 await tournamentRepository.upsertStageRoster({
                     stage_team_id: insertedStageTeam.id,
                     player_id: insertedPlayer.id,
@@ -651,10 +569,7 @@ export const faceitImportService = {
             }
 
             if (leaderId) {
-                await teamRepository.updateTeamCaptain(
-                    insertedTeam.id,
-                    leaderId,
-                );
+                await teamRepository.updateTeamCaptain(insertedTeam.id, leaderId);
             }
         }
 

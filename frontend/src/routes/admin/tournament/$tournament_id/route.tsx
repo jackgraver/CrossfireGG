@@ -21,8 +21,7 @@ function StageRow({
 }) {
     const { mutate, isPending } = useRefreshMatches(faceitId, stageId);
 
-    const { mutate: mutateTeams, isPending: isPendingTeams } =
-        useRefreshTeams();
+    const { mutate: mutateTeams, isPending: isPendingTeams } = useRefreshTeams();
 
     return (
         <div className="bg-secondBg border-border flex items-center justify-between rounded-md border px-4 py-3">
@@ -56,9 +55,7 @@ function RouteComponent() {
 
     return (
         <div className="flex min-h-screen flex-col gap-4">
-            <h1 className="text-textPrimary text-2xl font-bold">
-                {tournament?.name}
-            </h1>
+            <h1 className="text-textPrimary text-2xl font-bold">{tournament?.name}</h1>
             <div className="flex flex-col gap-3">
                 {tournament?.stages.map((stage) => (
                     <StageRow

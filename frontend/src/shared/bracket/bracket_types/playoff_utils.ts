@@ -12,10 +12,7 @@ const LEGACY_IDS: Record<string, string[]> = {
     GF: ["5", "F"],
 };
 
-function matchRoundColumn(
-    round: string | null | undefined,
-    columnId: string,
-): boolean {
+function matchRoundColumn(round: string | null | undefined, columnId: string): boolean {
     if (!round) return false;
     if (round === columnId) return true;
     return LEGACY_IDS[columnId]?.includes(round) ?? false;
@@ -35,16 +32,16 @@ export function getPlayoffRounds(matches: MatchWithParticipantsDTO[]): BracketRo
         const roundMatches = matches
             .filter((m) => matchRoundColumn(m.round, config.id))
             .sort((a, b) => (a.match_number ?? 0) - (b.match_number ?? 0));
-        
+
         // Fill with undefined if matches are missing to maintain structure
         const filledMatches = [...roundMatches];
         while (filledMatches.length < config.count) {
             filledMatches.push(undefined);
         }
-        
+
         rounds.push({
             name: config.name,
-            matches: filledMatches
+            matches: filledMatches,
         });
     }
 

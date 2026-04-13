@@ -1,9 +1,6 @@
 import { Request, Response } from "express";
 import { tournamentService } from "./tournament.service";
-import {
-    TournamentParamsSchema,
-    RegisterForTournamentBodySchema,
-} from "./tournament.validation";
+import { TournamentParamsSchema, RegisterForTournamentBodySchema } from "./tournament.validation";
 import { teamRepository } from "../teams/team.repository";
 import { playerRepository } from "../players/player.repository";
 import { tournamentRepository } from "./tournament.repository";
@@ -57,9 +54,7 @@ export const tournamentController = {
         if (found) {
             tournament = JSON.parse(found);
         } else {
-            tournament = await tournamentService.getTournamentById(
-                data.tournamentId,
-            );
+            tournament = await tournamentService.getTournamentById(data.tournamentId);
         }
 
         if (!tournament) return; //TODO: better handling
@@ -78,9 +73,7 @@ export const tournamentController = {
         const data = parseOr400(res, TournamentParamsSchema, req.params);
         if (!data) return;
 
-        const teams = await tournamentService.getTeamsByTournamentId(
-            data.tournamentId,
-        );
+        const teams = await tournamentService.getTeamsByTournamentId(data.tournamentId);
 
         sendContract(res, StageTeamSignUpContract.array(), teams);
     },
@@ -89,10 +82,9 @@ export const tournamentController = {
         const data = parseOr400(res, TournamentParamsSchema, req.params);
         if (!data) return;
 
-        const registrations =
-            await tournamentService.getRegistrationsByTournamentId(
-                data.tournamentId,
-            );
+        const registrations = await tournamentService.getRegistrationsByTournamentId(
+            data.tournamentId,
+        );
 
         sendContract(res, StageTeamSignUpContract.array(), registrations);
     },
@@ -144,10 +136,7 @@ export const tournamentController = {
             });
         }
 
-        const players = await playerRepository.findByIdsAndTeamId(
-            allIds,
-            teamId,
-        );
+        const players = await playerRepository.findByIdsAndTeamId(allIds, teamId);
         if (players.length !== allIds.length) {
             const foundIds = new Set(players.map((p) => p.id));
             const missingIds = allIds.filter((id) => !foundIds.has(id));
@@ -158,10 +147,7 @@ export const tournamentController = {
         }
 
         // Check if team is already registered for this stage
-        const existingStageTeam = await teamRepository.findStageTeam(
-            teamId,
-            entryStage.id,
-        );
+        const existingStageTeam = await teamRepository.findStageTeam(teamId, entryStage.id);
 
         if (existingStageTeam) {
             return res.status(400).json({
@@ -218,8 +204,7 @@ export const tournamentController = {
         if (!data) return;
 
         try {
-            const tournament =
-                await tournamentRepository.createTournament(data);
+            const tournament = await tournamentRepository.createTournament(data);
             res.status(201).json({
                 success: true,
                 message: "Tournament created successfully",
@@ -242,9 +227,7 @@ export const tournamentController = {
             return res.status(400).json({ error: "Invalid tournament ID" });
         }
 
-        const tournament = await tournamentRepository.findTournamentForEdit(
-            data.tournamentId,
-        );
+        const tournament = await tournamentRepository.findTournamentForEdit(data.tournamentId);
 
         if (!tournament) {
             return res.status(404).json({ error: "Tournament not found" });
@@ -271,10 +254,7 @@ export const tournamentController = {
                 return res.status(404).json({ error: "Tournament not found" });
             }
 
-            const tournament = await tournamentRepository.updateTournament(
-                tournamentId,
-                data,
-            );
+            const tournament = await tournamentRepository.updateTournament(tournamentId, data);
             res.json({
                 success: true,
                 message: "Tournament updated successfully",

@@ -24,9 +24,7 @@ export default function MatchCastingCard({
                 <div className="flex-1">
                     <div className="mb-2 flex items-center gap-2">
                         <span className="text-sm text-gray-400">Round:</span>
-                        <span className="text-textPrimary font-medium">
-                            {match.round}
-                        </span>
+                        <span className="text-textPrimary font-medium">{match.round}</span>
                         <div className="ml-8">
                             {isClaimed && "casters" in match && (
                                 <span className="mt-1 font-medium text-green-400">
@@ -57,9 +55,7 @@ export default function MatchCastingCard({
                         </div>
                     </div>
                     <div className="text-sm text-gray-400">Scheduled:</div>
-                    <div className="text-sm text-gray-400">
-                        Status: {match.status}
-                    </div>
+                    <div className="text-sm text-gray-400">Status: {match.status}</div>
                 </div>
                 <div className="flex flex-col gap-2">
                     <Link
@@ -72,9 +68,7 @@ export default function MatchCastingCard({
                     {/* <ProtectedElement roles={["PRODUCTION", "PRODUCTION_LEAD"]}> */}
                     {!isClaimed ? (
                         <button
-                            onClick={() =>
-                                claimMutation.mutate(match.id.toString())
-                            }
+                            onClick={() => claimMutation.mutate(match.id.toString())}
                             disabled={claimMutation.isPending}
                             className="rounded bg-green-600 px-3 py-1 text-center text-sm font-bold text-white transition-colors hover:bg-green-700 disabled:bg-gray-600"
                         >

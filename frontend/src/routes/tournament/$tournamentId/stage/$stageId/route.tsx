@@ -18,19 +18,13 @@ import TabGroup, { Tab } from "@/components/shared/TabGroup";
 import { openInNewTab } from "@/utils/openInNewTab";
 import { FaceitSyncStatusBadge } from "./-components/FaceitSyncStatusBadge";
 
-export const Route = createFileRoute(
-    "/tournament/$tournamentId/stage/$stageId",
-)({
+export const Route = createFileRoute("/tournament/$tournamentId/stage/$stageId")({
     component: RouteComponent,
 });
 
 function RouteComponent() {
     const { tournamentId, stageId } = Route.useParams();
-    const {
-        data: tournament,
-        isLoading,
-        error,
-    } = useTournamentById(tournamentId);
+    const { data: tournament, isLoading, error } = useTournamentById(tournamentId);
 
     if (isLoading) {
         return (
@@ -123,9 +117,7 @@ function RouteComponent() {
                                     bg="bg-green-500/20"
                                     text="text-green-400"
                                     icon={DollarSign}
-                                    label={
-                                        tournament.prize_pool?.toString() ?? "0"
-                                    }
+                                    label={tournament.prize_pool?.toString() ?? "0"}
                                 />
                                 {tournament.is_vrs_enabled && (
                                     <Tile
@@ -152,9 +144,7 @@ function RouteComponent() {
                                         value={
                                             tournament.start_date
                                                 ? formatDateOnly(
-                                                      toUnixTimestamp(
-                                                          tournament.start_date,
-                                                      )!,
+                                                      toUnixTimestamp(tournament.start_date)!,
                                                   )
                                                 : "TBD"
                                         }
@@ -165,9 +155,7 @@ function RouteComponent() {
                                         value={
                                             tournament.start_date
                                                 ? formatDateOnly(
-                                                      toUnixTimestamp(
-                                                          tournament.start_date,
-                                                      )!,
+                                                      toUnixTimestamp(tournament.start_date)!,
                                                   )
                                                 : "TBD"
                                         }
@@ -178,9 +166,7 @@ function RouteComponent() {
                                         value={
                                             tournament.end_date
                                                 ? formatDateOnly(
-                                                      toUnixTimestamp(
-                                                          tournament.end_date,
-                                                      )!,
+                                                      toUnixTimestamp(tournament.end_date)!,
                                                   )
                                                 : "TBD"
                                         }
@@ -239,11 +225,7 @@ function RouteComponent() {
                 <div className="mt-8 space-y-8">
                     <TabGroup
                         tabs={tabs}
-                        trailing={
-                            <FaceitSyncStatusBadge
-                                syncStatus={tournament.syncStatus}
-                            />
-                        }
+                        trailing={<FaceitSyncStatusBadge syncStatus={tournament.syncStatus} />}
                     />
                 </div>
             </div>

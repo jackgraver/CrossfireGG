@@ -29,9 +29,7 @@ export const useDialog = () => {
 const buttonClass = "flex-1 rounded-md py-2 font-semibold";
 
 export const DialogProvider = ({ children }: { children: ReactNode }) => {
-    const [dialogOptions, setDialogOptions] = useState<DialogOptions | null>(
-        null,
-    );
+    const [dialogOptions, setDialogOptions] = useState<DialogOptions | null>(null);
 
     const openDialog = (options: DialogOptions) => {
         setDialogOptions(options);

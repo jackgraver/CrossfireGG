@@ -25,10 +25,7 @@ export function MatchTeam({
                 <TeamLogo team={team} styling="h-6 w-6 rounded object-cover" />
             </div>
             <div className="min-w-0 text-left">
-                <span
-                    className="block truncate text-sm font-semibold"
-                    title={team?.name}
-                >
+                <span className="block truncate text-sm font-semibold" title={team?.name}>
                     {team?.name}
                 </span>
             </div>

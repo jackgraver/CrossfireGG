@@ -18,9 +18,7 @@ export async function syncSystemRoles() {
         const existingRoleNames = existingRoles.map((r) => r.name);
 
         // 1. Insert missing roles
-        const rolesToInsert = ALL_ROLES.filter(
-            (name) => !existingRoleNames.includes(name),
-        );
+        const rolesToInsert = ALL_ROLES.filter((name) => !existingRoleNames.includes(name));
         if (rolesToInsert.length > 0) {
             await db.insert(roles).values(
                 rolesToInsert.map((name) => ({
@@ -34,28 +32,18 @@ export async function syncSystemRoles() {
         await db
             .update(roles)
             .set({ deleted_at: null })
-            .where(
-                and(
-                    inArray(roles.name, ALL_ROLES),
-                    sql`${roles.deleted_at} IS NOT NULL`,
-                ),
-            );
+            .where(and(inArray(roles.name, ALL_ROLES), sql`${roles.deleted_at} IS NOT NULL`));
 
         // 3. Soft-delete roles that are no longer in the canonical list
         await db
             .update(roles)
             .set({ deleted_at: new Date() })
-            .where(
-                and(
-                    notInArray(roles.name, ALL_ROLES),
-                    sql`${roles.deleted_at} IS NULL`,
-                ),
-            );
+            .where(and(notInArray(roles.name, ALL_ROLES), sql`${roles.deleted_at} IS NULL`));
 
         logger.info("System roles synchronization complete.");
     } catch (error) {
         logger.error("Failed to synchronize system roles:", error);
-        // We don't necessarily want to crash the server if sync fails, 
+        // We don't necessarily want to crash the server if sync fails,
         // but it's a major issue for auth.
     }
 }

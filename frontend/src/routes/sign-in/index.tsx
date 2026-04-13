@@ -1,12 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { useForm } from "@tanstack/react-form";
-import {
-    Checkbox,
-    Input,
-    PasswordInput,
-    SubmitButton,
-} from "@/components/shared/form";
+import { Checkbox, Input, PasswordInput, SubmitButton } from "@/components/shared/form";
 import UserForm from "@/components/shared/UserForm";
 import { authClient } from "@/lib/auth/auth-client";
 
@@ -16,9 +11,9 @@ export const Route = createFileRoute("/sign-in/")({
 
 function SignIn() {
     const navigate = useNavigate();
-    const [submitStatus, setSubmitStatus] = useState<
-        "idle" | "submitting" | "success" | "error"
-    >("idle");
+    const [submitStatus, setSubmitStatus] = useState<"idle" | "submitting" | "success" | "error">(
+        "idle",
+    );
 
     const form = useForm({
         defaultValues: {
@@ -82,10 +77,7 @@ function SignIn() {
                     out
                 </button>
             </h1>
-            <form
-                onSubmit={form.handleSubmit}
-                className="w-full"
-            >
+            <form onSubmit={form.handleSubmit} className="w-full">
                 <form.Field name="email">
                     {(field) => (
                         <Input
@@ -109,11 +101,7 @@ function SignIn() {
                 </form.Field>
                 <form.Field name="rememberMe">
                     {(field) => (
-                        <Checkbox
-                            field={field}
-                            label="Remember me"
-                            disabled={isSubmitting}
-                        />
+                        <Checkbox field={field} label="Remember me" disabled={isSubmitting} />
                     )}
                 </form.Field>
                 <div className="mt-6 flex flex-row gap-4">

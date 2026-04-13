@@ -15,13 +15,7 @@ interface BracketMatchProps {
 }
 
 export const BracketMatch = React.memo(
-    ({
-        match,
-        roundIndex,
-        matchIndex,
-        layoutKey,
-        onPositionUpdate,
-    }: BracketMatchProps) => {
+    ({ match, roundIndex, matchIndex, layoutKey, onPositionUpdate }: BracketMatchProps) => {
         const containerRef = React.useRef<HTMLDivElement>(null);
 
         React.useLayoutEffect(() => {

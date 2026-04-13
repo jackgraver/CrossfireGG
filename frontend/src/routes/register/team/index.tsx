@@ -4,10 +4,7 @@ import { useStore } from "@tanstack/react-form";
 import z from "zod";
 import UserForm from "@/components/shared/UserForm";
 import { useAuth } from "@/contexts/auth";
-import {
-    formSteps,
-    type StepValidationErrors,
-} from "./-types/registration.types";
+import { formSteps, type StepValidationErrors } from "./-types/registration.types";
 import { useTeamRegistrationForm } from "./-hooks/useTeamRegistrationForm";
 import { useStepNavigation } from "./-hooks/useStepNavigation";
 import { useStepValidation } from "./-hooks/useStepValidation";
@@ -44,11 +41,10 @@ function RegisterPage() {
 
     const values = useStore(form.store, (state) => state.values);
     const { canContinue, validateStep } = useStepValidation(values);
-    const { currentStep, canGoBack, canGoNext, goBack, goNext, setStepIndex } =
-        useStepNavigation({
-            steps: formSteps,
-            validateStep: (step) => canContinue(step),
-        });
+    const { currentStep, canGoBack, canGoNext, goBack, goNext, setStepIndex } = useStepNavigation({
+        steps: formSteps,
+        validateStep: (step) => canContinue(step),
+    });
 
     const isLoggedIn = !!user;
 

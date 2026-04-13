@@ -1,12 +1,11 @@
 {
     "private": true,
-    "type": "module",
     "workspaces": [
         "frontend",
-        "frontend_mig",
         "backend",
         "shared/*"
     ],
+    "type": "module",
     "scripts": {
         "fmt": "oxfmt",
         "fmt:check": "oxfmt --check",

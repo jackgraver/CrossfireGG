@@ -111,9 +111,7 @@ for (const envVar of REQUIRED_VARS) {
 
 if (missingVars.length > 0) {
     // Print all missing at once, nicely
-    const errorMessages = missingVars
-        .map((v) => `- ${v.name}: ${v.message}`)
-        .join("\n");
+    const errorMessages = missingVars.map((v) => `- ${v.name}: ${v.message}`).join("\n");
     throw new Error(
         `The following required environment variables are missing or empty:\n${errorMessages}`,
     );

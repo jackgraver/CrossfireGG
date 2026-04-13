@@ -12,9 +12,7 @@ export default function TournamentsSection() {
                     <h2 className="mb-2 text-xl font-bold text-red-500">
                         Error Loading Tournaments
                     </h2>
-                    <p className="text-textSecondary text-sm">
-                        {error.message}
-                    </p>
+                    <p className="text-textSecondary text-sm">{error.message}</p>
                 </div>
             </div>
         );
@@ -48,18 +46,9 @@ export default function TournamentsSection() {
                         </div>
                     ) : (
                         <>
-                            <TournamentGroup
-                                type="active"
-                                tournaments={activeTournaments}
-                            />
-                            <TournamentGroup
-                                type="upcoming"
-                                tournaments={upcomingTournaments}
-                            />
-                            <TournamentGroup
-                                type="ended"
-                                tournaments={endedTournaments}
-                            />
+                            <TournamentGroup type="active" tournaments={activeTournaments} />
+                            {/* <TournamentGroup type="upcoming" tournaments={upcomingTournaments} />
+                            <TournamentGroup type="ended" tournaments={endedTournaments} /> */}
                         </>
                     )}
                 </>

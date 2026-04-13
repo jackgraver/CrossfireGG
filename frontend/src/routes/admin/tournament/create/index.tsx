@@ -34,10 +34,5 @@ function RouteComponent() {
         toastService.error("Load failed", "Could not load tournament data");
     }
 
-    return (
-        <TournamentFormPage
-            tournamentId={tournamentId}
-            initialData={editData}
-        />
-    );
+    return <TournamentFormPage tournamentId={tournamentId} initialData={editData} />;
 }

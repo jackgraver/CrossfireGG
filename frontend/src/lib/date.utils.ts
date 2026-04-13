@@ -110,9 +110,7 @@ export const isToday = (timestamp: number): boolean => {
  * @param date Date string, Date object, or Unix timestamp in seconds
  * @returns Unix timestamp in seconds
  */
-export const toUnixTimestamp = (
-    date: string | Date | number | null | undefined,
-): number | null => {
+export const toUnixTimestamp = (date: string | Date | number | null | undefined): number | null => {
     if (!date) return null;
     if (typeof date === "number") return date;
     if (typeof date === "string") {

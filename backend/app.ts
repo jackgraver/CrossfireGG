@@ -14,10 +14,7 @@ import rateLimit from "express-rate-limit";
 import { scannerBlocker } from "./core/middleware/scannerBlocker";
 import { toNodeHandler } from "better-auth/node";
 import { auth } from "./lib/auth";
-import {
-    authMiddleware,
-    requireRoles,
-} from "./core/middleware/auth.middleware";
+import { authMiddleware, requireRoles } from "./core/middleware/auth.middleware";
 import { checkRedisCache } from "./core/middleware/redis.middleware";
 import { invalidateCache } from "./core/redis";
 import { logger } from "./core/logger";

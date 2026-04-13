@@ -24,6 +24,4 @@ export const GroupWithMatchesAndFormatContract = z.object({
     groups: GroupWithMatchesContract.array(),
 });
 
-export type GroupWithMatchesAndFormatDTO = z.infer<
-    typeof GroupWithMatchesAndFormatContract
->;
+export type GroupWithMatchesAndFormatDTO = z.infer<typeof GroupWithMatchesAndFormatContract>;

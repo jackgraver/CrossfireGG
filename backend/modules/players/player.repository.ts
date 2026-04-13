@@ -16,12 +16,7 @@ export const playerRepository = {
         const result = await db
             .select()
             .from(players)
-            .where(
-                and(
-                    eq(players.faceit_id, faceitId),
-                    isNull(players.deleted_at),
-                ),
-            )
+            .where(and(eq(players.faceit_id, faceitId), isNull(players.deleted_at)))
             .limit(1);
         return result[0];
     },
@@ -43,12 +38,7 @@ export const playerRepository = {
         const existing = await dbOrTx
             .select()
             .from(players)
-            .where(
-                and(
-                    eq(players.faceit_id, playerData.faceit_id),
-                    isNull(players.deleted_at),
-                ),
-            )
+            .where(and(eq(players.faceit_id, playerData.faceit_id), isNull(players.deleted_at)))
             .limit(1);
 
         if (existing.length > 0) {
@@ -61,17 +51,13 @@ export const playerRepository = {
                     country: playerData.country,
                     base_role: playerData.base_role,
                     hltv_id:
-                        playerData.hltv_id !== undefined
-                            ? playerData.hltv_id
-                            : existing[0].hltv_id,
+                        playerData.hltv_id !== undefined ? playerData.hltv_id : existing[0].hltv_id,
                     discord_id:
                         playerData.discord_id !== undefined
                             ? playerData.discord_id
                             : existing[0].discord_id,
                     team_id:
-                        playerData.team_id !== undefined
-                            ? playerData.team_id
-                            : existing[0].team_id,
+                        playerData.team_id !== undefined ? playerData.team_id : existing[0].team_id,
                     updated_at: new Date(),
                 })
                 .where(eq(players.id, existing[0].id))
@@ -107,22 +93,14 @@ export const playerRepository = {
         const result = await db
             .select()
             .from(players)
-            .where(
-                and(
-                    eq(players.user_id, userId.toString()),
-                    isNull(players.deleted_at),
-                ),
-            )
+            .where(and(eq(players.user_id, userId.toString()), isNull(players.deleted_at)))
             .limit(1);
         return result[0];
     },
     findByFaceitIds: async (faceitIds: string[]) => {
         if (faceitIds.length === 0) return [];
 
-        return db
-            .select()
-            .from(players)
-            .where(inArray(players.faceit_id, faceitIds));
+        return db.select().from(players).where(inArray(players.faceit_id, faceitIds));
     },
 
     findByIdsAndTeamId: async (playerIds: number[], teamId: number) => {

@@ -9,10 +9,8 @@ const CHECK_INTERVAL = 60 * 60 * 1000;
 const LAST_REFETCH_TTL = Math.ceil(CHECK_INTERVAL / 1000);
 const SYNC_LOCK_TTL = 300;
 
-const lastRefetchKey = (faceitId: string) =>
-    `tournament:stage:${faceitId}:last-sync`;
-const syncingStageKey = (faceitId: string) =>
-    `tournament:stage:${faceitId}:syncing`;
+const lastRefetchKey = (faceitId: string) => `tournament:stage:${faceitId}:last-sync`;
+const syncingStageKey = (faceitId: string) => `tournament:stage:${faceitId}:syncing`;
 
 async function getLastRefetchTime(faceitId: string): Promise<number> {
     const redisValue = await redisGet(lastRefetchKey(faceitId));
@@ -29,11 +27,7 @@ async function getLastRefetchTime(faceitId: string): Promise<number> {
 
 async function setLastRefetchTime(faceitId: string, timestamp: number) {
     LAST_REFETCH_TIME.set(faceitId, timestamp);
-    await redisSet(
-        lastRefetchKey(faceitId),
-        String(timestamp),
-        LAST_REFETCH_TTL,
-    );
+    await redisSet(lastRefetchKey(faceitId), String(timestamp), LAST_REFETCH_TTL);
 }
 
 export async function isStageSyncing(faceitId: string): Promise<boolean> {
@@ -96,20 +90,12 @@ export async function syncTournamentMatches(
 async function syncStages(stages: { id: number; faceit_id: string }[]) {
     for (const { id, faceit_id } of stages) {
         try {
-            const matchesData =
-                await faceitFetchUtil.fetchMatchesData(faceit_id);
+            const matchesData = await faceitFetchUtil.fetchMatchesData(faceit_id);
 
-            console.log(
-                `Processing matches for ${faceit_id}, found ${matchesData.length} matches`,
-            );
+            console.log(`Processing matches for ${faceit_id}, found ${matchesData.length} matches`);
 
-            const result = await faceitImportService.processNewStageMatches(
-                matchesData,
-                id,
-            );
-            console.log(
-                `Processed ${result?.newMatchesCount ?? -1} new matches`,
-            );
+            const result = await faceitImportService.processNewStageMatches(matchesData, id);
+            console.log(`Processed ${result?.newMatchesCount ?? -1} new matches`);
 
             await setLastRefetchTime(faceit_id, Date.now());
         } finally {

@@ -37,9 +37,7 @@ export default function ScheduledCard({ match }: ScheduledCardProps) {
                     <div className="text-textPrimary flex items-center gap-1 text-xs">
                         <p className="mr-2 ml-1 flex items-center gap-1 font-bold">
                             <CalendarFold size={14} />
-                            <span>
-                                {formatMatchDate(match?.scheduled_at ?? 0)}
-                            </span>
+                            <span>{formatMatchDate(match?.scheduled_at ?? 0)}</span>
                         </p>
                     </div>
                 </div>

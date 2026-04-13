@@ -9,10 +9,7 @@ export type ToastProps = {
     status?: ToastStatus;
 };
 
-const statusConfig: Record<
-    ToastStatus,
-    { bg: string; accent: string; icon: React.ReactNode }
-> = {
+const statusConfig: Record<ToastStatus, { bg: string; accent: string; icon: React.ReactNode }> = {
     success: {
         bg: "bg-secondBg border-emerald-500/30",
         accent: "text-emerald-400",
@@ -35,12 +32,7 @@ const statusConfig: Record<
     },
 };
 
-export default function Toast({
-    title,
-    body,
-    onClose,
-    status = "default",
-}: ToastProps) {
+export default function Toast({ title, body, onClose, status = "default" }: ToastProps) {
     const [visible, setVisible] = useState(false);
     const config = statusConfig[status];
     const hasBody = body !== "" && body != null;
@@ -72,9 +64,7 @@ export default function Toast({
                     </span>
                 )}
                 <div className="min-w-0 flex-1">
-                    <p className="text-sm leading-snug font-medium text-white">
-                        {title}
-                    </p>
+                    <p className="text-sm leading-snug font-medium text-white">{title}</p>
                     {hasBody && (
                         <p className="mt-0.5 text-[13px] leading-relaxed text-neutral-400">
                             {body}

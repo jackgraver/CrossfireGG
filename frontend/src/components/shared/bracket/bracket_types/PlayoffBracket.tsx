@@ -1,7 +1,4 @@
-import {
-    MatchWithParticipantAndMinifiedMapsDTO,
-    MatchWithParticipantsDTO,
-} from "@repo/contracts";
+import { MatchWithParticipantAndMinifiedMapsDTO, MatchWithParticipantsDTO } from "@repo/contracts";
 import { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import { getPlayoffRounds } from "./playoff_utils";
 import { BracketMatch } from "../components/BracketMatch";
@@ -59,11 +56,7 @@ const Connections = ({
         });
     });
 
-    return (
-        <svg className="pointer-events-none absolute inset-0 h-full w-full">
-            {paths}
-        </svg>
-    );
+    return <svg className="pointer-events-none absolute inset-0 h-full w-full">{paths}</svg>;
 };
 
 export default function PlayoffBracket({ matches }: PlayoffBracketProps) {
@@ -94,17 +87,11 @@ export default function PlayoffBracket({ matches }: PlayoffBracketProps) {
                 .join("|"),
         [matches],
     );
-    const [positions, setPositions] = useState<Record<string, MatchPosition>>(
-        {},
-    );
+    const [positions, setPositions] = useState<Record<string, MatchPosition>>({});
     const containerRef = useRef<HTMLDivElement>(null);
 
     const handlePositionUpdate = useCallback(
-        (
-            roundIndex: number,
-            matchIndex: number,
-            element: HTMLDivElement | null,
-        ) => {
+        (roundIndex: number, matchIndex: number, element: HTMLDivElement | null) => {
             if (!element || !containerRef.current) return;
 
             const containerRect = containerRef.current.getBoundingClientRect();
@@ -167,10 +154,7 @@ export default function PlayoffBracket({ matches }: PlayoffBracketProps) {
                     </div>
                     <div className="flex grow flex-col justify-around">
                         {round.matches.map((match, matchIndex) => (
-                            <div
-                                key={`${roundIndex}-${matchIndex}`}
-                                className="relative"
-                            >
+                            <div key={`${roundIndex}-${matchIndex}`} className="relative">
                                 <BracketMatch
                                     match={match}
                                     roundIndex={roundIndex}
@@ -178,25 +162,24 @@ export default function PlayoffBracket({ matches }: PlayoffBracketProps) {
                                     layoutKey={bracketLayoutSignature}
                                     onPositionUpdate={handlePositionUpdate}
                                 />
-                                {round.name === "Grand Final" &&
-                                    rounds.thirdPlaceRound && (
-                                        <div className="absolute top-full right-0 left-0 mt-32">
-                                            <div className="text-center">
-                                                <h2 className="bg-secondBg rounded-md p-1 font-bold tracking-wider text-gray-400 uppercase">
-                                                    Third Place
-                                                </h2>
-                                            </div>
-                                            <div className="flex min-h-25 items-center">
-                                                <MatchCard
-                                                    match={
-                                                        rounds.thirdPlaceRound
-                                                            ?.matches[0] as MatchWithParticipantAndMinifiedMapsDTO
-                                                    }
-                                                    margin={false}
-                                                />
-                                            </div>
+                                {round.name === "Grand Final" && rounds.thirdPlaceRound && (
+                                    <div className="absolute top-full right-0 left-0 mt-32">
+                                        <div className="text-center">
+                                            <h2 className="bg-secondBg rounded-md p-1 font-bold tracking-wider text-gray-400 uppercase">
+                                                Third Place
+                                            </h2>
                                         </div>
-                                    )}
+                                        <div className="flex min-h-25 items-center">
+                                            <MatchCard
+                                                match={
+                                                    rounds.thirdPlaceRound
+                                                        ?.matches[0] as MatchWithParticipantAndMinifiedMapsDTO
+                                                }
+                                                margin={false}
+                                            />
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         ))}
                     </div>

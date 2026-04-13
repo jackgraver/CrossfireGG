@@ -13,20 +13,17 @@ export const matchService = {
 
             const rosterPlayerIds = (stageTeamId: number) =>
                 new Set(
-                    (match.participants.find((p) => p.team_id === stageTeamId)
-                        ?.stageTeam?.players ?? []
+                    (
+                        match.participants.find((p) => p.team_id === stageTeamId)?.stageTeam
+                            ?.players ?? []
                     ).map((sp) => sp.player_id),
                 );
 
             const team1Roster = rosterPlayerIds(team1Id);
             const team2Roster = rosterPlayerIds(team2Id);
 
-            const team1Stats = map.playerStats.filter((s) =>
-                team1Roster.has(s.player_id),
-            );
-            const team2Stats = map.playerStats.filter((s) =>
-                team2Roster.has(s.player_id),
-            );
+            const team1Stats = map.playerStats.filter((s) => team1Roster.has(s.player_id));
+            const team2Stats = map.playerStats.filter((s) => team2Roster.has(s.player_id));
 
             return {
                 ...map,
@@ -126,12 +123,8 @@ export const matchService = {
     getAllMatchCasting: async () => {
         const allMatches = await matchRepository.findAllMatchCasting();
 
-        const claimedMatches = allMatches.filter(
-            (match) => match.casters.length > 0,
-        );
-        const unclaimedMatches = allMatches.filter(
-            (match) => match.casters.length === 0,
-        );
+        const claimedMatches = allMatches.filter((match) => match.casters.length > 0);
+        const unclaimedMatches = allMatches.filter((match) => match.casters.length === 0);
 
         return {
             claimed: claimedMatches,

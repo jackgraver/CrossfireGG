@@ -14,18 +14,13 @@ type MatchCardProps = {
     unroundedTop?: boolean;
 };
 
-export default function MatchCard({
-    match,
-    margin,
-    unroundedTop,
-}: MatchCardProps) {
+export default function MatchCard({ match, margin, unroundedTop }: MatchCardProps) {
     if (margin === undefined) {
         margin = true;
     }
 
     const navigate = useNavigate();
-    const { activeMatchId, openDropdown, closeDropdown, anchorRect } =
-        useMatchDropdown();
+    const { activeMatchId, openDropdown, closeDropdown, anchorRect } = useMatchDropdown();
     const triggerRef = useRef<HTMLDivElement>(null);
 
     const isOpen = match && activeMatchId === match.id;
@@ -167,8 +162,7 @@ export default function MatchCard({
                                         <span
                                             className={cn(
                                                 "w-8 text-center text-xs font-bold",
-                                                map.winner_id ===
-                                                    match?.participants?.[0].id
+                                                map.winner_id === match?.participants?.[0].id
                                                     ? "text-green-500"
                                                     : "text-textSecondary",
                                             )}
@@ -183,8 +177,7 @@ export default function MatchCard({
                                         <span
                                             className={cn(
                                                 "w-8 text-center text-xs font-bold",
-                                                map.winner_id ===
-                                                    match?.participants?.[1].id
+                                                map.winner_id === match?.participants?.[1].id
                                                     ? "text-green-500"
                                                     : "text-textSecondary",
                                             )}

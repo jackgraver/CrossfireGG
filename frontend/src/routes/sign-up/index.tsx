@@ -15,8 +15,7 @@ export const Route = createFileRoute("/sign-up/")({
     component: SignUp,
 });
 
-const validFaceitLinkRegex =
-    /^https:\/\/www\.faceit\.com\/[^\/]+\/players\/([a-zA-Z0-9_]{3,32})$/;
+const validFaceitLinkRegex = /^https:\/\/www\.faceit\.com\/[^\/]+\/players\/([a-zA-Z0-9_]{3,32})$/;
 
 function extractFaceitUsername(link: string): string {
     const match = link.match(validFaceitLinkRegex);
@@ -26,9 +25,9 @@ function extractFaceitUsername(link: string): string {
 function SignUp() {
     const navigate = useNavigate();
     const { refetch } = useAuth();
-    const [submitStatus, setSubmitStatus] = useState<
-        "idle" | "submitting" | "success" | "error"
-    >("idle");
+    const [submitStatus, setSubmitStatus] = useState<"idle" | "submitting" | "success" | "error">(
+        "idle",
+    );
     const [faceitTeamName, setFaceitTeamName] = useState("");
     const [faceitTeamId, setFaceitTeamId] = useState("");
 
@@ -80,22 +79,14 @@ function SignUp() {
 
     return (
         <UserForm>
-            <h1 className="text-textPrimary text-2xl font-bold">
-                Create Account
-            </h1>
+            <h1 className="text-textPrimary text-2xl font-bold">Create Account</h1>
             <p className="text-textSecondary">
                 Already have an account?{" "}
-                <a
-                    href="/sign-in"
-                    className="text-blue-600 hover:text-blue-800"
-                >
+                <a href="/sign-in" className="text-blue-600 hover:text-blue-800">
                     Sign in
                 </a>
             </p>
-            <form
-                onSubmit={form.handleSubmit}
-                className="w-full"
-            >
+            <form onSubmit={form.handleSubmit} className="w-full">
                 <form.Field name="email">
                     {(field) => (
                         <Input

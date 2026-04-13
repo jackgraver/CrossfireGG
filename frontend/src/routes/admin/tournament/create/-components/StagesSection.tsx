@@ -21,9 +21,7 @@ export default function StagesSection({
             <div className="flex items-start justify-between gap-4">
                 <div>
                     <h2 className="text-lg font-semibold">Stages</h2>
-                    <p className="text-sm text-gray-400">
-                        Add one or more stages
-                    </p>
+                    <p className="text-sm text-gray-400">Add one or more stages</p>
                 </div>
                 <button
                     type="button"

@@ -17,9 +17,7 @@ function Casting() {
     if (isLoading) {
         return (
             <div className="flex min-h-screen items-center justify-center">
-                <div className="text-textPrimary text-xl">
-                    Loading matches...
-                </div>
+                <div className="text-textPrimary text-xl">Loading matches...</div>
             </div>
         );
     }
@@ -27,9 +25,7 @@ function Casting() {
     if (error) {
         return (
             <div className="flex min-h-screen items-center justify-center">
-                <div className="text-xl text-red-500">
-                    Error: {error.message}
-                </div>
+                <div className="text-xl text-red-500">Error: {error.message}</div>
             </div>
         );
     }
@@ -42,12 +38,9 @@ function Casting() {
     return (
         <div className="container mx-auto py-8">
             <div className="mb-8">
-                <h1 className="text-textPrimary mb-2 text-4xl font-bold">
-                    Match Casting
-                </h1>
+                <h1 className="text-textPrimary mb-2 text-4xl font-bold">Match Casting</h1>
                 <p className="text-textSecondary">
-                    Manage match casting assignments and claim matches for
-                    casting
+                    Manage match casting assignments and claim matches for casting
                 </p>
             </div>
             <div className="relative grid grid-cols-1 gap-24 lg:grid-cols-2">
@@ -59,8 +52,7 @@ function Casting() {
                         </h2>
                         <p className="text-textSecondary text-sm">
                             {unclaimed.length} match
-                            {unclaimed.length !== 1 ? "es" : ""} available for
-                            casting
+                            {unclaimed.length !== 1 ? "es" : ""} available for casting
                         </p>
                     </div>
                     <div className="space-y-4">
@@ -70,11 +62,7 @@ function Casting() {
                             </div>
                         ) : (
                             unclaimed.map((match) => (
-                                <MatchCastingCard
-                                    key={match.id}
-                                    match={match}
-                                    isClaimed={false}
-                                />
+                                <MatchCastingCard key={match.id} match={match} isClaimed={false} />
                             ))
                         )}
                     </div>
@@ -86,8 +74,7 @@ function Casting() {
                         </h2>
                         <p className="text-textSecondary text-sm">
                             {claimed.length} match
-                            {claimed.length !== 1 ? "es" : ""} assigned to
-                            casters
+                            {claimed.length !== 1 ? "es" : ""} assigned to casters
                         </p>
                     </div>
                     <div className="space-y-4">
@@ -97,11 +84,7 @@ function Casting() {
                             </div>
                         ) : (
                             claimed.map((match) => (
-                                <MatchCastingCard
-                                    key={match.id}
-                                    match={match}
-                                    isClaimed={true}
-                                />
+                                <MatchCastingCard key={match.id} match={match} isClaimed={true} />
                             ))
                         )}
                     </div>

@@ -2,16 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { cn } from "@/utils/cn";
 import { matchesRole } from "@/utils/role.util";
 import { Roles } from "@repo/types";
-import {
-    Trophy,
-    Video,
-    Settings,
-    User,
-    LogOut,
-    Home,
-    Users,
-    Info,
-} from "lucide-react";
+import { Trophy, Video, Settings, User, LogOut, Home, Users, Info } from "lucide-react";
 import TeamLogo from "./shared/bracket/atoms/TeamLogo";
 import { useSignOut } from "@/contexts/auth";
 import { authClient } from "@/lib/auth/auth-client";
@@ -59,11 +50,7 @@ const NavItem = ({
     }
 
     return (
-        <button
-            className={baseClasses}
-            onClick={onClick}
-            onMouseEnter={onMouseEnter}
-        >
+        <button className={baseClasses} onClick={onClick} onMouseEnter={onMouseEnter}>
             {left && icon}
             <span className="hidden sm:inline">{label}</span>
             {!left && icon}
@@ -130,13 +117,7 @@ export default function NavBar({
                         Roles.ADMIN,
                         Roles.PRODUCTION_LEAD,
                         Roles.PRODUCTION,
-                    ) && (
-                        <NavItem
-                            to="/casting"
-                            icon={<Video size={18} />}
-                            label="Casting"
-                        />
-                    )}
+                    ) && <NavItem to="/casting" icon={<Video size={18} />} label="Casting" />}
                     {user ? (
                         <div className="group relative">
                             <NavItem
@@ -189,16 +170,11 @@ export default function NavBar({
 
                                 await authClient.signIn.oauth2({
                                     providerId: "faceit",
-                                    callbackURL:
-                                        "https://crossfiregg.com/tournament",
+                                    callbackURL: "https://crossfiregg.com/tournament",
                                 });
                             }}
                         >
-                            <img
-                                src="/faceit.png"
-                                alt="Faceit"
-                                className="h-5 w-5"
-                            />
+                            <img src="/faceit.png" alt="Faceit" className="h-5 w-5" />
                             Sign In With Faceit
                         </button>
                     )}

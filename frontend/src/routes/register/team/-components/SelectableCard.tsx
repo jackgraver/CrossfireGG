@@ -23,8 +23,7 @@ export default function SelectableCard({
     const { toggle, isSelected, canSelectMore, max } = useSelectableCardGroup();
     const selected = isSelected(element);
     const isSingleSelect = max === 1;
-    const isClickable =
-        !disabled && (isSingleSelect || selected || canSelectMore);
+    const isClickable = !disabled && (isSingleSelect || selected || canSelectMore);
 
     const handleClick = () => {
         if (isClickable) {

@@ -16,9 +16,7 @@ function getRootDomain(origin: string): string | undefined {
     }
 }
 
-const cookieDomain = config.appOrigin
-    ? getRootDomain(config.appOrigin)
-    : undefined;
+const cookieDomain = config.appOrigin ? getRootDomain(config.appOrigin) : undefined;
 
 export const auth = betterAuth({
     database: drizzleAdapter(db, {
@@ -64,11 +62,7 @@ export const auth = betterAuth({
                 token: string;
                 user: { id: string };
             };
-            if (
-                ctx.path.startsWith("/sign-up/email") &&
-                ctx.method === "POST" &&
-                returned.token
-            ) {
+            if (ctx.path.startsWith("/sign-up/email") && ctx.method === "POST" && returned.token) {
                 //TODO: switch to OAUTH
                 //TODO: fetch player information from faceit with OAUTH info?
                 const res = await playerRepository.upsertPlayerByFaceitId({
@@ -103,8 +97,7 @@ export const auth = betterAuth({
                     tokenUrl: "https://api.faceit.com/auth/v1/oauth/token",
 
                     // URL used to fetch the authenticated user's information after successful authorization
-                    userInfoUrl:
-                        "https://api.faceit.com/auth/v1/resources/userinfo",
+                    userInfoUrl: "https://api.faceit.com/auth/v1/resources/userinfo",
 
                     // Scopes indicate the level of access requested from the user's Faceit account
                     scopes: ["openid", "profile", "email"],
@@ -162,12 +155,8 @@ export const auth = betterAuth({
                         };
                         return {
                             id: profile.sub,
-                            email:
-                                profile.email ?? `${profile.sub}@faceit.local`,
-                            name:
-                                profile.nickname ||
-                                profile.email ||
-                                profile.sub,
+                            email: profile.email ?? `${profile.sub}@faceit.local`,
+                            name: profile.nickname || profile.email || profile.sub,
                             image: profile.picture || undefined,
                             emailVerified: !!profile.email_verified,
                         };

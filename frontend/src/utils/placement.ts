@@ -14,9 +14,7 @@ export function formatOrdinal(n: number): string {
     }
 }
 
-export function achievementPlacementFromSummaryLabel(
-    label: string,
-): 1 | 2 | 3 | null {
+export function achievementPlacementFromSummaryLabel(label: string): 1 | 2 | 3 | null {
     if (label.endsWith(" Winners")) return 1;
     if (label.endsWith(" Runners Up")) return 2;
     if (label.endsWith(" 3rd Place")) return 3;

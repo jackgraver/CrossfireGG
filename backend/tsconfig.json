@@ -20,8 +20,5 @@
     },
     "include": ["."],
     "exclude": ["node_modules", "dist"],
-    "references": [
-        { "path": "../shared/contracts" },
-        { "path": "../shared/types" }
-    ]
+    "references": [{ "path": "../shared/contracts" }, { "path": "../shared/types" }]
 }

@@ -1,14 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Roles } from "@repo/types";
-import {
-    Trophy,
-    Users,
-    Settings,
-    Video,
-    LogOut,
-    Plus,
-    Pencil,
-} from "lucide-react";
+import { Trophy, Users, Settings, Video, LogOut, Plus, Pencil } from "lucide-react";
 import { UserWithRolesDTO } from "@repo/contracts";
 import { redirect } from "@tanstack/react-router";
 import { useAllTournaments } from "@/lib/api/tournament.queries";
@@ -128,24 +120,16 @@ function Admin() {
                                             className={`flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-[10px] font-black tracking-wider uppercase ${
                                                 roleName === "ADMIN"
                                                     ? "bg-cfRed/10 text-cfRed border-cfRed/20"
-                                                    : roleName ===
-                                                        "PRODUCTION_LEAD"
+                                                    : roleName === "PRODUCTION_LEAD"
                                                       ? "border-yellow-500/20 bg-yellow-500/10 text-yellow-500"
-                                                      : roleName ===
-                                                          "PRODUCTION"
+                                                      : roleName === "PRODUCTION"
                                                         ? "border-blue-500/20 bg-blue-500/10 text-blue-500"
                                                         : "text-textSecondary border-white/10 bg-white/5"
                                             }`}
                                         >
-                                            {roleName === "ADMIN" && (
-                                                <Settings size={10} />
-                                            )}
-                                            {roleName === "PRODUCTION_LEAD" && (
-                                                <Trophy size={10} />
-                                            )}
-                                            {roleName === "PRODUCTION" && (
-                                                <Video size={10} />
-                                            )}
+                                            {roleName === "ADMIN" && <Settings size={10} />}
+                                            {roleName === "PRODUCTION_LEAD" && <Trophy size={10} />}
+                                            {roleName === "PRODUCTION" && <Video size={10} />}
                                             {roleName.replace("_", " ")}
                                         </span>
                                     );

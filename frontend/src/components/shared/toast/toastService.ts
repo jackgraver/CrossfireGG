@@ -18,9 +18,7 @@ export type ToastInstance = {
     durationMs: number;
 };
 
-type ToastEvent =
-    | { type: "show"; toast: ToastInstance }
-    | { type: "dismiss"; id?: string };
+type ToastEvent = { type: "show"; toast: ToastInstance } | { type: "dismiss"; id?: string };
 
 type Listener = (event: ToastEvent) => void;
 
@@ -65,11 +63,7 @@ export const toastService = {
         return id;
     },
 
-    success(
-        title: string,
-        body?: React.ReactNode,
-        opts?: Partial<ToastOptions>,
-    ) {
+    success(title: string, body?: React.ReactNode, opts?: Partial<ToastOptions>) {
         return this.display({ ...opts, title, body, status: "success" });
     },
 
