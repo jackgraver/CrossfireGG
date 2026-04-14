@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { Trophy } from "lucide-react";
 import TopLevelBracket from "@/components/shared/bracket/TopLevelBracket";
 import { useStageBracket, useTournamentById } from "@/lib/api/tournament.queries";
+import SectionTitle from "./SectionTitle";
 
 function HomeLiveBracketSkeleton() {
     return (
@@ -77,9 +78,7 @@ export default function HomeLiveBracket() {
     return (
         <div className="w-full space-y-4">
             <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <span className="text-left font-semibold text-orange-500 uppercase">
-                    {target.tournamentName}
-                </span>
+                <SectionTitle title={"LIVE BRACKET"} subtitle={"SEASON 4 PLAYOFFS"} />
                 <Link
                     to="/tournament/$tournamentId/stage/$stageId/bracket"
                     params={{
@@ -92,9 +91,6 @@ export default function HomeLiveBracket() {
                     View full tournament
                 </Link>
             </div>
-            <h2 className="text-2xl font-extrabold tracking-tight text-white sm:text-3xl">
-                {target.stageName}
-            </h2>
             <div className="text-textPrimary w-full overflow-x-auto pb-2">
                 <TopLevelBracket stageFormat={bracket.format} groups={bracket.groups} />
             </div>

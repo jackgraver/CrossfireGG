@@ -3,12 +3,19 @@ import { useAllTournaments, type TournamentListStatus } from "@/lib/api/tourname
 import { TournamentGroup, TournamentGroupSkeleton } from "./TournamentGroup";
 import { Trophy } from "lucide-react";
 import { cn } from "@/utils/cn";
+import SectionTitle from "@/routes/-components/SectionTitle";
 
 const STATUS_OPTIONS: { value: TournamentListStatus; label: string }[] = [
     { value: "active", label: "Active" },
     { value: "upcoming", label: "Upcoming" },
     { value: "ended", label: "Ended" },
 ];
+
+const STATUS_HEADLINES: Record<TournamentListStatus, string> = {
+    active: "Active Tournaments",
+    upcoming: "Upcoming Tournaments",
+    ended: "Ended Tournaments",
+};
 
 export default function TournamentsSection() {
     const [status, setStatus] = useState<TournamentListStatus>("active");
@@ -32,21 +39,33 @@ export default function TournamentsSection() {
     return (
         <div className="min-h-screen py-6">
             <div className="mb-8 flex flex-wrap gap-2">
-                {STATUS_OPTIONS.map(({ value, label }) => (
-                    <button
-                        key={value}
-                        type="button"
-                        onClick={() => setStatus(value)}
-                        className={cn(
-                            "rounded-lg border px-4 py-2 text-sm font-semibold transition-colors",
-                            status === value
-                                ? "border-orange-500 bg-orange-500/20 text-white"
-                                : "border-border text-textSecondary hover:border-orange-500/50 hover:text-textPrimary",
-                        )}
-                    >
-                        {label}
-                    </button>
-                ))}
+                <div className="flex flex-row items-center gap-2">
+                    <SectionTitle
+                        title={
+                            status === "active"
+                                ? "Active Tournaments"
+                                : status === "upcoming"
+                                  ? "Upcoming Tournaments"
+                                  : "Ended Tournaments"
+                        }
+                        subtitle="COMPETE"
+                    />
+                    {STATUS_OPTIONS.map(({ value, label }) => (
+                        <button
+                            key={value}
+                            type="button"
+                            onClick={() => setStatus(value)}
+                            className={cn(
+                                "rounded-lg border px-4 py-2 text-sm font-semibold transition-colors",
+                                status === value
+                                    ? "border-orange-500 bg-orange-500/20 text-white"
+                                    : "border-border text-textSecondary hover:border-orange-500/50 hover:text-textPrimary",
+                            )}
+                        >
+                            {label}
+                        </button>
+                    ))}
+                </div>
             </div>
             {isLoading ? (
                 <TournamentGroupSkeleton />

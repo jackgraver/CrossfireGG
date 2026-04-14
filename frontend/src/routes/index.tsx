@@ -5,12 +5,16 @@ import HowItWorksSection from "./-components/HowItWorksSection";
 import HomeHero from "./-components/HomeHero";
 import HomeSection from "./-components/HomeSection";
 import HomeLiveBracket from "./-components/HomeLiveBracket";
+import SectionTitle from "./-components/SectionTitle";
+import { useNavigate } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
     component: App,
 });
 
 function App() {
+    const navigate = useNavigate();
+
     return (
         <div className="bg-mainBg">
             <HomeSection variant="contained">
@@ -20,21 +24,13 @@ function App() {
                 <TournamentsSection />
             </HomeSection>
             <HomeSection variant="band" tone="muted" minHeightScreen>
-                <div className="mb-2">
-                    <span className="text-orange-500 font-semibold tracking-wide uppercase">
-                        Live bracket
-                    </span>
-                </div>
                 <HomeLiveBracket />
             </HomeSection>
             <HomeSection variant="contained">
                 <HowItWorksSection />
             </HomeSection>
             <HomeSection variant="band" tone="muted" compactPadding centered>
-                <span className="text-orange-500">POWERED BY</span>
-                <h1 className="text-2xl font-extrabold tracking-tight text-white sm:text-6xl lg:text-7xl">
-                    OUR PARTNERS
-                </h1>
+                <SectionTitle title="OUR PARTNERS" subtitle="POWERED BY" />
             </HomeSection>
             <HomeSection variant="contained">
                 <section className="pb-16 text-center">
@@ -49,11 +45,17 @@ function App() {
                         compete for the $3,000 prize pool.
                     </p>
                     <div className="mt-6 flex flex-row flex-wrap items-center justify-center gap-3">
-                        <button className="flex items-center gap-2 rounded-md bg-orange-500 px-2 py-2 text-xs font-semibold text-white transition-colors hover:bg-orange-600">
+                        <button className="flex items-center gap-2 rounded-md bg-orange-500 px-2 py-2 text-xs font-semibold text-white transition-colors hover:bg-orange-600"
+                        onClick={() => navigate({
+                            to: "/register/team",
+                        })}>
                             <LogIn className="h-4 w-4" />
                             Register Now
                         </button>
-                        <button className="flex items-center gap-2 rounded-md bg-gray-700 px-2 py-2 text-xs font-semibold text-white transition-colors hover:bg-gray-600">
+                        <button
+                            className="flex items-center gap-2 rounded-md bg-gray-700 px-2 py-2 text-xs font-semibold text-white transition-colors hover:bg-gray-600"
+                            onClick={() => window.open("https://discord.gg/99tm9U5c", "_blank")}
+                        >
                             <Bot className="h-4 w-4" />
                             Join Discord
                         </button>

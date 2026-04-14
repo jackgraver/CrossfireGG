@@ -76,7 +76,10 @@ export const useStageBracket = (
         opts === undefined
             ? isLiveStageToken(stageId)
                 ? (query: { state: { data: unknown } }) => {
-                      const data = query.state.data as GroupWithMatchesAndFormatDTO | null | undefined;
+                      const data = query.state.data as
+                          | GroupWithMatchesAndFormatDTO
+                          | null
+                          | undefined;
                       const tid = data?.liveContext?.tournamentId;
                       if (!tid) return false;
                       const t = queryClient.getQueryData<TournamentWithMinimalStagesDTO>([

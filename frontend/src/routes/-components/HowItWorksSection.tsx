@@ -1,5 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 import { Key, Swords, Trophy, Users } from "lucide-react";
+import SectionTitle from "./SectionTitle";
 
 const steps: {
     num: string;
@@ -46,19 +47,14 @@ export default function HowItWorksSection() {
     return (
         <section className="mt-24 w-full pb-16">
             <div className="mb-10 text-left">
-                <p className="text-xs font-bold uppercase tracking-wider text-orange-500 sm:text-sm">
-                    HOW IT WORKS
-                </p>
-                <h2 className="mt-2 text-4xl font-extrabold uppercase tracking-tight text-white sm:text-5xl lg:text-6xl">
-                    JOIN THE BATTLE
-                </h2>
+                <SectionTitle title="JOIN THE BATTLE" subtitle="HOW IT WORKS" />
             </div>
             <div className="overflow-hidden rounded-2xl border border-white/10 bg-firstBg/80">
                 <div className="flex w-full flex-row divide-x divide-white/10 overflow-x-auto">
                     {steps.map(({ num, Icon, iconClass, title, description }) => (
                         <div
                             key={num}
-                            className="flex min-w-[9rem] flex-1 flex-col items-start gap-4 p-4 sm:p-6 lg:p-8"
+                            className="flex min-w-36 flex-1 flex-col items-start gap-4 p-4 sm:p-6 lg:p-8"
                         >
                             <span className="text-5xl font-bold leading-none text-orange-600/35 sm:text-6xl">
                                 {num}

@@ -49,7 +49,9 @@ export const stageController = {
         } else {
             const numeric = /^\d+$/.test(data.stageId) ? Number(data.stageId) : NaN;
             if (!Number.isFinite(numeric) || numeric < 1) {
-                return res.status(400).json({ error: "Stage ID must be a positive number or 'live'" });
+                return res
+                    .status(400)
+                    .json({ error: "Stage ID must be a positive number or 'live'" });
             }
             resolvedStageId = numeric;
         }

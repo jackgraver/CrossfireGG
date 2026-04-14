@@ -4,6 +4,7 @@ import { Calendar, CalendarFold, CheckCircle2, DollarSign, PlayCircle, Users } f
 import Tile from "../$tournamentId/-component/Tile";
 import { formatDateOnly, toUnixTimestamp } from "@/lib/date.utils";
 import SignUpButton from "./SignUpButton";
+import SectionTitle from "@/routes/-components/SectionTitle";
 
 export function TournamentGroupSkeleton() {
     return (
@@ -53,7 +54,7 @@ export const TournamentGroup = ({
 
     return (
         <section className="mb-12 flex flex-col gap-4">
-            <p className="text-orange-500">COMPETE</p>
+            {/* <p className="text-orange-500">COMPETE</p>
             <h2 className="text-textSecondary flex items-center gap-2 text-3xl font-black tracking-tight uppercase">
                 {iconMap[type]}
                 {type === "active"
@@ -61,7 +62,8 @@ export const TournamentGroup = ({
                     : type === "upcoming"
                       ? "Upcoming Tournaments"
                       : "Ended Tournaments"}
-            </h2>
+                      
+            </h2> */}
             <div className="flex flex-row flex-wrap gap-8">
                 {tournaments.map((tournament: TournamentWithTeamCountDTO) => (
                     <article

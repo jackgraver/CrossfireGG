@@ -2,8 +2,11 @@ import InfoDisplay from "./InfoDisplay";
 import UpcomingMatches from "./UpcomingMatches";
 import Tile from "@/routes/tournament/$tournamentId/-component/Tile";
 import { Play, Users } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
 
 export default function HomeHero() {
+    const navigate = useNavigate();
+
     return (
         <div className="relative h-screen overflow-hidden">
             <div className="absolute inset-0" />
@@ -33,11 +36,23 @@ export default function HomeHero() {
                                 </p>
                             </div>
                             <div className="flex flex-wrap gap-3">
-                                <button className="flex items-center gap-2 rounded-md bg-orange-500 px-2 py-2 text-xs font-semibold text-white transition-colors hover:bg-orange-600">
+                                <button className="flex items-center gap-2 rounded-md bg-orange-500 px-2 py-2 text-xs font-semibold text-white transition-colors hover:bg-orange-600"
+                                onClick={() => navigate({
+                                    to: "/tournament/$tournamentId/stage/$stageId/bracket",
+                                    params: {
+                                        tournamentId: "8",
+                                        stageId: "16",
+                                    }, //TODO: dont hardcode
+                                })}>
                                     <Play className="h-4 w-4" />
                                     View Season 5
                                 </button>
-                                <button className="flex items-center gap-2 rounded-md bg-gray-700 px-2 py-2 text-xs font-semibold text-white transition-colors hover:bg-gray-600">
+                                <button
+                                    className="flex items-center gap-2 rounded-md bg-gray-700 px-2 py-2 text-xs font-semibold text-white transition-colors hover:bg-gray-600"
+                                    onClick={() =>
+                                        window.open("https://discord.gg/99tm9U5c", "_blank")
+                                    }
+                                >
                                     <Users className="h-4 w-4" />
                                     Join Discord
                                 </button>
