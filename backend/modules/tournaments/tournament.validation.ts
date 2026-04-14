@@ -11,6 +11,12 @@ export const StageParamsSchema = z.object({
     stageId: z.string().regex(/^\d+$/, "Stage ID must be a valid number").transform(Number),
 });
 
+export const TournamentListStatusSchema = z.enum(["active", "upcoming", "ended"]);
+
+export const GetAllTournamentsQuerySchema = z.object({
+    status: TournamentListStatusSchema.optional(),
+});
+
 export const RegisterForTournamentBodySchema = z.object({
     teamId: z.coerce.number().int().positive(),
     starters: z.array(z.coerce.number().int().positive()).min(5).max(5),

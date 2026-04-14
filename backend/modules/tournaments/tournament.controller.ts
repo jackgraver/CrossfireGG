@@ -1,6 +1,10 @@
 import { Request, Response } from "express";
 import { tournamentService } from "./tournament.service";
-import { TournamentParamsSchema, RegisterForTournamentBodySchema } from "./tournament.validation";
+import {
+    TournamentParamsSchema,
+    RegisterForTournamentBodySchema,
+    GetAllTournamentsQuerySchema,
+} from "./tournament.validation";
 import { teamRepository } from "../teams/team.repository";
 import { playerRepository } from "../players/player.repository";
 import { tournamentRepository } from "./tournament.repository";
@@ -19,7 +23,10 @@ import { redisGet } from "../../core/redis";
 
 export const tournamentController = {
     getAllTournaments: async (req: Request, res: Response) => {
-        const tournaments = await tournamentService.getAllTournaments();
+        const query = parseOr400(res, GetAllTournamentsQuerySchema, req.query);
+        if (query === undefined) return;
+
+        const tournaments = await tournamentService.getAllTournaments(query.status);
 
         sendContract(res, TournamentWithTeamCountContract.array(), tournaments);
     },

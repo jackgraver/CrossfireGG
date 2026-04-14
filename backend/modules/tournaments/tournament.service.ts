@@ -2,8 +2,8 @@ import { tournamentRepository } from "./tournament.repository";
 import { stagesRepository } from "./stages/stages.repository";
 
 export const tournamentService = {
-    getAllTournaments: async () => {
-        const allTournaments = await tournamentRepository.findAll();
+    getAllTournaments: async (status?: "active" | "upcoming" | "ended") => {
+        const allTournaments = await tournamentRepository.findAll(status);
         return allTournaments;
     },
 

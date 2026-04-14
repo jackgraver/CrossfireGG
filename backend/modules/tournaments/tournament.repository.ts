@@ -4,7 +4,10 @@ import { eq, and, isNull, count, inArray, notInArray, getTableColumns } from "dr
 import type { UpdateTournamentDTO } from "@repo/contracts";
 
 export const tournamentRepository = {
-    findAll: async () => {
+    findAll: async (status?: "active" | "upcoming" | "ended") => {
+        const whereClause = status
+            ? and(isNull(tournaments.deleted_at), eq(tournaments.status, status))
+            : isNull(tournaments.deleted_at);
         return await db
             .select({
                 ...getTableColumns(tournaments),
@@ -50,7 +53,8 @@ export const tournamentRepository = {
                     ),
                 ),
             })
-            .from(tournaments);
+            .from(tournaments)
+            .where(whereClause);
     },
 
     findTotalTeams: async (tournamentId: number) => {

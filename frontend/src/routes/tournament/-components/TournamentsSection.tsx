@@ -1,9 +1,18 @@
-import { useAllTournaments } from "@/lib/api/tournament.queries";
+import { useState } from "react";
+import { useAllTournaments, type TournamentListStatus } from "@/lib/api/tournament.queries";
 import { TournamentGroup, TournamentGroupSkeleton } from "./TournamentGroup";
 import { Trophy } from "lucide-react";
+import { cn } from "@/utils/cn";
+
+const STATUS_OPTIONS: { value: TournamentListStatus; label: string }[] = [
+    { value: "active", label: "Active" },
+    { value: "upcoming", label: "Upcoming" },
+    { value: "ended", label: "Ended" },
+];
 
 export default function TournamentsSection() {
-    const { data, isLoading, error } = useAllTournaments();
+    const [status, setStatus] = useState<TournamentListStatus>("active");
+    const { data, isLoading, error } = useAllTournaments(status);
 
     if (error) {
         return (
@@ -18,40 +27,38 @@ export default function TournamentsSection() {
         );
     }
 
-    const tournaments = data || [];
-
-    // Group tournaments by status: "ACTIVE", "UPCOMING", "ENDED"
-    const activeTournaments = tournaments.filter(
-        (t) => (t.status?.toUpperCase?.() ?? "") === "ACTIVE",
-    );
-    const upcomingTournaments = tournaments.filter(
-        (t) => (t.status?.toUpperCase?.() ?? "") === "UPCOMING",
-    );
-    const endedTournaments = tournaments.filter(
-        (t) => (t.status?.toUpperCase?.() ?? "") === "ENDED",
-    );
+    const tournaments = data ?? [];
 
     return (
         <div className="min-h-screen py-6">
+            <div className="mb-8 flex flex-wrap gap-2">
+                {STATUS_OPTIONS.map(({ value, label }) => (
+                    <button
+                        key={value}
+                        type="button"
+                        onClick={() => setStatus(value)}
+                        className={cn(
+                            "rounded-lg border px-4 py-2 text-sm font-semibold transition-colors",
+                            status === value
+                                ? "border-orange-500 bg-orange-500/20 text-white"
+                                : "border-border text-textSecondary hover:border-orange-500/50 hover:text-textPrimary",
+                        )}
+                    >
+                        {label}
+                    </button>
+                ))}
+            </div>
             {isLoading ? (
                 <TournamentGroupSkeleton />
+            ) : tournaments.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-32 opacity-20">
+                    <Trophy size={64} strokeWidth={1} />
+                    <p className="mt-4 text-sm font-bold tracking-widest uppercase">
+                        No tournaments found
+                    </p>
+                </div>
             ) : (
-                <>
-                    {tournaments.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center py-32 opacity-20">
-                            <Trophy size={64} strokeWidth={1} />
-                            <p className="mt-4 text-sm font-bold tracking-widest uppercase">
-                                No tournaments found
-                            </p>
-                        </div>
-                    ) : (
-                        <>
-                            <TournamentGroup type="active" tournaments={activeTournaments} />
-                            {/* <TournamentGroup type="upcoming" tournaments={upcomingTournaments} />
-                            <TournamentGroup type="ended" tournaments={endedTournaments} /> */}
-                        </>
-                    )}
-                </>
+                <TournamentGroup type={status} tournaments={tournaments} />
             )}
         </div>
     );

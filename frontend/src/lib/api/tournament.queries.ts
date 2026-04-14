@@ -12,10 +12,15 @@ import {
 import { apiGET, apiPOST, apiPUT } from "@/lib/api/client";
 import { queryClient } from "@/lib/api/queryClient";
 
-export const useAllTournaments = () => {
+export type TournamentListStatus = "active" | "upcoming" | "ended";
+
+export const useAllTournaments = (status?: TournamentListStatus) => {
     return useQuery<TournamentWithTeamCountDTO[]>({
-        queryKey: ["tournaments"],
-        queryFn: () => apiGET<TournamentWithTeamCountDTO[]>("/tournament/all"),
+        queryKey: ["tournaments", status ?? "all"],
+        queryFn: () =>
+            apiGET<TournamentWithTeamCountDTO[]>(
+                status ? `/tournament/all?status=${encodeURIComponent(status)}` : "/tournament/all",
+            ),
     });
 };
 
