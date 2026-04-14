@@ -11,6 +11,11 @@ export const StageParamsSchema = z.object({
     stageId: z.string().regex(/^\d+$/, "Stage ID must be a valid number").transform(Number),
 });
 
+/** Bracket route: numeric id, or path segment `live` for the current live stage. */
+export const StageBracketParamsSchema = z.object({
+    stageId: z.string(),
+});
+
 export const TournamentListStatusSchema = z.enum(["active", "upcoming", "ended"]);
 
 export const GetAllTournamentsQuerySchema = z.object({

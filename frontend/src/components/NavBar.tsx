@@ -71,9 +71,7 @@ export default function NavBar({
         <nav
             className={cn(
                 "z-50 backdrop-blur-md transition-colors duration-500 bg-mainBg",
-                isHomePage
-                    ? "fixed inset-x-0 top-0 mx-auto max-w-7xl "
-                    : "sticky top-0",
+                isHomePage ? "fixed inset-x-0 top-0 mx-auto max-w-7xl " : "sticky top-0",
             )}
         >
             <div className="flex h-14 items-center justify-between">

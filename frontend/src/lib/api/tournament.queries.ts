@@ -1,4 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
+import axios from "axios";
 import {
     GroupWithMatchesAndFormatDTO,
     MatchesByStageResponseDTO,
@@ -59,12 +60,52 @@ export const useStageTeams = (stageId: number, opts?: { refetchInterval?: number
     });
 };
 
-export const useStageBracket = (stageId: number | null, opts?: { refetchInterval?: number }) => {
-    return useQuery<GroupWithMatchesAndFormatDTO>({
+function isLiveStageToken(stageId: number | "live" | string | null | undefined): boolean {
+    return stageId === "live" || (typeof stageId === "string" && stageId.toLowerCase() === "live");
+}
+
+/**
+ * Fetch bracket for a numeric stage id, or path `/tournament/stage/live/bracket` for the
+ * current live stage. Live returns 404 when there is no current stage; the hook maps that to `null`.
+ */
+export const useStageBracket = (
+    stageId: number | "live" | string | null,
+    opts?: { refetchInterval?: number },
+) => {
+    const refetchInterval =
+        opts === undefined
+            ? isLiveStageToken(stageId)
+                ? (query: { state: { data: unknown } }) => {
+                      const data = query.state.data as GroupWithMatchesAndFormatDTO | null | undefined;
+                      const tid = data?.liveContext?.tournamentId;
+                      if (!tid) return false;
+                      const t = queryClient.getQueryData<TournamentWithMinimalStagesDTO>([
+                          "tournament",
+                          String(tid),
+                      ]);
+                      return t?.syncStatus === "processing" ? 3_000 : false;
+                  }
+                : undefined
+            : opts.refetchInterval;
+
+    return useQuery<GroupWithMatchesAndFormatDTO | null>({
         queryKey: ["stageStandings", stageId],
-        queryFn: () => apiGET<GroupWithMatchesAndFormatDTO>(`/tournament/stage/${stageId}/bracket`),
-        enabled: !!stageId,
-        refetchInterval: opts?.refetchInterval,
+        queryFn: async () => {
+            const isLive = isLiveStageToken(stageId);
+            const url = isLive
+                ? "/tournament/stage/live/bracket"
+                : `/tournament/stage/${stageId}/bracket`;
+            try {
+                return await apiGET<GroupWithMatchesAndFormatDTO>(url);
+            } catch (e) {
+                if (isLive && axios.isAxiosError(e) && e.response?.status === 404) {
+                    return null;
+                }
+                throw e;
+            }
+        },
+        enabled: stageId !== null && stageId !== undefined && stageId !== "",
+        ...(refetchInterval !== undefined ? { refetchInterval } : {}),
     });
 };
 

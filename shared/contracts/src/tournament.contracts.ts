@@ -46,6 +46,16 @@ export const TournamentWithMinimalStagesContract = TournamentContract.extend({
 
 export type TournamentWithMinimalStagesDTO = z.infer<typeof TournamentWithMinimalStagesContract>;
 
+/** Active tournament whose stage has `is_current` set (live broadcast stage). */
+export const LiveBracketTargetContract = z.object({
+    tournamentId: z.number(),
+    tournamentName: z.string(),
+    stageId: z.number(),
+    stageName: z.string(),
+});
+
+export type LiveBracketTargetDTO = z.infer<typeof LiveBracketTargetContract>;
+
 export const CreateTournamentContract = z
     .object({
         name: z.string().min(2, "Tournament name is required"),

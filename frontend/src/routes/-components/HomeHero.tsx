@@ -9,7 +9,7 @@ export default function HomeHero() {
             <div className="absolute inset-0" />
             <div className="relative z-10 flex h-full min-h-0 flex-col">
                 <div className="flex min-h-0 flex-1 flex-col justify-center pt-6 pb-[10vh]">
-                    <div className="flex w-full flex-col gap-10 lg:flex-row lg:items-center lg:justify-between lg:gap-12">
+                    <div className="flex w-full flex-col gap-10 lg:flex-row lg:items-start lg:justify-between lg:gap-12">
                         <div className="flex min-w-0 flex-1 flex-col gap-6 text-left">
                             <div className="flex flex-col items-start">
                                 <Tile
@@ -48,7 +48,7 @@ export default function HomeHero() {
                                 <InfoDisplay text="5" subtext="SEASONS RAN" />
                             </div>
                         </div>
-                        <div className="w-full max-w-84 min-w-0 shrink-0 lg:max-w-96">
+                        <div className="w-full max-w-84 min-w-0 shrink-0 lg:max-w-96 lg:pt-9">
                             <UpcomingMatches />
                         </div>
                     </div>

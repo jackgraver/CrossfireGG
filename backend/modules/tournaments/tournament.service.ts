@@ -97,4 +97,8 @@ export const tournamentService = {
         }
         return entryStage;
     },
+
+    getLiveBracketTarget: async () => {
+        return await tournamentRepository.findLiveBracketTarget();
+    },
 };

@@ -84,40 +84,24 @@ export const matchService = {
     },
 
     getUpcomingMatches: async () => {
-        const now = new Date();
-
-        const startOfToday = new Date(now);
-        startOfToday.setHours(0, 0, 0, 0);
-
-        const startOfTomorrow = new Date(startOfToday);
-        startOfTomorrow.setDate(startOfTomorrow.getDate() + 1);
-
         const upcomingMatches = await matchRepository.findUpcomingMatches();
 
-        return upcomingMatches.sort((a, b) => {
-            const aScheduledAt = a.scheduled_at ?? 0;
-            const bScheduledAt = b.scheduled_at ?? 0;
+        const isLive = (status: string | null | undefined) => {
+            const s = (status ?? "").toLowerCase();
+            return s === "live" || s === "ongoing";
+        };
 
-            const aIsToday =
-                aScheduledAt >= Math.floor(startOfToday.getTime() / 1000) &&
-                aScheduledAt < Math.floor(startOfTomorrow.getTime() / 1000);
-            const bIsToday =
-                bScheduledAt >= Math.floor(startOfToday.getTime() / 1000) &&
-                bScheduledAt < Math.floor(startOfTomorrow.getTime() / 1000);
-
-            if (aIsToday && !bIsToday) return -1;
-            if (!aIsToday && bIsToday) return 1;
-
-            const aIsLive = a.status === "live";
-            const bIsLive = b.status === "live";
-
-            if (aIsToday && bIsToday) {
-                if (aIsLive && !bIsLive) return -1;
-                if (!aIsLive && bIsLive) return 1;
-            }
-
-            return aScheduledAt - bScheduledAt;
-        });
+        return [...upcomingMatches]
+            .sort((a, b) => {
+                const aLive = isLive(a.status);
+                const bLive = isLive(b.status);
+                if (aLive && !bLive) return -1;
+                if (!aLive && bLive) return 1;
+                const aT = a.scheduled_at ?? Number.MAX_SAFE_INTEGER;
+                const bT = b.scheduled_at ?? Number.MAX_SAFE_INTEGER;
+                return aT - bT;
+            })
+            .slice(0, 5);
     },
 
     getAllMatchCasting: async () => {

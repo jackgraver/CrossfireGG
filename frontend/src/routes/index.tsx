@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import TournamentsSection from "./tournament/-components/TournamentsSection";
-import { Bot, LogIn, Trophy } from "lucide-react";
+import { Bot, LogIn } from "lucide-react";
 import HowItWorksSection from "./-components/HowItWorksSection";
 import HomeHero from "./-components/HomeHero";
 import HomeSection from "./-components/HomeSection";
+import HomeLiveBracket from "./-components/HomeLiveBracket";
 
 export const Route = createFileRoute("/")({
     component: App,
@@ -14,22 +15,17 @@ function App() {
         <div className="bg-mainBg">
             <HomeSection variant="contained">
                 <HomeHero />
-                <section className="mt-16 w-full">
-                    <TournamentsSection />
-                </section>
+            </HomeSection>
+            <HomeSection variant="contained">
+                <TournamentsSection />
             </HomeSection>
             <HomeSection variant="band" tone="muted" minHeightScreen>
-                <div className="flex w-full items-center justify-between">
-                    <span className="text-left font-semibold text-orange-500">
-                        SEASON 4 PLAYOFFS
+                <div className="mb-2">
+                    <span className="text-orange-500 font-semibold tracking-wide uppercase">
+                        Live bracket
                     </span>
-                    <button className="flex items-center gap-2 rounded-md bg-gray-700 px-2 py-2 text-xs font-semibold text-white transition-colors hover:bg-gray-600">
-                        <Trophy className="h-4 w-4" /> View Full Tournament
-                    </button>
                 </div>
-                <h1 className="pt-2 text-4xl font-extrabold tracking-tight text-white">
-                    LIVE BRACKET
-                </h1>
+                <HomeLiveBracket />
             </HomeSection>
             <HomeSection variant="contained">
                 <HowItWorksSection />

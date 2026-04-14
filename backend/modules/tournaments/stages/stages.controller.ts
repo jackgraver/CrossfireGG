@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
-import { StageParamsSchema } from "../tournament.validation";
+import { StageBracketParamsSchema, StageParamsSchema } from "../tournament.validation";
 import { sendContract } from "../../../core/sendContract";
 import {
+    type LiveBracketTargetDTO,
     GroupWithMatchesAndFormatContract,
     MatchesByStageResponseContract,
     StageFormatContract,
@@ -9,6 +10,7 @@ import {
 } from "@repo/contracts";
 import { stagesService } from "./stages.service";
 import { parseOr400 } from "../../../core/validation/parseOr400";
+import { tournamentService } from "../tournament.service";
 
 export const stageController = {
     getMatchesByStageId: async (req: Request, res: Response) => {
@@ -29,12 +31,34 @@ export const stageController = {
     },
 
     getStageBracket: async (req: Request, res: Response) => {
-        const data = parseOr400(res, StageParamsSchema, req.params);
+        const data = parseOr400(res, StageBracketParamsSchema, req.params);
         if (!data) return;
 
-        const groups = await stagesService.getStageBracket(data.stageId);
+        const wantsLive = data.stageId === "live";
 
-        sendContract(res, GroupWithMatchesAndFormatContract, groups);
+        let resolvedStageId: number;
+        let liveContext: LiveBracketTargetDTO | undefined;
+
+        if (wantsLive) {
+            const target = await tournamentService.getLiveBracketTarget();
+            if (!target) {
+                return res.status(404).json({ error: "No live stage" });
+            }
+            resolvedStageId = target.stageId;
+            liveContext = target;
+        } else {
+            const numeric = /^\d+$/.test(data.stageId) ? Number(data.stageId) : NaN;
+            if (!Number.isFinite(numeric) || numeric < 1) {
+                return res.status(400).json({ error: "Stage ID must be a positive number or 'live'" });
+            }
+            resolvedStageId = numeric;
+        }
+
+        const payload = await stagesService.getStageBracket(resolvedStageId);
+        sendContract(res, GroupWithMatchesAndFormatContract, {
+            ...payload,
+            ...(liveContext ? { liveContext } : {}),
+        });
     },
 
     getAllFormats: async (_: Request, res: Response) => {

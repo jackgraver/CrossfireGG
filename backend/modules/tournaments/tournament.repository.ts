@@ -1,6 +1,6 @@
 import { db } from "../../config/database";
 import { tournaments, stages, groups, stageTeams, stageFormats, stagePlayers } from "../../schemas";
-import { eq, and, isNull, count, inArray, notInArray, getTableColumns } from "drizzle-orm";
+import { eq, and, isNull, count, inArray, notInArray, getTableColumns, desc } from "drizzle-orm";
 import type { UpdateTournamentDTO } from "@repo/contracts";
 
 export const tournamentRepository = {
@@ -437,6 +437,29 @@ export const tournamentRepository = {
                 ),
             orderBy: (s, { asc }) => [asc(s.start_date)],
         });
+    },
+
+    findLiveBracketTarget: async () => {
+        const result = await db
+            .select({
+                tournamentId: tournaments.id,
+                tournamentName: tournaments.name,
+                stageId: stages.id,
+                stageName: stages.name,
+            })
+            .from(tournaments)
+            .innerJoin(stages, eq(stages.tournament_id, tournaments.id))
+            .where(
+                and(
+                    eq(tournaments.status, "active"),
+                    isNull(tournaments.deleted_at),
+                    eq(stages.is_current, true),
+                    isNull(stages.deleted_at),
+                ),
+            )
+            .orderBy(desc(tournaments.start_date))
+            .limit(1);
+        return result[0] ?? null;
     },
 
     upsertStageRoster: async (rosterData: {

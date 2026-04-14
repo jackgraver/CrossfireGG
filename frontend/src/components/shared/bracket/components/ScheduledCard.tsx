@@ -26,7 +26,7 @@ export default function ScheduledCard({ match }: ScheduledCardProps) {
 
     return (
         <div className="flex flex-col">
-            {match.status == "ONGOING" ? (
+            {["ongoing", "live"].includes(match.status?.toLowerCase() ?? "") ? (
                 <div className="w-fit max-w-full overflow-hidden rounded-t-md bg-green-500 px-1 py-0.5 whitespace-nowrap">
                     <div className="flex gap-1 text-xs text-black">
                         <p className="mx-2 font-bold">LIVE!</p>
