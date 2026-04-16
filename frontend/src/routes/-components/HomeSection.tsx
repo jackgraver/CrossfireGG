@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { cn } from "@/utils/cn";
 
-export const HOME_CONTENT_GUTTER = "mx-auto w-full max-w-7/12 px-4 sm:px-6";
+export const HOME_CONTENT_GUTTER = "mx-auto w-full max-w-8/12";
 
 type HomeSectionProps = {
     children: ReactNode;

@@ -36,14 +36,18 @@ export default function HomeHero() {
                                 </p>
                             </div>
                             <div className="flex flex-wrap gap-3">
-                                <button className="flex items-center gap-2 rounded-md bg-orange-500 px-2 py-2 text-xs font-semibold text-white transition-colors hover:bg-orange-600"
-                                onClick={() => navigate({
-                                    to: "/tournament/$tournamentId/stage/$stageId/bracket",
-                                    params: {
-                                        tournamentId: "8",
-                                        stageId: "16",
-                                    }, //TODO: dont hardcode
-                                })}>
+                                <button
+                                    className="flex items-center gap-2 rounded-md bg-orange-500 px-2 py-2 text-xs font-semibold text-white transition-colors hover:bg-orange-600"
+                                    onClick={() =>
+                                        navigate({
+                                            to: "/tournament/$tournamentId/stage/$stageId/bracket",
+                                            params: {
+                                                tournamentId: "8",
+                                                stageId: "16",
+                                            }, //TODO: dont hardcode
+                                        })
+                                    }
+                                >
                                     <Play className="h-4 w-4" />
                                     View Season 5
                                 </button>

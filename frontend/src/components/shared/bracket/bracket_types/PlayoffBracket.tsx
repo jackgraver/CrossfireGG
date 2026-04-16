@@ -139,10 +139,7 @@ export default function PlayoffBracket({ matches }: PlayoffBracketProps) {
         >
             <Connections mainRounds={rounds.mainRounds} positions={positions} />
             {rounds.mainRounds.map((round, roundIndex) => (
-                <div
-                    key={round.name}
-                    className="z-10 flex min-w-0 flex-1 flex-col justify-around"
-                >
+                <div key={round.name} className="z-10 flex min-w-0 flex-1 flex-col justify-around">
                     <div className="mb-4 w-full text-center">
                         <h2 className="bg-secondBg rounded-md p-1 font-bold tracking-wider text-gray-400 uppercase">
                             {round.name}
@@ -150,7 +147,10 @@ export default function PlayoffBracket({ matches }: PlayoffBracketProps) {
                     </div>
                     <div className="flex w-full grow flex-col justify-around">
                         {round.matches.map((match, matchIndex) => (
-                            <div key={`${roundIndex}-${matchIndex}`} className="relative w-full min-w-0">
+                            <div
+                                key={`${roundIndex}-${matchIndex}`}
+                                className="relative w-full min-w-0"
+                            >
                                 <BracketMatch
                                     match={match}
                                     roundIndex={roundIndex}

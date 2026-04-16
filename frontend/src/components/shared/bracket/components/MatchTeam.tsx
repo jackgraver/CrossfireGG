@@ -19,11 +19,7 @@ export function MatchTeam({
     return (
         <div
             className={cn(
-                variant === "bracket"
-                    ? "min-w-0 w-full"
-                    : !team
-                      ? "min-w-32"
-                      : "min-w-60",
+                variant === "bracket" ? "min-w-0 w-full" : !team ? "min-w-32" : "min-w-60",
                 "grid grid-cols-[auto_1fr_auto] items-center gap-x-3 px-2 py-1",
                 bg,
             )}

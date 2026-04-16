@@ -45,10 +45,14 @@ function App() {
                         compete for the $3,000 prize pool.
                     </p>
                     <div className="mt-6 flex flex-row flex-wrap items-center justify-center gap-3">
-                        <button className="flex items-center gap-2 rounded-md bg-orange-500 px-2 py-2 text-xs font-semibold text-white transition-colors hover:bg-orange-600"
-                        onClick={() => navigate({
-                            to: "/register/team",
-                        })}>
+                        <button
+                            className="flex items-center gap-2 rounded-md bg-orange-500 px-2 py-2 text-xs font-semibold text-white transition-colors hover:bg-orange-600"
+                            onClick={() =>
+                                navigate({
+                                    to: "/register/team",
+                                })
+                            }
+                        >
                             <LogIn className="h-4 w-4" />
                             Register Now
                         </button>

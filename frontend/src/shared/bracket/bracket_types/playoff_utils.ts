@@ -18,7 +18,9 @@ function matchRoundColumn(round: string | null | undefined, columnId: string): b
     return LEGACY_IDS[columnId]?.includes(round) ?? false;
 }
 
-export function getPlayoffRounds(matches: MatchWithParticipantAndMinifiedMapsDTO[]): BracketRound[] {
+export function getPlayoffRounds(
+    matches: MatchWithParticipantAndMinifiedMapsDTO[],
+): BracketRound[] {
     const rounds: BracketRound[] = [];
 
     const roundConfigs = [
