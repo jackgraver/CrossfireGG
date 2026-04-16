@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { useAllTournaments, type TournamentListStatus } from "@/lib/api/tournament.queries";
 import { TournamentGroup, TournamentGroupSkeleton } from "./TournamentGroup";
 import { Trophy } from "lucide-react";
@@ -20,6 +20,26 @@ const STATUS_HEADLINES: Record<TournamentListStatus, string> = {
 export default function TournamentsSection() {
     const [status, setStatus] = useState<TournamentListStatus>("active");
     const { data, isLoading, error } = useAllTournaments(status);
+    const tabsRef = useRef<(HTMLButtonElement | null)[]>([]);
+    const tabStripRef = useRef<HTMLDivElement>(null);
+    const [indicator, setIndicator] = useState({ left: 0, width: 0, opacity: 0 });
+
+    const activeIndex = STATUS_OPTIONS.findIndex((o) => o.value === status);
+
+    useLayoutEffect(() => {
+        const measure = () => {
+            const el = tabsRef.current[activeIndex];
+            if (!el || !tabStripRef.current) return;
+            setIndicator({
+                left: el.offsetLeft,
+                width: el.offsetWidth,
+                opacity: 1,
+            });
+        };
+        measure();
+        window.addEventListener("resize", measure);
+        return () => window.removeEventListener("resize", measure);
+    }, [activeIndex]);
 
     if (error) {
         return (
@@ -38,33 +58,48 @@ export default function TournamentsSection() {
 
     return (
         <div className="min-h-screen py-6">
-            <div className="mb-8 flex flex-wrap gap-2">
-                <div className="flex flex-row items-center gap-2">
-                    <SectionTitle
-                        title={
-                            status === "active"
-                                ? "Active Tournaments"
-                                : status === "upcoming"
-                                  ? "Upcoming Tournaments"
-                                  : "Ended Tournaments"
-                        }
-                        subtitle="COMPETE"
-                    />
-                    {STATUS_OPTIONS.map(({ value, label }) => (
-                        <button
-                            key={value}
-                            type="button"
-                            onClick={() => setStatus(value)}
-                            className={cn(
-                                "rounded-lg border px-4 py-2 text-sm font-semibold transition-colors",
-                                status === value
-                                    ? "border-orange-500 bg-orange-500/20 text-white"
-                                    : "border-border text-textSecondary hover:border-orange-500/50 hover:text-textPrimary",
-                            )}
-                        >
-                            {label}
-                        </button>
-                    ))}
+            <div className="mb-8 flex w-full flex-col gap-4 sm:mb-10 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+                <div className="min-w-0">
+                    <SectionTitle title={STATUS_HEADLINES[status]} subtitle="COMPETE" />
+                </div>
+                <div
+                    className="flex w-full max-w-full shrink-0 justify-end rounded-2xl border border-border/60 bg-black/25 p-1.5 shadow-inner backdrop-blur-sm sm:w-auto"
+                    role="tablist"
+                    aria-label="Filter by tournament status"
+                >
+                    <div ref={tabStripRef} className="relative flex w-full min-w-0 gap-0 sm:w-auto">
+                        <span
+                            className="pointer-events-none absolute inset-y-0 rounded-xl bg-orange-500 shadow-md shadow-orange-900/30 transition-[left,width,opacity] duration-300 ease-in-out"
+                            style={{
+                                left: indicator.left,
+                                width: indicator.width,
+                                opacity: indicator.opacity,
+                            }}
+                        />
+                        {STATUS_OPTIONS.map(({ value, label }, i) => {
+                            const selected = status === value;
+                            return (
+                                <button
+                                    key={value}
+                                    ref={(el) => {
+                                        tabsRef.current[i] = el;
+                                    }}
+                                    type="button"
+                                    role="tab"
+                                    aria-selected={selected}
+                                    onClick={() => setStatus(value)}
+                                    className={cn(
+                                        "relative z-10 min-h-11 flex-1 rounded-xl px-3 py-2.5 text-center text-sm font-semibold transition-colors sm:min-w-26 sm:flex-initial sm:px-4",
+                                        selected
+                                            ? "text-white"
+                                            : "text-textSecondary hover:text-textPrimary",
+                                    )}
+                                >
+                                    {label}
+                                </button>
+                            );
+                        })}
+                    </div>
                 </div>
             </div>
             {isLoading ? (

@@ -85,7 +85,7 @@ export default function HomeLiveBracket() {
                         tournamentId: target.tournamentId,
                         stageId: target.stageId,
                     }}
-                    className="flex w-fit items-center gap-2 rounded-md bg-gray-700 px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-gray-600"
+                    className="flex w-fit items-center gap-2 rounded-md bg-firstBg px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-secondBg/80"
                 >
                     <Trophy className="h-4 w-4" />
                     View full tournament
