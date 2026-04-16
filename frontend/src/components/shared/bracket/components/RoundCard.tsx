@@ -1,9 +1,9 @@
 import MatchCard from "./MatchCard";
-import { MatchWithParticipantsDTO } from "@repo/contracts";
+import { MatchWithParticipantAndMinifiedMapsDTO } from "@repo/contracts";
 
 type RoundCardProps = {
     round: string;
-    matches: MatchWithParticipantsDTO[] | undefined;
+    matches: MatchWithParticipantAndMinifiedMapsDTO[] | undefined;
 };
 
 const numMatchesForRound = (round: string): number => {
@@ -83,10 +83,10 @@ export default function RoundCard({ round, matches }: RoundCardProps) {
             </div>
 
             {matches.map((match) => (
-                <MatchCard key={match.id} match={match} />
+                <MatchCard key={match.id} match={match} bracketLayout />
             ))}
             {Array.from({ length: numMatchesForRound(round) - matches.length }, (_, i) => (
-                <MatchCard key={`placeholder-${round}-${i}`} match={undefined} />
+                <MatchCard key={`placeholder-${round}-${i}`} match={undefined} bracketLayout />
             ))}
         </div>
     );

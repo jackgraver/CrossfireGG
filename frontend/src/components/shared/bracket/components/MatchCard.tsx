@@ -12,9 +12,11 @@ type MatchCardProps = {
     match: MatchWithParticipantAndMinifiedMapsDTO | undefined;
     margin?: boolean;
     unroundedTop?: boolean;
+    /** Narrow columns: full width + shrink + truncated team names */
+    bracketLayout?: boolean;
 };
 
-export default function MatchCard({ match, margin, unroundedTop }: MatchCardProps) {
+export default function MatchCard({ match, margin, unroundedTop, bracketLayout }: MatchCardProps) {
     if (margin === undefined) {
         margin = true;
     }
@@ -37,6 +39,8 @@ export default function MatchCard({ match, margin, unroundedTop }: MatchCardProp
         }
     };
 
+    const teamVariant = bracketLayout ? "bracket" : "default";
+
     if (!match) {
         return (
             <div
@@ -45,6 +49,7 @@ export default function MatchCard({ match, margin, unroundedTop }: MatchCardProp
                     margin ? "m-2 rounded-md" : "rounded-md",
                     isOpen ? "ring-2 ring-blue-500/50" : "",
                     unroundedTop && "rounded-tl-none border-t-0",
+                    bracketLayout && "w-full min-w-0 max-w-full",
                 )}
             >
                 <div
@@ -58,8 +63,8 @@ export default function MatchCard({ match, margin, unroundedTop }: MatchCardProp
                         }
                     }}
                 >
-                    <MatchTeam team={team1} winner={undefined} score={0} />
-                    <MatchTeam team={team2} winner={undefined} score={0} />
+                    <MatchTeam variant={teamVariant} team={team1} winner={undefined} score={0} />
+                    <MatchTeam variant={teamVariant} team={team2} winner={undefined} score={0} />
                 </div>
             </div>
         );
@@ -73,6 +78,7 @@ export default function MatchCard({ match, margin, unroundedTop }: MatchCardProp
                 margin ? "m-2 rounded-md" : "rounded-md",
                 isOpen ? "ring-2 ring-blue-500/50" : "",
                 unroundedTop && "rounded-tl-none",
+                bracketLayout && "w-full min-w-0 max-w-full",
             )}
         >
             <div
@@ -87,11 +93,13 @@ export default function MatchCard({ match, margin, unroundedTop }: MatchCardProp
                 }}
             >
                 <MatchTeam
+                    variant={teamVariant}
                     team={team1}
                     winner={match?.participants?.[0]?.winner}
                     score={match?.participants?.[0]?.score}
                 />
                 <MatchTeam
+                    variant={teamVariant}
                     team={team2}
                     winner={match?.participants?.[1]?.winner}
                     score={match?.participants?.[1]?.score}

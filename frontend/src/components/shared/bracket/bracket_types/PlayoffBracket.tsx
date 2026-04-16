@@ -1,12 +1,11 @@
-import { MatchWithParticipantAndMinifiedMapsDTO, MatchWithParticipantsDTO } from "@repo/contracts";
+import { MatchWithParticipantAndMinifiedMapsDTO } from "@repo/contracts";
 import { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import { getPlayoffRounds } from "./playoff_utils";
 import { BracketMatch } from "../components/BracketMatch";
 import MatchCard from "../components/MatchCard";
-import { cn } from "@/utils/cn";
 
 type PlayoffBracketProps = {
-    matches: MatchWithParticipantsDTO[];
+    matches: MatchWithParticipantAndMinifiedMapsDTO[];
 };
 
 interface MatchPosition {
@@ -136,25 +135,22 @@ export default function PlayoffBracket({ matches }: PlayoffBracketProps) {
     return (
         <div
             ref={containerRef}
-            className="scrollbar-hide relative flex min-h-200 flex-row overflow-x-auto"
+            className="scrollbar-hide relative flex min-h-200 w-full min-w-0 flex-row gap-16 md:gap-16"
         >
             <Connections mainRounds={rounds.mainRounds} positions={positions} />
             {rounds.mainRounds.map((round, roundIndex) => (
                 <div
                     key={round.name}
-                    className={cn(
-                        "z-10 flex flex-col justify-around",
-                        roundIndex === 0 ? "pr-8" : "px-8",
-                    )}
+                    className="z-10 flex min-w-0 flex-1 flex-col justify-around"
                 >
-                    <div className="mb-4 text-center">
+                    <div className="mb-4 w-full text-center">
                         <h2 className="bg-secondBg rounded-md p-1 font-bold tracking-wider text-gray-400 uppercase">
                             {round.name}
                         </h2>
                     </div>
-                    <div className="flex grow flex-col justify-around">
+                    <div className="flex w-full grow flex-col justify-around">
                         {round.matches.map((match, matchIndex) => (
-                            <div key={`${roundIndex}-${matchIndex}`} className="relative">
+                            <div key={`${roundIndex}-${matchIndex}`} className="relative w-full min-w-0">
                                 <BracketMatch
                                     match={match}
                                     roundIndex={roundIndex}
@@ -176,6 +172,7 @@ export default function PlayoffBracket({ matches }: PlayoffBracketProps) {
                                                         ?.matches[0] as MatchWithParticipantAndMinifiedMapsDTO
                                                 }
                                                 margin={false}
+                                                bracketLayout
                                             />
                                         </div>
                                     </div>

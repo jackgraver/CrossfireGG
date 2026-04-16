@@ -1,4 +1,4 @@
-import { MatchWithParticipantAndMinifiedMapsDTO, MatchWithParticipantsDTO } from "@repo/contracts";
+import { MatchWithParticipantAndMinifiedMapsDTO } from "@repo/contracts";
 import { Calendar, ChevronDown, ChevronUp } from "lucide-react";
 import { useMemo, useState } from "react";
 import MatchCard from "../../components/MatchCard";
@@ -22,7 +22,7 @@ export default function MatchesDropdown({
                     acc[round].push(match);
                     return acc;
                 },
-                {} as Record<string, MatchWithParticipantsDTO[]>,
+                {} as Record<string, MatchWithParticipantAndMinifiedMapsDTO[]>,
             ),
         [matches],
     );
@@ -62,6 +62,7 @@ export default function MatchesDropdown({
                                                 match={
                                                     match as MatchWithParticipantAndMinifiedMapsDTO
                                                 }
+                                                bracketLayout
                                             />
                                         )}
                                         {match.status !== "scheduled" && (
@@ -71,6 +72,7 @@ export default function MatchesDropdown({
                                                     match as MatchWithParticipantAndMinifiedMapsDTO
                                                 }
                                                 margin={false}
+                                                bracketLayout
                                             />
                                         )}
                                     </>

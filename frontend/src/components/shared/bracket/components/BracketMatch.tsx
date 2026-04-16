@@ -1,9 +1,10 @@
 import React from "react";
 import MatchCard from "./MatchCard";
-import { MatchWithParticipantsDTO } from "@repo/contracts";
+import { MatchWithParticipantAndMinifiedMapsDTO } from "@repo/contracts";
+import ScheduledCard from "./ScheduledCard";
 
 interface BracketMatchProps {
-    match: MatchWithParticipantsDTO | undefined;
+    match: MatchWithParticipantAndMinifiedMapsDTO | undefined;
     roundIndex: number;
     matchIndex: number;
     layoutKey: string;
@@ -30,17 +31,18 @@ export const BracketMatch = React.memo(
             ro.observe(el);
             return () => ro.disconnect();
         }, [onPositionUpdate, roundIndex, matchIndex, layoutKey]);
-
         return (
             <div
                 ref={containerRef}
-                className="shrink-0"
-                style={{
-                    display: "flex",
-                    alignItems: "center",
-                }}
+                className="flex w-full min-w-0 flex-col items-stretch justify-center"
             >
-                <MatchCard match={match} margin={false} />
+                <div className="w-full min-w-0">
+                    {match?.status === "scheduled" ? (
+                        <ScheduledCard match={match} bracketLayout />
+                    ) : (
+                        <MatchCard match={match} margin={false} bracketLayout />
+                    )}
+                </div>
             </div>
         );
     },

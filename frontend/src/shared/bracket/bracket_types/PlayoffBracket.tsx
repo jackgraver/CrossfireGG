@@ -1,10 +1,10 @@
-import { MatchWithParticipantsDTO } from "@repo/contracts";
+import { MatchWithParticipantAndMinifiedMapsDTO } from "@repo/contracts";
 import { useState, useCallback, useMemo, useRef, useEffect } from "react";
-import { getPlayoffRounds, BracketRound } from "./playoff_utils";
+import { getPlayoffRounds } from "./playoff_utils";
 import { BracketMatch } from "@/components/shared/bracket/components/BracketMatch";
 
 type PlayoffBracketProps = {
-    matches: MatchWithParticipantsDTO[];
+    matches: MatchWithParticipantAndMinifiedMapsDTO[];
 };
 
 interface MatchPosition {
@@ -117,7 +117,6 @@ export default function PlayoffBracket({ matches }: PlayoffBracketProps) {
 
         return <svg className="pointer-events-none absolute inset-0 h-full w-full">{paths}</svg>;
     };
-
     return (
         <div ref={containerRef} className="relative flex min-h-[800px] flex-row overflow-auto">
             {renderConnections()}

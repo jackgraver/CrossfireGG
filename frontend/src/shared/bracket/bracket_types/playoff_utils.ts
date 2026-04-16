@@ -1,8 +1,8 @@
-import { MatchWithParticipantsDTO } from "@repo/contracts";
+import type { MatchWithParticipantAndMinifiedMapsDTO } from "@repo/contracts";
 
 export interface BracketRound {
     name: string;
-    matches: (MatchWithParticipantsDTO | undefined)[];
+    matches: (MatchWithParticipantAndMinifiedMapsDTO | undefined)[];
 }
 
 const LEGACY_IDS: Record<string, string[]> = {
@@ -18,7 +18,7 @@ function matchRoundColumn(round: string | null | undefined, columnId: string): b
     return LEGACY_IDS[columnId]?.includes(round) ?? false;
 }
 
-export function getPlayoffRounds(matches: MatchWithParticipantsDTO[]): BracketRound[] {
+export function getPlayoffRounds(matches: MatchWithParticipantAndMinifiedMapsDTO[]): BracketRound[] {
     const rounds: BracketRound[] = [];
 
     const roundConfigs = [
@@ -33,8 +33,9 @@ export function getPlayoffRounds(matches: MatchWithParticipantsDTO[]): BracketRo
             .filter((m) => matchRoundColumn(m.round, config.id))
             .sort((a, b) => (a.match_number ?? 0) - (b.match_number ?? 0));
 
-        // Fill with undefined if matches are missing to maintain structure
-        const filledMatches = [...roundMatches];
+        const filledMatches: (MatchWithParticipantAndMinifiedMapsDTO | undefined)[] = [
+            ...roundMatches,
+        ];
         while (filledMatches.length < config.count) {
             filledMatches.push(undefined);
         }

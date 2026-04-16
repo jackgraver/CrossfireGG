@@ -1,10 +1,10 @@
-import type { MatchWithParticipantsDTO } from "@repo/contracts";
+import type { MatchWithParticipantAndMinifiedMapsDTO } from "@repo/contracts";
 import RoundSection from "../components/RoundSection";
 import RoundCard from "../components/RoundCard";
 import { filterAndSortMatchesByRound } from "../Bracket.util";
 
 type BracketProps = {
-    matches: MatchWithParticipantsDTO[];
+    matches: MatchWithParticipantAndMinifiedMapsDTO[];
 };
 
 export default function RegularSeasonBracket({ matches }: BracketProps) {
