@@ -3,6 +3,8 @@ import { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import { getPlayoffRounds } from "./playoff_utils";
 import { BracketMatch } from "../components/BracketMatch";
 import MatchCard from "../components/MatchCard";
+import ScheduledCard from "../components/ScheduledCard";
+import { cn } from "@/utils/cn";
 
 type PlayoffBracketProps = {
     matches: MatchWithParticipantAndMinifiedMapsDTO[];
@@ -160,20 +162,37 @@ export default function PlayoffBracket({ matches }: PlayoffBracketProps) {
                                 />
                                 {round.name === "Grand Final" && rounds.thirdPlaceRound && (
                                     <div className="absolute top-full right-0 left-0 mt-32">
-                                        <div className="text-center">
+                                        <div
+                                            className={cn(
+                                                "text-center",
+                                                rounds.thirdPlaceRound?.matches[0]?.status ===
+                                                    "scheduled" && "pb-4",
+                                            )}
+                                        >
                                             <h2 className="bg-secondBg rounded-md p-1 font-bold tracking-wider text-gray-400 uppercase">
                                                 Third Place
                                             </h2>
                                         </div>
                                         <div className="flex min-h-25 items-center">
-                                            <MatchCard
-                                                match={
-                                                    rounds.thirdPlaceRound
-                                                        ?.matches[0] as MatchWithParticipantAndMinifiedMapsDTO
-                                                }
-                                                margin={false}
-                                                bracketLayout
-                                            />
+                                            {rounds.thirdPlaceRound?.matches[0]?.status ===
+                                            "scheduled" ? (
+                                                <ScheduledCard
+                                                    match={
+                                                        rounds.thirdPlaceRound
+                                                            ?.matches[0] as MatchWithParticipantAndMinifiedMapsDTO
+                                                    }
+                                                    bracketLayout
+                                                />
+                                            ) : (
+                                                <MatchCard
+                                                    match={
+                                                        rounds.thirdPlaceRound
+                                                            ?.matches[0] as MatchWithParticipantAndMinifiedMapsDTO
+                                                    }
+                                                    margin={false}
+                                                    bracketLayout
+                                                />
+                                            )}
                                         </div>
                                     </div>
                                 )}

@@ -52,16 +52,16 @@ export default function HowItWorksSection() {
                             className="flex min-w-36 flex-1 flex-col items-start p-4 sm:p-6 lg:p-8"
                         >
                             <div className="flex flex-row items-center gap-2 w-full mb-8">
-                            <span className="flex-1 text-5xl font-bold leading-none text-orange-600/35 sm:text-6xl">
-                                {num}
-                            </span>
-                            <div
-                                className={`flex h-11 w-11 shrink-0 items-center justify-center  `}
-                            >
-                                <Icon className="h-10 w-10" strokeWidth={1.75} />
-                            </div>
+                                <span className="flex-1 text-5xl font-bold leading-none text-orange-600/35 sm:text-6xl">
+                                    {num}
+                                </span>
+                                <div
+                                    className={`flex h-11 w-11 shrink-0 items-center justify-center  `}
+                                >
+                                    <Icon className="h-10 w-10" strokeWidth={1.75} />
                                 </div>
-                           
+                            </div>
+
                             <h3 className="text-xl font-extrabold text-white mb-2">{title}</h3>
                             <p className="text-sm leading-relaxed text-textSecondary">
                                 {description}

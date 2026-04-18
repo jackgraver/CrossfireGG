@@ -185,7 +185,10 @@ export const faceitImportService = {
                     return false;
                 }
 
-                return existingMatch.status !== match.status.toLowerCase();
+                return (
+                    existingMatch.status !== match.status.toLowerCase() ||
+                    (existingMatch.scheduled_at ?? null) !== (match.scheduled_at ?? null)
+                );
             });
         }
 
