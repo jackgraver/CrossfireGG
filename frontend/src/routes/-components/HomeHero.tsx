@@ -57,7 +57,11 @@ export default function HomeHero() {
                                         window.open("https://discord.gg/99tm9U5c", "_blank")
                                     }
                                 >
-                                    <Users className="h-4 w-4" />
+                                    <img 
+                                        src="/Discord-Symbol-White.svg"
+                                        alt="Discord Logo"
+                                        className="h-4 w-4"
+                                    />
                                     Join Discord
                                 </button>
                             </div>
