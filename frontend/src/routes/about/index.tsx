@@ -42,7 +42,7 @@ function RouteComponent() {
                         rel="noopener noreferrer"
                         className="flex flex-col items-center gap-2 rounded-lg bg-[#5865F2] px-6 py-3 text-white hover:bg-[#4959c6] transition-colors"
                     >
-                        <img 
+                        <img
                             src="/Discord-Symbol-White.svg"
                             alt="Discord Logo"
                             className="h-7 w-7"
@@ -54,11 +54,7 @@ function RouteComponent() {
                         rel="noopener noreferrer"
                         className="flex flex-col items-center gap-2 rounded-lg bg-black px-6 py-3 text-white hover:bg-neutral-800 transition-colors"
                     >
-                        <img 
-                            src="/X logo.svg"
-                            alt="X Logo"
-                            className="h-7 w-7"
-                        />
+                        <img src="/X logo.svg" alt="X Logo" className="h-7 w-7" />
                     </a>
                     <a
                         href="https://twitch.tv/PlayCrossFire"
@@ -66,11 +62,7 @@ function RouteComponent() {
                         rel="noopener noreferrer"
                         className="flex flex-col items-center gap-2 rounded-lg bg-[#9147FF] px-6 py-3 text-white hover:bg-[#722fd2] transition-colors"
                     >
-                        <img
-                            src="/glitch_flat_white.svg"
-                            alt="Twitch Logo"
-                            className="h-7 w-7"
-                        />
+                        <img src="/glitch_flat_white.svg" alt="Twitch Logo" className="h-7 w-7" />
                     </a>
                     <a
                         href="https://www.faceit.com/en/organizers/1b5c9ed3-5233-4c58-8761-78f6ef5a0fd9/CrossfireGG"
@@ -78,11 +70,7 @@ function RouteComponent() {
                         rel="noopener noreferrer"
                         className="flex flex-col items-center gap-2 rounded-lg bg-[#FF5500] px-6 py-3 text-white hover:bg-[#cc4400] transition-colors"
                     >
-                        <img
-                            src="/faceit.png"
-                            alt="Faceit Logo"
-                            className="h-7 w-7 mr-2"
-                        />
+                        <img src="/faceit.png" alt="Faceit Logo" className="h-7 w-7 mr-2" />
                     </a>
                 </div>
             </div>

@@ -7,6 +7,7 @@ import HomeSection from "./-components/HomeSection";
 import HomeLiveBracket from "./-components/HomeLiveBracket";
 import SectionTitle from "./-components/SectionTitle";
 import { useNavigate } from "@tanstack/react-router";
+import { openInNewTab } from "@/utils/openInNewTab";
 
 export const Route = createFileRoute("/")({
     component: App,
@@ -36,21 +37,24 @@ function App() {
                         <img
                             src="/MYHUD Logo.png"
                             alt="MYHUD Logo"
-                            className="object-contain h-full max-w-full"
+                            className="object-contain h-full max-w-full cursor-pointer"
+                            onClick={() => openInNewTab("https://myhud.app")}
                         />
                     </div>
                     <div className="flex items-center justify-center w-[170px] h-20">
                         <img
                             src="/SCL Logo.png"
                             alt="SCL Logo"
-                            className="object-contain h-full max-w-full"
+                            className="object-contain h-full max-w-full cursor-pointer"
+                            onClick={() => openInNewTab("https://scl.gg")}
                         />
                     </div>
                     <div className="flex items-center justify-center w-[170px] h-20">
                         <img
                             src="/faceit logo.jpg"
                             alt="Faceit Logo"
-                            className="object-contain h-full max-w-full"
+                            className="object-contain h-full max-w-full cursor-pointer"
+                            onClick={() => openInNewTab("https://www.faceit.com")}
                         />
                     </div>
                 </div>

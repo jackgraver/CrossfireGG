@@ -100,7 +100,7 @@ export default function NavBar({
                         padding="px-3 py-2 -ml-3"
                     />
                     <NavItem
-                        to="/"
+                        to="/partners"
                         icon={<Users size={18} />}
                         label="Partners"
                         padding="px-3 py-2 -ml-3"
