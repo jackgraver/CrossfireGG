@@ -1,8 +1,8 @@
 import { Link } from "@tanstack/react-router";
 
-const navLinks: { label: string; to: "/" | "/about/" | "/partners/" | "/rules/" }[] = [
+const navLinks: { label: string; to: "/" | "/about" | "/partners/" | "/rules/" }[] = [
     { label: "Rules", to: "/rules/" },
-    { label: "About Us", to: "/about/" },
+    { label: "About Us", to: "/about" },
     { label: "Partners", to: "/partners/" },
     { label: "Contact", to: "/" },
 ];

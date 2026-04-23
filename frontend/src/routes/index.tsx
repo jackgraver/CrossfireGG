@@ -31,6 +31,29 @@ function App() {
             </HomeSection>
             <HomeSection variant="band" tone="muted" compactPadding centered>
                 <SectionTitle title="OUR PARTNERS" subtitle="POWERED BY" />
+                <div className="mt-8 flex flex-row flex-wrap items-center justify-center gap-32">
+                    <div className="flex items-center justify-center w-[170px] h-20">
+                        <img
+                            src="/MYHUD Logo.png"
+                            alt="MYHUD Logo"
+                            className="object-contain h-full max-w-full"
+                        />
+                    </div>
+                    <div className="flex items-center justify-center w-[170px] h-20">
+                        <img
+                            src="/SCL Logo.png"
+                            alt="SCL Logo"
+                            className="object-contain h-full max-w-full"
+                        />
+                    </div>
+                    <div className="flex items-center justify-center w-[170px] h-20">
+                        <img
+                            src="/faceit logo.jpg"
+                            alt="Faceit Logo"
+                            className="object-contain h-full max-w-full"
+                        />
+                    </div>
+                </div>
             </HomeSection>
             <HomeSection variant="contained">
                 <section className="pb-16 text-center">
