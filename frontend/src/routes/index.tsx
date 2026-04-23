@@ -35,7 +35,7 @@ function App() {
                 <div className="mt-8 flex flex-row flex-wrap items-center justify-center gap-32">
                     <div className="flex items-center justify-center w-[170px] h-20">
                         <img
-                            src="/MYHUD Logo.png"
+                            src="/myhud_logo.png"
                             alt="MYHUD Logo"
                             className="object-contain h-full max-w-full cursor-pointer"
                             onClick={() => openInNewTab("https://myhud.app")}
@@ -43,7 +43,7 @@ function App() {
                     </div>
                     <div className="flex items-center justify-center w-[170px] h-20">
                         <img
-                            src="/SCL Logo.png"
+                            src="/scl_logo.png"
                             alt="SCL Logo"
                             className="object-contain h-full max-w-full cursor-pointer"
                             onClick={() => openInNewTab("https://scl.gg")}

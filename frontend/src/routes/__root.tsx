@@ -24,7 +24,7 @@ export const Route = createRootRoute({
                 name: "viewport",
                 content: "width=device-width, initial-scale=1",
             },
-            { title: "CrossFire Season 4" },
+            { title: "CROSSFIRE" },
         ],
         links: [{ rel: "stylesheet", href: appCss }],
     }),
@@ -65,8 +65,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                                 >
                                     <NavBar user={user} isHomePage={isHomePage} />
                                     {children}
-                                    <Footer />
+                                    
                                 </div>
+                                <Footer />
                             </div>
                             <ReactQueryDevtools initialIsOpen={false} />
                             <Scripts />
