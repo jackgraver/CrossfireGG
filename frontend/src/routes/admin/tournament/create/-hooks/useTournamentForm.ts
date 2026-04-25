@@ -21,8 +21,7 @@ export const useTournamentForm = (opts?: UseTournamentFormOptions) => {
     const createMutation = useCreateTournament();
     const updateMutation = useUpdateTournament();
 
-    const tomorrow = new Date(new Date().setDate(new Date().getDate() + 1));
-    const twoDaysFromNow = new Date(new Date().setDate(new Date().getDate() + 2));
+    const defaultDateInput = new Date().toISOString().slice(0, 10);
 
     const defaultValues = isEditMode
         ? {
@@ -51,8 +50,8 @@ export const useTournamentForm = (opts?: UseTournamentFormOptions) => {
               description: "",
               prize_pool: "",
               is_vrs_enabled: false,
-              start_date: toDateInput(tomorrow),
-              end_date: toDateInput(twoDaysFromNow),
+              start_date: defaultDateInput,
+              end_date: defaultDateInput,
               stages: [] as (CreateStageDTO & {
                   __id: string;
                   _serverId?: number;

@@ -155,6 +155,45 @@ export const useRefreshTeams = () => {
     });
 };
 
+export const useSetCurrentStage = (tournamentId: string) => {
+    return useMutation({
+        mutationFn: ({ stageId }: { stageId: number | null }) =>
+            apiPUT(`/tournament/${tournamentId}/current-stage`, { stageId }),
+        onMutate: async ({ stageId }) => {
+            await queryClient.cancelQueries({ queryKey: ["tournament", tournamentId] });
+
+            const previous = queryClient.getQueryData<TournamentWithMinimalStagesDTO>([
+                "tournament",
+                tournamentId,
+            ]);
+
+            if (previous) {
+                queryClient.setQueryData<TournamentWithMinimalStagesDTO>(
+                    ["tournament", tournamentId],
+                    {
+                        ...previous,
+                        stages: previous.stages.map((s) => ({
+                            ...s,
+                            is_current: stageId !== null && s.id === stageId,
+                        })),
+                    },
+                );
+            }
+
+            return { previous };
+        },
+        onError: (_err, _vars, ctx) => {
+            if (ctx?.previous) {
+                queryClient.setQueryData(["tournament", tournamentId], ctx.previous);
+            }
+        },
+        onSettled: () => {
+            queryClient.invalidateQueries({ queryKey: ["tournament", tournamentId] });
+            queryClient.invalidateQueries({ queryKey: ["stageStandings", "live"] });
+        },
+    });
+};
+
 export const useCreateTournament = () => {
     return useMutation({
         mutationFn: (payload: any) => apiPOST<any>(`/tournament/create`, payload),

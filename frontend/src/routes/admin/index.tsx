@@ -26,7 +26,6 @@ function Admin() {
     return (
         <div className="mx-auto min-h-screen max-w-7xl p-6">
             <h1 className="mb-8 text-3xl font-bold">Staff Dashboard</h1>
-
             <div className="mb-12">
                 <div className="flex items-center justify-between">
                     <h2 className="text-textSecondary mb-4 flex items-center gap-2 text-xl font-semibold">
@@ -66,7 +65,7 @@ function Admin() {
                                 search={{
                                     tournamentId: tournament.id.toString(),
                                 }}
-                                className="text-textSecondary hover:text-cfRed hover:bg-cfRed/10 absolute top-3 right-3 rounded-lg p-2 opacity-0 transition-all group-hover:opacity-100"
+                                className="text-textSecondary hover:text-cfRed hover:bg-cfRed/10 absolute top-3 right-3 rounded-lg p-2"
                                 title="Edit tournament"
                                 onClick={(e) => e.stopPropagation()}
                             >

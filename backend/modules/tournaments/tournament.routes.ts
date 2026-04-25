@@ -27,6 +27,13 @@ router.get(
 );
 
 router.put(
+    "/:tournamentId/current-stage",
+    ...authMiddleware,
+    requireRoles(Roles.ADMIN),
+    asyncHandler(tournamentController.setCurrentStage),
+);
+
+router.put(
     "/:tournamentId",
     ...authMiddleware,
     requireRoles(Roles.ADMIN),

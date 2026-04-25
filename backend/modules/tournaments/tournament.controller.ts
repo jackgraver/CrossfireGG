@@ -4,6 +4,7 @@ import {
     TournamentParamsSchema,
     RegisterForTournamentBodySchema,
     GetAllTournamentsQuerySchema,
+    SetCurrentStageBodySchema,
 } from "./tournament.validation";
 import { teamRepository } from "../teams/team.repository";
 import { playerRepository } from "../players/player.repository";
@@ -26,7 +27,9 @@ export const tournamentController = {
         const query = parseOr400(res, GetAllTournamentsQuerySchema, req.query);
         if (query === undefined) return;
 
-        const tournaments = await tournamentService.getAllTournaments(query.status);
+        const tournaments = await tournamentService.getAllTournaments(
+            query.status,
+        );
 
         sendContract(res, TournamentWithTeamCountContract.array(), tournaments);
     },
@@ -43,6 +46,7 @@ export const tournamentController = {
                             name: string;
                             id: number;
                             faceit_id: string;
+                            is_current: boolean;
                         }[]
                       | undefined;
                   name?: string | undefined;
@@ -61,7 +65,9 @@ export const tournamentController = {
         if (found) {
             tournament = JSON.parse(found);
         } else {
-            tournament = await tournamentService.getTournamentById(data.tournamentId);
+            tournament = await tournamentService.getTournamentById(
+                data.tournamentId,
+            );
         }
 
         if (!tournament) return; //TODO: better handling
@@ -80,7 +86,9 @@ export const tournamentController = {
         const data = parseOr400(res, TournamentParamsSchema, req.params);
         if (!data) return;
 
-        const teams = await tournamentService.getTeamsByTournamentId(data.tournamentId);
+        const teams = await tournamentService.getTeamsByTournamentId(
+            data.tournamentId,
+        );
 
         sendContract(res, StageTeamSignUpContract.array(), teams);
     },
@@ -89,9 +97,10 @@ export const tournamentController = {
         const data = parseOr400(res, TournamentParamsSchema, req.params);
         if (!data) return;
 
-        const registrations = await tournamentService.getRegistrationsByTournamentId(
-            data.tournamentId,
-        );
+        const registrations =
+            await tournamentService.getRegistrationsByTournamentId(
+                data.tournamentId,
+            );
 
         sendContract(res, StageTeamSignUpContract.array(), registrations);
     },
@@ -143,7 +152,10 @@ export const tournamentController = {
             });
         }
 
-        const players = await playerRepository.findByIdsAndTeamId(allIds, teamId);
+        const players = await playerRepository.findByIdsAndTeamId(
+            allIds,
+            teamId,
+        );
         if (players.length !== allIds.length) {
             const foundIds = new Set(players.map((p) => p.id));
             const missingIds = allIds.filter((id) => !foundIds.has(id));
@@ -154,7 +166,10 @@ export const tournamentController = {
         }
 
         // Check if team is already registered for this stage
-        const existingStageTeam = await teamRepository.findStageTeam(teamId, entryStage.id);
+        const existingStageTeam = await teamRepository.findStageTeam(
+            teamId,
+            entryStage.id,
+        );
 
         if (existingStageTeam) {
             return res.status(400).json({
@@ -211,7 +226,8 @@ export const tournamentController = {
         if (!data) return;
 
         try {
-            const tournament = await tournamentRepository.createTournament(data);
+            const tournament =
+                await tournamentRepository.createTournament(data);
             res.status(201).json({
                 success: true,
                 message: "Tournament created successfully",
@@ -234,13 +250,30 @@ export const tournamentController = {
             return res.status(400).json({ error: "Invalid tournament ID" });
         }
 
-        const tournament = await tournamentRepository.findTournamentForEdit(data.tournamentId);
+        const tournament = await tournamentRepository.findTournamentForEdit(
+            data.tournamentId,
+        );
 
         if (!tournament) {
             return res.status(404).json({ error: "Tournament not found" });
         }
 
         sendContract(res, TournamentForEditContract, tournament);
+    },
+
+    setCurrentStage: async (req: Request, res: Response) => {
+        const params = parseOr400(res, TournamentParamsSchema, req.params);
+        if (!params) return;
+
+        const body = parseOr400(res, SetCurrentStageBodySchema, req.body);
+        if (!body) return;
+
+        const ok = await tournamentService.setCurrentStage(params.tournamentId, body.stageId);
+        if (!ok) {
+            return res.status(404).json({ error: "Stage does not belong to this tournament" });
+        }
+
+        res.json({ success: true });
     },
 
     updateTournament: async (req: Request, res: Response) => {
@@ -261,7 +294,10 @@ export const tournamentController = {
                 return res.status(404).json({ error: "Tournament not found" });
             }
 
-            const tournament = await tournamentRepository.updateTournament(tournamentId, data);
+            const tournament = await tournamentRepository.updateTournament(
+                tournamentId,
+                data,
+            );
             res.json({
                 success: true,
                 message: "Tournament updated successfully",

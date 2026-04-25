@@ -29,8 +29,8 @@ export const StageTeamSignUpContract = z.object({
         z.object({
             name: z.string(),
             faceit_id: z.string(),
-            hltv_id: z.string(),
-            discord_id: z.string(),
+            hltv_id: z.string().optional().nullable(),
+            discord_id: z.string().optional().nullable(),
         }),
     ),
 });

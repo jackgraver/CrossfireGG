@@ -10,7 +10,7 @@ import { useRegistrationsByTournamentId } from "@/lib/api/tournament.queries";
 
 export default function TeamsTable({ tournamentId }: { tournamentId: number }) {
     const { data: teams, isLoading: teamsLoading } = useRegistrationsByTournamentId(tournamentId);
-
+    console.log(teams);
     const columnHelper = createColumnHelper<StageTeamSignUpDTO>();
 
     const columns = [

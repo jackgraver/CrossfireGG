@@ -40,11 +40,7 @@ export default function Footer() {
                         aria-label="X"
                         onClick={(e) => e.preventDefault()}
                     >
-                        <img
-                            src="/X logo.svg"
-                            alt="X Logo"
-                            className="h-5 w-5"
-                        />
+                        <img src="/X logo.svg" alt="X Logo" className="h-5 w-5" />
                     </a>
                     <a
                         href="#"

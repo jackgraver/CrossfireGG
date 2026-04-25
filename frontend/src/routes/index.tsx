@@ -87,7 +87,11 @@ function App() {
                             className="flex items-center gap-2 rounded-md bg-gray-700 px-2 py-2 text-xs font-semibold text-white transition-colors hover:bg-gray-600"
                             onClick={() => window.open("https://discord.gg/99tm9U5c", "_blank")}
                         >
-                            <Bot className="h-4 w-4" />
+                            <img
+                                src="/Discord-Symbol-White.svg"
+                                alt="Discord Logo"
+                                className="h-4 w-4"
+                            />
                             Join Discord
                         </button>
                     </div>

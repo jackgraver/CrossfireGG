@@ -63,7 +63,7 @@ export const tournamentService = {
         if (!entryStage) {
             throw new Error("No entry stage found");
         }
-
+        console.log(entryStage);
         const teams = await stagesRepository.findAllStageTeams(entryStage.id);
 
         const res = teams.map((team) => ({
@@ -100,5 +100,9 @@ export const tournamentService = {
 
     getLiveBracketTarget: async () => {
         return await tournamentRepository.findLiveBracketTarget();
+    },
+
+    setCurrentStage: async (tournamentId: number, stageId: number | null) => {
+        return await tournamentRepository.setCurrentStage(tournamentId, stageId);
     },
 };

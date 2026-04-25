@@ -70,13 +70,6 @@ export default function MatchCard({ match, margin, unroundedTop, bracketLayout }
         );
     }
 
-    if (
-        ["Reborn", "team mouse"].includes(match.participants[0].stageTeam.team.name) &&
-        ["Reborn", "team mouse"].includes(match.participants[1].stageTeam.team.name)
-    ) {
-        console.log("match", match);
-    }
-
     return (
         <div
             ref={triggerRef}

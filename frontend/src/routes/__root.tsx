@@ -13,9 +13,10 @@ import { getUserMeServerFn } from "@/lib/auth/auth.server";
 import { meQueryOptions } from "@/lib/auth/auth.query";
 import ToastProvider from "@/components/shared/toast/ToastProvider";
 import { cn } from "@/utils/cn";
+import { defaultTitleFromMatches } from "@/utils/documentTitle";
 
 export const Route = createRootRoute({
-    head: () => ({
+    head: ({ matches }) => ({
         meta: [
             {
                 charSet: "utf-8",
@@ -24,7 +25,7 @@ export const Route = createRootRoute({
                 name: "viewport",
                 content: "width=device-width, initial-scale=1",
             },
-            { title: "CROSSFIRE" },
+            { title: defaultTitleFromMatches(matches) },
         ],
         links: [{ rel: "stylesheet", href: appCss }],
     }),
@@ -65,7 +66,6 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                                 >
                                     <NavBar user={user} isHomePage={isHomePage} />
                                     {children}
-                                    
                                 </div>
                                 <Footer />
                             </div>

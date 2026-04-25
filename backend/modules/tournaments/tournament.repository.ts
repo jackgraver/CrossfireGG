@@ -100,7 +100,9 @@ export const tournamentRepository = {
                         id: true,
                         faceit_id: true,
                         name: true,
+                        is_current: true,
                     },
+                    where: (s, { isNull }) => isNull(s.deleted_at),
                 },
             },
         });
@@ -126,7 +128,9 @@ export const tournamentRepository = {
                         id: true,
                         faceit_id: true,
                         name: true,
+                        is_current: true,
                     },
+                    where: (s, { isNull }) => isNull(s.deleted_at),
                 },
             },
         });
@@ -436,6 +440,53 @@ export const tournamentRepository = {
                     isNull(s.deleted_at),
                 ),
             orderBy: (s, { asc }) => [asc(s.start_date)],
+        });
+    },
+
+    /**
+     * Atomically marks a single stage as current within a tournament. If `stageId` is `null`,
+     * clears the current stage entirely. Enforces the invariant that at most one stage per
+     * tournament has `is_current = true`.
+     *
+     * Returns `false` when the stage does not belong to the tournament; otherwise `true`.
+     */
+    setCurrentStage: async (tournamentId: number, stageId: number | null): Promise<boolean> => {
+        return await db.transaction(async (tx) => {
+            if (stageId !== null) {
+                const owned = await tx
+                    .select({ id: stages.id })
+                    .from(stages)
+                    .where(
+                        and(
+                            eq(stages.id, stageId),
+                            eq(stages.tournament_id, tournamentId),
+                            isNull(stages.deleted_at),
+                        ),
+                    )
+                    .limit(1);
+
+                if (owned.length === 0) return false;
+            }
+
+            await tx
+                .update(stages)
+                .set({ is_current: false, updated_at: new Date() })
+                .where(
+                    and(
+                        eq(stages.tournament_id, tournamentId),
+                        eq(stages.is_current, true),
+                        isNull(stages.deleted_at),
+                    ),
+                );
+
+            if (stageId !== null) {
+                await tx
+                    .update(stages)
+                    .set({ is_current: true, updated_at: new Date() })
+                    .where(eq(stages.id, stageId));
+            }
+
+            return true;
         });
     },
 

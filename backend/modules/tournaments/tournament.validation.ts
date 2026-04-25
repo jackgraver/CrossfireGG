@@ -22,6 +22,10 @@ export const GetAllTournamentsQuerySchema = z.object({
     status: TournamentListStatusSchema.optional(),
 });
 
+export const SetCurrentStageBodySchema = z.object({
+    stageId: z.number().int().positive().nullable(),
+});
+
 export const RegisterForTournamentBodySchema = z.object({
     teamId: z.coerce.number().int().positive(),
     starters: z.array(z.coerce.number().int().positive()).min(5).max(5),
