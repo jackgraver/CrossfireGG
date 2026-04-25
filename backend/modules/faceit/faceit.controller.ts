@@ -9,7 +9,10 @@ import {
 import { faceitImportService } from "./faceit.service";
 import { faceitFetchUtil } from "../../utils/faceitFetch.util";
 import { teamRepository } from "../teams/team.repository";
-import { FaceitPlayerTeamsResponse, FaceitTeamPlayersResponse } from "./faceit.types";
+import {
+    FaceitPlayerTeamsResponse,
+    FaceitTeamPlayersResponse,
+} from "./faceit.types";
 import { playerRepository } from "../players/player.repository";
 import { parseOr400 } from "../../core/validation/parseOr400";
 import { FaceitAPITournamentTeam } from "../../utils/transformFaceitData";
@@ -32,14 +35,25 @@ export const faceitController = {
         const data = parseOr400(res, ImportFaceitStageSchema, req.body);
         if (!data) return;
 
-        const { cfTournamentId, faceitChampionshipId, readFileName, writeFileName } = data;
+        const {
+            cfTournamentId,
+            faceitChampionshipId,
+            readFileName,
+            writeFileName,
+        } = data;
 
-        const championshipData = await faceitFetchUtil.fetchStageData(faceitChampionshipId, {
-            readFileName: readFileName,
-            writeFileName: writeFileName,
-        });
+        const championshipData = await faceitFetchUtil.fetchStageData(
+            faceitChampionshipId,
+            {
+                readFileName: readFileName,
+                writeFileName: writeFileName,
+            },
+        );
 
-        const stage = await faceitImportService.importStage(championshipData, cfTournamentId);
+        const stage = await faceitImportService.importStage(
+            championshipData,
+            cfTournamentId,
+        );
 
         res.json({
             success: true,
@@ -52,7 +66,12 @@ export const faceitController = {
         const data = parseOr400(res, ImportFaceitStageSchema, req.body);
         if (!data) return;
 
-        const { cfTournamentId, faceitChampionshipId, readFileName, writeFileName } = data;
+        const {
+            cfTournamentId,
+            faceitChampionshipId,
+            readFileName,
+            writeFileName,
+        } = data;
 
         let offset = 0;
 
@@ -61,10 +80,13 @@ export const faceitController = {
         while (true) {
             const teamsData = await faceitFetchUtil.fetchData<{
                 items: FaceitAPITournamentTeam[];
-            }>(`/championships/${faceitChampionshipId}/subscriptions?offset=${offset}`, {
-                readFileName: readFileName,
-                writeFileName: writeFileName,
-            });
+            }>(
+                `/championships/${faceitChampionshipId}/subscriptions?offset=${offset}`,
+                {
+                    readFileName: readFileName,
+                    writeFileName: writeFileName,
+                },
+            );
 
             const result = await faceitImportService.processStageTeams(
                 teamsData.items,
@@ -96,7 +118,8 @@ export const faceitController = {
         if (await isStageSyncing(championshipId)) {
             res.status(409).json({
                 success: false,
-                message: "Match import already in progress for this championship",
+                message:
+                    "Match import already in progress for this championship",
                 newMatchesCount: 0,
             });
             return;
@@ -104,15 +127,23 @@ export const faceitController = {
 
         await markStageSyncing(championshipId);
         try {
-            const matchesData = await faceitFetchUtil.fetchMatchesData(championshipId, {
-                readFileName: readFileName,
-                writeFileName: writeFileName,
-            });
+            const matchesData = await faceitFetchUtil.fetchMatchesData(
+                championshipId,
+                {
+                    readFileName: readFileName,
+                    writeFileName: writeFileName,
+                },
+            );
 
-            const result = await faceitImportService.processNewStageMatches(matchesData, stageId);
+            const result = await faceitImportService.processNewStageMatches(
+                matchesData,
+                stageId,
+            );
 
             if (result) {
-                await Promise.all(tournamentStageGetCacheKeys(stageId).map(redisDel));
+                await Promise.all(
+                    tournamentStageGetCacheKeys(stageId).map(redisDel),
+                );
             }
 
             res.json({
@@ -134,20 +165,27 @@ export const faceitController = {
 
     getFaceitPlayerTeams: async (req: Request, res: Response) => {
         try {
-            const data = parseOr400(res, VerifyFaceitPlayerTeamsSchema, req.params);
+            const data = parseOr400(
+                res,
+                VerifyFaceitPlayerTeamsSchema,
+                req.params,
+            );
             if (!data) return;
 
             const { playerId } = data;
 
-            const response = await faceitFetchUtil.fetchData<FaceitPlayerTeamsResponse>(
-                `/players/${playerId}/teams`,
-                {
-                    readFileName: `player_teams_${playerId}.json`,
-                    // writeFileName: `player_teams_${playerId}.json`,
-                },
-            );
+            const response =
+                await faceitFetchUtil.fetchData<FaceitPlayerTeamsResponse>(
+                    `/players/${playerId}/teams`,
+                    {
+                        readFileName: `player_teams_${playerId}.json`,
+                        // writeFileName: `player_teams_${playerId}.json`,
+                    },
+                );
 
-            const ledTeams = response.items.filter((team) => team.leader === playerId);
+            const ledTeams = response.items.filter(
+                (team) => team.leader === playerId,
+            );
 
             if (ledTeams.length === 0) {
                 res.status(200).json({ teams: [] });
@@ -158,14 +196,18 @@ export const faceitController = {
                 ledTeams.map((team) => team.team_id),
             );
 
-            const existingTeamsByFaceitId = new Map(existingTeams.map((t) => [t.faceit_id!, t]));
+            const existingTeamsByFaceitId = new Map(
+                existingTeams.map((t) => [t.faceit_id!, t]),
+            );
 
             const result = ledTeams.map((team) => ({
                 team_id: team.team_id,
                 name: team.name,
                 avatar: team.avatar,
                 leader: team.leader,
-                isRegistered: existingTeamsByFaceitId.get(team.team_id)?.id?.toString() ?? null,
+                isRegistered:
+                    existingTeamsByFaceitId.get(team.team_id)?.id?.toString() ??
+                    null,
             }));
 
             res.json({ teams: result });
@@ -185,17 +227,19 @@ export const faceitController = {
 
             const { teamId } = data;
 
-            const players = await faceitFetchUtil.fetchData<FaceitTeamPlayersResponse>(
-                `/teams/${teamId}`,
-                {
-                    readFileName: `team_players_${teamId}.json`,
-                    // writeFileName: `team_players_${teamId}.json`,
-                },
-            );
+            const players =
+                await faceitFetchUtil.fetchData<FaceitTeamPlayersResponse>(
+                    `/teams/${teamId}`,
+                    {
+                        readFileName: `team_players_${teamId}.json`,
+                        // writeFileName: `team_players_${teamId}.json`,
+                    },
+                );
 
-            const existingPlayersByFaceitId = await playerRepository.findByFaceitIds(
-                players.members.map((member) => member.user_id),
-            );
+            const existingPlayersByFaceitId =
+                await playerRepository.findByFaceitIds(
+                    players.members.map((member) => member.user_id),
+                );
 
             if (existingPlayersByFaceitId.length === 0) {
                 res.status(200).json({ players: [] });

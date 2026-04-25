@@ -8,40 +8,50 @@ export const tournamentService = {
     },
 
     getTournamentById: async (tournamentId: number) => {
-        const tournament = await tournamentRepository.findTournamentById(tournamentId);
+        const tournament =
+            await tournamentRepository.findTournamentById(tournamentId);
 
         const stagesWithCounts =
-            await tournamentRepository.findStageMatchCountsByTournamentId(tournamentId);
+            await tournamentRepository.findStageMatchCountsByTournamentId(
+                tournamentId,
+            );
 
         return {
             ...tournament,
             stages: tournament?.stages.map((s) => ({
                 ...s,
-                teams_count: stagesWithCounts.find((sc) => sc.stageId === s.id)?.teamsCount || 0,
+                teams_count:
+                    stagesWithCounts.find((sc) => sc.stageId === s.id)
+                        ?.teamsCount || 0,
             })),
         };
     },
 
     getTournamentByName: async (tournamentId: string) => {
-        const tournament = await tournamentRepository.findTournamentByName(tournamentId);
+        const tournament =
+            await tournamentRepository.findTournamentByName(tournamentId);
 
         if (!tournament) return null;
 
-        const stagesWithCounts = await tournamentRepository.findStageMatchCountsByTournamentId(
-            tournament.id,
-        );
+        const stagesWithCounts =
+            await tournamentRepository.findStageMatchCountsByTournamentId(
+                tournament.id,
+            );
 
         return {
             ...tournament,
             stages: tournament?.stages.map((s) => ({
                 ...s,
-                teams_count: stagesWithCounts.find((sc) => sc.stageId === s.id)?.teamsCount || 0,
+                teams_count:
+                    stagesWithCounts.find((sc) => sc.stageId === s.id)
+                        ?.teamsCount || 0,
             })),
         };
     },
 
     getTeamsByTournamentId: async (tournamentId: number) => {
-        const teams = await tournamentRepository.findTeamsByTournamentId(tournamentId);
+        const teams =
+            await tournamentRepository.findTeamsByTournamentId(tournamentId);
 
         const res = teams.map((team) => ({
             timestamp: team.created_at,
@@ -59,11 +69,11 @@ export const tournamentService = {
     },
 
     getRegistrationsByTournamentId: async (tournamentId: number) => {
-        const entryStage = await tournamentRepository.findEntryStage(tournamentId);
+        const entryStage =
+            await tournamentRepository.findEntryStage(tournamentId);
         if (!entryStage) {
             throw new Error("No entry stage found");
         }
-        console.log(entryStage);
         const teams = await stagesRepository.findAllStageTeams(entryStage.id);
 
         const res = teams.map((team) => ({
@@ -82,7 +92,8 @@ export const tournamentService = {
     },
 
     getUpcomingTournament: async () => {
-        const upcomingTournament = await tournamentRepository.findUpcomingTournament();
+        const upcomingTournament =
+            await tournamentRepository.findUpcomingTournament();
         if (!upcomingTournament) {
             throw new Error("No upcoming tournament found");
         }
@@ -91,7 +102,8 @@ export const tournamentService = {
     },
 
     getEntryStage: async (tournamentId: number) => {
-        const entryStage = await tournamentRepository.findEntryStage(tournamentId);
+        const entryStage =
+            await tournamentRepository.findEntryStage(tournamentId);
         if (!entryStage) {
             throw new Error("No entry stage found");
         }
@@ -103,6 +115,9 @@ export const tournamentService = {
     },
 
     setCurrentStage: async (tournamentId: number, stageId: number | null) => {
-        return await tournamentRepository.setCurrentStage(tournamentId, stageId);
+        return await tournamentRepository.setCurrentStage(
+            tournamentId,
+            stageId,
+        );
     },
 };

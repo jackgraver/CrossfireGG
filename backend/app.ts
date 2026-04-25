@@ -14,7 +14,10 @@ import rateLimit from "express-rate-limit";
 import { scannerBlocker } from "./core/middleware/scannerBlocker";
 import { toNodeHandler } from "better-auth/node";
 import { auth } from "./lib/auth";
-import { authMiddleware, requireRoles } from "./core/middleware/auth.middleware";
+import {
+    authMiddleware,
+    requireRoles,
+} from "./core/middleware/auth.middleware";
 import { checkRedisCache } from "./core/middleware/redis.middleware";
 import { invalidateCache } from "./core/redis";
 import { logger } from "./core/logger";
@@ -79,7 +82,7 @@ app.use("/user", userRoutes);
 app.use("/tournament", tournamentRoutes);
 app.use("/match", matchRoutes);
 app.use("/team", teamRoutes);
-app.use("/faceit", ...authMiddleware, requireRoles(Roles.ADMIN), faceitRoutes);
+app.use("/faceit", faceitRoutes);
 
 app.use(errorHandler);
 
