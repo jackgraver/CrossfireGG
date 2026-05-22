@@ -5,7 +5,7 @@ import { Roles } from "@repo/types";
 import { Trophy, Video, Settings, User, LogOut, Home, Users, Info } from "lucide-react";
 import TeamLogo from "./shared/bracket/atoms/TeamLogo";
 import { useSignOut } from "@/contexts/auth";
-import { authClient } from "@/lib/auth/auth-client";
+// import { authClient } from "@/lib/auth/auth-client";
 import { UserType } from "@/lib/auth/auth.query";
 
 interface NavItemProps {
@@ -159,6 +159,8 @@ export default function NavBar({
                                 </ul>
                             </div>
                         </div>
+                    ) : null}
+                    {/* Sign-in temporarily disabled
                     ) : (
                         <button
                             className="bg-faceit hover:bg-faceitSecondary flex cursor-pointer items-center gap-2 rounded-md py-2 pr-3 pl-2 text-sm font-bold text-black"
@@ -180,7 +182,7 @@ export default function NavBar({
                             <img src="/faceit.png" alt="Faceit" className="h-5 w-5" />
                             Sign In With Faceit
                         </button>
-                    )}
+                    )} */}
                 </div>
             </div>
 

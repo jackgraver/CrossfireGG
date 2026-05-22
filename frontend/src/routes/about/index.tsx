@@ -27,9 +27,16 @@ function RouteComponent() {
                     <img
                         src="/crossfire.png"
                         alt="Crossfire Logo"
-                        className="h-auto w-full max-h-64 object-contain sm:max-h-80 lg:max-h-[min(70vh,36rem)] lg:w-full"
+                        className="object-contain"
+                        style={{
+                            maxWidth: "400px",
+                            maxHeight: "400px",
+                            width: "100%",
+                            height: "auto",
+                        }}
                     />
                 </div>
+          
             </div>
             <div className="flex w-full flex-col gap-4 px-4 pb-10 sm:px-6 lg:px-8">
                 <h2 className="text-center text-2xl font-bold tracking-tight sm:text-3xl">

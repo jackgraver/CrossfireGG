@@ -12,8 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as NotFoundRouteImport } from './routes/not-found'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TournamentIndexRouteImport } from './routes/tournament/index'
-import { Route as SignUpIndexRouteImport } from './routes/sign-up/index'
-import { Route as SignInIndexRouteImport } from './routes/sign-in/index'
 import { Route as RulesIndexRouteImport } from './routes/rules/index'
 import { Route as PartnersIndexRouteImport } from './routes/partners/index'
 import { Route as CastingIndexRouteImport } from './routes/casting/index'
@@ -49,16 +47,6 @@ const IndexRoute = IndexRouteImport.update({
 const TournamentIndexRoute = TournamentIndexRouteImport.update({
   id: '/tournament/',
   path: '/tournament/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SignUpIndexRoute = SignUpIndexRouteImport.update({
-  id: '/sign-up/',
-  path: '/sign-up/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SignInIndexRoute = SignInIndexRouteImport.update({
-  id: '/sign-in/',
-  path: '/sign-in/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RulesIndexRoute = RulesIndexRouteImport.update({
@@ -184,8 +172,6 @@ export interface FileRoutesByFullPath {
   '/casting/': typeof CastingIndexRoute
   '/partners/': typeof PartnersIndexRoute
   '/rules/': typeof RulesIndexRoute
-  '/sign-in/': typeof SignInIndexRoute
-  '/sign-up/': typeof SignUpIndexRoute
   '/tournament/': typeof TournamentIndexRoute
   '/admin/tournament/$tournament_id': typeof AdminTournamentTournament_idRouteRouteWithChildren
   '/team/$team_id/matches': typeof TeamTeam_idMatchesRoute
@@ -211,8 +197,6 @@ export interface FileRoutesByTo {
   '/casting': typeof CastingIndexRoute
   '/partners': typeof PartnersIndexRoute
   '/rules': typeof RulesIndexRoute
-  '/sign-in': typeof SignInIndexRoute
-  '/sign-up': typeof SignUpIndexRoute
   '/tournament': typeof TournamentIndexRoute
   '/admin/tournament/$tournament_id': typeof AdminTournamentTournament_idRouteRouteWithChildren
   '/team/$team_id/matches': typeof TeamTeam_idMatchesRoute
@@ -240,8 +224,6 @@ export interface FileRoutesById {
   '/casting/': typeof CastingIndexRoute
   '/partners/': typeof PartnersIndexRoute
   '/rules/': typeof RulesIndexRoute
-  '/sign-in/': typeof SignInIndexRoute
-  '/sign-up/': typeof SignUpIndexRoute
   '/tournament/': typeof TournamentIndexRoute
   '/admin/tournament/$tournament_id': typeof AdminTournamentTournament_idRouteRouteWithChildren
   '/team/$team_id/matches': typeof TeamTeam_idMatchesRoute
@@ -270,8 +252,6 @@ export interface FileRouteTypes {
     | '/casting/'
     | '/partners/'
     | '/rules/'
-    | '/sign-in/'
-    | '/sign-up/'
     | '/tournament/'
     | '/admin/tournament/$tournament_id'
     | '/team/$team_id/matches'
@@ -297,8 +277,6 @@ export interface FileRouteTypes {
     | '/casting'
     | '/partners'
     | '/rules'
-    | '/sign-in'
-    | '/sign-up'
     | '/tournament'
     | '/admin/tournament/$tournament_id'
     | '/team/$team_id/matches'
@@ -325,8 +303,6 @@ export interface FileRouteTypes {
     | '/casting/'
     | '/partners/'
     | '/rules/'
-    | '/sign-in/'
-    | '/sign-up/'
     | '/tournament/'
     | '/admin/tournament/$tournament_id'
     | '/team/$team_id/matches'
@@ -354,8 +330,6 @@ export interface RootRouteChildren {
   CastingIndexRoute: typeof CastingIndexRoute
   PartnersIndexRoute: typeof PartnersIndexRoute
   RulesIndexRoute: typeof RulesIndexRoute
-  SignInIndexRoute: typeof SignInIndexRoute
-  SignUpIndexRoute: typeof SignUpIndexRoute
   TournamentIndexRoute: typeof TournamentIndexRoute
   AdminTournamentTournament_idRouteRoute: typeof AdminTournamentTournament_idRouteRouteWithChildren
   AdminStaffIndexRoute: typeof AdminStaffIndexRoute
@@ -387,20 +361,6 @@ declare module '@tanstack/react-router' {
       path: '/tournament'
       fullPath: '/tournament/'
       preLoaderRoute: typeof TournamentIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sign-up/': {
-      id: '/sign-up/'
-      path: '/sign-up'
-      fullPath: '/sign-up/'
-      preLoaderRoute: typeof SignUpIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sign-in/': {
-      id: '/sign-in/'
-      path: '/sign-in'
-      fullPath: '/sign-in/'
-      preLoaderRoute: typeof SignInIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/rules/': {
@@ -616,8 +576,6 @@ const rootRouteChildren: RootRouteChildren = {
   CastingIndexRoute: CastingIndexRoute,
   PartnersIndexRoute: PartnersIndexRoute,
   RulesIndexRoute: RulesIndexRoute,
-  SignInIndexRoute: SignInIndexRoute,
-  SignUpIndexRoute: SignUpIndexRoute,
   TournamentIndexRoute: TournamentIndexRoute,
   AdminTournamentTournament_idRouteRoute:
     AdminTournamentTournament_idRouteRouteWithChildren,
