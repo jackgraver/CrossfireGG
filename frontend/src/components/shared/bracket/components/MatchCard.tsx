@@ -14,9 +14,18 @@ type MatchCardProps = {
     unroundedTop?: boolean;
     /** Narrow columns: full width + shrink + truncated team names */
     bracketLayout?: boolean;
+    hoveredTeamId?: number | null;
+    onTeamHover?: (teamId: number | null) => void;
 };
 
-export default function MatchCard({ match, margin, unroundedTop, bracketLayout }: MatchCardProps) {
+export default function MatchCard({
+    match,
+    margin,
+    unroundedTop,
+    bracketLayout,
+    hoveredTeamId,
+    onTeamHover,
+}: MatchCardProps) {
     if (margin === undefined) {
         margin = true;
     }
@@ -63,8 +72,8 @@ export default function MatchCard({ match, margin, unroundedTop, bracketLayout }
                         }
                     }}
                 >
-                    <MatchTeam variant={teamVariant} team={team1} winner={undefined} score={0} />
-                    <MatchTeam variant={teamVariant} team={team2} winner={undefined} score={0} />
+                    <MatchTeam variant={teamVariant} team={team1} winner={undefined} score={0} hoveredTeamId={hoveredTeamId} onTeamHover={onTeamHover} />
+                    <MatchTeam variant={teamVariant} team={team2} winner={undefined} score={0} hoveredTeamId={hoveredTeamId} onTeamHover={onTeamHover} />
                 </div>
             </div>
         );
@@ -97,12 +106,16 @@ export default function MatchCard({ match, margin, unroundedTop, bracketLayout }
                     team={team1}
                     winner={match?.participants?.[0]?.winner}
                     score={match?.participants?.[0]?.score}
+                    hoveredTeamId={hoveredTeamId}
+                    onTeamHover={onTeamHover}
                 />
                 <MatchTeam
                     variant={teamVariant}
                     team={team2}
                     winner={match?.participants?.[1]?.winner}
                     score={match?.participants?.[1]?.score}
+                    hoveredTeamId={hoveredTeamId}
+                    onTeamHover={onTeamHover}
                 />
             </div>
             {isOpen && match && anchorRect && (

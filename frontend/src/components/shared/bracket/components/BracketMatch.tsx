@@ -13,10 +13,12 @@ interface BracketMatchProps {
         matchIndex: number,
         element: HTMLDivElement | null,
     ) => void;
+    hoveredTeamId?: number | null;
+    onTeamHover?: (teamId: number | null) => void;
 }
 
 export const BracketMatch = React.memo(
-    ({ match, roundIndex, matchIndex, layoutKey, onPositionUpdate }: BracketMatchProps) => {
+    ({ match, roundIndex, matchIndex, layoutKey, onPositionUpdate, hoveredTeamId, onTeamHover }: BracketMatchProps) => {
         const containerRef = React.useRef<HTMLDivElement>(null);
 
         React.useLayoutEffect(() => {
@@ -38,9 +40,9 @@ export const BracketMatch = React.memo(
             >
                 <div className="w-full min-w-0">
                     {match?.status === "scheduled" ? (
-                        <ScheduledCard match={match} bracketLayout />
+                        <ScheduledCard match={match} bracketLayout hoveredTeamId={hoveredTeamId} onTeamHover={onTeamHover} />
                     ) : (
-                        <MatchCard match={match} margin={false} bracketLayout />
+                        <MatchCard match={match} margin={false} bracketLayout hoveredTeamId={hoveredTeamId} onTeamHover={onTeamHover} />
                     )}
                 </div>
             </div>

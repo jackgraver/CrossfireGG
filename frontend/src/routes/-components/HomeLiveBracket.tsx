@@ -91,7 +91,7 @@ export default function HomeLiveBracket() {
                     View full tournament
                 </Link>
             </div>
-            <div className="text-textPrimary w-full overflow-x-auto pb-2">
+            <div className="text-textPrimary w-full pb-2">
                 <TopLevelBracket stageFormat={bracket.format} groups={bracket.groups} />
             </div>
         </div>

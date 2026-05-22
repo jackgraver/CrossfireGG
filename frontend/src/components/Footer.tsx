@@ -10,7 +10,7 @@ const navLinks: { label: string; to: "/" | "/about" | "/partners/" | "/rules/" }
 export default function Footer() {
     return (
         <footer className="mt-auto w-full">
-            <div className="flex flex-col items-center gap-8 px-4 py-8 sm:px-6 md:flex-row md:items-center md:justify-between md:gap-4">
+            <div className="flex flex-col items-center gap-8 px-4 pt-8 pb-4 sm:px-6 md:flex-row md:items-center md:justify-between md:gap-4">
                 <span className="w-full flex-1 text-center text-sm text-textSecondary md:text-left">
                     <span className="font-extrabold text-white text-xl">
                         CROSS<span className="text-orange-500">FIRE</span>GG

@@ -6,9 +6,11 @@ import { CalendarFold } from "lucide-react";
 type ScheduledCardProps = {
     match: MatchWithParticipantAndMinifiedMapsDTO | undefined;
     bracketLayout?: boolean;
+    hoveredTeamId?: number | null;
+    onTeamHover?: (teamId: number | null) => void;
 };
 
-export default function ScheduledCard({ match, bracketLayout }: ScheduledCardProps) {
+export default function ScheduledCard({ match, bracketLayout, hoveredTeamId, onTeamHover }: ScheduledCardProps) {
     if (!match) {
         return (
             <div className="flex w-full flex-col">
@@ -21,7 +23,7 @@ export default function ScheduledCard({ match, bracketLayout }: ScheduledCardPro
                     </div>
                 </div>
                 <div className="w-full">
-                    <MatchCard match={match} margin={false} bracketLayout={bracketLayout} />
+                    <MatchCard match={match} margin={false} bracketLayout={bracketLayout} hoveredTeamId={hoveredTeamId} onTeamHover={onTeamHover} />
                 </div>
             </div>
         );
@@ -51,6 +53,8 @@ export default function ScheduledCard({ match, bracketLayout }: ScheduledCardPro
                     margin={false}
                     unroundedTop
                     bracketLayout={bracketLayout}
+                    hoveredTeamId={hoveredTeamId}
+                    onTeamHover={onTeamHover}
                 />
             </div>
         </div>

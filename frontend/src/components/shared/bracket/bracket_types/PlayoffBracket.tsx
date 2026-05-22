@@ -89,6 +89,7 @@ export default function PlayoffBracket({ matches }: PlayoffBracketProps) {
         [matches],
     );
     const [positions, setPositions] = useState<Record<string, MatchPosition>>({});
+    const [hoveredTeamId, setHoveredTeamId] = useState<number | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
 
     const handlePositionUpdate = useCallback(
@@ -137,7 +138,8 @@ export default function PlayoffBracket({ matches }: PlayoffBracketProps) {
     return (
         <div
             ref={containerRef}
-            className="scrollbar-hide relative flex min-h-200 w-full min-w-0 flex-row gap-16 md:gap-16"
+            className="scrollbar-hide relative flex min-h-200 w-full min-w-0 flex-row gap-16 overflow-x-auto md:gap-16"
+            onMouseLeave={() => setHoveredTeamId(null)}
         >
             <Connections mainRounds={rounds.mainRounds} positions={positions} />
             {rounds.mainRounds.map((round, roundIndex) => (
@@ -159,9 +161,11 @@ export default function PlayoffBracket({ matches }: PlayoffBracketProps) {
                                     matchIndex={matchIndex}
                                     layoutKey={bracketLayoutSignature}
                                     onPositionUpdate={handlePositionUpdate}
+                                    hoveredTeamId={hoveredTeamId}
+                                    onTeamHover={setHoveredTeamId}
                                 />
                                 {round.name === "Grand Final" && rounds.thirdPlaceRound && (
-                                    <div className="absolute top-full right-0 left-0 mt-32">
+                                    <div className="mt-32 w-full">
                                         <div
                                             className={cn(
                                                 "text-center",
@@ -182,6 +186,8 @@ export default function PlayoffBracket({ matches }: PlayoffBracketProps) {
                                                             ?.matches[0] as MatchWithParticipantAndMinifiedMapsDTO
                                                     }
                                                     bracketLayout
+                                                    hoveredTeamId={hoveredTeamId}
+                                                    onTeamHover={setHoveredTeamId}
                                                 />
                                             ) : (
                                                 <MatchCard
@@ -191,6 +197,8 @@ export default function PlayoffBracket({ matches }: PlayoffBracketProps) {
                                                     }
                                                     margin={false}
                                                     bracketLayout
+                                                    hoveredTeamId={hoveredTeamId}
+                                                    onTeamHover={setHoveredTeamId}
                                                 />
                                             )}
                                         </div>
