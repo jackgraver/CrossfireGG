@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useAllTournaments, type TournamentListStatus } from "@/lib/api/tournament.queries";
 import { TournamentGroup, TournamentGroupSkeleton } from "./TournamentGroup";
 import { Trophy } from "lucide-react";
@@ -19,11 +19,39 @@ const STATUS_HEADLINES: Record<TournamentListStatus, string> = {
 
 export default function TournamentsSection() {
     const [status, setStatus] = useState<TournamentListStatus>("active");
-    const { data, isLoading, error } = useAllTournaments(status);
+    const userPickedTab = useRef(false);
+    const activeQuery = useAllTournaments("active");
+    const upcomingQuery = useAllTournaments("upcoming");
+    const endedQuery = useAllTournaments("ended");
+    const queriesByStatus = {
+        active: activeQuery,
+        upcoming: upcomingQuery,
+        ended: endedQuery,
+    };
+    const { data, isLoading, error } = queriesByStatus[status];
     const tabsRef = useRef<(HTMLButtonElement | null)[]>([]);
     const tabStripRef = useRef<HTMLDivElement>(null);
     const [indicator, setIndicator] = useState({ left: 0, width: 0, opacity: 0 });
 
+    useEffect(() => {
+        if (userPickedTab.current) return;
+        const allLoaded = STATUS_OPTIONS.every(({ value }) => !queriesByStatus[value].isLoading);
+        if (!allLoaded) return;
+        const firstWithData = STATUS_OPTIONS.find(
+            ({ value }) => (queriesByStatus[value].data?.length ?? 0) > 0,
+        );
+        setStatus(firstWithData?.value ?? "ended");
+    }, [
+        activeQuery.isLoading,
+        activeQuery.data,
+        upcomingQuery.isLoading,
+        upcomingQuery.data,
+        endedQuery.isLoading,
+        endedQuery.data,
+    ]);
+
+    const isResolvingDefault =
+        !userPickedTab.current && STATUS_OPTIONS.some(({ value }) => queriesByStatus[value].isLoading);
     const activeIndex = STATUS_OPTIONS.findIndex((o) => o.value === status);
 
     useLayoutEffect(() => {
@@ -87,7 +115,10 @@ export default function TournamentsSection() {
                                     type="button"
                                     role="tab"
                                     aria-selected={selected}
-                                    onClick={() => setStatus(value)}
+                                    onClick={() => {
+                                        userPickedTab.current = true;
+                                        setStatus(value);
+                                    }}
                                     className={cn(
                                         "relative z-10 min-h-11 flex-1 rounded-xl px-3 py-2.5 text-center text-sm font-semibold transition-colors sm:min-w-26 sm:flex-initial sm:px-4",
                                         selected
@@ -102,7 +133,7 @@ export default function TournamentsSection() {
                     </div>
                 </div>
             </div>
-            {isLoading ? (
+            {isResolvingDefault || isLoading ? (
                 <TournamentGroupSkeleton />
             ) : tournaments.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-32 opacity-20">

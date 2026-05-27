@@ -88,7 +88,7 @@ export default function NavBar({
                         padding="px-3 py-2 -ml-3"
                     />
                     <NavItem
-                        to="/tournament/8/stage/16/bracket"
+                        to="/tournament/9/stage/1/bracket"
                         icon={<Trophy size={18} />}
                         label="Season 5"
                         padding="px-3 py-2 -ml-3"

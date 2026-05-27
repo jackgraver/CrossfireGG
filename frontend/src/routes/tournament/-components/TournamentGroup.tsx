@@ -165,9 +165,9 @@ export const TournamentGroup = ({
                             >
                                 View Tournament
                             </Link>
-                            {tournament.status === "upcoming" && (
+                            {/* {tournament.status === "upcoming" && (
                                 <SignUpButton tournamentId={tournament.id.toString()} />
-                            )}
+                            )} */}
                         </div>
                     </article>
                 ))}
