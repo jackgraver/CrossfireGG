@@ -14,10 +14,10 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as TournamentIndexRouteImport } from './routes/tournament/index'
 import { Route as RulesIndexRouteImport } from './routes/rules/index'
 import { Route as PartnersIndexRouteImport } from './routes/partners/index'
+import { Route as Fa5e41858a7f4a0d829974fd8c0f517cIndexRouteImport } from './routes/fa5e4185-8a7f-4a0d-8299-74fd8c0f517c/index'
 import { Route as CastingIndexRouteImport } from './routes/casting/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AboutIndexRouteImport } from './routes/about/index'
-import { Route as UuidIndexRouteImport } from './routes/$uuid/index'
 import { Route as TeamTeam_idRouteRouteImport } from './routes/team/$team_id/route'
 import { Route as TeamTeam_idIndexRouteImport } from './routes/team/$team_id/index'
 import { Route as RegisterTeamIndexRouteImport } from './routes/register/team/index'
@@ -60,6 +60,12 @@ const PartnersIndexRoute = PartnersIndexRouteImport.update({
   path: '/partners/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const Fa5e41858a7f4a0d829974fd8c0f517cIndexRoute =
+  Fa5e41858a7f4a0d829974fd8c0f517cIndexRouteImport.update({
+    id: '/fa5e4185-8a7f-4a0d-8299-74fd8c0f517c/',
+    path: '/fa5e4185-8a7f-4a0d-8299-74fd8c0f517c/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const CastingIndexRoute = CastingIndexRouteImport.update({
   id: '/casting/',
   path: '/casting/',
@@ -73,11 +79,6 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
 const AboutIndexRoute = AboutIndexRouteImport.update({
   id: '/about/',
   path: '/about/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const UuidIndexRoute = UuidIndexRouteImport.update({
-  id: '/$uuid/',
-  path: '/$uuid/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TeamTeam_idRouteRoute = TeamTeam_idRouteRouteImport.update({
@@ -173,10 +174,10 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/not-found': typeof NotFoundRoute
   '/team/$team_id': typeof TeamTeam_idRouteRouteWithChildren
-  '/$uuid/': typeof UuidIndexRoute
   '/about/': typeof AboutIndexRoute
   '/admin/': typeof AdminIndexRoute
   '/casting/': typeof CastingIndexRoute
+  '/fa5e4185-8a7f-4a0d-8299-74fd8c0f517c/': typeof Fa5e41858a7f4a0d829974fd8c0f517cIndexRoute
   '/partners/': typeof PartnersIndexRoute
   '/rules/': typeof RulesIndexRoute
   '/tournament/': typeof TournamentIndexRoute
@@ -199,10 +200,10 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/not-found': typeof NotFoundRoute
-  '/$uuid': typeof UuidIndexRoute
   '/about': typeof AboutIndexRoute
   '/admin': typeof AdminIndexRoute
   '/casting': typeof CastingIndexRoute
+  '/fa5e4185-8a7f-4a0d-8299-74fd8c0f517c': typeof Fa5e41858a7f4a0d829974fd8c0f517cIndexRoute
   '/partners': typeof PartnersIndexRoute
   '/rules': typeof RulesIndexRoute
   '/tournament': typeof TournamentIndexRoute
@@ -227,10 +228,10 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/not-found': typeof NotFoundRoute
   '/team/$team_id': typeof TeamTeam_idRouteRouteWithChildren
-  '/$uuid/': typeof UuidIndexRoute
   '/about/': typeof AboutIndexRoute
   '/admin/': typeof AdminIndexRoute
   '/casting/': typeof CastingIndexRoute
+  '/fa5e4185-8a7f-4a0d-8299-74fd8c0f517c/': typeof Fa5e41858a7f4a0d829974fd8c0f517cIndexRoute
   '/partners/': typeof PartnersIndexRoute
   '/rules/': typeof RulesIndexRoute
   '/tournament/': typeof TournamentIndexRoute
@@ -256,10 +257,10 @@ export interface FileRouteTypes {
     | '/'
     | '/not-found'
     | '/team/$team_id'
-    | '/$uuid/'
     | '/about/'
     | '/admin/'
     | '/casting/'
+    | '/fa5e4185-8a7f-4a0d-8299-74fd8c0f517c/'
     | '/partners/'
     | '/rules/'
     | '/tournament/'
@@ -282,10 +283,10 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/not-found'
-    | '/$uuid'
     | '/about'
     | '/admin'
     | '/casting'
+    | '/fa5e4185-8a7f-4a0d-8299-74fd8c0f517c'
     | '/partners'
     | '/rules'
     | '/tournament'
@@ -309,10 +310,10 @@ export interface FileRouteTypes {
     | '/'
     | '/not-found'
     | '/team/$team_id'
-    | '/$uuid/'
     | '/about/'
     | '/admin/'
     | '/casting/'
+    | '/fa5e4185-8a7f-4a0d-8299-74fd8c0f517c/'
     | '/partners/'
     | '/rules/'
     | '/tournament/'
@@ -337,10 +338,10 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   NotFoundRoute: typeof NotFoundRoute
   TeamTeam_idRouteRoute: typeof TeamTeam_idRouteRouteWithChildren
-  UuidIndexRoute: typeof UuidIndexRoute
   AboutIndexRoute: typeof AboutIndexRoute
   AdminIndexRoute: typeof AdminIndexRoute
   CastingIndexRoute: typeof CastingIndexRoute
+  Fa5e41858a7f4a0d829974fd8c0f517cIndexRoute: typeof Fa5e41858a7f4a0d829974fd8c0f517cIndexRoute
   PartnersIndexRoute: typeof PartnersIndexRoute
   RulesIndexRoute: typeof RulesIndexRoute
   TournamentIndexRoute: typeof TournamentIndexRoute
@@ -390,6 +391,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PartnersIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/fa5e4185-8a7f-4a0d-8299-74fd8c0f517c/': {
+      id: '/fa5e4185-8a7f-4a0d-8299-74fd8c0f517c/'
+      path: '/fa5e4185-8a7f-4a0d-8299-74fd8c0f517c'
+      fullPath: '/fa5e4185-8a7f-4a0d-8299-74fd8c0f517c/'
+      preLoaderRoute: typeof Fa5e41858a7f4a0d829974fd8c0f517cIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/casting/': {
       id: '/casting/'
       path: '/casting'
@@ -409,13 +417,6 @@ declare module '@tanstack/react-router' {
       path: '/about'
       fullPath: '/about/'
       preLoaderRoute: typeof AboutIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/$uuid/': {
-      id: '/$uuid/'
-      path: '/$uuid'
-      fullPath: '/$uuid/'
-      preLoaderRoute: typeof UuidIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/team/$team_id': {
@@ -591,10 +592,11 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   NotFoundRoute: NotFoundRoute,
   TeamTeam_idRouteRoute: TeamTeam_idRouteRouteWithChildren,
-  UuidIndexRoute: UuidIndexRoute,
   AboutIndexRoute: AboutIndexRoute,
   AdminIndexRoute: AdminIndexRoute,
   CastingIndexRoute: CastingIndexRoute,
+  Fa5e41858a7f4a0d829974fd8c0f517cIndexRoute:
+    Fa5e41858a7f4a0d829974fd8c0f517cIndexRoute,
   PartnersIndexRoute: PartnersIndexRoute,
   RulesIndexRoute: RulesIndexRoute,
   TournamentIndexRoute: TournamentIndexRoute,
