@@ -17,6 +17,7 @@ import { Route as PartnersIndexRouteImport } from './routes/partners/index'
 import { Route as CastingIndexRouteImport } from './routes/casting/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as AboutIndexRouteImport } from './routes/about/index'
+import { Route as UuidIndexRouteImport } from './routes/$uuid/index'
 import { Route as TeamTeam_idRouteRouteImport } from './routes/team/$team_id/route'
 import { Route as TeamTeam_idIndexRouteImport } from './routes/team/$team_id/index'
 import { Route as RegisterTeamIndexRouteImport } from './routes/register/team/index'
@@ -72,6 +73,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
 const AboutIndexRoute = AboutIndexRouteImport.update({
   id: '/about/',
   path: '/about/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UuidIndexRoute = UuidIndexRouteImport.update({
+  id: '/$uuid/',
+  path: '/$uuid/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TeamTeam_idRouteRoute = TeamTeam_idRouteRouteImport.update({
@@ -167,6 +173,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/not-found': typeof NotFoundRoute
   '/team/$team_id': typeof TeamTeam_idRouteRouteWithChildren
+  '/$uuid/': typeof UuidIndexRoute
   '/about/': typeof AboutIndexRoute
   '/admin/': typeof AdminIndexRoute
   '/casting/': typeof CastingIndexRoute
@@ -192,6 +199,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/not-found': typeof NotFoundRoute
+  '/$uuid': typeof UuidIndexRoute
   '/about': typeof AboutIndexRoute
   '/admin': typeof AdminIndexRoute
   '/casting': typeof CastingIndexRoute
@@ -219,6 +227,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/not-found': typeof NotFoundRoute
   '/team/$team_id': typeof TeamTeam_idRouteRouteWithChildren
+  '/$uuid/': typeof UuidIndexRoute
   '/about/': typeof AboutIndexRoute
   '/admin/': typeof AdminIndexRoute
   '/casting/': typeof CastingIndexRoute
@@ -247,6 +256,7 @@ export interface FileRouteTypes {
     | '/'
     | '/not-found'
     | '/team/$team_id'
+    | '/$uuid/'
     | '/about/'
     | '/admin/'
     | '/casting/'
@@ -272,6 +282,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/not-found'
+    | '/$uuid'
     | '/about'
     | '/admin'
     | '/casting'
@@ -298,6 +309,7 @@ export interface FileRouteTypes {
     | '/'
     | '/not-found'
     | '/team/$team_id'
+    | '/$uuid/'
     | '/about/'
     | '/admin/'
     | '/casting/'
@@ -325,6 +337,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   NotFoundRoute: typeof NotFoundRoute
   TeamTeam_idRouteRoute: typeof TeamTeam_idRouteRouteWithChildren
+  UuidIndexRoute: typeof UuidIndexRoute
   AboutIndexRoute: typeof AboutIndexRoute
   AdminIndexRoute: typeof AdminIndexRoute
   CastingIndexRoute: typeof CastingIndexRoute
@@ -396,6 +409,13 @@ declare module '@tanstack/react-router' {
       path: '/about'
       fullPath: '/about/'
       preLoaderRoute: typeof AboutIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/$uuid/': {
+      id: '/$uuid/'
+      path: '/$uuid'
+      fullPath: '/$uuid/'
+      preLoaderRoute: typeof UuidIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/team/$team_id': {
@@ -571,6 +591,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   NotFoundRoute: NotFoundRoute,
   TeamTeam_idRouteRoute: TeamTeam_idRouteRouteWithChildren,
+  UuidIndexRoute: UuidIndexRoute,
   AboutIndexRoute: AboutIndexRoute,
   AdminIndexRoute: AdminIndexRoute,
   CastingIndexRoute: CastingIndexRoute,
