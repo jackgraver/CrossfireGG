@@ -12,8 +12,7 @@ export const useAllStageFormats = () => {
 
 export const useCreateTournament = () => {
     return useMutation({
-        mutationFn: (payload: any) =>
-            apiPOST<any>(`/tournament/create`, payload),
+        mutationFn: (payload: any) => apiPOST<any>(`/tournament/create`, payload),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["tournaments"] });
         },

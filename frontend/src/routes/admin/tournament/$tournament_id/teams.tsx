@@ -9,17 +9,14 @@ import {
 } from "@tanstack/react-table";
 import { StageTeamSignUpDTO } from "@repo/contracts";
 
-export const Route = createFileRoute(
-    "/admin/tournament/$tournament_id/teams",
-)({
+export const Route = createFileRoute("/admin/tournament/$tournament_id/teams")({
     component: RouteComponent,
 });
 
 function RouteComponent() {
     const { tournament_id } = Route.useParams();
 
-    const { data: teams, isLoading: teamsLoading } =
-        useTournamentTeams(tournament_id);
+    const { data: teams, isLoading: teamsLoading } = useTournamentTeams(tournament_id);
 
     const columnHelper = createColumnHelper<StageTeamSignUpDTO>();
 
@@ -37,30 +34,21 @@ function RouteComponent() {
                 id: `player_${idx + 1}`,
                 header: `Player ${idx + 1}`,
                 columns: [
-                    columnHelper.accessor(
-                        (row) => row.players?.[idx]?.name ?? "-",
-                        {
-                            id: `player_${idx + 1}_name`,
-                            header: "Name",
-                            cell: (info) => info.getValue(),
-                        },
-                    ),
-                    columnHelper.accessor(
-                        (row) => row.players?.[idx]?.hltv_id ?? "-",
-                        {
-                            id: `player_${idx + 1}_hltv`,
-                            header: "HLTV",
-                            cell: (info) => info.getValue(),
-                        },
-                    ),
-                    columnHelper.accessor(
-                        (row) => row.players?.[idx]?.discord_id ?? "-",
-                        {
-                            id: `player_${idx + 1}_discord`,
-                            header: "Discord",
-                            cell: (info) => info.getValue(),
-                        },
-                    ),
+                    columnHelper.accessor((row) => row.players?.[idx]?.name ?? "-", {
+                        id: `player_${idx + 1}_name`,
+                        header: "Name",
+                        cell: (info) => info.getValue(),
+                    }),
+                    columnHelper.accessor((row) => row.players?.[idx]?.hltv_id ?? "-", {
+                        id: `player_${idx + 1}_hltv`,
+                        header: "HLTV",
+                        cell: (info) => info.getValue(),
+                    }),
+                    columnHelper.accessor((row) => row.players?.[idx]?.discord_id ?? "-", {
+                        id: `player_${idx + 1}_discord`,
+                        header: "Discord",
+                        cell: (info) => info.getValue(),
+                    }),
                 ],
             }),
         ),
@@ -75,9 +63,7 @@ function RouteComponent() {
     return (
         <div className="flex h-full flex-col space-y-6 overflow-hidden p-6">
             <div className="flex shrink-0 flex-col gap-y-2">
-                <h1 className="text-2xl font-bold text-white">
-                    Tournament Signups
-                </h1>
+                <h1 className="text-2xl font-bold text-white">Tournament Signups</h1>
                 <p className="text-gray-400">
                     Manage and view team registrations for each tournament.
                 </p>
@@ -103,8 +89,7 @@ function RouteComponent() {
                                                 {header.isPlaceholder
                                                     ? null
                                                     : flexRender(
-                                                          header.column
-                                                              .columnDef.header,
+                                                          header.column.columnDef.header,
                                                           header.getContext(),
                                                       )}
                                             </th>
@@ -114,10 +99,7 @@ function RouteComponent() {
                             </thead>
                             <tbody>
                                 {table.getRowModel().rows.map((row) => (
-                                    <tr
-                                        key={row.id}
-                                        className="hover:bg-secondBg"
-                                    >
+                                    <tr key={row.id} className="hover:bg-secondBg">
                                         {row.getVisibleCells().map((cell) => (
                                             <td
                                                 key={cell.id}

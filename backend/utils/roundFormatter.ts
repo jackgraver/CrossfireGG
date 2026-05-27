@@ -29,11 +29,7 @@ export function calculateSwissRecord(wins: number, losses: number): string {
  * @param losses - Number of losses for the team
  * @returns Formatted string like "Round 2 (1-0)" or "Round 3 (2-0)"
  */
-export function formatSwissRound(
-    round: number,
-    wins?: number,
-    losses?: number,
-): string {
+export function formatSwissRound(round: number, wins?: number, losses?: number): string {
     const baseRound = `Round ${round}`;
     if (wins !== undefined && losses !== undefined) {
         return `${calculateSwissRecord(wins, losses)}`;
@@ -77,10 +73,7 @@ export function formatSingleEliminationRoundAbbrev(
     }
 }
 
-export function formatSingleEliminationRound(
-    round: number,
-    totalTeams: number = 32,
-): string {
+export function formatSingleEliminationRound(round: number, totalTeams: number = 32): string {
     // Calculate total rounds needed
     const totalRounds = Math.ceil(Math.log2(totalTeams));
 
@@ -126,8 +119,7 @@ export function formatDoubleEliminationRound(
     }
 
     const baseLabel = formatSingleEliminationRound(round, totalTeams);
-    const bracketLabel =
-        bracket === "upper" ? "Upper Bracket" : "Lower Bracket";
+    const bracketLabel = bracket === "upper" ? "Upper Bracket" : "Lower Bracket";
 
     return `${bracketLabel} - ${baseLabel}`;
 }
@@ -169,11 +161,7 @@ export function formatRound(
         case "bracket":
             return formatSingleEliminationRound(round, options?.totalTeams);
         case "double-elimination":
-            return formatDoubleEliminationRound(
-                round,
-                options?.bracket,
-                options?.totalTeams,
-            );
+            return formatDoubleEliminationRound(round, options?.bracket, options?.totalTeams);
         default:
             return `Round ${round}`;
     }

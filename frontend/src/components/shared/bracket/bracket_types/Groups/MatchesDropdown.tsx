@@ -1,7 +1,4 @@
-import {
-    MatchWithParticipantAndMinifiedMapsDTO,
-    MatchWithParticipantsDTO,
-} from "@repo/contracts";
+import { MatchWithParticipantAndMinifiedMapsDTO } from "@repo/contracts";
 import { Calendar, ChevronDown, ChevronUp } from "lucide-react";
 import { useMemo, useState } from "react";
 import MatchCard from "../../components/MatchCard";
@@ -25,7 +22,7 @@ export default function MatchesDropdown({
                     acc[round].push(match);
                     return acc;
                 },
-                {} as Record<string, MatchWithParticipantsDTO[]>,
+                {} as Record<string, MatchWithParticipantAndMinifiedMapsDTO[]>,
             ),
         [matches],
     );
@@ -43,50 +40,46 @@ export default function MatchesDropdown({
                         {matches.length}
                     </span>
                 </div>
-                {isOpen ? (
-                    <ChevronUp className="h-4 w-4" />
-                ) : (
-                    <ChevronDown className="h-4 w-4" />
-                )}
+                {isOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
             </button>
             {isOpen && (
                 <div className="animate-in fade-in slide-in-from-top-2 mt-2 space-y-6 duration-300">
-                    {Object.entries(matchesByRound).map(
-                        ([round, roundMatches]) => (
-                            <div key={round} className="space-y-3">
-                                <div className="flex items-center gap-2 px-1">
-                                    <div className="bg-border/50 h-px flex-1" />
-                                    <span className="text-textSecondary/60 text-[10px] font-black tracking-[0.2em] uppercase">
-                                        Round {round}
-                                    </span>
-                                    <div className="bg-border/50 h-px flex-1" />
-                                </div>
-                                <div className="grid grid-cols-1 gap-3">
-                                    {roundMatches.map((match, mIndex) => (
-                                        <>
-                                            {match.status === "scheduled" && (
-                                                <ScheduledCard
-                                                    key={mIndex}
-                                                    match={
-                                                        match as MatchWithParticipantAndMinifiedMapsDTO
-                                                    }
-                                                />
-                                            )}
-                                            {match.status !== "scheduled" && (
-                                                <MatchCard
-                                                    key={mIndex}
-                                                    match={
-                                                        match as MatchWithParticipantAndMinifiedMapsDTO
-                                                    }
-                                                    margin={false}
-                                                />
-                                            )}
-                                        </>
-                                    ))}
-                                </div>
+                    {Object.entries(matchesByRound).map(([round, roundMatches]) => (
+                        <div key={round} className="space-y-3">
+                            <div className="flex items-center gap-2 px-1">
+                                <div className="bg-border/50 h-px flex-1" />
+                                <span className="text-textSecondary/60 text-[10px] font-black tracking-[0.2em] uppercase">
+                                    Round {round}
+                                </span>
+                                <div className="bg-border/50 h-px flex-1" />
                             </div>
-                        ),
-                    )}
+                            <div className="grid grid-cols-1 gap-3">
+                                {roundMatches.map((match, mIndex) => (
+                                    <>
+                                        {match.status === "scheduled" && (
+                                            <ScheduledCard
+                                                key={mIndex}
+                                                match={
+                                                    match as MatchWithParticipantAndMinifiedMapsDTO
+                                                }
+                                                bracketLayout
+                                            />
+                                        )}
+                                        {match.status !== "scheduled" && (
+                                            <MatchCard
+                                                key={mIndex}
+                                                match={
+                                                    match as MatchWithParticipantAndMinifiedMapsDTO
+                                                }
+                                                margin={false}
+                                                bracketLayout
+                                            />
+                                        )}
+                                    </>
+                                ))}
+                            </div>
+                        </div>
+                    ))}
                 </div>
             )}
         </div>

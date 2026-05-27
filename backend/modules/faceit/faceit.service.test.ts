@@ -1,12 +1,4 @@
-import {
-    afterEach,
-    beforeAll,
-    beforeEach,
-    describe,
-    expect,
-    it,
-    vi,
-} from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock dependencies before importing service
 vi.mock("../../core/logger", () => ({
@@ -110,9 +102,7 @@ describe("faceitImportService", () => {
         vi.mocked(stagesRepository.findStageFormatById).mockResolvedValue({
             name: "single elimination",
         } as any);
-        vi.mocked(playerRepository.upsertPlayerByFaceitId).mockResolvedValue(
-            {} as any,
-        );
+        vi.mocked(playerRepository.upsertPlayerByFaceitId).mockResolvedValue({} as any);
         vi.mocked(faceitFetchUtil.fetchData).mockResolvedValue(null);
     });
 
@@ -547,9 +537,9 @@ describe("faceitImportService", () => {
         let transformFaceitMatch: typeof transformHelpers.transformFaceitMatch;
 
         beforeAll(async () => {
-            const actual = await vi.importActual<
-                typeof import("../../utils/transformFaceitData")
-            >("../../utils/transformFaceitData");
+            const actual = await vi.importActual<typeof import("../../utils/transformFaceitData")>(
+                "../../utils/transformFaceitData",
+            );
             transformFaceitMatch = actual.transformFaceitMatch;
         });
 
@@ -647,18 +637,11 @@ describe("faceitImportService", () => {
 
         it("swiss format does not apply single-elim 3RD/GF abbreviations", () => {
             const match = createMockFaceitMatch({ round: 1 });
-            const row = transformFaceitMatch(
-                match as any,
-                1,
-                null,
-                "swiss",
-                undefined,
-                {
-                    totalTeams: 8,
-                    lossesBeforeF1: 1,
-                    lossesBeforeF2: 1,
-                },
-            );
+            const row = transformFaceitMatch(match as any, 1, null, "swiss", undefined, {
+                totalTeams: 8,
+                lossesBeforeF1: 1,
+                lossesBeforeF2: 1,
+            });
             expect(row).toMatchObject({
                 round: "Round 1",
             });
@@ -775,10 +758,7 @@ describe("faceitImportService", () => {
                         totalTeams,
                     );
                 } catch (error) {
-                    logger.error(
-                        `Error applying placements for match ${match.match_id}:`,
-                        error,
-                    );
+                    logger.error(`Error applying placements for match ${match.match_id}:`, error);
                 }
             }
         }
@@ -805,19 +785,17 @@ describe("faceitImportService", () => {
                     },
                 ],
             ]);
-            await applyPlacementsBatch(
-                [match],
+            await applyPlacementsBatch([match], 1, { name: "single elimination" }, 16, snapshots);
+            expect(teamRepository.upsertTournamentPlacementByTeamAndStage).toHaveBeenCalledWith(
+                20,
                 1,
-                { name: "single elimination" },
-                16,
-                snapshots,
+                "2nd",
             );
-            expect(
-                teamRepository.upsertTournamentPlacementByTeamAndStage,
-            ).toHaveBeenCalledWith(20, 1, "2nd");
-            expect(
-                teamRepository.upsertTournamentPlacementByTeamAndStage,
-            ).toHaveBeenCalledWith(10, 1, "1st");
+            expect(teamRepository.upsertTournamentPlacementByTeamAndStage).toHaveBeenCalledWith(
+                10,
+                1,
+                "1st",
+            );
         });
 
         it("skips matches that have no snapshot entry", async () => {
@@ -825,16 +803,8 @@ describe("faceitImportService", () => {
                 match_id: "orphan",
                 round: 4,
             });
-            await applyPlacementsBatch(
-                [match],
-                1,
-                { name: "single elimination" },
-                16,
-                new Map(),
-            );
-            expect(
-                teamRepository.upsertTournamentPlacementByTeamAndStage,
-            ).not.toHaveBeenCalled();
+            await applyPlacementsBatch([match], 1, { name: "single elimination" }, 16, new Map());
+            expect(teamRepository.upsertTournamentPlacementByTeamAndStage).not.toHaveBeenCalled();
         });
 
         it("applies 3rd/4th when either team already has a loss (bronze)", async () => {
@@ -853,25 +823,23 @@ describe("faceitImportService", () => {
                     },
                 ],
             ]);
-            await applyPlacementsBatch(
-                [match],
+            await applyPlacementsBatch([match], 1, { name: "single elimination" }, 16, snapshots);
+            expect(teamRepository.upsertTournamentPlacementByTeamAndStage).toHaveBeenCalledWith(
+                20,
                 1,
-                { name: "single elimination" },
-                16,
-                snapshots,
+                "3rd",
             );
-            expect(
-                teamRepository.upsertTournamentPlacementByTeamAndStage,
-            ).toHaveBeenCalledWith(20, 1, "3rd");
-            expect(
-                teamRepository.upsertTournamentPlacementByTeamAndStage,
-            ).toHaveBeenCalledWith(10, 1, "4th");
+            expect(teamRepository.upsertTournamentPlacementByTeamAndStage).toHaveBeenCalledWith(
+                10,
+                1,
+                "4th",
+            );
         });
 
         it("logs and continues when placement upsert throws", async () => {
-            vi.mocked(
-                teamRepository.upsertTournamentPlacementByTeamAndStage,
-            ).mockRejectedValueOnce(new Error("db fail"));
+            vi.mocked(teamRepository.upsertTournamentPlacementByTeamAndStage).mockRejectedValueOnce(
+                new Error("db fail"),
+            );
             const match = createMockFaceitMatch({
                 match_id: "gf",
                 round: 4,
@@ -886,18 +854,10 @@ describe("faceitImportService", () => {
                 ],
             ]);
             await expect(
-                applyPlacementsBatch(
-                    [match],
-                    1,
-                    { name: "single elimination" },
-                    16,
-                    snapshots,
-                ),
+                applyPlacementsBatch([match], 1, { name: "single elimination" }, 16, snapshots),
             ).resolves.toBeUndefined();
             expect(logger.error).toHaveBeenCalledWith(
-                expect.stringContaining(
-                    "Error applying placements for match gf",
-                ),
+                expect.stringContaining("Error applying placements for match gf"),
                 expect.any(Error),
             );
         });

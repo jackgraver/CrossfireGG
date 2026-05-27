@@ -28,13 +28,10 @@ export function Select({
     className,
 }: SelectProps) {
     const { isTouched, errors } = field.state.meta;
-    const isInvalid =
-        isTouched && errors.length > 0 ? String(errors[0]) : undefined;
+    const isInvalid = isTouched && errors.length > 0 ? String(errors[0]) : undefined;
 
-    const firstError =
-        isTouched && errors.length > 0 ? String(errors[0]) : undefined;
-    const extraErrors =
-        isTouched && errors.length > 1 ? errors.slice(1).join(", ") : undefined;
+    const firstError = isTouched && errors.length > 0 ? String(errors[0]) : undefined;
+    const extraErrors = isTouched && errors.length > 1 ? errors.slice(1).join(", ") : undefined;
 
     return (
         <div className={cn(styles.wrapper, "flex flex-1 flex-col", className)}>
@@ -79,9 +76,7 @@ export function Select({
                                 position="popper"
                                 sideOffset={4}
                             >
-                                <RadixSelect.Viewport
-                                    className={styles.viewport}
-                                >
+                                <RadixSelect.Viewport className={styles.viewport}>
                                     {options.map((option) => (
                                         <RadixSelect.Item
                                             key={option.value}
@@ -114,10 +109,7 @@ export function Select({
             >
                 {firstError}
                 {extraErrors && (
-                    <span title={extraErrors}>
-                        {" "}
-                        {"+" + (errors && errors.length - 1)}
-                    </span>
+                    <span title={extraErrors}> {"+" + (errors && errors.length - 1)}</span>
                 )}
             </em>
         </div>

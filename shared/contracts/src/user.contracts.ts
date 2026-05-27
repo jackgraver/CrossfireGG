@@ -33,18 +33,12 @@ export const UserWithRolesContract = UserContract.extend({
 
 export type UserWithRolesDTO = z.infer<typeof UserWithRolesContract>;
 
-export const StaffRoleNameContract = z.enum([
-    "ADMIN",
-    "PRODUCTION_LEAD",
-    "PRODUCTION",
-]);
+export const StaffRoleNameContract = z.enum(["ADMIN", "PRODUCTION_LEAD", "PRODUCTION"]);
 
 export const UpdateUserRolesBodyContract = z.object({
-    roles: z
-        .array(StaffRoleNameContract)
-        .refine((r) => new Set(r).size === r.length, {
-            message: "Roles must be unique",
-        }),
+    roles: z.array(StaffRoleNameContract).refine((r) => new Set(r).size === r.length, {
+        message: "Roles must be unique",
+    }),
 });
 
 export type UpdateUserRolesBodyDTO = z.infer<typeof UpdateUserRolesBodyContract>;

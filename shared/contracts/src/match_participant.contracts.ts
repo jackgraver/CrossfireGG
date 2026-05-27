@@ -13,12 +13,8 @@ export const MatchParticipantContract = z.object({
 
 export type MatchParticipantDTO = z.infer<typeof MatchParticipantContract>;
 
-export const MatchParticipantWithTeamContract = MatchParticipantContract.extend(
-    {
-        stageTeam: StageTeamWithTeamContract,
-    },
-);
+export const MatchParticipantWithTeamContract = MatchParticipantContract.extend({
+    stageTeam: StageTeamWithTeamContract,
+});
 
-export type MatchParticipantWithTeamDTO = z.infer<
-    typeof MatchParticipantWithTeamContract
->;
+export type MatchParticipantWithTeamDTO = z.infer<typeof MatchParticipantWithTeamContract>;

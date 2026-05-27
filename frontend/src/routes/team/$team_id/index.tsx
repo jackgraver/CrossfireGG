@@ -10,8 +10,7 @@ export const Route = createFileRoute("/team/$team_id/")({
 function TeamOverview() {
     const { team_id } = Route.useParams();
     const { data: team, isLoading, error } = useTeam(team_id);
-    const { data: tournaments, isLoading: loadingTournaments } =
-        useTeamTournaments(team_id);
+    const { data: tournaments, isLoading: loadingTournaments } = useTeamTournaments(team_id);
 
     if (isLoading) {
         return (
@@ -39,11 +38,7 @@ function TeamOverview() {
     }
 
     if (error || !team) {
-        return (
-            <div className="text-textSecondary py-8 text-center">
-                Failed to load team data
-            </div>
-        );
+        return <div className="text-textSecondary py-8 text-center">Failed to load team data</div>;
     }
 
     if (tournaments?.length === 0) {
@@ -83,14 +78,11 @@ function TeamOverview() {
                         >
                             {tournament.name}
                         </Link>
-                        {tournament.placement != null &&
-                            tournament.placement !== "" && (
-                                <div className="pl-4">
-                                    <PlacementOrdinal
-                                        placement={tournament.placement}
-                                    />
-                                </div>
-                            )}
+                        {tournament.placement != null && tournament.placement !== "" && (
+                            <div className="pl-4">
+                                <PlacementOrdinal placement={tournament.placement} />
+                            </div>
+                        )}
                     </div>
                     <div className="grid gap-3 pb-2 sm:grid-cols-2 lg:grid-cols-3">
                         {tournament.stages.map((stage) => (
@@ -102,49 +94,31 @@ function TeamOverview() {
                                         </h3>
                                         <h2></h2>
                                         <article className="flex flex-wrap gap-3 text-sm">
-                                            {stage.stageTeams[0].wins !==
-                                                undefined &&
-                                                stage.stageTeams[0].losses !==
-                                                    undefined && (
+                                            {stage.stageTeams[0].wins !== undefined &&
+                                                stage.stageTeams[0].losses !== undefined && (
                                                     <div className="flex items-center gap-1.5">
                                                         <span className="text-textSecondary">
                                                             Record:
                                                         </span>
                                                         <span className="font-bold text-green-500">
-                                                            {
-                                                                stage
-                                                                    .stageTeams[0]
-                                                                    .wins
-                                                            }
-                                                            W
+                                                            {stage.stageTeams[0].wins}W
                                                         </span>
                                                         <span className="text-textSecondary">
                                                             -
                                                         </span>
                                                         <span className="font-bold text-red-500">
-                                                            {
-                                                                stage
-                                                                    .stageTeams[0]
-                                                                    .losses
-                                                            }
-                                                            L
+                                                            {stage.stageTeams[0].losses}L
                                                         </span>
                                                     </div>
                                                 )}
                                             {stage.stageTeams[0]?.seed &&
-                                                stage.stageTeams[0].seed >
-                                                    0 && (
+                                                stage.stageTeams[0].seed > 0 && (
                                                     <div className="flex items-center gap-1.5">
                                                         <span className="text-textSecondary">
                                                             Seed:
                                                         </span>
                                                         <span className="text-textPrimary font-medium">
-                                                            #
-                                                            {
-                                                                stage
-                                                                    .stageTeams[0]
-                                                                    .seed
-                                                            }
+                                                            #{stage.stageTeams[0].seed}
                                                         </span>
                                                     </div>
                                                 )}

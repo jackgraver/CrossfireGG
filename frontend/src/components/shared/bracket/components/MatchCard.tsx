@@ -12,20 +12,26 @@ type MatchCardProps = {
     match: MatchWithParticipantAndMinifiedMapsDTO | undefined;
     margin?: boolean;
     unroundedTop?: boolean;
+    /** Narrow columns: full width + shrink + truncated team names */
+    bracketLayout?: boolean;
+    hoveredTeamId?: number | null;
+    onTeamHover?: (teamId: number | null) => void;
 };
 
 export default function MatchCard({
     match,
     margin,
     unroundedTop,
+    bracketLayout,
+    hoveredTeamId,
+    onTeamHover,
 }: MatchCardProps) {
     if (margin === undefined) {
         margin = true;
     }
 
     const navigate = useNavigate();
-    const { activeMatchId, openDropdown, closeDropdown, anchorRect } =
-        useMatchDropdown();
+    const { activeMatchId, openDropdown, closeDropdown, anchorRect } = useMatchDropdown();
     const triggerRef = useRef<HTMLDivElement>(null);
 
     const isOpen = match && activeMatchId === match.id;
@@ -42,6 +48,8 @@ export default function MatchCard({
         }
     };
 
+    const teamVariant = bracketLayout ? "bracket" : "default";
+
     if (!match) {
         return (
             <div
@@ -50,6 +58,7 @@ export default function MatchCard({
                     margin ? "m-2 rounded-md" : "rounded-md",
                     isOpen ? "ring-2 ring-blue-500/50" : "",
                     unroundedTop && "rounded-tl-none border-t-0",
+                    bracketLayout && "w-full min-w-0 max-w-full",
                 )}
             >
                 <div
@@ -63,8 +72,8 @@ export default function MatchCard({
                         }
                     }}
                 >
-                    <MatchTeam team={team1} winner={undefined} score={0} />
-                    <MatchTeam team={team2} winner={undefined} score={0} />
+                    <MatchTeam variant={teamVariant} team={team1} winner={undefined} score={0} hoveredTeamId={hoveredTeamId} onTeamHover={onTeamHover} />
+                    <MatchTeam variant={teamVariant} team={team2} winner={undefined} score={0} hoveredTeamId={hoveredTeamId} onTeamHover={onTeamHover} />
                 </div>
             </div>
         );
@@ -78,6 +87,7 @@ export default function MatchCard({
                 margin ? "m-2 rounded-md" : "rounded-md",
                 isOpen ? "ring-2 ring-blue-500/50" : "",
                 unroundedTop && "rounded-tl-none",
+                bracketLayout && "w-full min-w-0 max-w-full",
             )}
         >
             <div
@@ -92,14 +102,20 @@ export default function MatchCard({
                 }}
             >
                 <MatchTeam
+                    variant={teamVariant}
                     team={team1}
                     winner={match?.participants?.[0]?.winner}
                     score={match?.participants?.[0]?.score}
+                    hoveredTeamId={hoveredTeamId}
+                    onTeamHover={onTeamHover}
                 />
                 <MatchTeam
+                    variant={teamVariant}
                     team={team2}
                     winner={match?.participants?.[1]?.winner}
                     score={match?.participants?.[1]?.score}
+                    hoveredTeamId={hoveredTeamId}
+                    onTeamHover={onTeamHover}
                 />
             </div>
             {isOpen && match && anchorRect && (
@@ -167,8 +183,7 @@ export default function MatchCard({
                                         <span
                                             className={cn(
                                                 "w-8 text-center text-xs font-bold",
-                                                map.winner_id ===
-                                                    match?.participants?.[0].id
+                                                map.winner_id === match?.participants?.[0].id
                                                     ? "text-green-500"
                                                     : "text-textSecondary",
                                             )}
@@ -183,8 +198,7 @@ export default function MatchCard({
                                         <span
                                             className={cn(
                                                 "w-8 text-center text-xs font-bold",
-                                                map.winner_id ===
-                                                    match?.participants?.[1].id
+                                                map.winner_id === match?.participants?.[1].id
                                                     ? "text-green-500"
                                                     : "text-textSecondary",
                                             )}

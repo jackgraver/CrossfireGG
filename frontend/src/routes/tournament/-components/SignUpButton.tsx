@@ -10,13 +10,7 @@ import { useAuth } from "@/contexts/auth";
 
 const useRegisterTeamForTournament = () => {
     return useMutation({
-        mutationFn: ({
-            teamId,
-            tournamentId,
-        }: {
-            teamId: number;
-            tournamentId: string;
-        }) =>
+        mutationFn: ({ teamId, tournamentId }: { teamId: number; tournamentId: string }) =>
             apiPOST<unknown>(`/tournament/${tournamentId}/register`, {
                 teamId,
             }),
@@ -30,9 +24,7 @@ const useRegisterTeamForTournament = () => {
 function TeamSignUpDialog({ teamId }: { teamId: number }) {
     const dialog = useDialog();
     const { data: teamPlayers } = useTeamPlayers(teamId.toString());
-    const starters = teamPlayers?.filter(
-        (player) => player.base_role === "starter",
-    );
+    const starters = teamPlayers?.filter((player) => player.base_role === "starter");
     const subs = teamPlayers?.filter((player) => player.base_role === "sub");
     const coach = teamPlayers?.filter((player) => player.base_role === "coach");
 
@@ -60,18 +52,14 @@ function TeamSignUpDialog({ teamId }: { teamId: number }) {
                                 avatar={player.player_logo ?? undefined}
                                 styling="h-6 w-6 rounded-full object-cover"
                             />
-                            <span className="text-sm font-medium">
-                                {player.player_name}
-                            </span>
+                            <span className="text-sm font-medium">{player.player_name}</span>
                         </div>
                     ))}
                 </div>
             </section>
             {subs && subs.length > 0 && (
                 <section className="flex flex-col gap-y-2">
-                    <h2 className="pt-4 text-lg font-bold text-white">
-                        Substitutes
-                    </h2>
+                    <h2 className="pt-4 text-lg font-bold text-white">Substitutes</h2>
                     <div className="flex flex-col gap-2">
                         {subs.map((player) => (
                             <div
@@ -82,9 +70,7 @@ function TeamSignUpDialog({ teamId }: { teamId: number }) {
                                     avatar={player.player_logo ?? undefined}
                                     styling="h-6 w-6 rounded-full object-cover"
                                 />
-                                <span className="text-sm font-medium">
-                                    {player.player_name}
-                                </span>
+                                <span className="text-sm font-medium">{player.player_name}</span>
                             </div>
                         ))}
                     </div>
@@ -103,9 +89,7 @@ function TeamSignUpDialog({ teamId }: { teamId: number }) {
                                     avatar={player.player_logo ?? undefined}
                                     styling="h-6 w-6 rounded-full object-cover"
                                 />
-                                <span className="text-sm font-medium">
-                                    {player.player_name}
-                                </span>
+                                <span className="text-sm font-medium">{player.player_name}</span>
                             </div>
                         ))}
                     </div>
@@ -115,11 +99,7 @@ function TeamSignUpDialog({ teamId }: { teamId: number }) {
     );
 }
 
-export default function SignUpButton({
-    tournamentId,
-}: {
-    tournamentId: string;
-}) {
+export default function SignUpButton({ tournamentId }: { tournamentId: string }) {
     const { user, isLoading: isAuthLoading } = useAuth();
 
     const { openDialog } = useDialog();

@@ -43,15 +43,13 @@ export default function StepAgreements({
                                     <input
                                         type="checkbox"
                                         checked={field.state.value}
-                                        onChange={(e) =>
-                                            field.handleChange(e.target.checked)
-                                        }
+                                        onChange={(e) => field.handleChange(e.target.checked)}
                                         className="h-5 w-5 rounded border-gray-700 bg-gray-800 text-orange-500 focus:ring-orange-500 focus:ring-offset-gray-900"
                                     />
                                 </div>
                                 <span className="text-gray-300 group-hover:text-white transition-colors">
-                                    I, as a representative of my team, can say that my
-                                    team and I understand the rules and guidelines of
+                                    I, as a representative of my team, can say that my team and I
+                                    understand the rules and guidelines of
                                     {""}
                                 </span>
                             </label>
@@ -72,15 +70,13 @@ export default function StepAgreements({
                                     <input
                                         type="checkbox"
                                         checked={field.state.value}
-                                        onChange={(e) =>
-                                            field.handleChange(e.target.checked)
-                                        }
+                                        onChange={(e) => field.handleChange(e.target.checked)}
                                         className="h-5 w-5 rounded border-gray-700 bg-gray-800 text-orange-500 focus:ring-orange-500 focus:ring-offset-gray-900"
                                     />
                                 </div>
                                 <span className="text-gray-300 group-hover:text-white transition-colors">
-                                    All members of my team that are participating are
-                                    currently in the Crossfire Discord.
+                                    All members of my team that are participating are currently in
+                                    the Crossfire Discord.
                                 </span>
                             </label>
                             {field.state.meta.errors && (

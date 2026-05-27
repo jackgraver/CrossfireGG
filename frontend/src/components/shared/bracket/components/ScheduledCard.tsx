@@ -5,13 +5,16 @@ import { CalendarFold } from "lucide-react";
 
 type ScheduledCardProps = {
     match: MatchWithParticipantAndMinifiedMapsDTO | undefined;
+    bracketLayout?: boolean;
+    hoveredTeamId?: number | null;
+    onTeamHover?: (teamId: number | null) => void;
 };
 
-export default function ScheduledCard({ match }: ScheduledCardProps) {
+export default function ScheduledCard({ match, bracketLayout, hoveredTeamId, onTeamHover }: ScheduledCardProps) {
     if (!match) {
         return (
-            <div className="flex flex-col">
-                <div className="bg-firstBg w-fit max-w-full overflow-hidden rounded-t-md px-1 py-1 whitespace-nowrap">
+            <div className="flex w-full flex-col">
+                <div className="bg-firstBg w-full max-w-full overflow-hidden rounded-t-md px-1 py-1 whitespace-nowrap">
                     <div className="text-textPrimary flex items-center gap-1 text-xs">
                         <p className="w-28">
                             <CalendarFold size={14} />
@@ -19,14 +22,16 @@ export default function ScheduledCard({ match }: ScheduledCardProps) {
                         <span className="inline-block animate-pulse rounded dark:bg-gray-700" />
                     </div>
                 </div>
-                <MatchCard match={match} margin={false} />
+                <div className="w-full">
+                    <MatchCard match={match} margin={false} bracketLayout={bracketLayout} hoveredTeamId={hoveredTeamId} onTeamHover={onTeamHover} />
+                </div>
             </div>
         );
     }
 
     return (
-        <div className="flex flex-col">
-            {match.status == "ONGOING" ? (
+        <div className="flex w-full flex-col">
+            {["ongoing", "live"].includes(match.status?.toLowerCase() ?? "") ? (
                 <div className="w-fit max-w-full overflow-hidden rounded-t-md bg-green-500 px-1 py-0.5 whitespace-nowrap">
                     <div className="flex gap-1 text-xs text-black">
                         <p className="mx-2 font-bold">LIVE!</p>
@@ -37,14 +42,21 @@ export default function ScheduledCard({ match }: ScheduledCardProps) {
                     <div className="text-textPrimary flex items-center gap-1 text-xs">
                         <p className="mr-2 ml-1 flex items-center gap-1 font-bold">
                             <CalendarFold size={14} />
-                            <span>
-                                {formatMatchDate(match?.scheduled_at ?? 0)}
-                            </span>
+                            <span>{formatMatchDate(match?.scheduled_at ?? 0)}</span>
                         </p>
                     </div>
                 </div>
             )}
-            <MatchCard match={match} margin={false} unroundedTop />
+            <div className="w-full">
+                <MatchCard
+                    match={match}
+                    margin={false}
+                    unroundedTop
+                    bracketLayout={bracketLayout}
+                    hoveredTeamId={hoveredTeamId}
+                    onTeamHover={onTeamHover}
+                />
+            </div>
         </div>
     );
 }

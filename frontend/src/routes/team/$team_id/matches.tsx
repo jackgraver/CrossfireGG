@@ -22,7 +22,10 @@ function MatchesPage() {
                 {isLoading ? (
                     <div className="flex flex-col gap-3">
                         {Array.from({ length: 4 }).map((_, i) => (
-                            <div key={i} className="border-border flex flex-col gap-2 rounded-md border p-3">
+                            <div
+                                key={i}
+                                className="border-border flex flex-col gap-2 rounded-md border p-3"
+                            >
                                 <div className="bg-thirdBg h-3 w-20 animate-pulse rounded" />
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-2">
@@ -42,11 +45,7 @@ function MatchesPage() {
                 ) : (
                     <div className="flex flex-col gap-3">
                         {matches?.map((match) => (
-                            <MatchCard
-                                key={match.id}
-                                match={match}
-                                teamId={team_id}
-                            />
+                            <MatchCard key={match.id} match={match} teamId={team_id} />
                         ))}
                     </div>
                 )}
@@ -55,20 +54,10 @@ function MatchesPage() {
     );
 }
 
-function MatchCard({
-    match,
-    teamId,
-}: {
-    match: MatchWithParticipantsDTO;
-    teamId: string;
-}) {
-    const team = match.participants.find(
-        (p) => p.stageTeam.team_id === parseInt(teamId),
-    );
+function MatchCard({ match, teamId }: { match: MatchWithParticipantsDTO; teamId: string }) {
+    const team = match.participants.find((p) => p.stageTeam.team_id === parseInt(teamId));
 
-    const opponent = match.participants.find(
-        (p) => p.stageTeam.team_id !== parseInt(teamId),
-    );
+    const opponent = match.participants.find((p) => p.stageTeam.team_id !== parseInt(teamId));
 
     const getStatusStyle = () => {
         switch (match.status?.toUpperCase()) {
@@ -107,7 +96,12 @@ function MatchCard({
                         </span>
                     )}
                     {match.status && (
-                        <span className={cn("rounded px-1.5 py-0.5 text-xs font-medium", getStatusStyle())}>
+                        <span
+                            className={cn(
+                                "rounded px-1.5 py-0.5 text-xs font-medium",
+                                getStatusStyle(),
+                            )}
+                        >
                             {match.status.toUpperCase()}
                         </span>
                     )}

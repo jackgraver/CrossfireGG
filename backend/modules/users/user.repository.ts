@@ -1,15 +1,6 @@
 import { db } from "../../config/database";
 import { users, userRoles, roles, players, account } from "../../schemas";
-import {
-    eq,
-    ne,
-    and,
-    isNull,
-    isNotNull,
-    inArray,
-    or,
-    ilike,
-} from "drizzle-orm";
+import { eq, ne, and, isNull, isNotNull, inArray, or, ilike } from "drizzle-orm";
 import { uuidv4 } from "zod";
 import { ALL_ROLES, Role } from "@repo/types";
 import { ROOT_USER_EMAIL } from "../../core/rootUser";
@@ -54,11 +45,7 @@ export const userRepository = {
         }
 
         return db.query.users.findMany({
-            where: and(
-                isNull(users.deleted_at),
-                inArray(users.id, ids),
-                notRootUser,
-            ),
+            where: and(isNull(users.deleted_at), inArray(users.id, ids), notRootUser),
             with: {
                 userRoles: userRolesWithActiveRole,
             },
@@ -94,21 +81,13 @@ export const userRepository = {
         });
     },
 
-    replaceStaffRolesForUser: async (
-        userId: string,
-        roleNames: Role[],
-    ): Promise<void> => {
+    replaceStaffRolesForUser: async (userId: string, roleNames: Role[]): Promise<void> => {
         const want = new Set(roleNames);
         await db.transaction(async (tx) => {
             const staffRoleRows = await tx
                 .select()
                 .from(roles)
-                .where(
-                    and(
-                        inArray(roles.name, ALL_ROLES),
-                        isNull(roles.deleted_at),
-                    ),
-                );
+                .where(and(inArray(roles.name, ALL_ROLES), isNull(roles.deleted_at)));
 
             for (const roleName of ALL_ROLES) {
                 const roleRow = staffRoleRows.find((r) => r.name === roleName);
@@ -203,12 +182,7 @@ export const userRepository = {
         const result = await db
             .select({ accountId: account.accountId })
             .from(account)
-            .where(
-                and(
-                    eq(account.userId, userId),
-                    eq(account.providerId, "faceit"),
-                ),
-            )
+            .where(and(eq(account.userId, userId), eq(account.providerId, "faceit")))
             .limit(1);
         return result[0]?.accountId ?? null;
     },
@@ -247,9 +221,7 @@ export const userRepository = {
         const result = await db
             .update(users)
             .set(updated_ata)
-            .where(
-                and(eq(users.id, userId.toString()), isNull(users.deleted_at)),
-            )
+            .where(and(eq(users.id, userId.toString()), isNull(users.deleted_at)))
             .returning();
         return Array.isArray(result) ? result[0] : undefined;
     },
@@ -275,9 +247,7 @@ export const userRepository = {
             .set({
                 updatedAt: new Date(),
             })
-            .where(
-                and(eq(users.id, userId.toString()), isNull(users.deleted_at)),
-            )
+            .where(and(eq(users.id, userId.toString()), isNull(users.deleted_at)))
             .returning();
         return Array.isArray(result) ? result[0] : undefined;
     },

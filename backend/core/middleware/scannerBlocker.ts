@@ -40,7 +40,7 @@ export function scannerBlocker(req: Request, res: Response, next: NextFunction) 
             "unknown";
 
         logger.warn(`Blocked suspicious request from ${clientIp}: ${req.method} ${url}`);
-        
+
         // Return 404 to avoid confirming the path exists or 403 to be explicit.
         // 404 is often better as it doesn't give the bot any information.
         res.status(404).end();

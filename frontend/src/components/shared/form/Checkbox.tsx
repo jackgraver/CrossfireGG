@@ -12,14 +12,11 @@ type CheckboxProps = {
 
 export function Checkbox({ field, label, topLabel, disabled }: CheckboxProps) {
     const { isTouched, errors } = field.state.meta;
-    const error =
-        isTouched && errors.length > 0 ? String(errors[0]) : undefined;
+    const error = isTouched && errors.length > 0 ? String(errors[0]) : undefined;
 
     return (
         <div className={styles.wrapper}>
-            <span className={styles.topLabel}>
-                {topLabel ?? "\u00A0"}
-            </span>
+            <span className={styles.topLabel}>{topLabel ?? "\u00A0"}</span>
             <label
                 htmlFor={field.name}
                 className={`${styles.container}${disabled ? ` ${styles.containerDisabled}` : ""}`}
@@ -27,9 +24,7 @@ export function Checkbox({ field, label, topLabel, disabled }: CheckboxProps) {
                 <RadixCheckbox.Root
                     id={field.name}
                     checked={field.state.value}
-                    onCheckedChange={(checked) =>
-                        field.handleChange(checked === true)
-                    }
+                    onCheckedChange={(checked) => field.handleChange(checked === true)}
                     onBlur={field.handleBlur}
                     disabled={disabled}
                     className={styles.checkbox}

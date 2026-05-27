@@ -31,13 +31,10 @@ export function Input({
     className,
     title,
 }: InputProps) {
-    const isInvalid =
-        errors && errors.length > 0 ? String(errors[0]) : undefined;
+    const isInvalid = errors && errors.length > 0 ? String(errors[0]) : undefined;
 
-    const firstError =
-        errors && errors.length > 0 ? String(errors[0]) : undefined;
-    const extraErrors =
-        errors && errors.length > 1 ? errors.slice(1).join(", ") : undefined;
+    const firstError = errors && errors.length > 0 ? String(errors[0]) : undefined;
+    const extraErrors = errors && errors.length > 1 ? errors.slice(1).join(", ") : undefined;
 
     return (
         <div className={cn(styles.wrapper, className)}>
@@ -95,10 +92,7 @@ export function Input({
             >
                 {firstError}
                 {extraErrors && (
-                    <span title={extraErrors}>
-                        {" "}
-                        {"+" + (errors && errors.length - 1)}
-                    </span>
+                    <span title={extraErrors}> {"+" + (errors && errors.length - 1)}</span>
                 )}
             </em>
         </div>

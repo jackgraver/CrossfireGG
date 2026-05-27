@@ -13,20 +13,17 @@ export const matchService = {
 
             const rosterPlayerIds = (stageTeamId: number) =>
                 new Set(
-                    (match.participants.find((p) => p.team_id === stageTeamId)
-                        ?.stageTeam?.players ?? []
+                    (
+                        match.participants.find((p) => p.team_id === stageTeamId)?.stageTeam
+                            ?.players ?? []
                     ).map((sp) => sp.player_id),
                 );
 
             const team1Roster = rosterPlayerIds(team1Id);
             const team2Roster = rosterPlayerIds(team2Id);
 
-            const team1Stats = map.playerStats.filter((s) =>
-                team1Roster.has(s.player_id),
-            );
-            const team2Stats = map.playerStats.filter((s) =>
-                team2Roster.has(s.player_id),
-            );
+            const team1Stats = map.playerStats.filter((s) => team1Roster.has(s.player_id));
+            const team2Stats = map.playerStats.filter((s) => team2Roster.has(s.player_id));
 
             return {
                 ...map,
@@ -87,57 +84,31 @@ export const matchService = {
     },
 
     getUpcomingMatches: async () => {
-        const now = new Date();
+        const upcomingMatches = await matchRepository.findUpcomingMatches();
 
-        const startOfToday = new Date(now);
-        startOfToday.setHours(0, 0, 0, 0);
+        const isLive = (status: string | null | undefined) => {
+            const s = (status ?? "").toLowerCase();
+            return s === "live" || s === "ongoing";
+        };
 
-        const startOfTomorrow = new Date(startOfToday);
-        startOfTomorrow.setDate(startOfTomorrow.getDate() + 1);
-
-        const startOfDayAfterTomorrow = new Date(startOfTomorrow);
-        startOfDayAfterTomorrow.setDate(startOfDayAfterTomorrow.getDate() + 1);
-
-        const upcomingMatches = await matchRepository.findUpcomingMatches(
-            Math.floor(startOfToday.getTime() / 1000),
-            Math.floor(startOfDayAfterTomorrow.getTime() / 1000),
-        );
-
-        return upcomingMatches.sort((a, b) => {
-            const aScheduledAt = a.scheduled_at ?? 0;
-            const bScheduledAt = b.scheduled_at ?? 0;
-
-            const aIsToday =
-                aScheduledAt >= Math.floor(startOfToday.getTime() / 1000) &&
-                aScheduledAt < Math.floor(startOfTomorrow.getTime() / 1000);
-            const bIsToday =
-                bScheduledAt >= Math.floor(startOfToday.getTime() / 1000) &&
-                bScheduledAt < Math.floor(startOfTomorrow.getTime() / 1000);
-
-            if (aIsToday && !bIsToday) return -1;
-            if (!aIsToday && bIsToday) return 1;
-
-            const aIsLive = a.status === "live";
-            const bIsLive = b.status === "live";
-
-            if (aIsToday && bIsToday) {
-                if (aIsLive && !bIsLive) return -1;
-                if (!aIsLive && bIsLive) return 1;
-            }
-
-            return aScheduledAt - bScheduledAt;
-        });
+        return [...upcomingMatches]
+            .sort((a, b) => {
+                const aLive = isLive(a.status);
+                const bLive = isLive(b.status);
+                if (aLive && !bLive) return -1;
+                if (!aLive && bLive) return 1;
+                const aT = a.scheduled_at ?? Number.MAX_SAFE_INTEGER;
+                const bT = b.scheduled_at ?? Number.MAX_SAFE_INTEGER;
+                return aT - bT;
+            })
+            .slice(0, 5);
     },
 
     getAllMatchCasting: async () => {
         const allMatches = await matchRepository.findAllMatchCasting();
 
-        const claimedMatches = allMatches.filter(
-            (match) => match.casters.length > 0,
-        );
-        const unclaimedMatches = allMatches.filter(
-            (match) => match.casters.length === 0,
-        );
+        const claimedMatches = allMatches.filter((match) => match.casters.length > 0);
+        const unclaimedMatches = allMatches.filter((match) => match.casters.length === 0);
 
         return {
             claimed: claimedMatches,

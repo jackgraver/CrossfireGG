@@ -2,10 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { useTeam, useTeamMembersRoster } from "@/lib/api/team.queries";
 import PlayerCard from "./-components/PlayerCard";
-import type {
-    TeamMemberPlayerDTO,
-    TeamMembersRosterDTO,
-} from "@repo/contracts";
+import type { TeamMemberPlayerDTO, TeamMembersRosterDTO } from "@repo/contracts";
 import { Users } from "lucide-react";
 
 export const Route = createFileRoute("/team/$team_id/members")({
@@ -66,9 +63,7 @@ function MembersPage() {
             ) : !hasPlayers ? (
                 <div className="flex flex-col items-center gap-3 py-12 text-center">
                     <Users className="text-textSecondary h-10 w-10" />
-                    <p className="text-textSecondary">
-                        No players on this team
-                    </p>
+                    <p className="text-textSecondary">No players on this team</p>
                 </div>
             ) : (
                 <MembersSections
@@ -108,24 +103,18 @@ function MembersSections({
     const effectiveSelection = selection ?? defaultSelection;
 
     const optionCount =
-        roster.tournament_rosters.length +
-        (roster.historic_players.length > 0 ? 1 : 0);
+        roster.tournament_rosters.length + (roster.historic_players.length > 0 ? 1 : 0);
     const showDropdown = optionCount > 1;
 
     const displayPlayers = useMemo(() => {
         if (effectiveSelection === "historic") {
             return sortMembers(roster.historic_players, teamCaptainId);
         }
-        const tr = roster.tournament_rosters.find(
-            (t) => t.tournament_id === effectiveSelection,
-        );
+        const tr = roster.tournament_rosters.find((t) => t.tournament_id === effectiveSelection);
         return sortMembers(tr?.players ?? [], teamCaptainId);
     }, [roster, effectiveSelection, teamCaptainId]);
 
-    const selectValue =
-        effectiveSelection === "historic"
-            ? "historic"
-            : String(effectiveSelection);
+    const selectValue = effectiveSelection === "historic" ? "historic" : String(effectiveSelection);
 
     return (
         <div className="flex flex-col gap-4">
@@ -137,16 +126,11 @@ function MembersSections({
                         value={selectValue}
                         onChange={(e) => {
                             const v = e.target.value;
-                            setSelection(
-                                v === "historic" ? "historic" : Number(v),
-                            );
+                            setSelection(v === "historic" ? "historic" : Number(v));
                         }}
                     >
                         {roster.tournament_rosters.map((t) => (
-                            <option
-                                key={t.tournament_id}
-                                value={String(t.tournament_id)}
-                            >
+                            <option key={t.tournament_id} value={String(t.tournament_id)}>
                                 {t.tournament_name}
                             </option>
                         ))}
@@ -164,9 +148,7 @@ function MembersSections({
                 </h2>
             )}
             {displayPlayers.length === 0 && teamHasAnyPlayers(roster) ? (
-                <p className="text-textSecondary py-6 text-sm">
-                    No players in this view.
-                </p>
+                <p className="text-textSecondary py-6 text-sm">No players in this view.</p>
             ) : (
                 <div className="grid gap-3 sm:grid-cols-2">
                     {displayPlayers.map((player) => (

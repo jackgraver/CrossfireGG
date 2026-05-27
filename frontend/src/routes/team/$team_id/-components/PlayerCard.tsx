@@ -49,8 +49,7 @@ export default function PlayerCard({
                 </div>
                 {matchesPlayed != null && matchesPlayed > 0 && (
                     <p className="text-textSecondary mt-1 text-xs">
-                        {matchesPlayed} game{matchesPlayed === 1 ? "" : "s"}{" "}
-                        played
+                        {matchesPlayed} game{matchesPlayed === 1 ? "" : "s"} played
                     </p>
                 )}
                 {stageBadges && stageBadges.length > 0 && (

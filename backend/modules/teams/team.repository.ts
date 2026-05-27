@@ -323,7 +323,10 @@ export const teamRepository = {
                 stageId: stages.id,
             })
             .from(stagePlayers)
-            .innerJoin(stageTeams, eq(stagePlayers.stage_team_id, stageTeams.id))
+            .innerJoin(
+                stageTeams,
+                eq(stagePlayers.stage_team_id, stageTeams.id),
+            )
             .innerJoin(stages, eq(stageTeams.stage_id, stages.id))
             .innerJoin(players, eq(stagePlayers.player_id, players.id))
             .where(
@@ -351,7 +354,10 @@ export const teamRepository = {
                 stageId: stages.id,
             })
             .from(stagePlayers)
-            .innerJoin(stageTeams, eq(stagePlayers.stage_team_id, stageTeams.id))
+            .innerJoin(
+                stageTeams,
+                eq(stagePlayers.stage_team_id, stageTeams.id),
+            )
             .innerJoin(stages, eq(stageTeams.stage_id, stages.id))
             .innerJoin(players, eq(stagePlayers.player_id, players.id))
             .where(
@@ -377,7 +383,10 @@ export const teamRepository = {
                 tournamentId: stages.tournament_id,
             })
             .from(stagePlayers)
-            .innerJoin(stageTeams, eq(stagePlayers.stage_team_id, stageTeams.id))
+            .innerJoin(
+                stageTeams,
+                eq(stagePlayers.stage_team_id, stageTeams.id),
+            )
             .innerJoin(stages, eq(stageTeams.stage_id, stages.id))
             .innerJoin(players, eq(stagePlayers.player_id, players.id))
             .where(
@@ -395,7 +404,10 @@ export const teamRepository = {
         const rows = await db
             .selectDistinct({ player_id: stagePlayers.player_id })
             .from(stagePlayers)
-            .innerJoin(stageTeams, eq(stagePlayers.stage_team_id, stageTeams.id))
+            .innerJoin(
+                stageTeams,
+                eq(stagePlayers.stage_team_id, stageTeams.id),
+            )
             .where(
                 and(
                     eq(stageTeams.team_id, teamId),
@@ -538,8 +550,17 @@ export const teamRepository = {
             .limit(1);
 
         let teamLogo = "";
+        if (teamData.faceit_id === "27774140-ea00-4c62-86d6-a2e0257e9703") {
+            console.log("oyh teamData", teamData.team_logo);
+        }
         if (teamData.team_logo) {
             await fetch(teamData.team_logo).then((res) => {
+                if (
+                    teamData.faceit_id ===
+                    "27774140-ea00-4c62-86d6-a2e0257e9703"
+                ) {
+                    console.log("oyh res", res);
+                }
                 if (res.status !== 400) {
                     teamLogo = teamData.team_logo!;
                 }

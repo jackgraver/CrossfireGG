@@ -9,18 +9,10 @@ import { logger } from "./logger";
  * On validation failure, responds with HTTP 500 and a generic error body — Zod
  * messages and paths are not exposed to clients (they are logged server-side).
  */
-export function sendContract(
-    res: Response,
-    contract: z.ZodTypeAny,
-    data: unknown,
-    status = 200,
-) {
+export function sendContract(res: Response, contract: z.ZodTypeAny, data: unknown, status = 200) {
     const result = contract.safeParse(data);
     if (!result.success) {
-        logger.error(
-            "Response contract validation failed:",
-            result.error.issues,
-        );
+        logger.error("Response contract validation failed:", result.error.issues);
         const isDev = process.env.NODE_ENV === "development";
         return res.status(500).json({
             error: "Internal server error",

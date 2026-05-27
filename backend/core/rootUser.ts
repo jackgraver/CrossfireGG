@@ -57,10 +57,7 @@ export async function ensureRootUser() {
                 if (existingUser.name !== ROOT_NAME) updates.name = ROOT_NAME;
                 if (existingUser.deleted_at) updates.deleted_at = null;
                 if (Object.keys(updates).length > 0) {
-                    await tx
-                        .update(users)
-                        .set(updates)
-                        .where(eq(users.id, rootUserId));
+                    await tx.update(users).set(updates).where(eq(users.id, rootUserId));
                 }
             }
 

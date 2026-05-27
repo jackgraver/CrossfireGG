@@ -14,7 +14,7 @@ export default function GroupCard({
     group: GroupWithMatchesDTO;
     matches: MatchWithParticipantAndMinifiedMapsDTO[];
 }) {
-    const groupTeams = useMemo(() => {
+    const { groupTeams, noMatchesPlayed } = useMemo(() => {
         const teamMap = new Map<number, MatchParticipantWithTeamDTO>();
         matches.forEach((m) => {
             m.participants?.forEach((p) => {
@@ -23,9 +23,14 @@ export default function GroupCard({
                 }
             });
         });
-        return Array.from(teamMap.values()).sort(
-            (a, b) => b.stageTeam.wins - a.stageTeam.wins,
+        const teams = Array.from(teamMap.values());
+        const noMatchesPlayed = teams.every(
+            (t) => t.stageTeam.wins === 0 && t.stageTeam.losses === 0,
         );
+        const sorted = noMatchesPlayed
+            ? [...teams].sort((a, b) => a.stageTeam.seed - b.stageTeam.seed)
+            : [...teams].sort((a, b) => b.stageTeam.wins - a.stageTeam.wins);
+        return { groupTeams: sorted, noMatchesPlayed };
     }, [matches]);
 
     return (
@@ -48,7 +53,7 @@ export default function GroupCard({
                         key={team.id}
                         team={team}
                         index={index}
-                        // totalTeams={groupTeams.length}
+                        noMatchesPlayed={noMatchesPlayed}
                     />
                 ))}
             </div>

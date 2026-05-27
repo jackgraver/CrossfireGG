@@ -4,11 +4,7 @@ import TeamLogo from "@/components/shared/bracket/atoms/TeamLogo";
 import { formatTimeOnly } from "@/lib/date.utils";
 import { cn } from "@/utils/cn";
 
-export default function StageMatchRow({
-    match,
-}: {
-    match: MatchWithParticipantsDTO;
-}) {
+export default function StageMatchRow({ match }: { match: MatchWithParticipantsDTO }) {
     const p0 = match.participants[0];
     const p1 = match.participants[1];
     const t0 = p0?.stageTeam.team;
@@ -31,11 +27,7 @@ export default function StageMatchRow({
     };
 
     return (
-        <Link
-            to="/match/$match_id"
-            params={{ match_id: String(match.id) }}
-            className="group block"
-        >
+        <Link to="/match/$match_id" params={{ match_id: String(match.id) }} className="group block">
             <div className="border-border hover:border-textSecondary/30 flex flex-col gap-2 rounded-md border p-3 transition-colors">
                 <div className="flex items-center gap-2">
                     {match.scheduled_at != null && (
@@ -61,10 +53,7 @@ export default function StageMatchRow({
                             styling="h-8 w-8 shrink-0 rounded-full"
                         />
                         <span
-                            className={cn(
-                                "truncate font-medium",
-                                p0?.winner && "text-green-400",
-                            )}
+                            className={cn("truncate font-medium", p0?.winner && "text-green-400")}
                         >
                             {t0?.name ?? "TBD"}
                         </span>

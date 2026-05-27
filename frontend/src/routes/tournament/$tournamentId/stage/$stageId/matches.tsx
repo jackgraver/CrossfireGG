@@ -5,22 +5,15 @@ import { groupMatchesByCalendarDay } from "@/lib/match-grouping";
 import StageMatchRow from "./-components/StageMatchRow";
 import { CalendarDays } from "lucide-react";
 
-export const Route = createFileRoute(
-    "/tournament/$tournamentId/stage/$stageId/matches",
-)({
+export const Route = createFileRoute("/tournament/$tournamentId/stage/$stageId/matches")({
     component: StagePage,
 });
 
 function StagePage() {
     const { stageId } = Route.useParams();
-    const { data: matchesData, isLoading: matchesLoading } = useMatchesByStage(
-        Number(stageId),
-    );
+    const { data: matchesData, isLoading: matchesLoading } = useMatchesByStage(Number(stageId));
     const matches = matchesData?.matches ?? [];
-    const dayGroups = useMemo(
-        () => groupMatchesByCalendarDay(matches),
-        [matches],
-    );
+    const dayGroups = useMemo(() => groupMatchesByCalendarDay(matches), [matches]);
 
     return (
         <div className="rounded-xl shadow-md">
@@ -49,9 +42,7 @@ function StagePage() {
                 ) : matches.length === 0 ? (
                     <div className="flex flex-col items-center gap-3 py-12 text-center">
                         <CalendarDays className="text-textSecondary h-10 w-10" />
-                        <p className="text-textSecondary">
-                            No matches found for this stage
-                        </p>
+                        <p className="text-textSecondary">No matches found for this stage</p>
                     </div>
                 ) : (
                     <div className="flex flex-col gap-8">

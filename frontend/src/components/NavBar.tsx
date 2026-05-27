@@ -1,24 +1,11 @@
-import { useEffect, useState } from "react";
-import { Link, useRouter } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { cn } from "@/utils/cn";
 import { matchesRole } from "@/utils/role.util";
 import { Roles } from "@repo/types";
-import {
-    Trophy,
-    Video,
-    Settings,
-    User,
-    LogOut,
-    Moon,
-    Sun,
-    Monitor,
-    Home,
-} from "lucide-react";
+import { Trophy, Video, Settings, User, LogOut, Home, Users, Info } from "lucide-react";
 import TeamLogo from "./shared/bracket/atoms/TeamLogo";
 import { useSignOut } from "@/contexts/auth";
-import { authClient } from "@/lib/auth/auth-client";
-import { useRouteContext } from "@tanstack/react-router";
-import { setThemeServerFn } from "@/lib/theme";
+// import { authClient } from "@/lib/auth/auth-client";
 import { UserType } from "@/lib/auth/auth.query";
 
 interface NavItemProps {
@@ -63,11 +50,7 @@ const NavItem = ({
     }
 
     return (
-        <button
-            className={baseClasses}
-            onClick={onClick}
-            onMouseEnter={onMouseEnter}
-        >
+        <button className={baseClasses} onClick={onClick} onMouseEnter={onMouseEnter}>
             {left && icon}
             <span className="hidden sm:inline">{label}</span>
             {!left && icon}
@@ -83,42 +66,18 @@ export default function NavBar({
     isHomePage?: boolean;
 }) {
     const signOut = useSignOut();
-    const { theme } = useRouteContext({ from: "__root__" });
-    const router = useRouter();
-
-    const [scrolled, setScrolled] = useState(false);
-
-    useEffect(() => {
-        if (!isHomePage) return;
-        const onScroll = () =>
-            setScrolled(window.scrollY > window.innerHeight / 2);
-        window.addEventListener("scroll", onScroll, { passive: true });
-        return () => window.removeEventListener("scroll", onScroll);
-    }, [isHomePage]);
-
-    function toggleDarkMode() {
-        const themes = ["light", "dark", "auto"] as const;
-        const next = themes[(themes.indexOf(theme) + 1) % themes.length];
-        setThemeServerFn({ data: next }).then(() => router.invalidate());
-    }
 
     return (
         <nav
             className={cn(
-                "top-0 z-50 backdrop-blur-md transition-colors duration-500",
-                isHomePage
-                    ? cn(
-                          "fixed inset-x-0",
-                          scrolled ? "bg-mainBg/80" : "bg-black/20",
-                      )
-                    : "bg-mainBg/80 sticky",
+                "z-50 backdrop-blur-md transition-colors duration-500 bg-mainBg inset-x-0 mx-auto top-0",
+                isHomePage ? "fixed" : "sticky",
             )}
         >
             <div
                 className={cn(
-                    "mx-auto flex h-14 items-center justify-between",
-                    isHomePage && "transition-[max-width,padding] duration-500",
-                    isHomePage && !scrolled ? "max-w-full px-4" : "max-w-7xl",
+                    "flex h-14 items-center justify-between",
+                    isHomePage ? "mx-auto max-w-8/12" : "w-full",
                 )}
             >
                 <div className="flex items-center gap-1">
@@ -129,23 +88,23 @@ export default function NavBar({
                         padding="px-3 py-2 -ml-3"
                     />
                     <NavItem
-                        to="/tournament"
+                        to="/tournament/9/stage/1/bracket"
                         icon={<Trophy size={18} />}
-                        label="Tournaments"
+                        label="Season 5"
                         padding="px-3 py-2 -ml-3"
                     />
-                    {matchesRole(
-                        user?.roles,
-                        Roles.ADMIN,
-                        Roles.PRODUCTION_LEAD,
-                        Roles.PRODUCTION,
-                    ) && (
-                        <NavItem
-                            to="/casting"
-                            icon={<Video size={18} />}
-                            label="Casting"
-                        />
-                    )}
+                    <NavItem
+                        to="/about"
+                        icon={<Info size={18} />}
+                        label="About Us"
+                        padding="px-3 py-2 -ml-3"
+                    />
+                    <NavItem
+                        to="/partners"
+                        icon={<Users size={18} />}
+                        label="Partners"
+                        padding="px-3 py-2 -ml-3"
+                    />
                 </div>
                 <div className="flex items-center gap-1">
                     {matchesRole(user?.roles, Roles.ADMIN) && (
@@ -156,6 +115,12 @@ export default function NavBar({
                             left={false}
                         />
                     )}
+                    {matchesRole(
+                        user?.roles,
+                        Roles.ADMIN,
+                        Roles.PRODUCTION_LEAD,
+                        Roles.PRODUCTION,
+                    ) && <NavItem to="/casting" icon={<Video size={18} />} label="Casting" />}
                     {user ? (
                         <div className="group relative">
                             <NavItem
@@ -172,22 +137,6 @@ export default function NavBar({
                             />
                             <div className="bg-mainBg border-border invisible absolute right-0 z-20 mt-2 w-40 rounded border opacity-0 shadow-md transition-opacity duration-200 group-hover:visible group-hover:opacity-100">
                                 <ul className="flex flex-col py-2">
-                                    <li>
-                                        <NavItem
-                                            icon={
-                                                theme === "dark" ? (
-                                                    <Moon size={18} />
-                                                ) : theme === "light" ? (
-                                                    <Sun />
-                                                ) : (
-                                                    <Monitor />
-                                                )
-                                            }
-                                            label="Theme"
-                                            onClick={() => toggleDarkMode()}
-                                            left={false}
-                                        />
-                                    </li>
                                     <li>
                                         <NavItem
                                             left={false}
@@ -210,6 +159,8 @@ export default function NavBar({
                                 </ul>
                             </div>
                         </div>
+                    ) : null}
+                    {/* Sign-in temporarily disabled
                     ) : (
                         <button
                             className="bg-faceit hover:bg-faceitSecondary flex cursor-pointer items-center gap-2 rounded-md py-2 pr-3 pl-2 text-sm font-bold text-black"
@@ -224,19 +175,14 @@ export default function NavBar({
 
                                 await authClient.signIn.oauth2({
                                     providerId: "faceit",
-                                    callbackURL:
-                                        "https://crossfiregg.com/tournament",
+                                    callbackURL: "https://crossfiregg.com/tournament",
                                 });
                             }}
                         >
-                            <img
-                                src="/faceit.png"
-                                alt="Faceit"
-                                className="h-5 w-5"
-                            />
+                            <img src="/faceit.png" alt="Faceit" className="h-5 w-5" />
                             Sign In With Faceit
                         </button>
-                    )}
+                    )} */}
                 </div>
             </div>
 

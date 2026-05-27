@@ -1,12 +1,4 @@
-import {
-    pgTable,
-    serial,
-    integer,
-    timestamp,
-    boolean,
-    unique,
-    index,
-} from "drizzle-orm/pg-core";
+import { pgTable, serial, integer, timestamp, boolean, unique, index } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { stagePlayers } from "./stage_player.schema";
 import { teams } from "./team.schema";

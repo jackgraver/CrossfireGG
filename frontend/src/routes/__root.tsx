@@ -1,9 +1,4 @@
-import {
-    HeadContent,
-    Scripts,
-    createRootRoute,
-    useRouterState,
-} from "@tanstack/react-router";
+import { HeadContent, Scripts, createRootRoute, useRouterState } from "@tanstack/react-router";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import NavBar from "@/components/NavBar";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -14,14 +9,14 @@ import { AuthProvider } from "@/contexts/auth";
 import { DialogProvider } from "@/lib/dialog/DialogProvider";
 import { NotFound } from "./not-found";
 import Footer from "@/components/Footer";
-import { getThemeFromBrowser, getThemeServerFn } from "@/lib/theme";
 import { getUserMeServerFn } from "@/lib/auth/auth.server";
 import { meQueryOptions } from "@/lib/auth/auth.query";
 import ToastProvider from "@/components/shared/toast/ToastProvider";
 import { cn } from "@/utils/cn";
+import { defaultTitleFromMatches } from "@/utils/documentTitle";
 
 export const Route = createRootRoute({
-    head: () => ({
+    head: ({ matches }) => ({
         meta: [
             {
                 charSet: "utf-8",
@@ -30,36 +25,30 @@ export const Route = createRootRoute({
                 name: "viewport",
                 content: "width=device-width, initial-scale=1",
             },
-            { title: "CrossFire Season 4" },
+            { title: defaultTitleFromMatches(matches) },
         ],
         links: [{ rel: "stylesheet", href: appCss }],
     }),
     beforeLoad: async () => {
-        const [theme, user] = await Promise.all([
+        const user =
             typeof window === "undefined"
-                ? getThemeServerFn()
-                : Promise.resolve(getThemeFromBrowser()),
-            typeof window === "undefined"
-                ? getUserMeServerFn()
-                : queryClient.ensureQueryData(meQueryOptions()),
-        ]);
-        return { theme, user };
+                ? await getUserMeServerFn()
+                : await queryClient.ensureQueryData(meQueryOptions());
+        return { user };
     },
     notFoundComponent: () => <NotFound />,
     shellComponent: RootDocument,
 });
 
 function RootDocument({ children }: { children: React.ReactNode }) {
-    const { theme } = Route.useRouteContext();
     const { user } = Route.useRouteContext();
 
     const isHomePage = useRouterState({
-        select: (state) =>
-            (state.resolvedLocation ?? state.location).pathname === "/",
+        select: (state) => (state.resolvedLocation ?? state.location).pathname === "/",
     });
 
     return (
-        <html className={theme} lang="en" suppressHydrationWarning>
+        <html className="dark" lang="en" suppressHydrationWarning>
             <head>
                 <HeadContent />
             </head>
@@ -75,13 +64,10 @@ function RootDocument({ children }: { children: React.ReactNode }) {
                                         !isHomePage && "lg:max-w-8/12",
                                     )}
                                 >
-                                    <NavBar
-                                        user={user}
-                                        isHomePage={isHomePage}
-                                    />
+                                    <NavBar user={user} isHomePage={isHomePage} />
                                     {children}
-                                    <Footer />
                                 </div>
+                                <Footer />
                             </div>
                             <ReactQueryDevtools initialIsOpen={false} />
                             <Scripts />

@@ -1,12 +1,11 @@
 {
     "private": true,
-    "type": "module",
     "workspaces": [
         "frontend",
-        "frontend_mig",
         "backend",
         "shared/*"
     ],
+    "type": "module",
     "scripts": {
         "fmt": "oxfmt",
         "fmt:check": "oxfmt --check",
@@ -14,9 +13,9 @@
         "scan": "next dev & npx react-scan@latest localhost:5173"
     },
     "dependencies": {
-        "better-auth": "^1.4.18",
+        "better-auth": "^1.6.11",
         "drizzle-kit": "^0.31.8",
-        "drizzle-orm": "^0.45.1",
+        "drizzle-orm": "^0.45.2",
         "react-scan": "^0.4.3",
         "zod": "^4.3.5"
     },

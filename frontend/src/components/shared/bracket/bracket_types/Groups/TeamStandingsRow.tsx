@@ -5,12 +5,13 @@ import TeamLogo from "../../atoms/TeamLogo";
 export default function TeamStandingsRow({
     team,
     index,
+    noMatchesPlayed = false,
 }: {
     team: MatchParticipantWithTeamDTO;
     index: number;
+    noMatchesPlayed?: boolean;
 }) {
-    // Determine if team is in the "Qualification Zone" (top 2 for now, could be dynamic)
-    const isQualifying = index < 2;
+    const isQualifying = !noMatchesPlayed && index < 2;
 
     return (
         <Link

@@ -16,14 +16,10 @@ export const useTeam = (teamId: string) => {
     });
 };
 
-export const useTeamMatchesByStage = (
-    teamId: string,
-    stageId: string | null,
-) => {
+export const useTeamMatchesByStage = (teamId: string, stageId: string | null) => {
     return useQuery<unknown[]>({
         queryKey: ["team", teamId, "stage", stageId, "matches"],
-        queryFn: () =>
-            apiGET<unknown[]>(`/team/${teamId}/stages/${stageId}/matches`),
+        queryFn: () => apiGET<unknown[]>(`/team/${teamId}/stages/${stageId}/matches`),
         enabled: !!teamId && !!stageId,
     });
 };
@@ -39,8 +35,7 @@ export const useTeamPlayers = (teamId: string) => {
 export const useTeamMembersRoster = (teamId: string) => {
     return useQuery<TeamMembersRosterDTO>({
         queryKey: ["team", teamId, "members"],
-        queryFn: () =>
-            apiGET<TeamMembersRosterDTO>(`/team/${teamId}/members`),
+        queryFn: () => apiGET<TeamMembersRosterDTO>(`/team/${teamId}/members`),
         enabled: !!teamId,
     });
 };
@@ -48,8 +43,7 @@ export const useTeamMembersRoster = (teamId: string) => {
 export const useTeamTournaments = (teamId: string) => {
     return useQuery<TeamWithTournamentDTO>({
         queryKey: ["team", teamId, "tournaments"],
-        queryFn: () =>
-            apiGET<TeamWithTournamentDTO>(`/team/${teamId}/tournament`),
+        queryFn: () => apiGET<TeamWithTournamentDTO>(`/team/${teamId}/tournament`),
         enabled: !!teamId,
     });
 };
@@ -57,8 +51,7 @@ export const useTeamTournaments = (teamId: string) => {
 export const useTeamMatches = (teamId: string) => {
     return useQuery<MatchWithParticipantsDTO[]>({
         queryKey: ["team", teamId, "matches"],
-        queryFn: () =>
-            apiGET<MatchWithParticipantsDTO[]>(`/team/${teamId}/matches`),
+        queryFn: () => apiGET<MatchWithParticipantsDTO[]>(`/team/${teamId}/matches`),
         enabled: !!teamId,
     });
 };

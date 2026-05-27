@@ -2,8 +2,8 @@ import { tournamentRepository } from "./tournament.repository";
 import { stagesRepository } from "./stages/stages.repository";
 
 export const tournamentService = {
-    getAllTournaments: async () => {
-        const allTournaments = await tournamentRepository.findAll();
+    getAllTournaments: async (status?: "active" | "upcoming" | "ended") => {
+        const allTournaments = await tournamentRepository.findAll(status);
         return allTournaments;
     },
 
@@ -74,7 +74,6 @@ export const tournamentService = {
         if (!entryStage) {
             throw new Error("No entry stage found");
         }
-
         const teams = await stagesRepository.findAllStageTeams(entryStage.id);
 
         const res = teams.map((team) => ({
@@ -109,5 +108,16 @@ export const tournamentService = {
             throw new Error("No entry stage found");
         }
         return entryStage;
+    },
+
+    getLiveBracketTarget: async () => {
+        return await tournamentRepository.findLiveBracketTarget();
+    },
+
+    setCurrentStage: async (tournamentId: number, stageId: number | null) => {
+        return await tournamentRepository.setCurrentStage(
+            tournamentId,
+            stageId,
+        );
     },
 };

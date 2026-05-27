@@ -52,9 +52,7 @@ export const TeamTournamentRosterEntryContract = z.object({
     players: z.array(TeamMemberPlayerContract),
 });
 
-export type TeamTournamentRosterEntryDTO = z.infer<
-    typeof TeamTournamentRosterEntryContract
->;
+export type TeamTournamentRosterEntryDTO = z.infer<typeof TeamTournamentRosterEntryContract>;
 
 export const TeamMembersRosterContract = z.object({
     tournament_rosters: z.array(TeamTournamentRosterEntryContract),

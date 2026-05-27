@@ -4,6 +4,7 @@ import {
     MatchWithParticipantsContract,
 } from "./match.contracts";
 import { StageFormatContract } from "./stage.contracts";
+import { LiveBracketTargetContract } from "./tournament.contracts";
 
 export const GroupContract = z.object({
     id: z.number(),
@@ -22,8 +23,8 @@ export type GroupWithMatchesDTO = z.infer<typeof GroupWithMatchesContract>;
 export const GroupWithMatchesAndFormatContract = z.object({
     format: StageFormatContract,
     groups: GroupWithMatchesContract.array(),
+    /** Present when the bracket was resolved via `live` path or `?live=true`. */
+    liveContext: LiveBracketTargetContract.optional(),
 });
 
-export type GroupWithMatchesAndFormatDTO = z.infer<
-    typeof GroupWithMatchesAndFormatContract
->;
+export type GroupWithMatchesAndFormatDTO = z.infer<typeof GroupWithMatchesAndFormatContract>;

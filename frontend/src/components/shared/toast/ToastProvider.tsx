@@ -28,10 +28,7 @@ export default function ToastProvider() {
             if (event.type === "show") {
                 setToasts((prev) => [...prev, event.toast]);
                 if (event.toast.durationMs > 0) {
-                    const handle = setTimeout(
-                        () => remove(event.toast.id),
-                        event.toast.durationMs,
-                    );
+                    const handle = setTimeout(() => remove(event.toast.id), event.toast.durationMs);
                     timeouts.current.set(event.toast.id, handle);
                 }
             } else if (event.type === "dismiss") {
@@ -67,10 +64,8 @@ export default function ToastProvider() {
     const containerHeight =
         items.length > 0
             ? hovered
-                ? expandedOffset(items.length - 1) +
-                  h(items[items.length - 1].id)
-                : h(items[0].id) +
-                  Math.min(items.length - 1, MAX_VISIBLE_STACKED - 1) * PEEK
+                ? expandedOffset(items.length - 1) + h(items[items.length - 1].id)
+                : h(items[0].id) + Math.min(items.length - 1, MAX_VISIBLE_STACKED - 1) * PEEK
             : 0;
 
     const center = toasts.filter((t) => t.variant === "center");
@@ -101,20 +96,13 @@ export default function ToastProvider() {
                                         : i === 0
                                           ? "none"
                                           : `translateY(-${i * PEEK}px) scale(${1 - i * 0.05})`,
-                                    opacity:
-                                        !hovered && i >= MAX_VISIBLE_STACKED
-                                            ? 0
-                                            : 1,
+                                    opacity: !hovered && i >= MAX_VISIBLE_STACKED ? 0 : 1,
                                     transformOrigin: "bottom center",
                                 }}
                             >
                                 <Toast
                                     title={t.title}
-                                    body={
-                                        t.body !== "" && t.body != null
-                                            ? t.body
-                                            : undefined
-                                    }
+                                    body={t.body !== "" && t.body != null ? t.body : undefined}
                                     status={t.status}
                                     onClose={() => remove(t.id)}
                                 />
@@ -129,8 +117,7 @@ export default function ToastProvider() {
                         <Toast
                             title={latestCenter.title}
                             body={
-                                latestCenter.body !== "" &&
-                                latestCenter.body != null
+                                latestCenter.body !== "" && latestCenter.body != null
                                     ? latestCenter.body
                                     : undefined
                             }

@@ -1,11 +1,4 @@
-import {
-    pgTable,
-    serial,
-    integer,
-    text,
-    timestamp,
-    index,
-} from "drizzle-orm/pg-core";
+import { pgTable, serial, integer, text, timestamp, index } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { matches } from "./match.schema";
 import { matchParticipants } from "./match_participant.schema";

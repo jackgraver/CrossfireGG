@@ -9,9 +9,7 @@ type UseTeamRegistrationFormOptions = {
     onError?: (error: unknown) => void;
 };
 
-export function useTeamRegistrationForm(
-    options: UseTeamRegistrationFormOptions = {},
-) {
+export function useTeamRegistrationForm(options: UseTeamRegistrationFormOptions = {}) {
     const registerMutation = useRegisterTeam();
 
     const form = useForm({

@@ -3,12 +3,7 @@ import { logger } from "../logger";
 import { HttpError } from "../errors";
 import { z } from "zod";
 
-export function errorHandler(
-    err: any,
-    req: Request,
-    res: Response,
-    next: NextFunction,
-) {
+export function errorHandler(err: any, req: Request, res: Response, next: NextFunction) {
     if (err instanceof HttpError) {
         return res.status(err.statusCode).json({
             error: err.message,
@@ -26,8 +21,7 @@ export function errorHandler(
                 process.env.NODE_ENV === "development"
                     ? "Response contract validation failed"
                     : undefined,
-            details:
-                process.env.NODE_ENV === "development" ? err.issues : undefined,
+            details: process.env.NODE_ENV === "development" ? err.issues : undefined,
         });
     }
 
@@ -35,7 +29,6 @@ export function errorHandler(
 
     res.status(500).json({
         error: "Internal server error",
-        message:
-            process.env.NODE_ENV === "development" ? err.message : undefined,
+        message: process.env.NODE_ENV === "development" ? err.message : undefined,
     });
 }

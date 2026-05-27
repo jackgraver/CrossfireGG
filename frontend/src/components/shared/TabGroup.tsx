@@ -1,5 +1,6 @@
 import { cn } from "@/utils/cn";
 import { Link, useMatchRoute } from "@tanstack/react-router";
+import type { ReactNode } from "react";
 import { useLayoutEffect, useRef, useState } from "react";
 
 export interface Tab {
@@ -12,9 +13,10 @@ export interface Tab {
 
 type TabGroupProps = {
     tabs: Tab[];
+    trailing?: ReactNode;
 };
 
-export default function TabGroup({ tabs }: TabGroupProps) {
+export default function TabGroup({ tabs, trailing }: TabGroupProps) {
     const matchRoute = useMatchRoute();
     const tabsRef = useRef<(HTMLAnchorElement | null)[]>([]);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -47,7 +49,7 @@ export default function TabGroup({ tabs }: TabGroupProps) {
 
     return (
         <div className="flex flex-col justify-between gap-6 border-b border-white sm:flex-row sm:items-center">
-            <div ref={containerRef} className="relative flex gap-2">
+            <div ref={containerRef} className="relative flex min-w-0 flex-1 gap-2">
                 <span
                     className="pointer-events-none absolute inset-y-0 mb-2 rounded-md bg-gray-400/20 transition-[left,width] duration-300 ease-in-out"
                     style={indicator}
@@ -73,6 +75,11 @@ export default function TabGroup({ tabs }: TabGroupProps) {
                     </Link>
                 ))}
             </div>
+            {trailing != null && trailing !== false ? (
+                <div className="mb-2 flex shrink-0 items-center justify-start sm:justify-end">
+                    {trailing}
+                </div>
+            ) : null}
         </div>
     );
 }

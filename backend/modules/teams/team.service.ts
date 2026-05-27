@@ -37,10 +37,7 @@ function dedupeStageRowsByLatestStage(
         list.push(r);
         byPlayer.set(id, list);
     }
-    const out = new Map<
-        number,
-        { player: PlayerRow; rosterRole: "starter" | "sub" | "coach" }
-    >();
+    const out = new Map<number, { player: PlayerRow; rosterRole: "starter" | "sub" | "coach" }>();
     for (const [pid, list] of byPlayer) {
         const sorted = [...list].sort((a, b) => {
             const t = b.stageEndDate.getTime() - a.stageEndDate.getTime();
@@ -101,9 +98,7 @@ export const teamService = {
             const p = t.placement;
             if (p != null && String(p).trim() !== "") {
                 if (!["1st", "2nd", "3rd", "3rd-4th"].includes(p)) continue;
-                placement_summaries.push(
-                    formatTeamPlacementSummary(t.name, String(p)),
-                );
+                placement_summaries.push(formatTeamPlacementSummary(t.name, String(p)));
             }
         }
 
@@ -136,12 +131,8 @@ export const teamService = {
                     return b.id - a.id;
                 });
 
-                const raw =
-                    sortedStages[0].stageTeams[0].tournamentResult?.placement;
-                placement =
-                    raw != null && String(raw).trim() !== ""
-                        ? String(raw)
-                        : undefined;
+                const raw = sortedStages[0].stageTeams[0].tournamentResult?.placement;
+                placement = raw != null && String(raw).trim() !== "" ? String(raw) : undefined;
             }
 
             return {
@@ -156,27 +147,15 @@ export const teamService = {
         return matches;
     },
 
-    getTeamMatchesByStage: async (
-        teamId: number,
-        stageId: number,
-    ): Promise<FormattedMatch[]> => {
-        const teamMatches = await teamRepository.findMatchesByTeamIdAndStageId(
-            teamId,
-            stageId,
-        );
+    getTeamMatchesByStage: async (teamId: number, stageId: number): Promise<FormattedMatch[]> => {
+        const teamMatches = await teamRepository.findMatchesByTeamIdAndStageId(teamId, stageId);
 
         const formattedMatches: FormattedMatch[] = await Promise.all(
             teamMatches.map(async (match) => {
-                const participants = await teamRepository.findMatchParticipants(
-                    match.id,
-                );
+                const participants = await teamRepository.findMatchParticipants(match.id);
 
-                const team1Entry = participants.find(
-                    (p) => p.participant.position === 1,
-                );
-                const team2Entry = participants.find(
-                    (p) => p.participant.position === 2,
-                );
+                const team1Entry = participants.find((p) => p.participant.position === 1);
+                const team2Entry = participants.find((p) => p.participant.position === 2);
 
                 const team1Data = team1Entry?.team;
                 const team2Data = team2Entry?.team;
@@ -187,8 +166,7 @@ export const teamService = {
                           name: team1Data.name,
                           team_logo: team1Data.team_logo || null,
                           faceit_id: team1Data.faceit_id || null,
-                          team_captain_id:
-                              team1Data.team_captain_id?.toString() || null,
+                          team_captain_id: team1Data.team_captain_id?.toString() || null,
                       }
                     : null;
 
@@ -198,8 +176,7 @@ export const teamService = {
                           name: team2Data.name,
                           team_logo: team2Data.team_logo || null,
                           faceit_id: team2Data.faceit_id || null,
-                          team_captain_id:
-                              team2Data.team_captain_id?.toString() || null,
+                          team_captain_id: team2Data.team_captain_id?.toString() || null,
                       }
                     : null;
 
@@ -227,9 +204,7 @@ export const teamService = {
 
     getTeamMembersRoster: async (teamId: number) => {
         const orderedTournaments =
-            await teamRepository.findTournamentsForTeamOrderedByStartDate(
-                teamId,
-            );
+            await teamRepository.findTournamentsForTeamOrderedByStartDate(teamId);
 
         if (orderedTournaments.length > 0) {
             type DedupedMap = Map<
@@ -244,11 +219,7 @@ export const teamService = {
             }[] = [];
 
             for (const t of orderedTournaments) {
-                const rows =
-                    await teamRepository.findStagePlayersForTeamInTournament(
-                        teamId,
-                        t.id,
-                    );
+                const rows = await teamRepository.findStagePlayersForTeamInTournament(teamId, t.id);
                 const stageRows: StageRosterRow[] = rows.map((r) => ({
                     player: r.player,
                     rosterRole: r.rosterRole,
@@ -262,8 +233,7 @@ export const teamService = {
                 });
             }
 
-            const rosterPlayers =
-                await teamRepository.findPlayersByTeamId(teamId);
+            const rosterPlayers = await teamRepository.findPlayersByTeamId(teamId);
             const rosterIds = rosterPlayers.map((p) => p.id);
 
             const allIds = [
@@ -272,22 +242,13 @@ export const teamService = {
                     ...rosterIds,
                 ]),
             ];
-            const matchCounts =
-                await teamRepository.countMatchesPlayedByPlayerIds(
-                    teamId,
-                    allIds,
-                );
+            const matchCounts = await teamRepository.countMatchesPlayedByPlayerIds(teamId, allIds);
 
             const tournament_rosters = perTournament.map((tr) => ({
                 tournament_id: tr.tournament_id,
                 tournament_name: tr.tournament_name,
-                players: [...tr.deduped.values()].map(
-                    ({ player, rosterRole }) =>
-                        playerToMember(
-                            player,
-                            rosterRole,
-                            matchCounts.get(player.id) ?? 0,
-                        ),
+                players: [...tr.deduped.values()].map(({ player, rosterRole }) =>
+                    playerToMember(player, rosterRole, matchCounts.get(player.id) ?? 0),
                 ),
             }));
 
@@ -305,8 +266,7 @@ export const teamService = {
             };
         }
 
-        const rosterPlayers =
-            await teamRepository.findPlayersByTeamId(teamId);
+        const rosterPlayers = await teamRepository.findPlayersByTeamId(teamId);
         const matchCounts = await teamRepository.countMatchesPlayedByPlayerIds(
             teamId,
             rosterPlayers.map((p) => p.id),
@@ -325,10 +285,7 @@ export const teamService = {
     },
 
     searchPlayers: async (searchQuery: string, excludeTeamId?: number) => {
-        const foundPlayers = await teamRepository.searchPlayers(
-            searchQuery,
-            excludeTeamId,
-        );
+        const foundPlayers = await teamRepository.searchPlayers(searchQuery, excludeTeamId);
         return foundPlayers.map((player) => ({
             player_id: player.id.toString(),
             player_name: player.player_name,

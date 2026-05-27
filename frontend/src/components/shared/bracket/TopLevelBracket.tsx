@@ -12,10 +12,7 @@ export default function TopLevelBracket({
     stageFormat: StageFormatDTO;
     groups: GroupWithMatchesDTO[];
 }) {
-    const allMatches = useMemo(
-        () => groups.flatMap((group) => group.matches),
-        [groups],
-    );
+    const allMatches = useMemo(() => groups.flatMap((group) => group.matches), [groups]);
 
     if (!stageFormat) return null;
 

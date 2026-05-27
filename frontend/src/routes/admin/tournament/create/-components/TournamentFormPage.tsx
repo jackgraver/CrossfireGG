@@ -28,18 +28,14 @@ type TournamentFormPageProps = {
     initialData?: TournamentForEditDTO;
 };
 
-export default function TournamentFormPage({
-    tournamentId,
-    initialData,
-}: TournamentFormPageProps) {
+export default function TournamentFormPage({ tournamentId, initialData }: TournamentFormPageProps) {
     const { form, isEditMode, isSubmitting } = useTournamentForm(
         tournamentId && initialData ? { tournamentId, initialData } : undefined,
     );
 
     const { data: stageFormats } = useAllStageFormats();
 
-    const stages =
-        useStore(form.store, (state: any) => state.values.stages) ?? [];
+    const stages = useStore(form.store, (state: any) => state.values.stages) ?? [];
 
     const addStage = () => {
         form.setFieldValue("stages", [...stages, createStage()]);
@@ -65,10 +61,7 @@ export default function TournamentFormPage({
                             : "Fill out the form to create a new tournament."}
                     </p>
                 </header>
-                <form
-                    onSubmit={form.handleSubmit}
-                    className="grid gap-6 lg:grid-cols-2"
-                >
+                <form onSubmit={form.handleSubmit} className="grid gap-6 lg:grid-cols-2">
                     <TournamentDetailsSection
                         form={form}
                         isEditMode={isEditMode}

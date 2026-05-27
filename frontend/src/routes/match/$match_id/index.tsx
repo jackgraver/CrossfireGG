@@ -51,36 +51,24 @@ function MatchPage() {
     const match = data?.match;
 
     const currentMap =
-        selectedMapId === 0
-            ? undefined
-            : maps.find((m: any) => m.id === selectedMapId);
+        selectedMapId === 0 ? undefined : maps.find((m: any) => m.id === selectedMapId);
 
     const table1 = useStatsTable(
-        selectedMapId === 0
-            ? combinedStats?.team1
-            : currentMap?.playerStats.team1,
+        selectedMapId === 0 ? combinedStats?.team1 : currentMap?.playerStats.team1,
     );
     const table2 = useStatsTable(
-        selectedMapId === 0
-            ? combinedStats?.team2
-            : currentMap?.playerStats.team2,
+        selectedMapId === 0 ? combinedStats?.team2 : currentMap?.playerStats.team2,
     );
 
-    if (isLoading)
-        return <div className="text-textSecondary p-6">Loading...</div>;
-    if (error || !data)
-        return <div className="p-6 text-red-500">Error loading match</div>;
+    if (isLoading) return <div className="text-textSecondary p-6">Loading...</div>;
+    if (error || !data) return <div className="p-6 text-red-500">Error loading match</div>;
 
-    const team1Score =
-        selectedMapId === 0 ? team1.score : currentMap?.team1_score;
-    const team2Score =
-        selectedMapId === 0 ? team2.score : currentMap?.team2_score;
+    const team1Score = selectedMapId === 0 ? team1.score : currentMap?.team1_score;
+    const team2Score = selectedMapId === 0 ? team2.score : currentMap?.team2_score;
     const team1IsWinner =
-        currentMap?.winner_id === team1.id ||
-        (selectedMapId === 0 && team1.winner);
+        currentMap?.winner_id === team1.id || (selectedMapId === 0 && team1.winner);
     const team2IsWinner =
-        currentMap?.winner_id === team2.id ||
-        (selectedMapId === 0 && team2.winner);
+        currentMap?.winner_id === team2.id || (selectedMapId === 0 && team2.winner);
 
     return (
         <div className="flex min-h-screen flex-col gap-8 py-6">
@@ -135,9 +123,7 @@ function MatchPage() {
                             <span
                                 className={cn(
                                     "text-lg font-black",
-                                    team1IsWinner
-                                        ? "text-green-500"
-                                        : "text-red-500",
+                                    team1IsWinner ? "text-green-500" : "text-red-500",
                                 )}
                             >
                                 {team1Score}
@@ -167,9 +153,7 @@ function MatchPage() {
                             <span
                                 className={cn(
                                     "font-black",
-                                    team2IsWinner
-                                        ? "text-green-500"
-                                        : "text-red-500",
+                                    team2IsWinner ? "text-green-500" : "text-red-500",
                                 )}
                             >
                                 {team2Score}
@@ -182,9 +166,7 @@ function MatchPage() {
                 </div>
             )}
             <section className="border-border bg-secondBg rounded-lg border p-6">
-                <h2 className="text-textPrimary mb-4 text-lg font-semibold">
-                    Match Information
-                </h2>
+                <h2 className="text-textPrimary mb-4 text-lg font-semibold">Match Information</h2>
                 <div className="grid gap-x-8 gap-y-3 text-sm sm:grid-cols-2 lg:grid-cols-3">
                     {match?.status && (
                         <div className="flex items-center gap-2">
@@ -203,20 +185,14 @@ function MatchPage() {
                     {match?.round && (
                         <div className="flex items-center gap-2">
                             <span className="text-textSecondary">Round:</span>
-                            <span className="text-textPrimary font-medium">
-                                {match.round}
-                            </span>
+                            <span className="text-textPrimary font-medium">{match.round}</span>
                         </div>
                     )}
                     {match?.scheduled_at && (
                         <div className="flex items-center gap-2">
-                            <span className="text-textSecondary">
-                                Scheduled:
-                            </span>
+                            <span className="text-textSecondary">Scheduled:</span>
                             <span className="text-textPrimary font-medium">
-                                {new Date(
-                                    match.scheduled_at * 1000,
-                                ).toLocaleString()}
+                                {new Date(match.scheduled_at * 1000).toLocaleString()}
                             </span>
                         </div>
                     )}

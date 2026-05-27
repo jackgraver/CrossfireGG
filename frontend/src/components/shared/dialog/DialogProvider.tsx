@@ -28,9 +28,7 @@ export const useDialog = () => {
 const buttonClass = "flex-1 rounded-md py-2 font-semibold";
 
 export const DialogProvider = ({ children }: { children: ReactNode }) => {
-    const [dialogOptions, setDialogOptions] = useState<DialogOptions | null>(
-        null,
-    );
+    const [dialogOptions, setDialogOptions] = useState<DialogOptions | null>(null);
 
     const openDialog = (options: DialogOptions) => {
         setDialogOptions(options);
@@ -64,9 +62,7 @@ export const DialogProvider = ({ children }: { children: ReactNode }) => {
                                 <X className="text-textSecondary hover:text-textPrimary h-5 w-5" />
                             </button>
                         </div>
-                        <div className="text-textPrimary flex-1 p-6">
-                            {dialogOptions.content}
-                        </div>
+                        <div className="text-textPrimary flex-1 p-6">{dialogOptions.content}</div>
                         <div className="flex w-full gap-2 p-4 pt-0">
                             <button
                                 onClick={closeDialog}

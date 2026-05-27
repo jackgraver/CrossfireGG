@@ -3,6 +3,8 @@ import { tournamentService } from "./tournament.service";
 import {
     TournamentParamsSchema,
     RegisterForTournamentBodySchema,
+    GetAllTournamentsQuerySchema,
+    SetCurrentStageBodySchema,
 } from "./tournament.validation";
 import { teamRepository } from "../teams/team.repository";
 import { playerRepository } from "../players/player.repository";
@@ -22,7 +24,12 @@ import { redisGet } from "../../core/redis";
 
 export const tournamentController = {
     getAllTournaments: async (req: Request, res: Response) => {
-        const tournaments = await tournamentService.getAllTournaments();
+        const query = parseOr400(res, GetAllTournamentsQuerySchema, req.query);
+        if (query === undefined) return;
+
+        const tournaments = await tournamentService.getAllTournaments(
+            query.status,
+        );
 
         sendContract(res, TournamentWithTeamCountContract.array(), tournaments);
     },
@@ -39,6 +46,7 @@ export const tournamentController = {
                             name: string;
                             id: number;
                             faceit_id: string;
+                            is_current: boolean;
                         }[]
                       | undefined;
                   name?: string | undefined;
@@ -251,6 +259,21 @@ export const tournamentController = {
         }
 
         sendContract(res, TournamentForEditContract, tournament);
+    },
+
+    setCurrentStage: async (req: Request, res: Response) => {
+        const params = parseOr400(res, TournamentParamsSchema, req.params);
+        if (!params) return;
+
+        const body = parseOr400(res, SetCurrentStageBodySchema, req.body);
+        if (!body) return;
+
+        const ok = await tournamentService.setCurrentStage(params.tournamentId, body.stageId);
+        if (!ok) {
+            return res.status(404).json({ error: "Stage does not belong to this tournament" });
+        }
+
+        res.json({ success: true });
     },
 
     updateTournament: async (req: Request, res: Response) => {

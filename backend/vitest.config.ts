@@ -9,14 +9,8 @@ export default defineConfig({
     },
     resolve: {
         alias: {
-            "@repo/contracts": path.resolve(
-                __dirname,
-                "../shared/contracts/src",
-            ),
-            "@repo/types": path.resolve(
-                __dirname,
-                "../shared/types/src",
-            ),
+            "@repo/contracts": path.resolve(__dirname, "../shared/contracts/src"),
+            "@repo/types": path.resolve(__dirname, "../shared/types/src"),
         },
     },
 });

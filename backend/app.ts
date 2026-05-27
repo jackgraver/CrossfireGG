@@ -82,7 +82,7 @@ app.use("/user", userRoutes);
 app.use("/tournament", tournamentRoutes);
 app.use("/match", matchRoutes);
 app.use("/team", teamRoutes);
-app.use("/faceit", ...authMiddleware, requireRoles(Roles.ADMIN), faceitRoutes);
+app.use("/faceit", faceitRoutes);
 
 app.use(errorHandler);
 

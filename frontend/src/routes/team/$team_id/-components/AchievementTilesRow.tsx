@@ -12,11 +12,7 @@ export type AchievementTileItem = {
     text: string;
 };
 
-export default function AchievementTilesRow({
-    items,
-}: {
-    items: AchievementTileItem[];
-}) {
+export default function AchievementTilesRow({ items }: { items: AchievementTileItem[] }) {
     if (items.length === 0) {
         return null;
     }
@@ -58,9 +54,7 @@ export default function AchievementTilesRow({
                         >
                             <ul className="flex flex-col gap-2">
                                 {overflow.map((item, i) => (
-                                    <li
-                                        key={`${item.label}-${i + MAX_VISIBLE}`}
-                                    >
+                                    <li key={`${item.label}-${i + MAX_VISIBLE}`}>
                                         <Tile
                                             icon={item.icon}
                                             label={item.label}

@@ -1,11 +1,7 @@
 import { Request, Response } from "express";
 import { matchService } from "./match.service";
 import { logger } from "../../core/logger";
-import {
-    ClaimMatchSchema,
-    MatchParamsSchema,
-    UnclaimMatchSchema,
-} from "./match.validation";
+import { ClaimMatchSchema, MatchParamsSchema, UnclaimMatchSchema } from "./match.validation";
 import { parseOr400 } from "../../core/validation/parseOr400";
 import { sendContract } from "../../core/sendContract";
 import {
@@ -34,11 +30,7 @@ export const matchController = {
         try {
             const matches = await matchService.getUpcomingMatches();
 
-            sendContract(
-                res,
-                MatchWithParticipantAndMinifiedMapContract.array(),
-                matches,
-            );
+            sendContract(res, MatchWithParticipantAndMinifiedMapContract.array(), matches);
         } catch (error: any) {
             logger.error("Error fetching upcoming matches:", error);
             res.status(500).json({ error: "Failed to fetch upcoming matches" });

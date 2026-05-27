@@ -60,9 +60,7 @@ export const fetchSession: RequestHandler = async (req, res, next) => {
             image: user.image ?? null,
         };
         authReq.roles = await userRepository.getUserRoles(session.user.id);
-        authReq.playerInfo = await userRepository.userPlayerInfo(
-            session.user.id,
-        );
+        authReq.playerInfo = await userRepository.userPlayerInfo(session.user.id);
 
         next();
     } catch (error: any) {

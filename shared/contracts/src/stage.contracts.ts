@@ -32,6 +32,7 @@ export const MinimalStageContract = z.object({
     id: z.number(),
     faceit_id: z.string(),
     name: z.string(),
+    is_current: z.boolean().default(false),
 });
 
 export type MinimalStageDTO = z.infer<typeof MinimalStageContract>;

@@ -74,7 +74,10 @@ export default function StepCoach({
                                 avatar: value.avatar,
                             },
                         ];
-                        form.setFieldValue("coach", coach.length >= 1 ? nextCoach : [...coach, ...nextCoach]);
+                        form.setFieldValue(
+                            "coach",
+                            coach.length >= 1 ? nextCoach : [...coach, ...nextCoach],
+                        );
                     }
                 }}
             >
@@ -112,10 +115,7 @@ export default function StepCoach({
                 </div>
             )}
             {coach.map((player: any, index: number) => (
-                <div
-                    key={player.faceitId}
-                    className="rounded-lg transition-all duration-200"
-                >
+                <div key={player.faceitId} className="rounded-lg transition-all duration-200">
                     <PlayerFormFields
                         form={form}
                         namePrefix={`coach[${index}]`}

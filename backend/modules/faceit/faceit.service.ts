@@ -218,7 +218,11 @@ export const faceitImportService = {
                     return false;
                 }
 
-                return existingMatch.status !== match.status.toLowerCase();
+                return (
+                    existingMatch.status !== match.status.toLowerCase() ||
+                    (existingMatch.scheduled_at ?? null) !==
+                        (match.scheduled_at ?? null)
+                );
             });
         }
 
@@ -437,7 +441,10 @@ export const faceitImportService = {
         const participants = transformFaceitMatchParticipants(
             faceitMatch,
             createdMatch.id,
-            { faction1: stageTeam1.id, faction2: stageTeam2.id },
+            {
+                faction1: stageTeam1.id,
+                faction2: stageTeam2.id,
+            },
         );
 
         const [p1, p2] = await Promise.all([
@@ -600,9 +607,20 @@ export const faceitImportService = {
         for (const team of teams) {
             let leaderId: number | null = null;
 
+            let faceitTeamAvatar = team.team.avatar || "";
+            const faceitTeamData = await faceitFetchUtil.fetchData<{
+                avatar?: string;
+            }>(`/teams/${team.team.team_id}`);
+            if (faceitTeamData && faceitTeamData.avatar) {
+                faceitTeamAvatar = faceitTeamData.avatar;
+            }
+            if (team.team.team_id === "27774140-ea00-4c62-86d6-a2e0257e9703") {
+                console.log("oyh", faceitTeamData);
+            }
+
             const insertedTeam = await teamRepository.upsertTeamByFaceitId({
                 name: team.team.name,
-                team_logo: team.team.avatar || "",
+                team_logo: faceitTeamAvatar,
                 faceit_id: team.team.team_id,
                 team_captain_id: null,
             });

@@ -19,7 +19,7 @@ export default function Tile({
                 "flex items-center gap-1 rounded-md px-2 py-1 text-xs font-bold",
             )}
         >
-            <Icon size={12} />
+            {Icon ? <Icon size={12} /> : null}
             {label}
         </span>
     );

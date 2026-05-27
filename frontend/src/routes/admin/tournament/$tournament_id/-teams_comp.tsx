@@ -9,9 +9,7 @@ import { StageTeamSignUpDTO } from "@repo/contracts";
 import { useRegistrationsByTournamentId } from "@/lib/api/tournament.queries";
 
 export default function TeamsTable({ tournamentId }: { tournamentId: number }) {
-    const { data: teams, isLoading: teamsLoading } =
-        useRegistrationsByTournamentId(tournamentId);
-
+    const { data: teams, isLoading: teamsLoading } = useRegistrationsByTournamentId(tournamentId);
     const columnHelper = createColumnHelper<StageTeamSignUpDTO>();
 
     const columns = [
@@ -28,30 +26,21 @@ export default function TeamsTable({ tournamentId }: { tournamentId: number }) {
                 id: `player_${idx + 1}`,
                 header: `Player ${idx + 1}`,
                 columns: [
-                    columnHelper.accessor(
-                        (row) => row.players?.[idx]?.name ?? "-",
-                        {
-                            id: `player_${idx + 1}_name`,
-                            header: "Name",
-                            cell: (info) => info.getValue(),
-                        },
-                    ),
-                    columnHelper.accessor(
-                        (row) => row.players?.[idx]?.hltv_id ?? "-",
-                        {
-                            id: `player_${idx + 1}_hltv`,
-                            header: "HLTV",
-                            cell: (info) => info.getValue(),
-                        },
-                    ),
-                    columnHelper.accessor(
-                        (row) => row.players?.[idx]?.discord_id ?? "-",
-                        {
-                            id: `player_${idx + 1}_discord`,
-                            header: "Discord",
-                            cell: (info) => info.getValue(),
-                        },
-                    ),
+                    columnHelper.accessor((row) => row.players?.[idx]?.name ?? "-", {
+                        id: `player_${idx + 1}_name`,
+                        header: "Name",
+                        cell: (info) => info.getValue(),
+                    }),
+                    columnHelper.accessor((row) => row.players?.[idx]?.hltv_id ?? "-", {
+                        id: `player_${idx + 1}_hltv`,
+                        header: "HLTV",
+                        cell: (info) => info.getValue(),
+                    }),
+                    columnHelper.accessor((row) => row.players?.[idx]?.discord_id ?? "-", {
+                        id: `player_${idx + 1}_discord`,
+                        header: "Discord",
+                        cell: (info) => info.getValue(),
+                    }),
                 ],
             }),
         ),
@@ -66,9 +55,7 @@ export default function TeamsTable({ tournamentId }: { tournamentId: number }) {
     return (
         <div className="flex h-full flex-col space-y-6 overflow-hidden py-6">
             <div className="flex shrink-0 flex-col gap-y-2">
-                <h1 className="text-2xl font-bold text-white">
-                    Tournament Teams
-                </h1>
+                <h1 className="text-2xl font-bold text-white">Tournament Teams</h1>
             </div>
             <div className="bg-firstBg flex min-h-0 flex-col overflow-x-auto border border-gray-800">
                 {teamsLoading ? (
@@ -90,8 +77,7 @@ export default function TeamsTable({ tournamentId }: { tournamentId: number }) {
                                                 {header.isPlaceholder
                                                     ? null
                                                     : flexRender(
-                                                          header.column
-                                                              .columnDef.header,
+                                                          header.column.columnDef.header,
                                                           header.getContext(),
                                                       )}
                                             </th>
@@ -101,10 +87,7 @@ export default function TeamsTable({ tournamentId }: { tournamentId: number }) {
                             </thead>
                             <tbody>
                                 {table.getRowModel().rows.map((row) => (
-                                    <tr
-                                        key={row.id}
-                                        className="hover:bg-secondBg"
-                                    >
+                                    <tr key={row.id} className="hover:bg-secondBg">
                                         {row.getVisibleCells().map((cell) => (
                                             <td
                                                 key={cell.id}

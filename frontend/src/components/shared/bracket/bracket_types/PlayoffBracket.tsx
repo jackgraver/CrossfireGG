@@ -1,15 +1,13 @@
-import {
-    MatchWithParticipantAndMinifiedMapsDTO,
-    MatchWithParticipantsDTO,
-} from "@repo/contracts";
+import { MatchWithParticipantAndMinifiedMapsDTO } from "@repo/contracts";
 import { useState, useCallback, useMemo, useRef, useEffect } from "react";
 import { getPlayoffRounds } from "./playoff_utils";
 import { BracketMatch } from "../components/BracketMatch";
 import MatchCard from "../components/MatchCard";
+import ScheduledCard from "../components/ScheduledCard";
 import { cn } from "@/utils/cn";
 
 type PlayoffBracketProps = {
-    matches: MatchWithParticipantsDTO[];
+    matches: MatchWithParticipantAndMinifiedMapsDTO[];
 };
 
 interface MatchPosition {
@@ -59,11 +57,7 @@ const Connections = ({
         });
     });
 
-    return (
-        <svg className="pointer-events-none absolute inset-0 h-full w-full">
-            {paths}
-        </svg>
-    );
+    return <svg className="pointer-events-none absolute inset-0 h-full w-full">{paths}</svg>;
 };
 
 export default function PlayoffBracket({ matches }: PlayoffBracketProps) {
@@ -94,17 +88,12 @@ export default function PlayoffBracket({ matches }: PlayoffBracketProps) {
                 .join("|"),
         [matches],
     );
-    const [positions, setPositions] = useState<Record<string, MatchPosition>>(
-        {},
-    );
+    const [positions, setPositions] = useState<Record<string, MatchPosition>>({});
+    const [hoveredTeamId, setHoveredTeamId] = useState<number | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
 
     const handlePositionUpdate = useCallback(
-        (
-            roundIndex: number,
-            matchIndex: number,
-            element: HTMLDivElement | null,
-        ) => {
+        (roundIndex: number, matchIndex: number, element: HTMLDivElement | null) => {
             if (!element || !containerRef.current) return;
 
             const containerRect = containerRef.current.getBoundingClientRect();
@@ -149,27 +138,22 @@ export default function PlayoffBracket({ matches }: PlayoffBracketProps) {
     return (
         <div
             ref={containerRef}
-            className="scrollbar-hide relative flex min-h-200 flex-row overflow-x-auto"
+            className="scrollbar-hide relative flex min-h-200 w-full min-w-0 flex-row gap-16 overflow-x-auto md:gap-16"
+            onMouseLeave={() => setHoveredTeamId(null)}
         >
             <Connections mainRounds={rounds.mainRounds} positions={positions} />
             {rounds.mainRounds.map((round, roundIndex) => (
-                <div
-                    key={round.name}
-                    className={cn(
-                        "z-10 flex flex-col justify-around",
-                        roundIndex === 0 ? "pr-8" : "px-8",
-                    )}
-                >
-                    <div className="mb-4 text-center">
+                <div key={round.name} className="z-10 flex min-w-0 flex-1 flex-col justify-around">
+                    <div className="mb-4 w-full text-center">
                         <h2 className="bg-secondBg rounded-md p-1 font-bold tracking-wider text-gray-400 uppercase">
                             {round.name}
                         </h2>
                     </div>
-                    <div className="flex grow flex-col justify-around">
+                    <div className="flex w-full grow flex-col justify-around">
                         {round.matches.map((match, matchIndex) => (
                             <div
                                 key={`${roundIndex}-${matchIndex}`}
-                                className="relative"
+                                className="relative w-full min-w-0"
                             >
                                 <BracketMatch
                                     match={match}
@@ -177,26 +161,49 @@ export default function PlayoffBracket({ matches }: PlayoffBracketProps) {
                                     matchIndex={matchIndex}
                                     layoutKey={bracketLayoutSignature}
                                     onPositionUpdate={handlePositionUpdate}
+                                    hoveredTeamId={hoveredTeamId}
+                                    onTeamHover={setHoveredTeamId}
                                 />
-                                {round.name === "Grand Final" &&
-                                    rounds.thirdPlaceRound && (
-                                        <div className="absolute top-full right-0 left-0 mt-32">
-                                            <div className="text-center">
-                                                <h2 className="bg-secondBg rounded-md p-1 font-bold tracking-wider text-gray-400 uppercase">
-                                                    Third Place
-                                                </h2>
-                                            </div>
-                                            <div className="flex min-h-25 items-center">
+                                {round.name === "Grand Final" && rounds.thirdPlaceRound && (
+                                    <div className="mt-32 w-full">
+                                        <div
+                                            className={cn(
+                                                "text-center",
+                                                rounds.thirdPlaceRound?.matches[0]?.status ===
+                                                    "scheduled" && "pb-4",
+                                            )}
+                                        >
+                                            <h2 className="bg-secondBg rounded-md p-1 font-bold tracking-wider text-gray-400 uppercase">
+                                                Third Place
+                                            </h2>
+                                        </div>
+                                        <div className="flex min-h-25 items-center">
+                                            {rounds.thirdPlaceRound?.matches[0]?.status ===
+                                            "scheduled" ? (
+                                                <ScheduledCard
+                                                    match={
+                                                        rounds.thirdPlaceRound
+                                                            ?.matches[0] as MatchWithParticipantAndMinifiedMapsDTO
+                                                    }
+                                                    bracketLayout
+                                                    hoveredTeamId={hoveredTeamId}
+                                                    onTeamHover={setHoveredTeamId}
+                                                />
+                                            ) : (
                                                 <MatchCard
                                                     match={
                                                         rounds.thirdPlaceRound
                                                             ?.matches[0] as MatchWithParticipantAndMinifiedMapsDTO
                                                     }
                                                     margin={false}
+                                                    bracketLayout
+                                                    hoveredTeamId={hoveredTeamId}
+                                                    onTeamHover={setHoveredTeamId}
                                                 />
-                                            </div>
+                                            )}
                                         </div>
-                                    )}
+                                    </div>
+                                )}
                             </div>
                         ))}
                     </div>

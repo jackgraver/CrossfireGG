@@ -10,8 +10,7 @@ export default function TeamFormFields({ form }: TeamFormFieldsProps) {
             <form.Field
                 name="team.name"
                 validators={{
-                    onChange: ({ value }: any) =>
-                        !value ? "Team Name is required" : undefined,
+                    onChange: ({ value }: any) => (!value ? "Team Name is required" : undefined),
                 }}
             >
                 {(field: any) => (

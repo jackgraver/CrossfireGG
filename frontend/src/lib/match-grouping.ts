@@ -17,10 +17,7 @@ function localDateKey(timestampSec: number): string {
     return `${y}-${m}-${day}`;
 }
 
-function sortGroupMatches(
-    dateKey: string,
-    matches: MatchWithParticipantsDTO[],
-): void {
+function sortGroupMatches(dateKey: string, matches: MatchWithParticipantsDTO[]): void {
     if (dateKey === UNSCHEDULED_KEY) {
         matches.sort((a, b) => b.id - a.id);
         return;
@@ -32,15 +29,10 @@ function sortGroupMatches(
     });
 }
 
-export function groupMatchesByCalendarDay(
-    matches: MatchWithParticipantsDTO[],
-): MatchDayGroup[] {
+export function groupMatchesByCalendarDay(matches: MatchWithParticipantsDTO[]): MatchDayGroup[] {
     const map = new Map<string, MatchWithParticipantsDTO[]>();
     for (const m of matches) {
-        const key =
-            m.scheduled_at != null
-                ? localDateKey(m.scheduled_at)
-                : UNSCHEDULED_KEY;
+        const key = m.scheduled_at != null ? localDateKey(m.scheduled_at) : UNSCHEDULED_KEY;
         const arr = map.get(key);
         if (arr) arr.push(m);
         else map.set(key, [m]);

@@ -5,8 +5,7 @@ import { eq, sql, and, asc, isNull } from "drizzle-orm";
 export const stagesRepository = {
     findStageByName: async (name: string) => {
         return await db.query.stages.findFirst({
-            where: (s, { eq, isNull }) =>
-                and(eq(s.name, name), isNull(s.deleted_at)),
+            where: (s, { eq, isNull }) => and(eq(s.name, name), isNull(s.deleted_at)),
         });
     },
 
@@ -28,8 +27,7 @@ export const stagesRepository = {
 
     findMatchesByStageId: async (stageId: number) => {
         return await db.query.matches.findMany({
-            where: (m, { eq, and, isNull }) =>
-                and(eq(m.stage_id, stageId), isNull(m.deleted_at)),
+            where: (m, { eq, and, isNull }) => and(eq(m.stage_id, stageId), isNull(m.deleted_at)),
             with: {
                 participants: {
                     where: isNull(matchParticipants.deleted_at),
@@ -48,8 +46,7 @@ export const stagesRepository = {
     },
     findStageStandings: async (stageId: number) => {
         return await db.query.stages.findFirst({
-            where: (s, { eq, and, isNull }) =>
-                and(eq(s.id, stageId), isNull(s.deleted_at)),
+            where: (s, { eq, and, isNull }) => and(eq(s.id, stageId), isNull(s.deleted_at)),
             with: {
                 stageFormat: true,
                 groups: {

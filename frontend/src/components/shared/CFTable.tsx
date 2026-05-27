@@ -32,14 +32,8 @@ export default function CFTable<T>({ table }: { table: Table<T> }) {
                                             );
                                         }
                                     }}
-                                    role={
-                                        header.column.getCanSort()
-                                            ? "button"
-                                            : undefined
-                                    }
-                                    tabIndex={
-                                        header.column.getCanSort() ? 0 : undefined
-                                    }
+                                    role={header.column.getCanSort() ? "button" : undefined}
+                                    tabIndex={header.column.getCanSort() ? 0 : undefined}
                                 >
                                     {header.isPlaceholder
                                         ? null
@@ -49,11 +43,8 @@ export default function CFTable<T>({ table }: { table: Table<T> }) {
                                           )}
                                     {{
                                         asc: <ChevronUp className="h-4 w-4" />,
-                                        desc: (
-                                            <ChevronDown className="h-4 w-4" />
-                                        ),
-                                    }[header.column.getIsSorted() as string] ??
-                                        null}
+                                        desc: <ChevronDown className="h-4 w-4" />,
+                                    }[header.column.getIsSorted() as string] ?? null}
                                 </div>
                             </th>
                         ))}
@@ -69,10 +60,7 @@ export default function CFTable<T>({ table }: { table: Table<T> }) {
                                 style={{ width: cell.column.getSize() }}
                                 className="border-border text-textPrimary border px-4 py-2 text-sm whitespace-nowrap"
                             >
-                                {flexRender(
-                                    cell.column.columnDef.cell,
-                                    cell.getContext(),
-                                )}
+                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
                             </td>
                         ))}
                     </tr>

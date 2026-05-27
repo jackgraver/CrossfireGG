@@ -8,19 +8,11 @@ import {
     achievementPlacementFromSummaryLabel,
     achievementTileClassesForPlacement,
 } from "@/utils/placement";
-import {
-    CalendarDays,
-    ExternalLinkIcon,
-    Home,
-    Medal,
-    Users,
-} from "lucide-react";
+import { CalendarDays, ExternalLinkIcon, Home, Medal, Users } from "lucide-react";
 import TabGroup, { Tab } from "@/components/shared/TabGroup";
 import { openInNewTab } from "@/utils/openInNewTab";
 
-function placementSummariesToTileItems(
-    summaries: string[],
-): AchievementTileItem[] {
+function placementSummariesToTileItems(summaries: string[]): AchievementTileItem[] {
     return summaries.map((label) => {
         const p = achievementPlacementFromSummaryLabel(label);
         const { bg, text } = p
@@ -73,9 +65,7 @@ function RouteComponent() {
         return (
             <div className="flex min-h-screen items-center justify-center">
                 <div className="bg-firstBg rounded-xl p-8 text-center shadow-md">
-                    <h1 className="text-textPrimary mb-4 text-2xl font-bold">
-                        Team Not Found
-                    </h1>
+                    <h1 className="text-textPrimary mb-4 text-2xl font-bold">Team Not Found</h1>
                     <Link to="/" className="text-blue-400 hover:text-blue-300">
                         Return Home
                     </Link>
@@ -108,9 +98,7 @@ function RouteComponent() {
         },
     ] as const;
 
-    const achievementItems = placementSummariesToTileItems(
-        team.placement_summaries ?? [],
-    );
+    const achievementItems = placementSummariesToTileItems(team.placement_summaries ?? []);
 
     return (
         <div className="mx-auto min-h-screen max-w-350 px-4 py-5 md:px-6">
@@ -139,9 +127,7 @@ function RouteComponent() {
                                 }
                             >
                                 <ExternalLinkIcon className="h-4 w-4" />
-                                <span className="hidden sm:inline">
-                                    View on Faceit
-                                </span>
+                                <span className="hidden sm:inline">View on Faceit</span>
                             </button>
                         )}
                     </div>

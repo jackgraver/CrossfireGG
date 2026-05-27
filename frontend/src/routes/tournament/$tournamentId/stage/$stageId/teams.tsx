@@ -1,17 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import {
-    useStageTeams,
-    useTournamentById,
-} from "@/lib/api/tournament.queries";
+import { useStageTeams, useTournamentById } from "@/lib/api/tournament.queries";
 import TeamLogo from "@/components/shared/bracket/atoms/TeamLogo";
 import { MoveUpRight } from "lucide-react";
 import { StageTeamWithTeamDTO } from "@repo/contracts";
 import { cn } from "@/utils/cn";
 
-export const Route = createFileRoute(
-    "/tournament/$tournamentId/stage/$stageId/teams",
-)({
+export const Route = createFileRoute("/tournament/$tournamentId/stage/$stageId/teams")({
     component: TeamsPage,
 });
 
@@ -20,8 +15,7 @@ function TeamsPage() {
     const { data: tournament } = useTournamentById(tournamentId);
 
     const { data: teams, isLoading } = useStageTeams(stageId, {
-        refetchInterval:
-            tournament?.syncStatus === "processing" ? 3_000 : undefined,
+        refetchInterval: tournament?.syncStatus === "processing" ? 3_000 : undefined,
     });
 
     const sortedTeams = [...(teams || [])].sort((a, b) => a.seed - b.seed);
@@ -30,9 +24,7 @@ function TeamsPage() {
         <div className="rounded-xl shadow-md">
             <div className="py-4">
                 {isLoading ? (
-                    <div className="text-textSecondary py-8 text-center">
-                        Loading teams...
-                    </div>
+                    <div className="text-textSecondary py-8 text-center">Loading teams...</div>
                 ) : teams?.length === 0 ? (
                     <div className="text-textSecondary py-8 text-center">
                         No teams registered for this stage
@@ -65,17 +57,11 @@ function TeamCard({ team }: { team: StageTeamWithTeamDTO }) {
                 styling="h-12 w-12 rounded-full object-cover"
             />
             <div className="min-w-0 flex-1">
-                <div className="text-textPrimary truncate font-semibold">
-                    {team.team.name}
-                </div>
+                <div className="text-textPrimary truncate font-semibold">{team.team.name}</div>
                 <div className="text-textSecondary mt-0.5 flex gap-3 text-sm">
-                    <span className="font-bold text-green-500">
-                        {team.wins}W
-                    </span>
+                    <span className="font-bold text-green-500">{team.wins}W</span>
                     {"-"}
-                    <span className="font-bold text-red-500">
-                        {team.losses}L
-                    </span>
+                    <span className="font-bold text-red-500">{team.losses}L</span>
                     {team.seed !== undefined && <span>Seed #{team.seed}</span>}
                 </div>
             </div>

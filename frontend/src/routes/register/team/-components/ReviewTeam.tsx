@@ -8,12 +8,7 @@ type ReviewTeamProps = {
     coach: Player[];
 };
 
-export default function ReviewTeam({
-    teamId,
-    players,
-    subs,
-    coach,
-}: ReviewTeamProps) {
+export default function ReviewTeam({ teamId, players, subs, coach }: ReviewTeamProps) {
     return (
         <div>
             {players.length > 0 && (
@@ -35,11 +30,7 @@ export default function ReviewTeam({
                     <h2 className="text-lg font-bold">Substitutes</h2>
                     <div className="flex flex-col gap-2">
                         {subs.map((sub) => (
-                            <Card
-                                key={sub.faceitId}
-                                avatar={sub.avatar}
-                                name={sub.playerName}
-                            />
+                            <Card key={sub.faceitId} avatar={sub.avatar} name={sub.playerName} />
                         ))}
                     </div>
                 </>
@@ -49,11 +40,7 @@ export default function ReviewTeam({
                     <h2 className="text-lg font-bold">Coach</h2>
                     <div className="flex flex-col gap-2">
                         {coach.map((c) => (
-                            <Card
-                                key={c.faceitId}
-                                avatar={c.avatar}
-                                name={c.playerName}
-                            />
+                            <Card key={c.faceitId} avatar={c.avatar} name={c.playerName} />
                         ))}
                     </div>
                 </>

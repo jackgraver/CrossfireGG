@@ -1,101 +1,102 @@
 import { createFileRoute } from "@tanstack/react-router";
 import TournamentsSection from "./tournament/-components/TournamentsSection";
-import InfoBox from "./-components/InfoBox";
-import UpcomingMatches from "./-components/UpcomingMatches";
-import { Bot, CalendarFold, Twitter } from "lucide-react";
+import { Bot, LogIn } from "lucide-react";
+import HowItWorksSection from "./-components/HowItWorksSection";
+import HomeHero from "./-components/HomeHero";
+import HomeSection from "./-components/HomeSection";
+import HomeLiveBracket from "./-components/HomeLiveBracket";
+import SectionTitle from "./-components/SectionTitle";
+import { useNavigate } from "@tanstack/react-router";
+import { openInNewTab } from "@/utils/openInNewTab";
 
 export const Route = createFileRoute("/")({
     component: App,
 });
 
 function App() {
+    const navigate = useNavigate();
+
     return (
         <div className="bg-mainBg">
-            <div className="relative h-screen overflow-hidden">
-                <div className="absolute inset-0 grid h-full grid-cols-[minmax(0,1fr)_minmax(300px,900px)_minmax(0,1fr)]">
-                    <div className="relative">
-                        <img
-                            src="bg3.jpg"
-                            className="h-full w-full object-cover object-center"
-                        />
-                        <div className="to-mainBg absolute inset-0 bg-linear-to-r from-transparent" />
-                    </div>
-                    <div />
-                    <div className="relative">
-                        <img
-                            src="bg2.jpg"
-                            className="h-full w-full object-cover object-center"
-                        />
-                        <div className="to-mainBg absolute inset-0 bg-linear-to-l from-transparent" />
-                    </div>
-                </div>
-                <div className="to-mainBg absolute inset-0 bg-linear-to-b from-black/30 via-transparent" />
-                <div className="relative z-10 flex h-full flex-col items-center px-6 pt-[18vh]">
-                    <div className="flex flex-col items-center gap-6 lg:flex-row lg:gap-12">
-                        <img
-                            src="/crossfire.png"
-                            className="-mx-18 h-44 w-44 shrink-0 object-contain drop-shadow-[0_0_40px_rgba(220,38,38,0.3)] sm:h-60 sm:w-60 lg:h-72 lg:w-72"
-                        />
-                        <div className="flex flex-col text-center lg:text-left">
-                            <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-6xl lg:text-7xl">
-                                CROSSFIREGG
-                            </h1>
-                            <div className="mt-3 h-0.5 w-full bg-linear-to-r from-red-600 via-red-500 to-transparent" />
-                            <p className="pt-3 text-base font-semibold tracking-[0.3em] text-red-500 sm:text-lg">
-                                #CAUGHTINTHECROSSFIRE
-                            </p>
-                        </div>
-                    </div>
-                    <div className="mt-auto mb-[10vh] grid w-full max-w-7xl gap-12 sm:grid-cols-2 xl:grid-cols-3">
-                        <InfoBox
-                            title="See Crossfire Events"
-                            icon={<CalendarFold size={20} />}
-                            description="Check out upcoming or previous events and matches"
-                            clickAction={() => {
-                                const section =
-                                    document.querySelector("section");
-                                if (section) {
-                                    const topPadding = 72;
-                                    const y =
-                                        section.getBoundingClientRect().top +
-                                        window.scrollY -
-                                        topPadding;
-                                    window.scrollTo({
-                                        top: y,
-                                        behavior: "smooth",
-                                    });
-                                }
-                            }}
-                        />
-                        <InfoBox
-                            title="Follow us on Twitter"
-                            icon={<Twitter size={20} />}
-                            description=""
-                            clickAction={() =>
-                                window.open(
-                                    "https://x.com/PlayCrossfireGG",
-                                    "_blank",
-                                )
-                            }
-                        />
-                        <InfoBox
-                            title="Join the Community!"
-                            icon={<Bot size={20} />}
-                            description="Check out our discord!"
-                            clickAction={() =>
-                                window.open(
-                                    "https://discord.gg/99tm9U5c",
-                                    "_blank",
-                                )
-                            }
-                        />
-                    </div>
-                </div>
-            </div>
-            <section className="mx-auto mt-16 w-full lg:max-w-8/12">
-                <UpcomingMatches />
+            <HomeSection variant="contained">
+                <HomeHero />
+            </HomeSection>
+            <HomeSection variant="contained">
                 <TournamentsSection />
-            </section>
+            </HomeSection>
+            <HomeSection variant="band" tone="muted" minHeightScreen>
+                <HomeLiveBracket />
+            </HomeSection>
+            <HomeSection variant="contained">
+                <HowItWorksSection />
+            </HomeSection>
+            <HomeSection variant="band" tone="muted" compactPadding centered>
+                <SectionTitle title="OUR PARTNERS" subtitle="POWERED BY" />
+                <div className="mt-8 flex flex-row flex-wrap items-center justify-center gap-32">
+                    <div className="flex items-center justify-center w-[170px] h-20">
+                        <img
+                            src="/myhud_logo.png"
+                            alt="MYHUD Logo"
+                            className="object-contain h-full max-w-full cursor-pointer"
+                            onClick={() => openInNewTab("https://myhud.app")}
+                        />
+                    </div>
+                    <div className="flex items-center justify-center w-[170px] h-20">
+                        <img
+                            src="/scl_logo.png"
+                            alt="SCL Logo"
+                            className="object-contain h-full max-w-full cursor-pointer"
+                            onClick={() => openInNewTab("https://scl.gg")}
+                        />
+                    </div>
+                    <div className="flex items-center justify-center w-[170px] h-20">
+                        <img
+                            src="/faceit logo.jpg"
+                            alt="Faceit Logo"
+                            className="object-contain h-full max-w-full cursor-pointer"
+                            onClick={() => openInNewTab("https://www.faceit.com")}
+                        />
+                    </div>
+                </div>
+            </HomeSection>
+            <HomeSection variant="contained">
+                <section className="pb-16 text-center">
+                    <span className="text-orange-500">READY?</span>
+                    <h1 className="pt-2 text-5xl font-extrabold tracking-tight text-white sm:text-6xl lg:text-7xl">
+                        GET CAUGHT IN
+                        <br />
+                        THE <span className="text-orange-500">CROSSFIRE</span>
+                    </h1>
+                    <p className="mx-auto mt-4 max-w-2xl text-textSecondary">
+                        Season 5 registrations are open. Assemble your squad, sharpen your arm, and
+                        compete for the $3,000 prize pool.
+                    </p>
+                    <div className="mt-6 flex flex-row flex-wrap items-center justify-center gap-3">
+                        <button
+                            className="flex items-center gap-2 rounded-md bg-orange-500 px-2 py-2 text-xs font-semibold text-white transition-colors hover:bg-orange-600"
+                            onClick={() =>
+                                navigate({
+                                    to: "/register/team",
+                                })
+                            }
+                        >
+                            <LogIn className="h-4 w-4" />
+                            Register Now
+                        </button>
+                        <button
+                            className="flex items-center gap-2 rounded-md bg-gray-700 px-2 py-2 text-xs font-semibold text-white transition-colors hover:bg-gray-600"
+                            onClick={() => window.open("https://discord.gg/99tm9U5c", "_blank")}
+                        >
+                            <img
+                                src="/Discord-Symbol-White.svg"
+                                alt="Discord Logo"
+                                className="h-4 w-4"
+                            />
+                            Join Discord
+                        </button>
+                    </div>
+                </section>
+            </HomeSection>
         </div>
     );
 }
