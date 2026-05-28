@@ -39,7 +39,10 @@ export const matchRepository = {
                             with: {
                                 player: true,
                             },
-                            orderBy: [desc(playerStats.adr), desc(playerStats.kills)],
+                            orderBy: [
+                                desc(playerStats.adr),
+                                desc(playerStats.kills),
+                            ],
                         },
                     },
                 },
@@ -49,7 +52,10 @@ export const matchRepository = {
 
     findAllByStageId: async (stageId: number) => {
         return await db.query.matches.findMany({
-            where: and(eq(matches.stage_id, stageId), isNull(matches.deleted_at)),
+            where: and(
+                eq(matches.stage_id, stageId),
+                isNull(matches.deleted_at),
+            ),
         });
     },
 
@@ -78,25 +84,28 @@ export const matchRepository = {
     findUpcomingMatches: async () => {
         const nowSeconds = Math.floor(Date.now() / 1000);
 
-        const stagesInActiveTournaments = db
-            .select({ id: stages.id })
-            .from(stages)
-            .innerJoin(tournaments, eq(stages.tournament_id, tournaments.id))
-            .where(
-                and(
-                    isNull(stages.deleted_at),
-                    isNull(tournaments.deleted_at),
-                    eq(tournaments.status, "active"),
-                ),
-            );
+        // const stagesInActiveTournaments = db
+        //     .select({ id: stages.id })
+        //     .from(stages)
+        //     .innerJoin(tournaments, eq(stages.tournament_id, tournaments.id))
+        //     .where(
+        //         and(
+        //             isNull(stages.deleted_at),
+        //             isNull(tournaments.deleted_at),
+        //             // eq(tournaments.status, "active"),
+        //         ),
+        //     );
 
         return await db.query.matches.findMany({
             where: and(
                 isNull(matches.deleted_at),
-                inArray(matches.stage_id, stagesInActiveTournaments),
+                // inArray(matches.stage_id, stagesInActiveTournaments),
                 ne(matches.status, "finished"),
                 ne(matches.status, "cancelled"),
-                or(gte(matches.scheduled_at, nowSeconds), eq(matches.status, "live")),
+                or(
+                    gte(matches.scheduled_at, nowSeconds),
+                    eq(matches.status, "live"),
+                ),
             ),
             with: {
                 participants: {
@@ -167,7 +176,11 @@ export const matchRepository = {
     },
 
     findGroupById: async (groupId: number) => {
-        const result = await db.select().from(groups).where(eq(groups.id, groupId)).limit(1);
+        const result = await db
+            .select()
+            .from(groups)
+            .where(eq(groups.id, groupId))
+            .limit(1);
         return result[0] || null;
     },
 
@@ -197,7 +210,9 @@ export const matchRepository = {
         return await db
             .select()
             .from(players)
-            .where(and(eq(players.team_id, teamId), isNull(players.deleted_at)));
+            .where(
+                and(eq(players.team_id, teamId), isNull(players.deleted_at)),
+            );
     },
 
     findMapsByMatchId: async (matchId: number) => {
@@ -218,7 +233,10 @@ export const matchRepository = {
             })
             .from(playerStats)
             .innerJoin(players, eq(playerStats.player_id, players.id))
-            .leftJoin(teams, and(eq(players.team_id, teams.id), isNull(teams.deleted_at)))
+            .leftJoin(
+                teams,
+                and(eq(players.team_id, teams.id), isNull(teams.deleted_at)),
+            )
             .where(
                 and(
                     eq(playerStats.match_id, matchId),
@@ -226,14 +244,23 @@ export const matchRepository = {
                     isNull(players.deleted_at),
                 ),
             )
-            .orderBy(asc(playerStats.map_id), desc(playerStats.kills), desc(playerStats.adr));
+            .orderBy(
+                asc(playerStats.map_id),
+                desc(playerStats.kills),
+                desc(playerStats.adr),
+            );
     },
 
     findMatchByFaceitId: async (faceitId: string) => {
         const result = await db
             .select()
             .from(matches)
-            .where(and(eq(matches.faceit_id, faceitId), isNull(matches.deleted_at)))
+            .where(
+                and(
+                    eq(matches.faceit_id, faceitId),
+                    isNull(matches.deleted_at),
+                ),
+            )
             .limit(1);
         return result[0] || null;
     },
@@ -253,7 +280,12 @@ export const matchRepository = {
         const existing = await db
             .select()
             .from(matches)
-            .where(and(eq(matches.faceit_id, matchData.faceit_id), isNull(matches.deleted_at)))
+            .where(
+                and(
+                    eq(matches.faceit_id, matchData.faceit_id),
+                    isNull(matches.deleted_at),
+                ),
+            )
             .limit(1);
 
         if (existing.length > 0) {

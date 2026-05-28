@@ -14,16 +14,21 @@ export const matchService = {
             const rosterPlayerIds = (stageTeamId: number) =>
                 new Set(
                     (
-                        match.participants.find((p) => p.team_id === stageTeamId)?.stageTeam
-                            ?.players ?? []
+                        match.participants.find(
+                            (p) => p.team_id === stageTeamId,
+                        )?.stageTeam?.players ?? []
                     ).map((sp) => sp.player_id),
                 );
 
             const team1Roster = rosterPlayerIds(team1Id);
             const team2Roster = rosterPlayerIds(team2Id);
 
-            const team1Stats = map.playerStats.filter((s) => team1Roster.has(s.player_id));
-            const team2Stats = map.playerStats.filter((s) => team2Roster.has(s.player_id));
+            const team1Stats = map.playerStats.filter((s) =>
+                team1Roster.has(s.player_id),
+            );
+            const team2Stats = map.playerStats.filter((s) =>
+                team2Roster.has(s.player_id),
+            );
 
             return {
                 ...map,
@@ -91,12 +96,31 @@ export const matchService = {
             return s === "live" || s === "ongoing";
         };
 
+        const getSeedSum = (
+            match: (typeof upcomingMatches)[number],
+        ): number | null => {
+            const p = match.participants;
+            if (!p || p.length < 2) return null;
+            const s1 = p[0]?.stageTeam?.seed;
+            const s2 = p[1]?.stageTeam?.seed;
+            if (s1 == null || s2 == null || s1 <= 0 || s2 <= 0) return null;
+            return s1 + s2;
+        };
+
         return [...upcomingMatches]
             .sort((a, b) => {
                 const aLive = isLive(a.status);
                 const bLive = isLive(b.status);
                 if (aLive && !bLive) return -1;
                 if (!aLive && bLive) return 1;
+
+                const aSeed = getSeedSum(a);
+                const bSeed = getSeedSum(b);
+                if (aSeed !== null && bSeed === null) return -1;
+                if (aSeed === null && bSeed !== null) return 1;
+                if (aSeed !== null && bSeed !== null && aSeed !== bSeed)
+                    return aSeed - bSeed;
+
                 const aT = a.scheduled_at ?? Number.MAX_SAFE_INTEGER;
                 const bT = b.scheduled_at ?? Number.MAX_SAFE_INTEGER;
                 return aT - bT;
@@ -107,8 +131,12 @@ export const matchService = {
     getAllMatchCasting: async () => {
         const allMatches = await matchRepository.findAllMatchCasting();
 
-        const claimedMatches = allMatches.filter((match) => match.casters.length > 0);
-        const unclaimedMatches = allMatches.filter((match) => match.casters.length === 0);
+        const claimedMatches = allMatches.filter(
+            (match) => match.casters.length > 0,
+        );
+        const unclaimedMatches = allMatches.filter(
+            (match) => match.casters.length === 0,
+        );
 
         return {
             claimed: claimedMatches,

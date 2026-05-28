@@ -1,5 +1,6 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useAllTournaments, type TournamentListStatus } from "@/lib/api/tournament.queries";
+import type { TournamentWithTeamCountDTO } from "@repo/contracts";
 import { TournamentGroup, TournamentGroupSkeleton } from "./TournamentGroup";
 import { Trophy } from "lucide-react";
 import { cn } from "@/utils/cn";
@@ -17,41 +18,49 @@ const STATUS_HEADLINES: Record<TournamentListStatus, string> = {
     ended: "Ended Tournaments",
 };
 
+const EMPTY_BY_STATUS: Record<TournamentListStatus, TournamentWithTeamCountDTO[]> = {
+    active: [],
+    upcoming: [],
+    ended: [],
+};
+
+function groupTournamentsByStatus(
+    tournaments: TournamentWithTeamCountDTO[] | undefined,
+): Record<TournamentListStatus, TournamentWithTeamCountDTO[]> {
+    if (!tournaments?.length) return EMPTY_BY_STATUS;
+    const grouped: Record<TournamentListStatus, TournamentWithTeamCountDTO[]> = {
+        active: [],
+        upcoming: [],
+        ended: [],
+    };
+    for (const tournament of tournaments) {
+        const key = tournament.status as TournamentListStatus;
+        if (key in grouped) grouped[key].push(tournament);
+    }
+    return grouped;
+}
+
 export default function TournamentsSection() {
     const [status, setStatus] = useState<TournamentListStatus>("active");
     const userPickedTab = useRef(false);
-    const activeQuery = useAllTournaments("active");
-    const upcomingQuery = useAllTournaments("upcoming");
-    const endedQuery = useAllTournaments("ended");
-    const queriesByStatus = {
-        active: activeQuery,
-        upcoming: upcomingQuery,
-        ended: endedQuery,
-    };
-    const { data, isLoading, error } = queriesByStatus[status];
+    const { data, isLoading, error } = useAllTournaments();
+    const tournamentsByStatus = useMemo(() => groupTournamentsByStatus(data), [data]);
     const tabsRef = useRef<(HTMLButtonElement | null)[]>([]);
     const tabStripRef = useRef<HTMLDivElement>(null);
     const [indicator, setIndicator] = useState({ left: 0, width: 0, opacity: 0 });
 
+    const [defaultResolved, setDefaultResolved] = useState(false);
+
     useEffect(() => {
-        if (userPickedTab.current) return;
-        const allLoaded = STATUS_OPTIONS.every(({ value }) => !queriesByStatus[value].isLoading);
-        if (!allLoaded) return;
+        if (userPickedTab.current || isLoading) return;
         const firstWithData = STATUS_OPTIONS.find(
-            ({ value }) => (queriesByStatus[value].data?.length ?? 0) > 0,
+            ({ value }) => tournamentsByStatus[value].length > 0,
         );
         setStatus(firstWithData?.value ?? "ended");
-    }, [
-        activeQuery.isLoading,
-        activeQuery.data,
-        upcomingQuery.isLoading,
-        upcomingQuery.data,
-        endedQuery.isLoading,
-        endedQuery.data,
-    ]);
+        setDefaultResolved(true);
+    }, [isLoading, tournamentsByStatus]);
 
-    const isResolvingDefault =
-        !userPickedTab.current && STATUS_OPTIONS.some(({ value }) => queriesByStatus[value].isLoading);
+    const isResolvingDefault = !userPickedTab.current && (isLoading || !defaultResolved);
     const activeIndex = STATUS_OPTIONS.findIndex((o) => o.value === status);
 
     useLayoutEffect(() => {
@@ -82,7 +91,7 @@ export default function TournamentsSection() {
         );
     }
 
-    const tournaments = data ?? [];
+    const tournaments = tournamentsByStatus[status];
 
     return (
         <div className="min-h-screen py-6">
@@ -133,7 +142,7 @@ export default function TournamentsSection() {
                     </div>
                 </div>
             </div>
-            {isResolvingDefault || isLoading ? (
+            {isResolvingDefault ? (
                 <TournamentGroupSkeleton />
             ) : tournaments.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-32 opacity-20">
