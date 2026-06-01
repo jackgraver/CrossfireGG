@@ -9,7 +9,6 @@ import { AuthProvider } from "@/contexts/auth";
 import { DialogProvider } from "@/lib/dialog/DialogProvider";
 import { NotFound } from "./not-found";
 import Footer from "@/components/Footer";
-import { getUserMeServerFn } from "@/lib/auth/auth.server";
 import { meQueryOptions } from "@/lib/auth/auth.query";
 import ToastProvider from "@/components/shared/toast/ToastProvider";
 import { cn } from "@/utils/cn";
@@ -30,10 +29,7 @@ export const Route = createRootRoute({
         links: [{ rel: "stylesheet", href: appCss }],
     }),
     beforeLoad: async () => {
-        const user =
-            typeof window === "undefined"
-                ? await getUserMeServerFn()
-                : await queryClient.ensureQueryData(meQueryOptions());
+        const user = await queryClient.ensureQueryData(meQueryOptions());
         return { user };
     },
     notFoundComponent: () => <NotFound />,

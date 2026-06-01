@@ -1,5 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
-import { getUserMeServerFn } from "./auth.server";
+import { getUserMeServerFn } from "./auth.functions";
 
 export type UserType = {
     userId: string;

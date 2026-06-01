@@ -1,7 +1,7 @@
 import { createMiddleware, createServerFn } from "@tanstack/react-start";
 import { getRequestHeader } from "@tanstack/react-start/server";
 
-export const authMiddleware = createMiddleware().server(async ({ next }) => {
+const authMiddleware = createMiddleware().server(async ({ next }) => {
     const cookie = getRequestHeader("cookie");
     const userAgent = getRequestHeader("user-agent");
     const base =
