@@ -78,12 +78,12 @@ export default function HomeLiveBracket() {
     return (
         <div className="w-full space-y-4">
             <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <SectionTitle title={"LIVE BRACKET"} subtitle={"SEASON 4 PLAYOFFS"} />
+                <SectionTitle title={"LIVE BRACKET"} subtitle={"SEASON 5 PLAYOFFS"} />
                 <Link
                     to="/tournament/$tournamentId/stage/$stageId/bracket"
                     params={{
-                        tournamentId: target.tournamentId,
-                        stageId: target.stageId,
+                        tournamentId: target.tournamentId.toString(),
+                        stageId: target.stageId.toString(),
                     }}
                     className="flex w-fit items-center gap-2 rounded-md bg-firstBg px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-secondBg/80"
                 >

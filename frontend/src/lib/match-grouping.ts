@@ -41,7 +41,7 @@ export function groupMatchesByCalendarDay(matches: MatchWithParticipantsDTO[]): 
         sortGroupMatches(key, arr);
     }
     const datedKeys = [...map.keys()].filter((k) => k !== UNSCHEDULED_KEY);
-    datedKeys.sort((a, b) => (a < b ? 1 : a > b ? -1 : 0));
+    datedKeys.sort();
     const groups: MatchDayGroup[] = datedKeys.map((dateKey) => {
         const ms = map.get(dateKey)!;
         const firstTs = ms[0].scheduled_at!;

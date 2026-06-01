@@ -74,8 +74,8 @@ export const TournamentGroup = ({
                             navigate({
                                 to: "/tournament/$tournamentId/stage/$stageId/bracket",
                                 params: {
-                                    tournamentId: tournament.id,
-                                    stageId: tournament.entry_stage,
+                                    tournamentId: tournament.id.toString(),
+                                    stageId: tournament.entry_stage.toString(),
                                 },
                             });
                         }}
@@ -84,8 +84,8 @@ export const TournamentGroup = ({
                                 navigate({
                                     to: "/tournament/$tournamentId/stage/$stageId/bracket",
                                     params: {
-                                        tournamentId: tournament.id,
-                                        stageId: tournament.entry_stage,
+                                        tournamentId: tournament.id.toString(),
+                                        stageId: tournament.entry_stage.toString(),
                                     },
                                 });
                             }
@@ -93,7 +93,7 @@ export const TournamentGroup = ({
                         className="bg-firstBg border-border/10 hover:border-cfRed/30 flex w-full min-w-125 flex-col rounded-2xl border p-0 transition-all md:w-[calc(50%-1rem)] xl:w-[calc(33.333%-1.334rem)]"
                     >
                         <img
-                            src={tournament.id % 2 === 0 ? "ex2.jpg" : "Background_Match_day.png"}
+                            src={tournament.id % 2 === 0 ? "ex2.jpg" : "Background_Match_Day.png"}
                             alt="Season 4 Announcement"
                             className="h-48 w-full rounded-t-2xl object-cover"
                             style={{ background: "#252628" }}
@@ -158,8 +158,8 @@ export const TournamentGroup = ({
                             <Link
                                 to={"/tournament/$tournamentId/stage/$stageId/bracket"}
                                 params={{
-                                    tournamentId: tournament.id,
-                                    stageId: tournament.entry_stage,
+                                    tournamentId: tournament.id.toString(),
+                                    stageId: tournament.entry_stage.toString(),
                                 }}
                                 className="bg-secondBg text-textPrimary hover:bg-secondBg/80 flex w-full items-center justify-center gap-2 rounded-lg py-2 text-xs font-black tracking-widest uppercase transition-all"
                             >
