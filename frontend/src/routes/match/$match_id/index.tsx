@@ -45,8 +45,8 @@ function MatchPage() {
 
     const maps = data?.match?.maps ?? [];
     const participants = data?.match?.participants ?? [];
-    const team1 = participants[0];
-    const team2 = participants[1];
+    const team1 = participants.find((p) => p.position === 1) ?? participants[0];
+    const team2 = participants.find((p) => p.position === 2) ?? participants[1];
     const combinedStats = data?.match.combinedStats;
     const match = data?.match;
 
@@ -108,7 +108,7 @@ function MatchPage() {
                             <Link
                                 to="/team/$team_id"
                                 params={{
-                                    team_id: team1.stageTeam.team_id,
+                                    team_id: team1.stageTeam.team_id.toString(),
                                 }}
                                 className="flex items-center gap-2"
                             >
@@ -138,7 +138,7 @@ function MatchPage() {
                             <Link
                                 to="/team/$team_id"
                                 params={{
-                                    team_id: team2.stageTeam.team_id,
+                                    team_id: team2.stageTeam.team_id.toString(),
                                 }}
                                 className="flex items-center gap-2"
                             >

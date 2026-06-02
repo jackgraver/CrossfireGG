@@ -96,7 +96,7 @@ function RouteComponent() {
             icon: Users,
             exact: false,
         },
-    ] as const;
+    ];
 
     const achievementItems = placementSummariesToTileItems(team.placement_summaries ?? []);
 

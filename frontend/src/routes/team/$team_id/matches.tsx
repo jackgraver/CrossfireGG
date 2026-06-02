@@ -77,8 +77,8 @@ function MatchCard({ match, teamId }: { match: MatchWithParticipantsDTO; teamId:
 
     return (
         <Link
-            to={"/match/$matchId"}
-            params={{ matchId: opponent?.match_id }}
+            to="/match/$match_id"
+            params={{ match_id: String(opponent?.match_id ?? "") }}
             className="group block"
         >
             <div

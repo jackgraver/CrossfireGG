@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import type { AppRouteParams, AppRouteTo } from "@/lib/router.types";
 import { cn } from "@/utils/cn";
 import { matchesRole } from "@/utils/role.util";
 import { Roles } from "@repo/types";
@@ -9,8 +10,8 @@ import { useSignOut } from "@/contexts/auth";
 import { UserType } from "@/lib/auth/auth.query";
 
 interface NavItemProps {
-    to?: string;
-    params?: Record<string, string>;
+    to?: AppRouteTo;
+    params?: AppRouteParams;
     icon: React.ReactNode;
     label: string;
     left?: boolean;
@@ -37,7 +38,7 @@ const NavItem = ({
         return (
             <Link
                 to={to}
-                params={params}
+                {...(params ? { params } : {})}
                 className={baseClasses}
                 onClick={onClick}
                 onMouseEnter={onMouseEnter}
@@ -88,7 +89,8 @@ export default function NavBar({
                         padding="px-3 py-2 -ml-3"
                     />
                     <NavItem
-                        to="/tournament/9/stage/1/bracket"
+                        to="/tournament/$tournamentId/stage/$stageId/bracket"
+                        params={{ tournamentId: "9", stageId: "1" }}
                         icon={<Trophy size={18} />}
                         label="Season 5"
                         padding="px-3 py-2 -ml-3"
@@ -125,7 +127,6 @@ export default function NavBar({
                         <div className="group relative">
                             <NavItem
                                 left={false}
-                                to="/user"
                                 icon={
                                     <TeamLogo
                                         avatar={user.image ?? undefined}
@@ -140,7 +141,6 @@ export default function NavBar({
                                     <li>
                                         <NavItem
                                             left={false}
-                                            to="/user"
                                             icon={<User size={16} />}
                                             label="Profile"
                                         />

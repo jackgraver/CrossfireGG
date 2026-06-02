@@ -58,8 +58,8 @@ export default function HomeLiveBracket() {
                     <Link
                         to="/tournament/$tournamentId/stage/$stageId/bracket"
                         params={{
-                            tournamentId: target.tournamentId,
-                            stageId: target.stageId,
+                            tournamentId: target.tournamentId.toString(),
+                            stageId: target.stageId.toString(),
                         }}
                         className="flex w-fit items-center gap-2 rounded-md bg-gray-700 px-3 py-2 text-xs font-semibold text-white transition-colors hover:bg-gray-600"
                     >

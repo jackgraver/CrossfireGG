@@ -14,7 +14,7 @@ function TeamsPage() {
     const { tournamentId, stageId } = Route.useParams();
     const { data: tournament } = useTournamentById(tournamentId);
 
-    const { data: teams, isLoading } = useStageTeams(stageId, {
+    const { data: teams, isLoading } = useStageTeams(Number(stageId), {
         refetchInterval: tournament?.syncStatus === "processing" ? 3_000 : undefined,
     });
 

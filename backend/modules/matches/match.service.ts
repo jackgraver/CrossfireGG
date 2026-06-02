@@ -6,10 +6,12 @@ export const matchService = {
         if (!match) throw new Error("Match not found");
 
         const transformedMaps = match.maps.map((map) => {
-            const teamIds = match.participants.map((p) => p.team_id);
-
-            const team1Id = teamIds[0];
-            const team2Id = teamIds[1];
+            const team1Id =
+                match.participants.find((p) => p.position === 1)?.team_id ??
+                match.participants[0]?.team_id;
+            const team2Id =
+                match.participants.find((p) => p.position === 2)?.team_id ??
+                match.participants[1]?.team_id;
 
             const rosterPlayerIds = (stageTeamId: number) =>
                 new Set(

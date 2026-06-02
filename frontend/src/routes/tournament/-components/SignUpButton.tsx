@@ -115,14 +115,14 @@ export default function SignUpButton({ tournamentId }: { tournamentId: string })
 
     const getButtonContent = () => {
         if (!user) {
-            return { to: "/sign-up", text: "Create Account" };
+            return { text: "Create Account" as const };
         }
         if (!user?.teamId) {
-            return { to: "/register/team", text: "Create Team To Join" };
+            return { to: "/register/team" as const, text: "Create Team To Join" as const };
         }
         return {
-            to: "/register/team",
-            text: "Sign Up Team",
+            to: "/register/team" as const,
+            text: "Sign Up Team" as const,
             onClick: () =>
                 openDialog({
                     title: "Confirm Lineup",
@@ -137,21 +137,36 @@ export default function SignUpButton({ tournamentId }: { tournamentId: string })
         };
     };
 
-    const { to, text, onClick } = getButtonContent();
+    const content = getButtonContent();
 
-    return onClick ? (
-        <button className={activeClass} type="button" onClick={onClick}>
+    if ("onClick" in content && content.onClick) {
+        return (
+            <button className={activeClass} type="button" onClick={content.onClick}>
+                <div className="flex w-full items-center justify-center gap-2">
+                    <span className="flex items-center justify-center">{content.text}</span>
+                    <MoveUpRight className="flex h-5 w-5 items-center justify-center" />
+                </div>
+            </button>
+        );
+    }
+
+    if ("to" in content && content.to) {
+        return (
+            <Link className={activeClass} to={content.to}>
+                <div className="flex w-full items-center justify-center gap-2">
+                    <span className="flex items-center justify-center">{content.text}</span>
+                    <MoveUpRight className="flex h-5 w-5 items-center justify-center" />
+                </div>
+            </Link>
+        );
+    }
+
+    return (
+        <button className={activeClass} type="button" disabled>
             <div className="flex w-full items-center justify-center gap-2">
-                <span className="flex items-center justify-center">{text}</span>
+                <span className="flex items-center justify-center">{content.text}</span>
                 <MoveUpRight className="flex h-5 w-5 items-center justify-center" />
             </div>
         </button>
-    ) : (
-        <Link className={activeClass} to={to as any}>
-            <div className="flex w-full items-center justify-center gap-2">
-                <span className="flex items-center justify-center">{text}</span>
-                <MoveUpRight className="flex h-5 w-5 items-center justify-center" />
-            </div>
-        </Link>
     );
 }

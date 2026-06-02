@@ -71,8 +71,8 @@ function TeamOverview() {
                         <Link
                             to="/tournament/$tournamentId/stage/$stageId/bracket"
                             params={{
-                                tournamentId: tournament.id,
-                                stageId: tournament.stages[0]?.id ?? "",
+                                tournamentId: tournament.id.toString(),
+                                stageId: String(tournament.stages[0]?.id ?? ""),
                             }}
                             className="text-textPrimary hover:text-cfRed text-xl font-bold transition-colors"
                         >

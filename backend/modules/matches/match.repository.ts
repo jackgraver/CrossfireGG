@@ -19,6 +19,8 @@ export const matchRepository = {
             where: and(eq(matches.id, matchId), isNull(matches.deleted_at)),
             with: {
                 participants: {
+                    where: isNull(matchParticipants.deleted_at),
+                    orderBy: asc(matchParticipants.position),
                     with: {
                         stageTeam: {
                             with: {
@@ -34,6 +36,8 @@ export const matchRepository = {
                     },
                 },
                 maps: {
+                    where: isNull(maps.deleted_at),
+                    orderBy: asc(maps.map_order),
                     with: {
                         playerStats: {
                             with: {

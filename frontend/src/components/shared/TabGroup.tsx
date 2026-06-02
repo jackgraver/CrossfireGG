@@ -1,10 +1,11 @@
 import { cn } from "@/utils/cn";
+import type { AppRouteParams, AppRouteTo } from "@/lib/router.types";
 import { Link, useMatchRoute } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { useLayoutEffect, useRef, useState } from "react";
 
 export interface Tab {
-    nav: { to: string; params?: string };
+    nav: { to: AppRouteTo; params?: AppRouteParams };
     preload?: boolean;
     label: string;
     icon?: any;
@@ -26,7 +27,7 @@ export default function TabGroup({ tabs, trailing }: TabGroupProps) {
         opacity: 0,
     });
 
-    const isActiveTab = (to: string, params: string, exact: boolean) => {
+    const isActiveTab = (to: AppRouteTo, params: AppRouteParams | undefined, exact: boolean) => {
         if (exact) {
             return matchRoute({ to, params }) !== false;
         }
@@ -34,7 +35,7 @@ export default function TabGroup({ tabs, trailing }: TabGroupProps) {
     };
 
     const activeIndex = tabs.findIndex((tab) =>
-        isActiveTab(tab.nav.to, tab.nav.params ?? "", tab.exact),
+        isActiveTab(tab.nav.to, tab.nav.params, tab.exact),
     );
 
     useLayoutEffect(() => {
@@ -61,7 +62,7 @@ export default function TabGroup({ tabs, trailing }: TabGroupProps) {
                             tabsRef.current[i] = el;
                         }}
                         to={tab.nav.to}
-                        params={tab.nav.params}
+                        {...(tab.nav.params ? { params: tab.nav.params } : {})}
                         preload={tab.preload && "intent"}
                         className={cn(
                             "relative z-10 mb-2 flex items-center gap-2.5 rounded-md px-4 py-2 text-sm font-black transition-colors",
