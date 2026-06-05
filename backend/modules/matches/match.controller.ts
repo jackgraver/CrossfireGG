@@ -7,6 +7,7 @@ import { sendContract } from "../../core/sendContract";
 import {
     ClaimedAndUnclaimedMatchesContract,
     MatchWithParticipantAndMinifiedMapContract,
+    UpcomingMatchesRefreshResponseContract,
 } from "@repo/contracts";
 import { MatchPageContract } from "@repo/contracts";
 import { AuthRequest } from "../../core/middleware/auth.middleware";
@@ -34,6 +35,17 @@ export const matchController = {
         } catch (error: any) {
             logger.error("Error fetching upcoming matches:", error);
             res.status(500).json({ error: "Failed to fetch upcoming matches" });
+        }
+    },
+
+    refreshUpcomingMatches: async (_: Request, res: Response) => {
+        try {
+            const result = await matchService.refreshUpcomingMatches();
+
+            sendContract(res, UpcomingMatchesRefreshResponseContract, result);
+        } catch (error: any) {
+            logger.error("Error refreshing upcoming matches:", error);
+            res.status(500).json({ error: "Failed to refresh upcoming matches" });
         }
     },
 

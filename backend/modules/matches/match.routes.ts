@@ -6,6 +6,7 @@ import { requireSession } from "../../core/middleware/auth.middleware";
 const router = Router();
 
 router.get("/upcoming", matchController.getUpcomingMatches);
+router.post("/upcoming/refresh", matchController.refreshUpcomingMatches);
 router.get("/casting/all", matchController.getAllMatchCasting);
 router.get("/:matchId", matchController.getMatchById);
 router.post("/casting/claim", fetchSession, requireSession, matchController.claimMatch);

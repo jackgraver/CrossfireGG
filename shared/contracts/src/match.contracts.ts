@@ -79,3 +79,12 @@ export const MatchPageContract = z.object({
 });
 
 export type MatchPageDTO = z.infer<typeof MatchPageContract>;
+
+export const UpcomingMatchesRefreshResponseContract = z.object({
+    beforeMatches: MatchWithParticipantAndMinifiedMapContract.array(),
+    matches: MatchWithParticipantAndMinifiedMapContract.array(),
+    trackedMatches: MatchWithParticipantAndMinifiedMapContract.array(),
+    syncStatus: z.enum(["processing", "idle"]).default("idle"),
+});
+
+export type UpcomingMatchesRefreshDTO = z.infer<typeof UpcomingMatchesRefreshResponseContract>;
