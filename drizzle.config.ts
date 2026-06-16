@@ -1,19 +1,20 @@
 import type { Config } from "drizzle-kit";
+import { config as loadEnv } from "dotenv";
 
-// export default {
-//     schema: "./shared/schemas/index.ts",
-//     out: "./drizzle",
-//     dialect: "sqlite",
-//     dbCredentials: {
-//         url: "./cf.db",
-//     },
-// } satisfies Config;
+loadEnv({ path: "./backend/.env" });
+
+const databaseUrl = process.env.DATABASE_URL;
+if (!databaseUrl) {
+    throw new Error(
+        "DATABASE_URL is required for drizzle-kit. Set it in backend/.env (see backend/env.example).",
+    );
+}
 
 export default {
     schema: "./backend/schemas",
     out: "./drizzle",
     dialect: "postgresql",
     dbCredentials: {
-        url: "postgres://app-user:defpass@165.232.131.108:5432/cf-db",
+        url: databaseUrl,
     },
 } satisfies Config;
