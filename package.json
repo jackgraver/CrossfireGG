@@ -20,6 +20,6 @@
         "zod": "^4.3.5"
     },
     "devDependencies": {
-        "oxfmt": "^0.26.0"
+        "oxfmt": "^0.80.0"
     }
 }
